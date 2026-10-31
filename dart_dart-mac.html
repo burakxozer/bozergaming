@@ -1,0 +1,598 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Karambol Kriket</title>
+
+<style>
+:root{
+  --bg:#0b1220;
+  --panel:#111827;
+  --line:#1f2937;
+--row1:#020617;
+--row2:#111c3a;
+  --text:#e5e7eb;
+  --accent:#22c55e;
+}
+
+*{box-sizing:border-box;font-family:-apple-system,BlinkMacSystemFont,Segoe UI,sans-serif}
+body{margin:0;background:var(--bg);color:var(--text)}
+.app{max-width:900px;margin:auto;padding:10px}
+
+h1{text-align:center;margin:10px 0}
+
+.card{
+  background:var(--panel);
+  border-radius:14px;
+  padding:12px;
+  margin-bottom:12px;
+}
+
+button{
+  width:100%;
+  padding:14px;
+  font-size:18px;
+  border:none;
+  border-radius:12px;
+  background:var(--accent);
+  color:#000;
+  margin-top:10px;
+}
+
+.btn-row{display:flex;gap:10px}
+.btn-row button{flex:1}
+
+input{
+  width:100%;
+  padding:14px;
+  font-size:18px;
+  border-radius:12px;
+  border:none;
+  margin-bottom:10px;
+}
+
+.board{
+display:grid;
+border:2px solid #334155;
+border-radius:10px;
+overflow:hidden;
+height:calc(100vh - 260px);
+}
+.header,.row{display:grid}
+
+.row:nth-child(even){background:var(--row1)}
+.row:nth-child(odd){background:var(--row2)}
+
+.cell{
+  height:44px;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  border-left:1px solid var(--line);
+  font-size:22px;
+  user-select:none;
+}
+.cell:first-child{border-left:none}
+
+.score{
+  font-weight:900;
+  font-size:24px;
+  background:rgba(0,0,0,.35);
+}
+
+.team-header{
+  flex-direction:column;
+  font-size:14px;
+}
+.team-header span{
+  font-size:20px;
+  font-weight:700;
+}
+
+.mark{
+  width:26px;height:26px;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  border-radius:50%;
+}
+.circle{border:2px solid var(--text)}
+
+.controls{display:flex;gap:10px;margin-top:10px}
+.controls button{background:#334155;color:#fff}
+
+.winner{
+  background:#16a34a!important;
+  color:#000;
+}
+
+.popup{
+  position:fixed;
+  inset:0;
+  background:rgba(0,0,0,.8);
+  display:none;
+  align-items:flex-start;
+  justify-content:center;
+  padding-top:40px;
+  z-index:999;
+}
+
+.popup-card{
+  background:#0f172a;
+  padding:30px;
+  border-radius:20px;
+  text-align:center;
+  width:90%;
+  max-width:500px;
+  max-height:80vh;
+  overflow-y:auto;
+  box-shadow:0 0 30px rgba(34,197,94,.4);
+  animation:pop .25s ease;
+}
+
+.popup-card h2{
+  margin:0 0 10px;
+  font-size:26px;
+}
+
+.popup-card .cup{
+  font-size:60px;
+  margin:10px 0;
+}
+
+@keyframes pop{
+  from{transform:scale(.85);opacity:0}
+  to{transform:scale(1);opacity:1}
+}
+
+@media(max-width:768px){
+  .cell{font-size:18px;height:40px}
+  h1{font-size:22px}
+}
+
+@media(max-width:480px){
+  .cell{font-size:16px;height:36px}
+  input,button{font-size:16px}
+  .team-header span{font-size:16px}
+.score{
+  font-size:20px;
+}
+}
+
+.cell{
+  transition:transform .08s ease, background .2s ease;
+}
+
+.cell:active{
+  transform:scale(0.88);
+  background:#1e293b;
+}
+
+.cell.clicked{
+  animation:popMark .18s ease;
+}
+
+@keyframes popMark{
+  0%{transform:scale(.6);opacity:.4}
+  100%{transform:scale(1);opacity:1}
+}
+
+.undo-btn{
+  background:#dc2626 !important;
+  color:#fff;
+}
+
+.reset-btn{
+  background:#facc15 !important;
+  color:#000;
+}
+
+.info-btn{
+width:42px;
+height:42px;
+border-radius:50%;
+background:#06b6d4;
+color:white;
+font-weight:bold;
+font-size:18px;
+padding:0;
+}
+
+</style>
+</head>
+
+<body>
+<div class="app">
+<h1>KARAMBOL KRIKET</h1>
+
+<div id="modeSelect" class="card">
+<h3>Oyun Modu</h3>
+
+<div class="btn-row">
+<button onclick="selectMode('karambol')">Karambol Kriket</button>
+<button onclick="selectMode('kriket')">Kriket (15-20 B)</button>
+</div>
+
+</div>
+<div id="step1" class="card" style="display:none">
+  <h3>Takım Sayısı</h3>
+  <div class="btn-row">
+    <button onclick="selectTeams(2)">2</button>
+    <button onclick="selectTeams(3)">3</button>
+    <button onclick="selectTeams(4)">4</button>
+  </div>
+</div>
+
+<div id="step2" class="card" style="display:none">
+  <h3>Takım İsimleri</h3>
+  <div id="inputs"></div>
+
+  <h3>First To</h3>
+  <input id="firstToInput" type="number" placeholder="Örn: 3" min="1">
+
+  <button onclick="startGame()">Başla</button>
+</div>
+
+
+<div id="game" class="card" style="display:none">
+  <div id="board"></div>
+  <div class="controls">
+<button onclick="showInfo()" class="info-btn">i</button>
+    <button class="undo-btn" onclick="undo()">⬅ Undo</button>
+    <button class="reset-btn" onclick="confirmReset()">Reset</button>
+  </div>
+</div>
+</div>
+
+<div id="popup" class="popup" onclick="closePopup()">
+  <div class="popup-card" onclick="event.stopPropagation()">
+    <div id="popupContent"></div>
+  </div>
+</div>
+
+
+<script>
+
+let actions=[];
+
+let gameMode="karambol";
+
+let numbers=[];
+const states=["","/","X","⭕"];
+let teamCount=0,teams=[],scores=[],history=[],points=[],firstTo=1;
+
+function selectMode(mode){
+
+gameMode=mode;
+
+if(mode==="karambol"){
+numbers=["20","19","18","17","16","15","14","13","12","D","T","B","H"];
+}
+
+if(mode==="kriket"){
+numbers=["20","19","18","17","16","15","B"];
+}
+
+modeSelect.style.display="none";
+step1.style.display="block";
+
+}
+
+function selectTeams(n){
+  teamCount=n;
+  step1.style.display="none";
+  step2.style.display="block";
+  inputs.innerHTML="";
+  for(let i=0;i<n;i++)
+    inputs.innerHTML+=`<input placeholder="Takım ${i+1}">`;
+}
+
+function startGame(){
+ teams=[...inputs.querySelectorAll("input")].map(i=>{
+  return formatName(i.value || "Takım");
+});
+
+firstTo = parseInt(document.getElementById("firstToInput").value) || 1;
+  scores=Array.from({length:teamCount},()=>Array(numbers.length).fill(0));
+  points=Array(teamCount).fill(0);
+  step2.style.display="none";
+  game.style.display="block";
+  render();
+}
+
+function layout(){
+  if(teamCount===2) return [1,1];
+  if(teamCount===3) return [1,2];
+  return [2,2];
+}
+
+function render(){
+  board.innerHTML="";
+const rule=document.createElement("div");
+rule.style.textAlign="center";
+rule.style.marginBottom="6px";
+rule.innerHTML=`<strong>First To ${firstTo}</strong>`;
+board.appendChild(rule);
+
+  const [L,R]=layout();
+  board.style.gridTemplateColumns=`repeat(${L},1fr) 52px repeat(${R},1fr)`;
+
+
+
+  const header=document.createElement("div");
+  header.className="header";
+  header.style.gridTemplateColumns=board.style.gridTemplateColumns;
+
+  teams.forEach((t,i)=>{
+    const h=document.createElement("div");
+    h.className="cell team-header";
+    h.innerHTML=`${t}<span>${points[i]}</span>`;
+    header.appendChild(h);
+  });
+
+  const mid=document.createElement("div");
+  mid.className="cell score";
+  header.insertBefore(mid,header.children[L]);
+  board.appendChild(header);
+
+  numbers.forEach((num,row)=>{
+    const r=document.createElement("div");
+    r.className="row";
+    r.style.gridTemplateColumns=board.style.gridTemplateColumns;
+
+    teams.forEach((_,t)=>{
+      const c=document.createElement("div");
+      c.className="cell";
+      c.dataset.t=t;
+      c.dataset.r=row;
+      c.onclick=()=>toggle(c);
+      updateCell(c);
+      r.appendChild(c);
+    });
+
+    const s=document.createElement("div");
+    s.className="cell score";
+    s.textContent=num;
+    r.insertBefore(s,r.children[L]);
+    board.appendChild(r);
+  });
+}
+
+function toggle(cell){
+if(scores[cell.dataset.t][cell.dataset.r] === 3){
+return;
+}
+const team = teams[cell.dataset.t];
+const number = numbers[cell.dataset.r];
+const time = Date.now();
+  history.push({
+t:cell.dataset.t,
+r:cell.dataset.r,
+prev:scores[cell.dataset.t][cell.dataset.r]
+});
+  let val = scores[cell.dataset.t][cell.dataset.r];
+
+if(val < 3){
+  scores[cell.dataset.t][cell.dataset.r] = val + 1;
+}
+
+  cell.classList.add("clicked");
+  setTimeout(()=>cell.classList.remove("clicked"),180);
+
+  updateCell(cell);
+actions.unshift({
+team:cell.dataset.t,
+name:team,
+number:number,
+time:time,
+type:"write"
+});
+  checkWin();
+}
+
+
+function updateCell(cell){
+  const v=scores[cell.dataset.t][cell.dataset.r];
+  cell.innerHTML="";
+  if(states[v]==="⭕"){
+    const m=document.createElement("div");
+    m.className="mark circle";
+    m.textContent="X";
+    cell.appendChild(m);
+  }else cell.textContent=states[v];
+}
+
+function checkWin(){
+  scores.forEach((s,i)=>{
+    if(s.every(v=>v===3)){
+  points[i]++;
+
+ if(points[i] >= firstTo){
+showPopup(`
+  <div class="cup">🏆</div>
+  <h2>${teams[i]} MAÇI KAZANDI</h2>
+  <p>First To ${firstTo}</p>
+`, "match");
+
+  }else{
+showPopup(`
+  <h2>${teams[i]} SETİ KAZANDI</h2>
+`, "set");
+
+  }
+}
+
+  });
+}
+
+function undo(){
+
+const h = history.pop();
+if(!h) return;
+
+scores[h.t][h.r] = h.prev;
+
+actions.unshift({
+team:h.t,
+name:teams[h.t],
+number:numbers[h.r],
+time:Date.now(),
+type:"undo"
+});
+
+render();
+
+}
+
+function resetBoard(keepPoints=false){
+
+scores = Array.from({length:teamCount},()=>Array(numbers.length).fill(0));
+
+actions = []; // işlem geçmişi temizlenir
+
+if(!keepPoints) history=[];
+
+if(!keepPoints) points.fill(0);
+
+render();
+
+}
+
+
+function formatName(str){
+  return str
+    .toLowerCase()
+    .split(" ")
+    .map(w => w.charAt(0).toUpperCase() + w.slice(1))
+    .join(" ");
+}
+
+function showPopup(html, mode="set"){
+  popupContent.innerHTML = html;
+
+  // Maç bitmediyse buton ekleme
+  if(mode === "match"){
+    popupContent.innerHTML += `
+<div style="margin-top:15px;display:flex;gap:10px">
+<button onclick="rematch()">Rövanş ⚔️</button>
+<button onclick="restartGame()">Yeni Oyun</button>
+</div>
+`;
+  }
+
+  popup.style.display="flex";
+
+  // SET popup ise 2 saniye sonra otomatik kapan
+  if(mode === "set"){
+    setTimeout(()=>{
+      popup.style.display="none";
+      resetBoard(true);
+    },2000);
+  }
+}
+
+
+function closePopup(){
+  popup.style.display="none";
+}
+
+function restartGame(){
+  popup.style.display="none";
+
+  // Her şeyi sıfırla
+  teamCount=0;
+  teams=[];
+  scores=[];
+  history=[];
+  points=[];
+  firstTo=1;
+
+  game.style.display="none";
+  step2.style.display="none";
+  step1.style.display="block";
+}
+
+function rematch(){
+
+popup.style.display="none";
+
+scores = Array.from({length:teamCount},()=>Array(numbers.length).fill(0));
+history=[];
+points=Array(teamCount).fill(0);
+
+render();
+
+}
+
+function confirmReset(){
+  popupContent.innerHTML=`
+  <h2>Oyun sıfırlansın mı?</h2>
+  <div style="margin-top:20px;display:flex;gap:10px">
+    <button onclick="doReset()">Sıfırla</button>
+    <button onclick="closePopup()">Vazgeç</button>
+  </div>
+  `;
+  popup.style.display="flex";
+}
+
+function doReset(){
+  popup.style.display="none";
+  resetBoard();
+}
+
+function timeAgo(t){
+
+let diff = Math.floor((Date.now()-t)/1000);
+
+let m = Math.floor(diff/60);
+let s = diff%60;
+
+if(m>0) return `${m} dakika ${s} saniye önce`;
+return `${s} saniye önce`;
+
+}
+
+function showInfo(){
+
+let html=`
+<div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:10px">
+<h2 style="text-align:left">📜 İşlem Geçmişi</h2>
+<button onclick="closePopup()" style="
+background:#06b6d4;
+border:none;
+padding:6px 10px;
+border-radius:6px;
+color:white">✕</button>
+</div>
+`;
+
+actions.slice(0,50).forEach(a=>{
+
+let color = a.team==0 ? "#ef4444" : "#22c55e";
+
+let text = a.type=="undo"
+? `${a.name} ${a.number} geri alındı`
+: `${a.name} ${a.number} yazıldı`;
+
+html+=`
+<div style="display:flex;justify-content:space-between;
+border-bottom:1px solid #334155;padding:6px">
+
+<span style="color:${color}">${text}</span>
+
+<span style="opacity:.6">${timeAgo(a.time)}</span>
+
+</div>
+`;
+
+});
+
+popupContent.innerHTML = html;
+popup.style.display="flex";
+
+}
+
+</script>
+</body>
+</html>

@@ -1,0 +1,253 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Somali Okey</title>
+
+<style>
+*{box-sizing:border-box;font-family:system-ui}
+body{margin:0;background:#0f172a;color:#e5e7eb}
+.screen{display:none;min-height:100vh;padding:16px}
+.screen.active{display:block}
+h1,h2{text-align:center;margin:12px 0}
+.topbar{display:flex;justify-content:space-between;align-items:center}
+.money{font-weight:700}
+.card{background:#020617;border-radius:18px;padding:16px;margin-bottom:14px}
+input{width:100%;padding:14px;font-size:18px;border-radius:12px;border:none;margin-bottom:10px}
+button{width:100%;padding:14px;font-size:17px;font-weight:700;border-radius:14px;border:none;background:#22c55e;margin-bottom:8px}
+.secondary{background:#334155;color:#fff}
+.danger{background:#ef4444;color:#fff}
+.team{display:flex;justify-content:space-between;align-items:center;padding:12px;border:1px solid #334155;border-radius:14px;margin-bottom:10px}
+.tags span{margin-left:6px;font-weight:900}
+.D{color:#22c55e}.O{color:#ef4444}.G{color:#a855f7}
+.green{color:#22c55e}.red{color:#ef4444}
+hr{border:0;border-top:1px solid #334155;margin:12px 0}
+.small{font-size:14px}
+
+@media(max-width:768px){
+  .card{padding:14px}
+  button{font-size:16px}
+  input{font-size:16px}
+  .team{padding:10px}
+}
+
+@media(max-width:480px){
+  h1{font-size:22px}
+  h2{font-size:18px}
+  button{font-size:15px;padding:12px}
+  input{font-size:15px;padding:12px}
+  .team{flex-direction:column;gap:6px}
+}
+
+
+</style>
+</head>
+
+<body>
+
+<!-- MODE -->
+<div class="screen active" id="mode">
+<h1>SOMALİ</h1>
+<div class="card">
+<button onclick="selectMode('single')">Tekli</button>
+<button onclick="selectMode('team')">Eşli</button>
+</div>
+</div>
+
+<!-- NAMES -->
+<div class="screen" id="names">
+<div class="topbar"><h2>İsimler</h2><div class="money" id="moneyTop"></div></div>
+<div class="card" id="nameInputs"></div>
+<label><input type="checkbox" id="shuffle"> Takımları Karıştır</label>
+<button onclick="nextTarget()">Devam</button>
+</div>
+
+<!-- TARGET -->
+<div class="screen" id="target">
+<div class="topbar"><h2>Başlangıç</h2><div class="money" id="moneyTop2"></div></div>
+<div class="card">
+<input id="startScore" type="number" placeholder="Başlangıç Sayısı">
+<button onclick="nextMoney()">Devam</button>
+</div>
+</div>
+
+<!-- MONEY -->
+<div class="screen" id="moneyScreen">
+<h2>Bahis</h2>
+<div class="card">
+<input id="bet" type="number" placeholder="₺">
+<button onclick="startGame()">Oyuna Başla</button>
+</div>
+</div>
+
+<!-- GAME -->
+<div class="screen" id="game">
+<div class="topbar">
+<h2 id="roundText"></h2>
+<div class="money" id="moneyLabel"></div>
+</div>
+<div id="board"></div>
+<button onclick="openAction()">İşlem Yap</button>
+<button class="secondary" onclick="openStatus()">Güncel Durum</button>
+<button class="danger" onclick="location.reload()">Yeni Oyun</button>
+</div>
+
+<!-- ACTION -->
+<div class="screen" id="action">
+<h2>İşlem</h2>
+<div class="card">
+<button onclick="pickAction('D')">Düz</button>
+<button onclick="pickAction('O')">Okey</button>
+<button onclick="pickAction('G')">Gösterge</button>
+<button class="secondary" onclick="show('game')">Geri</button>
+</div>
+</div>
+
+<!-- PICK -->
+<div class="screen" id="pick">
+<h2>Kime?</h2>
+<div class="card" id="pickList"></div>
+<button class="secondary" onclick="show('game')">Geri</button>
+</div>
+
+<!-- END -->
+<div class="screen" id="end">
+<h2 id="winner"></h2>
+<div class="card" id="endList"></div>
+<button onclick="nextRound()">Oyuna Devam Et</button>
+<button class="danger" onclick="location.reload()">Yeni Oyun</button>
+</div>
+
+<!-- STATUS -->
+<div class="screen" id="status">
+<h2>Güncel Durum</h2>
+<div id="statusList"></div>
+<button class="secondary" onclick="show('game')">Geri</button>
+</div>
+
+<script>
+let mode='',players=[],bet=0,startScore=0,round=1,action='',history=[]
+const drop={D:2,O:4,G:1}
+const cap=s=>s.split(' ').map(w=>w[0].toUpperCase()+w.slice(1).toLowerCase()).join(' ')
+const show=id=>{document.querySelectorAll('.screen').forEach(s=>s.classList.remove('active'));document.getElementById(id).classList.add('active')}
+
+function selectMode(m){
+ mode=m
+ nameInputs.innerHTML=''
+ for(let i=0;i<(m==='single'?4:2);i++) nameInputs.innerHTML+='<input>'
+ show('names')
+}
+
+function nextTarget(){
+ players=[...nameInputs.querySelectorAll('input')].map(i=>({name:cap(i.value),score:0,okey:0,acts:[],balance:0}))
+ if(shuffle.checked) players.sort(()=>Math.random()-.5)
+ show('target')
+}
+
+function nextMoney(){
+ startScore=+document.getElementById('startScore').value
+ players.forEach(p=>p.score=startScore)
+ show('moneyScreen')
+}
+
+function startGame(){
+ bet=+document.getElementById('bet').value
+ updateMoney()
+ roundText.innerText=`${round}. Tur`
+ render()
+ show('game')
+}
+
+function updateMoney(){
+ document.querySelectorAll('.money').forEach(m=>m.innerText=`Sayısı ${bet}₺`)
+}
+
+function render(){
+ board.innerHTML=''
+ players.forEach(p=>{
+  board.innerHTML+=`
+  <div class="team">
+   <div>${p.name} <span class="tags">${p.acts.map(a=>`<span class="${a}">${a}</span>`).join('')}</span></div>
+   <div>${p.score}</div>
+  </div>`
+ })
+}
+
+function openAction(){show('action')}
+function pickAction(a){
+ action=a
+ pickList.innerHTML=''
+ players.forEach((p,i)=>pickList.innerHTML+=`<button onclick="apply(${i})">${p.name}</button>`)
+ show('pick')
+}
+
+function apply(i){
+ players[i].score=Math.max(0,players[i].score-drop[action])
+ players[i].acts.push(action)
+ if(action==='O') players[i].okey++
+ if((action==='D'||action==='O')&&players[i].score<=0) finish(i)
+ else{render();show('game')}
+}
+
+function finish(w){
+ let res=[]
+ if(mode==='team'){
+  const win=players[w], lose=players.find((_,i)=>i!==w)
+  const wNet=(lose.score*bet)+(win.okey*2*bet)-(lose.okey*2*bet)
+  const lNet=(lose.okey*2*bet)-(lose.score*bet)-(win.okey*2*bet)
+  win.balance+=wNet; lose.balance+=lNet
+  res.push({...win,net:wNet});res.push({...lose,net:lNet})
+ }else{
+  players.forEach((p,i)=>{
+   const enemyO=players.filter(x=>x!==p).reduce((a,b)=>a+b.okey,0)
+   const net=i===w
+    ? players.filter(x=>x!==p).reduce((a,b)=>a+b.score,0)*bet + (p.okey*3*2*bet) - (enemyO*2*bet)
+    : -(p.score*bet) + (p.okey*3*2*bet) - (enemyO*2*bet)
+   p.balance+=net
+   res.push({...p,net})
+  })
+ }
+ history.push({round,data:res})
+ drawEnd(w,res)
+}
+
+function drawEnd(w,res){
+ winner.innerText=`🏆 ${players[w].name}`
+ endList.innerHTML=''
+ res.forEach(r=>{
+  endList.innerHTML+=`
+  <div class="${r.net<0?'red':'green'}">
+   ${r.name} ${r.acts.map(a=>`<span class="${a}">${a}</span>`).join('')} | ${r.score} → ${r.net}₺
+  </div>`
+ })
+ show('end')
+}
+
+function openStatus(){
+ statusList.innerHTML=''
+ history.forEach(h=>{
+  statusList.innerHTML+=`<div class="card"><strong>${h.round}. Tur</strong>`
+  h.data.forEach(d=>{
+   statusList.innerHTML+=`
+   <div class="${d.net<0?'red':'green'} small">
+    ${d.name} ${d.acts.map(a=>`<span class="${a}">${a}</span>`).join('')} | ${d.score} → ${d.net}₺
+   </div>`
+  })
+  statusList.innerHTML+='</div>'
+ })
+ statusList.innerHTML+='<hr>'
+ players.forEach(p=>statusList.innerHTML+=`<div class="${p.balance<0?'red':'green'}">${p.name}: ${p.balance}₺</div>`)
+ show('status')
+}
+
+function nextRound(){
+ round++
+ players.forEach(p=>{p.score=startScore;p.okey=0;p.acts=[]})
+ roundText.innerText=`${round}. Tur`
+ render()
+ show('game')
+}
+</script>
+</body>
+</html>

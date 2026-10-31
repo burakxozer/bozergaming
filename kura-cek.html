@@ -1,0 +1,511 @@
+<!DOCTYPE html>
+<html lang="tr" data-theme="dark">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Kura Uygulaması</title>
+
+<style>
+/* ================= THEME ================= */
+:root{
+--bg:#0b1220;--panel:#111827;--soft:#020617;
+--text:#e5e7eb;--accent:#22c55e;--lose:#ef4444;--border:#1f2937;
+}
+:root[data-theme="light"]{
+--bg:#f3f4f6;--panel:#ffffff;--soft:#e5e7eb;
+--text:#111827;--accent:#16a34a;--lose:#dc2626;--border:#d1d5db;
+}
+:root[data-theme="casino"]{
+--bg:#064e3b;--panel:#022c22;--soft:#064e3b;
+--text:#ecfdf5;--accent:#facc15;--lose:#f87171;--border:#065f46;
+}
+
+/* ================= BASE ================= */
+*{box-sizing:border-box;font-family:-apple-system}
+body{margin:0;background:var(--bg);color:var(--text)}
+.app{max-width:900px;margin:auto;padding:12px;padding-bottom:80px}
+h1{text-align:center}
+
+/* ================= UI ================= */
+.card{
+background:var(--panel);
+border-radius:16px;
+padding:16px;
+margin-bottom:14px;
+animation:fade .25s ease
+}
+button{
+width:100%;
+padding:14px;
+font-size:18px;
+border:none;
+border-radius:14px;
+background:var(--accent);
+color:#000;
+margin-top:10px;
+cursor:pointer
+}
+.btn-row{display:flex;gap:10px}
+.btn-row button{flex:1}
+
+input{
+width:100%;
+padding:14px;
+font-size:22px;
+border-radius:14px;
+border:none;
+margin-top:6px
+}
+
+/* ================= MENU ================= */
+.menu-desc{
+font-size:13px;
+opacity:.7;
+margin-top:4px;
+text-align:center
+}
+
+/* ================= MATCH ================= */
+.match{
+background:var(--soft);
+padding:12px;
+border-radius:14px;
+margin-top:10px;
+border:1px solid var(--border)
+}
+.teams{
+display:flex;
+align-items:center;
+justify-content:space-between
+}
+.team{
+flex:1;
+text-align:center;
+padding:10px;
+border-radius:12px;
+font-weight:600;
+cursor:pointer;
+transition:.25s
+}
+.team.lose{
+text-decoration:line-through;
+color:var(--lose);
+opacity:.45
+}
+.vs{opacity:.6}
+
+/* ================= OVERLAY ================= */
+.overlay{
+position:fixed;
+inset:0;
+background:rgba(0,0,0,.75);
+backdrop-filter:blur(6px);
+display:flex;
+align-items:center;
+justify-content:center;
+z-index:99
+}
+.overlay-box{
+background:var(--panel);
+padding:22px;
+border-radius:20px;
+width:90%;
+max-width:380px;
+animation:scale .25s ease
+}
+
+/* ================= WINNER ================= */
+.winner{
+text-align:center;
+font-size:28px
+}
+.winner span{
+font-size:64px;
+display:block;
+margin-bottom:6px;
+animation:pulse 1.3s infinite;
+filter:drop-shadow(0 0 12px var(--accent))
+}
+
+/* ================= ANIM ================= */
+@keyframes fade{from{opacity:0}to{opacity:1}}
+@keyframes scale{from{transform:scale(.9);opacity:0}to{transform:scale(1);opacity:1}}
+@keyframes pulse{
+0%{transform:scale(1)}
+50%{transform:scale(1.1)}
+100%{transform:scale(1)}
+}
+@keyframes drop{
+from{opacity:0;transform:translateY(-6px)}
+to{opacity:1;transform:translateY(0)}
+}
+
+/* ===== TABLET ===== */
+@media (max-width: 1024px) {
+
+  .app{
+    max-width:95%;
+  }
+
+  button{
+    font-size:17px;
+    padding:12px;
+  }
+
+  input{
+    font-size:18px;
+    padding:12px;
+  }
+
+}
+
+/* ===== MOBİL ===== */
+@media (max-width: 600px) {
+
+  h1{
+    font-size:22px;
+  }
+
+  button{
+    font-size:16px;
+    padding:11px;
+  }
+
+  input{
+    font-size:16px;
+    padding:11px;
+  }
+
+  .match{
+    padding:10px;
+  }
+
+  .teams{
+    flex-direction:column;
+    gap:6px;
+  }
+
+  .vs{
+    font-size:14px;
+  }
+
+}
+
+/* ===== ÇOK KÜÇÜK EKRAN ===== */
+@media (max-width: 400px){
+
+  button{
+    font-size:14px;
+    padding:9px;
+  }
+
+  input{
+    font-size:14px;
+  }
+
+}
+
+.team:active{
+  transform:scale(.95);
+}
+
+
+</style>
+</head>
+
+<body>
+<div class="app">
+<h1>KURA UYGULAMASI</h1>
+<div id="screen"></div>
+</div>
+
+<!-- ================= OVERLAY ================= -->
+<div id="overlay" class="overlay" style="display:none">
+  <div class="overlay-box">
+    <p style="text-align:center;margin-bottom:10px">Bu maçı kim kazandı?</p>
+    <div id="overlayBtns" class="btn-row"></div>
+    <button onclick="closeOverlay()" style="margin-top:14px;background:#374151;color:#fff">İptal</button>
+  </div>
+</div>
+
+<!-- ================= BOTTOM BAR ================= -->
+<div class="bottom-bar">
+  <button onclick="home()">Ana Sayfa</button>
+</div>
+
+<script>
+/* ===== THEME AUTO ===== */
+(function(){
+let p=window.parent?.document?.documentElement?.getAttribute("data-theme");
+if(p) document.documentElement.setAttribute("data-theme",p);
+})();
+
+/* ===== UTIL ===== */
+function cap(str){
+  return str
+    .toLowerCase()
+    .split(" ")
+    .map(w => w.charAt(0).toUpperCase() + w.slice(1))
+    .join(" ");
+}
+const shuffle=a=>a.sort(()=>Math.random()-.5);
+const screen=document.getElementById("screen");
+
+/* ===== STATE ===== */
+let mode="home";
+
+/* ================= HOME ================= */
+function home(){
+mode="home";
+screen.innerHTML=`
+<div class="card">
+<button onclick="draw()">🎲 Çekiliş Yap</button>
+<div class="menu-desc">Rastgele kazanan seç</div>
+<button onclick="group()">👥 Grup Kurası</button>
+<div class="menu-desc">Dengeli gruplar oluştur</div>
+<button onclick="tournament()">🏆 Turnuva</button>
+<div class="menu-desc">Gerçek turnuva sistemi</div>
+</div>`;
+}
+home();
+
+/* =====================================================
+   1️⃣ ÇEKİLİŞ
+===================================================== */
+let drawNames=[],drawWinnerCount=1;
+function draw(){
+mode="draw";
+screen.innerHTML=`
+<div class="card">
+<p>Katılımcı Sayısı</p>
+<input id="dc" type="number" min="1"
+placeholder="Katılımcı Sayısı Girin...">
+<button onclick="drawNamesInput()">Devam</button>
+</div>`;
+}
+function drawNamesInput(){
+let c=+dc.value;
+screen.innerHTML=`<div class="card"><p>İsimler</p>`;
+for(let i=0;i<c;i++)
+  screen.innerHTML+=`<input class="dn" placeholder="Katılımcı ${i+1}">`;
+screen.innerHTML+=`
+<p>Kazanan Sayısı</p>
+<input id="dw" type="number" min="1"
+placeholder="Kazanacak Kişi Sayısı Girin...">
+<button onclick="drawResult()">Çekilişi Yap</button>
+</div>`;
+}
+function drawResult(){
+if(drawNames.length===0){
+drawNames=[...document.querySelectorAll(".dn")].map(i=>cap(i.value.trim())).filter(Boolean);
+drawWinnerCount=Math.min(drawNames.length,+dw.value);
+}
+let pool=[...drawNames];shuffle(pool);
+let win=pool.slice(0,drawWinnerCount);
+screen.innerHTML=`
+<div class="card">
+<div class="winner"><span>🎉</span>${win.join("<br>")}</div>
+<div class="btn-row">
+<button onclick="drawResult()">Tekrar Kura</button>
+<button onclick="draw();drawNames=[]">Yeni Çekiliş</button>
+</div>
+</div>`;
+}
+
+/* =====================================================
+   2️⃣ GRUP
+===================================================== */
+let groupNames=[],groupCount=2;
+function group(){
+mode="group";
+screen.innerHTML=`
+<div class="card">
+<p>Kişi Sayısı</p>
+<input id="gc" type="number" min="2"
+placeholder="Kişi Sayısı Girin...">
+<button onclick="groupNamesInput()">Devam</button>
+</div>`;
+}
+function groupNamesInput(){
+let c=+gc.value;
+screen.innerHTML=`<div class="card"><p>İsimler</p>`;
+for(let i=0;i<c;i++)
+  screen.innerHTML+=`<input class="gn" placeholder="Oyuncu ${i+1}">`;
+screen.innerHTML+=`
+<p>Grup Sayısı</p>
+<input id="gg" type="number" min="1"
+placeholder="Grup Sayısı Girin...">
+<button onclick="groupResult()">Grupları Oluştur</button>
+</div>`;
+}
+function groupResult(){
+if(groupNames.length===0){
+groupNames=[...document.querySelectorAll(".gn")].map(i=>cap(i.value.trim())).filter(Boolean);
+groupCount=Math.min(groupNames.length,+gg.value);
+}
+shuffle(groupNames);
+let groups=[...Array(groupCount)].map(()=>[]);
+groupNames.forEach((n,i)=>groups[i%groupCount].push(n));
+screen.innerHTML=`<div class="card">`;
+groups.forEach((g,i)=>{
+screen.innerHTML+=`
+<div class="match" style="animation:drop .25s ease">
+<strong>Grup ${i+1}</strong><br>${g.join("<br>")}
+</div>`;
+});
+screen.innerHTML+=`
+<div class="btn-row">
+<button onclick="groupResult()">Tekrar Kura</button>
+<button onclick="group();groupNames=[]">Yeni Kura</button>
+</div></div>`;
+}
+
+/* =====================================================
+   3️⃣ TURNUVA (MANTIK AYNI)
+===================================================== */
+let basePlayers=[],teamCount=0;
+let teams=[],rounds=[],currentRound=0,winnersBuffer=[];
+
+function tournament(){
+mode="tournament";
+screen.innerHTML=`
+<div class="card">
+<p>Oyuncu Sayısı</p>
+<input id="pc" type="number" min="2"
+placeholder="Oyuncu Sayısı Girin...">
+<button onclick="askTeam()">Devam</button>
+</div>`;
+}
+
+function askTeam(){
+const pcVal=+pc.value;
+screen.innerHTML=`
+<div class="card">
+<p>Takım Sayısı</p>
+<input id="tc" type="number" min="2"
+placeholder="Takım Sayısı Girin...">
+<button onclick="askPlayers(${pcVal})">Devam</button>
+</div>`;
+}
+
+function askPlayers(count){
+teamCount=+tc.value;
+screen.innerHTML=`<div class="card"><p>Oyuncular</p>`;
+for(let i=0;i<count;i++)
+  screen.innerHTML+=`<input class="pn" placeholder="Oyuncu ${i+1}">`;
+screen.innerHTML+=`
+<button onclick="savePlayers()">Takımları Oluştur</button>
+</div>`;
+}
+
+function savePlayers(){
+basePlayers=[...document.querySelectorAll(".pn")].map(i=>cap(i.value.trim())).filter(Boolean);
+createTeams();
+}
+
+function createTeams(){
+let pool=[...basePlayers];
+shuffle(pool);
+teams=[...Array(teamCount)].map(()=>[]);
+pool.forEach((p,i)=>teams[i%teamCount].push(p));
+teams=teams.map(t=>t.join(" - "));
+showPreview();
+}
+
+function showPreview(){
+shuffle(teams);
+screen.innerHTML=`<div class="card"><p>Kura Sonucu</p>`;
+teams.forEach((t,i)=>{
+if(i%2===0 && teams[i+1]){
+screen.innerHTML+=`
+<div class="match" style="animation:drop .25s ease ${i*120}ms">
+<div class="teams">
+<div class="team">${teams[i]}</div>
+<div class="vs">VS</div>
+<div class="team">${teams[i+1]}</div>
+</div>
+</div>`;
+}
+});
+screen.innerHTML+=`
+<div class="btn-row">
+<button onclick="createTeams()">Tekrar Kura</button>
+<button onclick="startTournament()">Turnuvayı Başlat</button>
+</div></div>`;
+}
+
+function startTournament(){
+rounds=[[...teams.map(t=>({name:t,eliminated:false}))]];
+currentRound=0;
+winnersBuffer=[];
+renderTournament();
+}
+
+function renderTournament(){
+screen.innerHTML="";
+rounds.forEach((round,ri)=>{
+screen.innerHTML+=`<div class="card"><strong>${ri+1}. Tur</strong>`;
+for(let i=0;i<round.length;i+=2){
+if(!round[i+1]) continue;
+screen.innerHTML+=`
+<div class="match">
+<div class="teams">
+<div class="team ${round[i].eliminated?'lose':''}" onclick="openOverlay(${ri},${i})">${round[i].name}</div>
+<div class="vs">VS</div>
+<div class="team ${round[i+1].eliminated?'lose':''}" onclick="openOverlay(${ri},${i+1})">${round[i+1].name}</div>
+</div>
+</div>`;
+}
+screen.innerHTML+=`</div>`;
+});
+}
+
+/* ===== OVERLAY ===== */
+function openOverlay(ri,ti){
+if(ri!==currentRound) return;
+const r=rounds[ri];
+const m=ti%2===0?ti:ti-1;
+overlayBtns.innerHTML=`
+<button onclick="pickWinner(${ri},${m})">${r[m].name}</button>
+<button onclick="pickWinner(${ri},${m+1})">${r[m+1].name}</button>`;
+overlay.style.display="flex";
+}
+function closeOverlay(){overlay.style.display="none"}
+
+function pickWinner(ri,ti){
+closeOverlay();
+let round=rounds[ri];
+let m=ti%2===0?ti:ti-1;
+let a=round[m],b=round[m+1];
+if(a.eliminated||b.eliminated) return;
+
+let winner=ti===m?a:b;
+let loser=ti===m?b:a;
+loser.eliminated=true;
+winnersBuffer.push({name:winner.name,eliminated:false});
+
+let done=true;
+for(let i=0;i<round.length;i+=2){
+if(!round[i].eliminated && !round[i+1].eliminated){done=false;break;}
+}
+
+if(done){
+if(winnersBuffer.length===1){
+screen.innerHTML=`
+<div class="card">
+<div class="winner"><span>🏆</span>${winnersBuffer[0].name}</div>
+<div class="btn-row">
+<button onclick="createTeams()">Aynı Oyuncular</button>
+<button onclick="tournament()">Yeni Oyuncular</button>
+</div></div>`;
+return;
+}
+rounds.push(winnersBuffer);
+currentRound++;
+winnersBuffer=[];
+}
+renderTournament();
+}
+</script>
+</body>
+</html>

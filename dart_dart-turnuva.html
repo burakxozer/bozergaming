@@ -1,0 +1,423 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Karambol Kriket Turnuva</title>
+
+<style>
+:root{
+--bg:#0b1220;--panel:#111827;--line:#1f2937;
+--row1:#020617;
+--row2:#111c3a;
+--text:#e5e7eb;--accent:#22c55e;
+}
+*{box-sizing:border-box;font-family:-apple-system}
+body{margin:0;background:var(--bg);color:var(--text)}
+.app{max-width:900px;margin:auto;padding:10px}
+h1{text-align:center}
+.card{background:var(--panel);border-radius:14px;padding:12px;margin-bottom:12px}
+button{width:100%;padding:14px;font-size:18px;border:none;border-radius:12px;background:var(--accent);color:#000;margin-top:10px;cursor:pointer}
+.btn-row{display:flex;gap:10px;flex-wrap:wrap}
+.btn-row button{flex:1}
+/* === iOS INPUT GERÇEKTEN BÜYÜK OLSUN === */
+input[type="text"],
+input[type="number"] {
+  font-size: 22px !important;
+  line-height: 1.4;
+}
+
+/* iPhone Safari özel fix */
+@supports (-webkit-touch-callout: none) {
+  input[type="text"],
+  input[type="number"] {
+    font-size: 22px !important;
+  }
+}
+
+input{width:100%;padding:14px;font-size:18px;border-radius:12px;border:none}
+label{display:flex;gap:8px;align-items:center;margin:6px 0}
+.hidden{display:none!important;pointer-events:none!important}
+
+/* INFO BAR */
+.info-bar{
+display:flex;justify-content:space-between;align-items:center;
+background:#020617;padding:8px 12px;border-radius:10px;font-size:14px
+}
+
+/* SCOREBOARD */
+.board{display:grid}
+.header,.row{display:grid}
+.row:nth-child(even){background:var(--row1)}
+.row:nth-child(odd){background:var(--row2)}
+.cell{
+height:44px;display:flex;align-items:center;justify-content:center;
+border-left:1px solid var(--line);font-size:22px;
+user-select:none;cursor:pointer
+}
+.cell:first-child{border-left:none}
+.score{font-weight:700}
+.team-header{flex-direction:column;font-size:14px}
+.team-score{font-size:18px;font-weight:700}
+.mark{width:26px;height:26px;border-radius:50%;display:flex;align-items:center;justify-content:center}
+.circle{border:2px solid #fff}
+
+/* OVERLAY */
+.overlay{
+position:fixed;inset:0;background:rgba(0,0,0,.8);
+display:flex;align-items:center;justify-content:center;z-index:50
+}
+.overlay .box{
+background:#020617;padding:22px 28px;border-radius:16px;text-align:center
+}
+.overlay span{font-size:56px}
+
+/* BRACKET */
+.bracket{margin-top:10px}
+.match{
+background:#020a1f;border:1px solid var(--line);
+border-radius:10px;padding:8px;margin-bottom:6px
+}
+.vs{text-align:center;color:#94a3b8;font-size:12px;margin:4px 0}
+
+/* WINNER */
+.winner{text-align:center;font-size:28px}
+.winner span{font-size:60px;display:block;margin:10px 0}
+
+/* === SERİBAŞI + INPUT ÇAKIŞMA FIX (MOBİL) === */
+label {
+  align-items: center;
+}
+
+label input[type="text"] {
+  flex: 1;                 /* 🔑 EN KRİTİK SATIR */
+  min-width: 0;
+}
+
+/* INPUT GERÇEK BOYUT VE OKUNAKLILIK */
+input[type="text"] {
+  font-size: 22px !important;
+  padding: 16px 18px;
+  background-color: #ffffff;
+  color: #000000;
+  caret-color: #000000;
+  -webkit-text-fill-color: #000000;
+}
+
+/* CHECKBOX MOBİLDE INPUT'U EZMESİN */
+label input[type="checkbox"] {
+  flex-shrink: 0;
+  width: 26px;
+  height: 26px;
+  margin-left: 12px;
+}
+
+.overlay .box{
+  box-shadow:0 0 30px rgba(34,197,94,.4);
+  animation:pop .25s ease;
+}
+
+.cell{
+  transition:transform .08s ease, background .2s ease;
+}
+
+.cell:active{
+  transform:scale(0.88);
+  background:#1e293b;
+}
+
+@media(max-width:768px){
+  .cell{font-size:18px;height:40px}
+}
+
+@media(max-width:480px){
+  .cell{font-size:16px;height:36px}
+  input,button{font-size:16px}
+}
+
+
+</style>
+</head>
+
+<body>
+<div class="app">
+<h1>KARAMBOL KRIKET</h1>
+
+<!-- SETUP -->
+<div id="setup" class="card">
+  <div id="s1">
+    <p>Takım Sayısı</p>
+    <div class="btn-row">
+      <button onclick="setTeamCount(2)">2</button>
+      <button onclick="setTeamCount(3)">3</button>
+      <button onclick="setTeamCount(4)">4</button>
+      <button onclick="setTeamCount(5)">5</button>
+      <button onclick="setTeamCount(6)">6</button>
+      <button onclick="setTeamCount(7)">7</button>
+      <button onclick="setTeamCount(8)">8</button>
+    </div>
+  </div>
+
+  <div id="s2" class="hidden">
+    <p>Oyuncu Sayısı</p>
+    <input id="playerCount" type="number" min="2">
+    <button onclick="setPlayers()">Devam</button>
+  </div>
+
+  <div id="s3" class="hidden">
+    <p>Oyuncular</p>
+    <div id="playerInputs"></div>
+    <button onclick="createTeams()">Takımları Oluştur</button>
+  </div>
+
+  <div id="s4" class="hidden">
+    <p>Turnuva Ayarları</p>
+    <label><input type="radio" name="mode" value="1" checked> Best of 1</label>
+    <label><input type="radio" name="mode" value="3"> Best of 3</label>
+    <div id="teamList"></div>
+    <div class="btn-row">
+      <button onclick="reshuffle()">Tekrar Kura</button>
+      <button onclick="prepareStart()">Turnuvayı Başlat</button>
+    </div>
+  </div>
+</div>
+
+<!-- INFO -->
+<div id="info" class="card hidden">
+  <div class="info-bar">
+    <div>
+      <strong id="matchLabel"></strong><br>
+      <span id="roundLabel"></span>
+    </div>
+    <button onclick="toggleBracket()" style="font-size:12px">Turnuva Ağacı</button>
+  </div>
+  <div id="bracketWrap" class="hidden">
+    <button onclick="toggleBracket()" style="font-size:12px">Kapat</button>
+    <div id="bracket" class="bracket"></div>
+  </div>
+</div>
+
+<!-- GAME -->
+<div id="game" class="card hidden">
+  <div id="board"></div>
+</div>
+
+<!-- OVERLAY -->
+<div id="overlay" class="overlay hidden">
+  <div class="box">
+    <h2>Maçı Kazandı</h2>
+    <div id="overlayText"></div>
+    <span id="overlayCount"></span>
+  </div>
+</div>
+
+<!-- WINNER -->
+<div id="winner" class="card hidden">
+  <div class="winner">
+    <span>🏆</span>
+    <div><strong>ŞAMPİYON</strong></div>
+    <div id="winnerName"></div>
+    <div class="btn-row">
+      <button onclick="restartSameTeams()">Tekrar Turnuva</button>
+      <button onclick="location.reload()">Yeni Turnuva</button>
+    </div>
+  </div>
+</div>
+
+<script>
+const shuffle=a=>a.sort(()=>Math.random()-.5);
+function cap(str){
+  return str
+    .toLowerCase()
+    .split(" ")
+    .map(w => w.charAt(0).toUpperCase() + w.slice(1))
+    .join(" ");
+}
+
+let teamCount, teams=[], queue=[], baseTeams=[];
+let currentMatch=[], mode=1, matchWins=[0,0];
+
+function setTeamCount(n){teamCount=n;s1.classList.add("hidden");s2.classList.remove("hidden");}
+
+function setPlayers(){
+  playerInputs.innerHTML="";
+  for(let i=0;i<playerCount.value;i++){
+    playerInputs.innerHTML+=`
+      <label>
+        <input type="text" placeholder="Oyuncu ${i+1}">
+        <input type="checkbox"> Seribaşı
+      </label>`;
+  }
+  s2.classList.add("hidden");s3.classList.remove("hidden");
+}
+
+function createTeams(){
+  let rows=[...playerInputs.children];
+  let seeded=[],normal=[];
+  rows.forEach(r=>{
+    let name=cap(r.children[0].value.trim());
+    let seed=r.children[1].checked;
+    (seed?seeded:normal).push(name);
+  });
+  shuffle(seeded);shuffle(normal);
+  teams=[...Array(teamCount)].map(()=>[]);
+  seeded.forEach((p,i)=>teams[i%teamCount].push(p));
+  normal.forEach((p,i)=>teams[i%teamCount].push(p));
+  teams=teams.map(t=>({name:t.join(" & ")}));
+  baseTeams=JSON.parse(JSON.stringify(teams));
+  teamList.innerHTML=teams.map(t=>`<p>• ${t.name}</p>`).join("");
+  s3.classList.add("hidden");s4.classList.remove("hidden");
+}
+
+function reshuffle(){createTeams();}
+
+function prepareStart(){
+  mode=+document.querySelector('input[name="mode"]:checked').value;
+  shuffle(teams);
+  queue=[...teams];
+  setup.classList.add("hidden");
+  info.classList.remove("hidden");
+  startNextMatch();
+}
+
+function restartSameTeams(){
+  winner.classList.add("hidden");
+  teams=JSON.parse(JSON.stringify(baseTeams));
+  shuffle(teams);
+  queue=[...teams];
+  info.classList.remove("hidden");
+  startNextMatch();
+}
+
+function roundName(){
+  if(queue.length<=2) return "Final";
+  if(queue.length<=4) return "Yarı Final";
+  return "Eleme Turu";
+}
+
+function toggleBracket(){
+  bracketWrap.classList.toggle("hidden");
+  renderBracket();
+}
+
+function renderBracket(){
+  bracket.innerHTML="";
+  for(let i=0;i<queue.length;i+=2){
+    if(!queue[i+1]) break;
+    bracket.innerHTML+=`
+      <div class="match">
+        ${queue[i].name}
+        <div class="vs">VS</div>
+        ${queue[i+1].name}
+      </div>`;
+  }
+}
+
+const nums=["20","19","18","17","16","15","14","13","12","D","T","B","H"];
+let scores;
+
+function startNextMatch(){
+  if(queue.length===1){
+    winnerName.textContent=queue[0].name;
+    winner.classList.remove("hidden");
+    info.classList.add("hidden");
+    return;
+  }
+  currentMatch=[queue.shift(),queue.shift()];
+  matchWins=[0,0];
+  matchLabel.textContent=currentMatch[0].name+" vs "+currentMatch[1].name;
+  roundLabel.textContent=roundName();
+  startBoard();
+}
+
+function startBoard(){
+  game.classList.remove("hidden");
+  render();
+}
+
+function render(){
+  board.innerHTML="";
+  scores=[Array(nums.length).fill(0),Array(nums.length).fill(0)];
+  board.style.gridTemplateColumns="1fr 52px 1fr";
+
+  const h=document.createElement("div");
+  h.className="header";
+  h.style.gridTemplateColumns=board.style.gridTemplateColumns;
+
+  currentMatch.forEach((t,i)=>{
+    const c=document.createElement("div");
+    c.className="cell team-header";
+    c.innerHTML=t.name+(mode===3?`<div class="team-score">${matchWins[i]}</div>`:"");
+    h.appendChild(c);
+  });
+
+  h.insertBefore(document.createElement("div"),h.children[1]);
+  board.appendChild(h);
+
+  nums.forEach((n,r)=>{
+    const row=document.createElement("div");
+    row.className="row";
+    row.style.gridTemplateColumns=board.style.gridTemplateColumns;
+    for(let t=0;t<2;t++){
+      const c=document.createElement("div");
+      c.className="cell";
+      c.onmousedown=e=>e.preventDefault();
+      c.onclick=()=>tap(c,t,r);
+      row.appendChild(c);
+      if(t===0){
+        const s=document.createElement("div");
+        s.className="cell score";
+        s.textContent=n;
+        row.appendChild(s);
+      }
+    }
+    board.appendChild(row);
+  });
+}
+
+function tap(cell,t,r){
+  scores[t][r]=(scores[t][r]+1)%4;
+  cell.innerHTML=["","/","X","<div class='mark circle'>X</div>"][scores[t][r]];
+  checkWin();
+}
+
+function checkWin(){
+  scores.forEach((s,i)=>{
+    if(s.every(v=>v===3)){
+      matchWins[i]++;
+      if(mode===1 || matchWins[i]===2){
+        let win=currentMatch[i];
+        game.classList.add("hidden");
+        if(queue.length===0){
+          winnerName.textContent=win.name;
+          winner.classList.remove("hidden");
+        }else{
+          queue.push(win);
+          showWinOverlay(win.name);
+        }
+      }else{
+        render();
+      }
+    }
+  });
+}
+
+function showWinOverlay(name){
+overlayText.innerHTML=`
+  <div style="font-size:60px">🏆</div>
+  <h2>${name} MAÇI KAZANDI</h2>
+`;
+  overlay.classList.remove("hidden");
+  let c=3;overlayCount.textContent=c;
+  let t=setInterval(()=>{
+    c--;overlayCount.textContent=c;
+    if(c===0){
+      clearInterval(t);
+      overlay.classList.add("hidden");
+      startNextMatch();
+    }
+  },1000);
+}
+</script>
+</body>
+</html>

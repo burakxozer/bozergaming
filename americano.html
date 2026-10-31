@@ -1,0 +1,758 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>AMERİCANO</title>
+
+<style>
+/* ================= THEME VARIABLES ================= */
+:root{
+  --bg:#f4f6f8;
+  --card:#ffffff;
+  --line:#cfd4dc;
+  --text:#111;
+  --blue:#2563eb;
+  --red:#dc2626;
+  --green:#16a34a;
+  --ara:#fff1d6;
+}
+
+/* THEMES */
+body.theme-dark{
+  --bg:#0f172a; --card:#1e293b; --line:#334155; --text:#e5e7eb; --ara:#3b2f1c;
+}
+body.theme-card-table-green{
+  --bg:#0b3d2e; --card:#14532d; --line:#166534; --text:#ecfdf5; --ara:#064e3b;
+}
+body.theme-casino-purple{
+  --bg:#1e1033; --card:#2e1065; --line:#6d28d9; --text:#f5f3ff; --ara:#4c1d95;
+}
+body.theme-steel-graphite{
+  --bg:#0f1720; --card:#1f2933; --line:#475569; --text:#e2e8f0; --ara:#111827;
+}
+body.theme-red-arena{
+  --bg:#2a0a0a; --card:#450a0a; --line:#7f1d1d; --text:#fee2e2; --ara:#7f1d1d;
+}
+body.theme-midnight-blue{
+  --bg:#020617; --card:#020617; --line:#1e3a8a; --text:#dbeafe; --ara:#020617;
+}
+
+/* ================= BASE ================= */
+body{
+  margin:0;
+  font-family:Segoe UI,Arial,sans-serif;
+  background:var(--bg);
+  color:var(--text);
+}
+
+h1{
+  text-align:center;
+  margin:12px 0 8px;
+  letter-spacing:3px;
+  font-size:24px;
+}
+
+.screen{padding:8px}
+.card{
+  background:var(--card);
+  border-radius:16px;
+  padding:14px;
+  box-shadow:0 10px 26px rgba(0,0,0,.18);
+}
+
+.center{text-align:center}
+
+button{
+  padding:8px 14px;
+  border:none;
+  border-radius:10px;
+  background:var(--blue);
+  color:white;
+  font-size:14px;
+  margin:4px;
+}
+button.gray{background:#6b7280}
+button.green{background:var(--green)}
+
+input{
+  width:100%;
+  box-sizing:border-box;
+  padding:6px;
+  font-size:14px;
+  border-radius:6px;
+  border:1px solid var(--line);
+  background:transparent;
+  color:var(--text);
+  text-align:center;
+}
+
+/* Masaüstü */
+@media (min-width: 769px){
+  table{
+    min-width: 700px;
+  }
+}
+
+/* Tablet */
+@media (max-width: 768px){
+  table{
+    min-width: 560px;
+  }
+}
+
+/* Telefon */
+@media (max-width: 480px){
+  table{
+    min-width: 420px;
+  }
+}
+
+th,td{
+  border:1px solid var(--line);
+  padding:4px;
+  text-align:center;
+  vertical-align: middle;
+}
+
+th.rule{
+  text-align:left;
+  padding-left:8px;
+  white-space:nowrap;
+}
+
+/* RULE STATES */
+.rule-black{color:var(--text)}
+.rule-blue{
+  color:var(--blue);
+  font-weight:600;
+  background:rgba(37,99,235,.10);
+  border-left:4px solid var(--blue);
+}
+.rule-red{
+  color:var(--red);
+  font-weight:600;
+  background:rgba(220,38,38,.12);
+}
+.rule-green{color:var(--green);font-weight:700}
+
+.arrow{margin-right:4px}
+.ara{
+  background:var(--ara);
+  font-weight:700;
+}
+
+/* POPUP */
+.popup{
+  position:fixed;
+  inset:0;
+  background:rgba(0,0,0,.6);
+  backdrop-filter:blur(3px);
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  z-index:999;
+}
+.popupBox{
+  background:var(--card);
+  padding:18px;
+  border-radius:16px;
+  width:90%;
+  max-width:420px;
+}
+.hidden{display:none}
+/* MOBİL TABLO DÜZELTME */
+.tableWrap{
+  width:100%;
+  overflow-x:auto;
+  -webkit-overflow-scrolling: touch;
+}
+
+table{
+  min-width: 680px; /* 4-5 oyuncu için ideal */
+}
+
+/* Tema butonu üstte kalsın */
+.themeBtn{
+  z-index: 2000;
+}
+
+/* Mobilde sol kural yazıları biraz küçülsün */
+@media (max-width: 480px){
+  th.rule{
+    font-size:11px;
+    padding-left:6px;
+  }
+}
+/* MOBİL TABLO DÜZELTME */
+.tableWrap{
+  width:100%;
+  overflow-x:auto;
+  -webkit-overflow-scrolling: touch;
+}
+
+table{
+  min-width: 680px; /* 4-5 oyuncu için ideal */
+}
+
+/* Tema butonu üstte kalsın */
+.themeBtn{
+  z-index: 2000;
+}
+
+/* Mobilde sol kural yazıları biraz küçülsün */
+@media (max-width: 480px){
+  th.rule{
+    font-size:11px;
+    padding-left:6px;
+  }
+}
+@media (max-width: 480px){
+  .cell{
+    padding: 3px;
+    height: 30px;
+    font-size: 12px;
+  }
+}
+/* ===============================
+   MOBİL TAM DENGE AYARI
+   =============================== */
+
+/* TELEFON */
+@media (max-width: 480px){
+
+  /* Tablo genişliği – 2–3 oyuncu aynı anda */
+  table{
+    min-width: 360px;
+  }
+
+  /* Satırlar sık */
+  tr{
+    height: 30px;
+  }
+
+  th, td{
+    padding: 2px;
+  }
+
+  /* Puan girişleri */
+  .cell{
+    height: 24px;
+    padding: 2px;
+    font-size: 11px;
+    border-radius: 5px;
+  }
+
+  /* Sol kural kolonu */
+  th.rule{
+    font-size: 11px;
+    line-height: 1.1;
+    max-width: 80px;
+    white-space: normal;
+  }
+
+  /* Oyuncu başlıkları */
+  th{
+    font-size: 11px;
+  }
+}
+
+/* TELEFON YATAY */
+@media (max-width: 480px) and (orientation: landscape){
+
+  table{
+    min-width: 520px;
+  }
+
+  .cell{
+    height: 26px;
+    font-size: 12px;
+  }
+}
+/* === MOBİL DİKEY SON İNCE AYAR === */
+@media (max-width: 480px){
+
+  /* Satır yüksekliği son kırpma */
+  tr{
+    height: 28px;
+  }
+
+  th, td{
+    padding: 1px 2px;
+  }
+
+  /* Input kutuları */
+  .cell{
+    height: 22px;
+    padding: 1px;
+    font-size: 11px;
+    border-radius: 4px;
+  }
+
+  /* Ara toplam satırı ekstra incelsin */
+  .ara td{
+    padding: 1px;
+  }
+
+  /* Kural yazıları biraz daha sık */
+  th.rule{
+    font-size: 10.5px;
+    line-height: 1.05;
+  }
+}
+/* === MOBİL SAĞ KENAR SON DÜZELTME === */
+@media (max-width: 480px){
+
+  .tableWrap{
+    padding-right: 12px;   /* 👈 EN KRİTİK SATIR */
+  }
+
+  table{
+    margin-right: 8px;     /* iOS scroll güvenliği */
+  }
+
+}
+/* === iOS SON PİKSEL AYARI === */
+@media (max-width: 480px){
+
+  /* Kart iç boşluğu biraz daralt */
+  .card{
+    padding-right: 6px;
+    padding-left: 6px;
+  }
+
+  /* Scroll alanı tam aç */
+  .tableWrap{
+    margin-right: -6px;
+    padding-right: 16px;
+  }
+
+  /* Tabloyu çok az sola çek */
+  table{
+    margin-left: -2px;
+  }
+
+}
+/* === MOBIL MIKRO SCALE (FINAL) === */
+@media (max-width: 480px){
+  .tableWrap{
+    transform: scale(0.94);
+    transform-origin: top center;
+  }
+}
+
+/* === KAZANMA ŞANSI RENKLERİ === */
+.chance-green{
+  color: var(--green);
+  font-weight:600;
+}
+
+.chance-blue{
+  color: var(--blue);
+  font-weight:600;
+}
+
+.chance-yellow{
+  color:#eab308;
+  font-weight:600;
+}
+
+.chance-red{
+  color: var(--red);
+  font-weight:600;
+}
+
+.chance-purple{
+  color:#8b5cf6;
+  font-weight:600;
+}
+
+/* === KAZANMA ŞANSLARI BUTON PARLAMA === */
+.glow-btn{
+  animation: glowPulse 1.4s infinite;
+  box-shadow: 0 0 0 rgba(37,99,235,0.7);
+}
+
+@keyframes glowPulse{
+  0%{
+    box-shadow: 0 0 0 0 rgba(37,99,235,0.7);
+  }
+  70%{
+    box-shadow: 0 0 0 14px rgba(37,99,235,0);
+  }
+  100%{
+    box-shadow: 0 0 0 0 rgba(37,99,235,0);
+  }
+}
+
+#chanceHintPopup .popupBox{
+  max-width:320px;
+  text-align:center;
+}
+
+</style>
+</head>
+
+<body>
+<button onclick="toggleTheme()" style="position:fixed;top:8px;right:10px">🎨 Tema</button>
+<h1>AMERİCANO</h1>
+<div id="app"></div>
+
+<script>
+/* THEME SYNC */
+const THEMES=["light","dark","card-table-green","casino-purple","steel-graphite","red-arena","midnight-blue"];
+function applyTheme(t){
+  document.body.className="";
+  if(t!=="light") document.body.classList.add("theme-"+t);
+  localStorage.theme=t;
+}
+function toggleTheme(){
+  let cur=localStorage.theme||"light";
+  let i=(THEMES.indexOf(cur)+1)%THEMES.length;
+  applyTheme(THEMES[i]);
+}
+applyTheme(localStorage.theme||"light");
+
+/* ======== OYUN MANTIĞI (DEĞİŞMEDİ) ======== */
+/* ================= DATA ================= */
+const RULES=[
+"KÜT","SERİ","KÜT+ SERİ","2x 3 KÜT","2x 3 SERİ","4 KÜT","4 SERİ",
+"4 KÜT+ SERİ","2 x 4 KÜT","2 x 4 SERİ","5 SERİ","ÇİFT",
+"JOKER","ARA TOPLAM","KONKEN","TOPLAM"
+];
+
+const JOKER_POOL=[
+"KÜT","SERİ","KÜT+ SERİ","2x 3 KÜT","2x 3 SERİ","4 KÜT","4 SERİ",
+"4 KÜT+ SERİ","2 x 4 KÜT","2 x 4 SERİ","5 SERİ","ÇİFT","KONKEN"
+];
+
+const CEZA={"/":25,"X":50,"X/":75,"XX":100,"XX/":125,"XXX":150,"XXX/":175,"XXXX":200};
+
+let state={step:"count",count:0,players:[],active:0,joker:""};
+const app=document.getElementById("app");
+render();
+
+/* ================= RENDER ================= */
+function render(){
+  app.innerHTML="";
+  if(state.step==="count") countScreen();
+  if(state.step==="names") nameScreen();
+  if(state.step==="board") boardScreen();
+}
+
+function countScreen(){
+  app.innerHTML=`<div class="screen card center">
+    <h3>Oyuncu Sayısı</h3>
+    ${[2,3,4,5].map(n=>`<button onclick="setCount(${n})">${n}</button>`).join("")}
+  </div>`;
+}
+
+function setCount(n){
+  state={step:"names",count:n,players:[],active:0,joker:""};
+  render();
+}
+
+function nameScreen(){
+  app.innerHTML=`<div class="screen card">
+    <h3>Oyuncu İsimleri</h3>
+    ${Array.from({length:state.count}).map((_,i)=>`
+      <input id="p${i}" placeholder="Oyuncu ${i+1}"><br><br>`).join("")}
+    <div class="center"><button onclick="start()">Başla</button></div>
+  </div>`;
+}
+
+function formatName(n){
+  return n.toLowerCase().split(" ").filter(Boolean)
+    .map(w=>w[0].toUpperCase()+w.slice(1)).join(" ");
+}
+
+function start(){
+  state.players=[];
+  for(let i=0;i<state.count;i++){
+    state.players.push(formatName(document.getElementById("p"+i).value));
+  }
+  state.step="board";
+  render();
+}
+
+/* ================= BOARD ================= */
+function boardScreen(){
+  app.innerHTML=`<div class="screen card">
+    <div id="jokerInfo" class="rule-green"></div>
+    <div class="tableWrap">
+  <table id="board"></table>
+</div>
+    <div class="center" id="chanceWrap"></div>
+  </div>
+
+  <div id="jokerPopup" class="popup hidden">
+    <div class="popupBox">
+      <h3>🎲 Joker Eli</h3>
+      <button onclick="drawJoker()">Kura Çek</button>
+      <h4 id="jokerAnim"></h4>
+    </div>
+  </div>
+<div id="chanceHintPopup" class="popup hidden">
+  <div class="popupBox center">
+    <h3>ℹ️ Bilgi</h3>
+    <p style="margin-top:10px">
+      Lütfen <b>Kazanma Şansları</b>'nı<br>
+      alt kısımdan kontrol edin!
+    </p>
+  </div>
+</div>
+
+
+  <div id="chancePopup" class="popup hidden">
+    <div class="popupBox">
+      <h3>Kazanma Şansları</h3>
+      <div id="chanceText"></div>
+      <div class="center"><button class="gray" onclick="closeChance()">Geri</button></div>
+    </div>
+  </div>
+
+  <div id="winnerPopup" class="popup hidden">
+    <div class="popupBox">
+      <h3>🏆 Sonuç</h3>
+      <pre id="winnerText"></pre>
+      <div class="center">
+        <button class="green" onclick="restart()">Tekrar Oyna</button>
+        <button class="gray" onclick="render()">Yeni Oyun</button>
+      </div>
+    </div>
+  </div>`;
+  buildTable();
+}
+
+function buildTable(){
+  const t=document.getElementById("board");
+  t.innerHTML="";
+
+  let tr=document.createElement("tr");
+  let th=document.createElement("th");
+  th.innerHTML = `
+  <span style="color:var(--red); font-weight:700;">X</span>
+  <span style="color:var(--red); font-weight:700; margin-left:6px;">
+    Cezalar
+  </span>
+`;
+
+  th.className="rule rule-red";
+  tr.appendChild(th);
+  state.players.forEach(()=>{
+    let td=document.createElement("td");
+    td.onclick=()=>cyclePenalty(td);
+    tr.appendChild(td);
+  });
+  t.appendChild(tr);
+
+  tr=document.createElement("tr");
+  th=document.createElement("th");
+  th.textContent="Oyuncu";
+  tr.appendChild(th);
+  state.players.forEach(p=>{
+    let th2=document.createElement("th");
+    th2.textContent=p;
+    tr.appendChild(th2);
+  });
+  t.appendChild(tr);
+
+  RULES.forEach(r=>{
+    tr=document.createElement("tr");
+    th=document.createElement("th");
+    th.textContent=r;
+    th.className="rule rule-black";
+    tr.appendChild(th);
+    state.players.forEach(()=>{
+      let td=document.createElement("td");
+      let i=document.createElement("input");
+      i.className="cell";
+      i.onblur=update;
+      td.appendChild(i);
+      tr.appendChild(td);
+    });
+    if(r==="ARA TOPLAM") tr.classList.add("ara");
+    t.appendChild(tr);
+  });
+  update();
+}
+
+/* ================= LOGIC ================= */
+function cyclePenalty(td){
+  const seq=["","/","X","X/","XX","XX/","XXX","XXX/","XXXX"];
+  let i=seq.indexOf(td.textContent);
+  td.textContent=seq[(i+1)%seq.length];
+}
+
+function val(v){
+  v=v.toUpperCase();
+  if(v==="-"||v==="/")return -25;
+  if(v==="X")return -50;
+  if(v==="XX")return -100;
+  return parseInt(v)||0;
+}
+
+function update(){
+  const rows=document.getElementById("board").rows;
+
+  for(let i=0;i<RULES.length;i++){
+    const cell=rows[i+2].cells[0];
+    cell.className="rule rule-black";
+    cell.textContent=RULES[i];
+
+    let filled=true;
+    for(let c=1;c<rows[i+2].cells.length;c++){
+      if(rows[i+2].cells[c].querySelector("input")?.value==="") filled=false;
+    }
+
+    if(i<state.active){
+      cell.className="rule rule-red";
+    }else if(i===state.active){
+      cell.className=RULES[i]==="JOKER"?"rule rule-green":"rule rule-blue";
+      cell.innerHTML="➤ "+RULES[i];
+      if(filled){
+        state.active++;
+        calcAra();
+        if(RULES[i]==="ÇİFT"){
+          setTimeout(()=>document.getElementById("jokerPopup").classList.remove("hidden"),800);
+        }
+        if(RULES[i]==="JOKER"){
+  document.getElementById("chanceWrap").innerHTML =
+    `<button class="glow-btn" onclick="showChances()">Kazanma Şansları</button>`;
+
+  // 📳 Telefon titreşimi (varsa)
+  if(navigator.vibrate){
+    navigator.vibrate(150);
+  }
+
+  // 🔔 2 saniyelik bilgilendirme popup'ı
+  const hint = document.getElementById("chanceHintPopup");
+  hint.classList.remove("hidden");
+
+  setTimeout(()=>{
+    hint.classList.add("hidden");
+  },2000);
+}
+
+        update();
+        return;
+      }
+    }
+  }
+
+  if(RULES[state.active-1]==="KONKEN"){
+    setTimeout(showWinner,3000);
+  }
+}
+
+function calcAra(){
+  const rows=document.getElementById("board").rows;
+  const araRow=RULES.indexOf("ARA TOPLAM")+2;
+
+  for(let c=1;c<=state.players.length;c++){
+    let sum=CEZA[rows[0].cells[c].textContent]||0;
+    for(let r=2;r<araRow;r++){
+      sum+=val(rows[r].cells[c].querySelector("input").value);
+    }
+    rows[araRow].cells[c].textContent=sum;
+  }
+}
+
+/* ================= JOKER ================= */
+function drawJoker(){
+  let a=document.getElementById("jokerAnim");
+  let i=0;
+  let int=setInterval(()=>{
+    a.textContent=JOKER_POOL[Math.floor(Math.random()*JOKER_POOL.length)];
+    if(++i>18){
+      clearInterval(int);
+      state.joker=a.textContent;
+      document.getElementById("jokerInfo").textContent="Joker Eli: "+state.joker;
+      setTimeout(()=>document.getElementById("jokerPopup").classList.add("hidden"),2000);
+    }
+  },100);
+}
+
+/* ================= KAZANMA ŞANSLARI ================= */
+function showChances(){
+  const rows=document.getElementById("board").rows;
+  const araRow=RULES.indexOf("ARA TOPLAM")+2;
+
+  let arr=[];
+  for(let c=1;c<=state.players.length;c++){
+    arr.push({
+      name:state.players[c-1],
+      score:parseInt(rows[araRow].cells[c].textContent)||0
+    });
+  }
+
+  arr.sort((a,b)=>a.score-b.score);
+  let first=arr[0].score;
+  let html="";
+
+  arr.forEach((p,i)=>{
+    let diff=p.score-first;
+    let text="", cls="";
+
+if(i===0 || diff<=90){
+  text="Biterse kazanır";
+  cls="chance-green";
+}
+else if(diff<=125){
+  text="Biterse kazanamayabilir, Job denenebilir";
+  cls="chance-blue";
+}
+else if(diff<=200){
+  text="Job'la kazanır";
+  cls="chance-yellow";
+}
+else if(diff<=350){
+  text="Job yetmeyebilir";
+  cls="chance-purple";
+}
+else{
+  text="Boşver kanka sen";
+  cls="chance-red";
+}
+
+
+    html+=`
+  <p class="${cls}">
+    <b>${p.name}</b> ${i===0?"(Lider)":"– "+(i+1)+"."}<br>
+    ${i===0?"":"Fark: "+diff}<br>
+    ${text}
+  </p><hr>`;
+
+  });
+
+  document.getElementById("chanceText").innerHTML=html;
+  document.getElementById("chancePopup").classList.remove("hidden");
+}
+
+function closeChance(){
+  document.getElementById("chancePopup").classList.add("hidden");
+}
+
+/* ================= WINNER ================= */
+function showWinner(){
+  const rows=document.getElementById("board").rows;
+  let res=[];
+  for(let c=1;c<=state.players.length;c++){
+    let total=parseInt(rows[RULES.indexOf("ARA TOPLAM")+2].cells[c].textContent)||0;
+    total+=val(rows[RULES.indexOf("KONKEN")+2].cells[c].querySelector("input").value);
+    res.push({name:state.players[c-1],score:total});
+  }
+  res.sort((a,b)=>a.score-b.score);
+  document.getElementById("winnerText").textContent=
+    res.map((p,i)=>`${i===0?"🏆":i+1+"."} ${p.name} – ${p.score}`).join("\n");
+  document.getElementById("winnerPopup").classList.remove("hidden");
+}
+
+function restart(){
+  state.active=0;
+  state.joker="";
+  render();
+}
+</script>
+</body>
+</html>

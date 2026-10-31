@@ -1,0 +1,569 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Lig Modu</title>
+
+<style>
+:root{
+--bg:#0b1220;--panel:#111827;--soft:#020617;
+--text:#e5e7eb;--accent:#22c55e;--lose:#ef4444;--border:#1f2937;
+}
+*{box-sizing:border-box;font-family:-apple-system}
+body{margin:0;background:var(--bg);color:var(--text)}
+.app{max-width:900px;margin:auto;padding:12px}
+h1{text-align:center}
+.card{background:var(--panel);border-radius:16px;padding:14px;margin-bottom:12px}
+button{width:100%;padding:14px;font-size:18px;border:none;border-radius:14px;background:var(--accent);color:#000;margin-top:10px;cursor:pointer}
+.btn-row{display:flex;gap:10px}
+.btn-row button{flex:1}
+input{width:100%;padding:14px;font-size:20px;border-radius:14px;border:none;margin-top:6px}
+
+.match{background:var(--soft);padding:12px;border-radius:14px;margin-top:8px;border:1px solid var(--border);transition:.25s}
+.match.done{opacity:.45}
+.teams{display:flex;align-items:center;justify-content:space-between}
+.team{flex:1;text-align:center;font-weight:600}
+.team.click{cursor:pointer}
+.team.win::after{content:" ✔";color:var(--accent)}
+.team.lose{text-decoration:line-through;color:var(--lose);opacity:.6}
+.vs{opacity:.6}
+
+/* standings */
+.standings{margin-top:10px;display:flex;flex-direction:column;gap:8px}
+.standing-row{background:var(--soft);border:1px solid var(--border);border-radius:12px;padding:10px 12px;display:flex;align-items:center;justify-content:space-between}
+.standing-left{display:flex;align-items:center;gap:10px}
+.standing-rank{width:22px;text-align:center;opacity:.6}
+.standing-team{font-weight:600}
+.standing-meta{font-size:12px;opacity:.65}
+.standing-points{
+  font-size:26px;
+  font-weight:900;
+  color:var(--accent);
+  min-width:36px;
+  text-align:right;
+}
+
+/* overlay */
+.overlay{position:fixed;inset:0;background:rgba(0,0,0,.7);display:flex;align-items:center;justify-content:center}
+.overlay-box{background:var(--panel);padding:20px;border-radius:18px;width:90%;max-width:360px}
+.radio{display:flex;gap:10px;margin-top:10px}
+.radio label{flex:1;background:#020617;padding:10px;border-radius:12px;text-align:center;cursor:pointer}
+.radio input{display:none}
+.radio input:checked+label{background:var(--accent);color:#000}
+/* SEGMENTED MODE SELECT */
+.mode-switch{
+  display:flex;
+  background:var(--soft);
+  border:1px solid var(--border);
+  border-radius:16px;
+  padding:6px;
+  gap:6px;
+  margin-top:12px;
+}
+
+.mode-switch input{
+  display:none;
+}
+
+.mode-option{
+  flex:1;
+  padding:10px 12px;
+  border-radius:12px;
+  text-align:center;
+  cursor:pointer;
+  font-size:16px;
+  color:var(--text);
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  gap:8px;
+  transition:.2s;
+}
+
+.mode-option .check{
+  opacity:0;
+  font-size:14px;
+}
+
+.mode-switch input:checked + .mode-option{
+  background:#020617;
+  border:1px solid var(--accent);
+  color:var(--accent);
+}
+
+.mode-switch input:checked + .mode-option .check{
+  opacity:1;
+}
+
+.standing-row:nth-child(1){
+  border-color:#facc15;
+}
+.standing-row:nth-child(2){
+  border-color:#9ca3af;
+}
+.standing-row:nth-child(3){
+  border-color:#d97706;
+}
+
+/* === LIG TABLO GORUNUMU === */
+.standings{
+  display:flex;
+  flex-direction:column;
+  gap:4px;
+}
+
+.standing-header,
+.standing-row{
+  display:grid;
+  grid-template-columns:
+    28px      /* sıra */
+    1.8fr     /* takım */
+    40px      /* O */
+    40px      /* G */
+    40px      /* M */
+    70px      /* Set */
+    50px;     /* Puan */
+  align-items:center;
+  padding:10px 12px;
+}
+
+.standing-header{
+  font-size:13px;
+  font-weight:700;
+  opacity:.75;
+  border-bottom:1px solid var(--border);
+}
+
+.standing-row{
+  background:var(--soft);
+  border-radius:10px;
+}
+
+.standing-row:nth-child(even){
+  background:#020617;
+}
+
+.standing-rank{
+  text-align:center;
+  opacity:.6;
+}
+
+.standing-team{
+  font-weight:600;
+
+  /* iki satıra izin ver */
+  white-space: normal;
+  overflow: hidden;
+
+  display: -webkit-box;
+  -webkit-line-clamp: 2;        /* maksimum 2 satır */
+  -webkit-box-orient: vertical;
+
+  line-height: 1.2;
+}
+
+.standing-set{
+  font-variant-numeric:tabular-nums;
+}
+
+.standing-points{
+  font-size:20px;
+  font-weight:900;
+  color:var(--accent);
+  text-align:right;
+}
+
+/* === LIG TABLO MOBILE FIX === */
+@media (max-width: 600px) {
+
+  .standing-header,
+  .standing-row{
+    grid-template-columns:
+      22px     /* # */
+      1.4fr      /* takım */
+      30px     /* O */
+      30px     /* G */
+      30px     /* M */
+      52px     /* Set */
+      36px;    /* P */
+  }
+}
+
+@media (max-width:600px){
+  .standing-points{
+    text-align:center;
+  }
+}
+
+/* ===== TABLET ===== */
+@media (max-width: 1024px) {
+
+  .app{
+    max-width:95%;
+  }
+
+  button{
+    font-size:17px;
+    padding:12px;
+  }
+
+  input{
+    font-size:18px;
+    padding:12px;
+  }
+
+}
+
+/* ===== MOBİL ===== */
+@media (max-width: 600px) {
+
+  h1{
+    font-size:22px;
+  }
+
+  button{
+    font-size:16px;
+    padding:11px;
+  }
+
+  input{
+    font-size:16px;
+    padding:11px;
+  }
+
+  .match{
+    padding:10px;
+  }
+
+  .teams{
+    flex-direction:column;
+    gap:6px;
+  }
+
+  .vs{
+    font-size:14px;
+  }
+
+}
+
+/* ===== ÇOK KÜÇÜK EKRAN ===== */
+@media (max-width: 400px){
+
+  button{
+    font-size:14px;
+    padding:9px;
+  }
+
+  input{
+    font-size:14px;
+  }
+
+}
+
+.match{
+  transition:transform .2s ease;
+}
+
+.match:hover{
+  transform:translateY(-2px);
+}
+
+
+</style>
+</head>
+
+<body>
+<div class="app">
+<h1>LİG MODU</h1>
+<div id="screen"></div>
+</div>
+
+<div id="overlay" class="overlay" style="display:none">
+  <div class="overlay-box">
+    <p style="text-align:center">Bu maçı kim kazandı?</p>
+    <div id="overlayBtns" class="btn-row"></div>
+    <button onclick="closeOverlay()" style="background:#374151;color:#fff">İptal</button>
+  </div>
+</div>
+
+<script>
+/* UTIL */
+function cap(str){
+  return str
+    .toLowerCase()
+    .split(" ")
+    .map(w => w.charAt(0).toUpperCase() + w.slice(1))
+    .join(" ");
+}
+const shuffle=a=>a.sort(()=>Math.random()-.5);
+const screen=document.getElementById("screen");
+
+/* STATE */
+let playerCount=0,teamCount=0;
+let players=[],teams=[];
+let rounds=[],currentRound=0;
+let stats={},playedMatches=0,results={};
+let doubleRound=false;
+let fromChampion=false;
+
+/* START */
+renderPlayerCount();
+
+function renderPlayerCount(){
+screen.innerHTML=`
+<div class="card">
+<p>Oyuncu Sayısı</p>
+<input id="pc" type="number" min="2"
+placeholder="Oyuncu Sayısı Girin...">
+<button onclick="savePlayerCount()">Devam</button>
+</div>`;
+}
+function savePlayerCount(){
+playerCount=+pc.value;if(playerCount<2)return;
+renderTeamCount();
+}
+function renderTeamCount(){
+screen.innerHTML=`
+<div class="card">
+<p>Takım Sayısı</p>
+<input id="tc" type="number" min="2"
+placeholder="Takım Sayısı Girin...">
+<button onclick="saveTeamCount()">Devam</button>
+</div>`;
+}
+function saveTeamCount(){
+teamCount=+tc.value;if(teamCount<2)return;
+renderPlayersInput();
+}
+function renderPlayersInput(){
+screen.innerHTML=`<div class="card"><p>Oyuncular</p>`;
+for(let i=0;i<playerCount;i++){
+  screen.innerHTML+=`
+    <input 
+      class="pn" 
+      type="text"
+      placeholder="Oyuncu ${i + 1}"
+    >
+  `;
+}
+screen.innerHTML+=`<button onclick="createTeams()">Takımları Oluştur</button></div>`;
+}
+
+/* TEAMS */
+function createTeams(){
+players=[...document.querySelectorAll(".pn")].map(i=>cap(i.value.trim())).filter(Boolean);
+shuffle(players);buildTeams();
+}
+function reshuffleTeams(){shuffle(players);buildTeams();}
+function buildTeams(){
+teams=[...Array(teamCount)].map(()=>[]);
+players.forEach((p,i)=>teams[i%teamCount].push(p));
+teams=teams.map(t=>t.join(" - "));
+renderTeamsPreview();
+}
+function renderTeamsPreview(){
+screen.innerHTML=`<div class="card"><b>Takımlar</b>`;
+teams.forEach(t=>screen.innerHTML+=`<div class="match">${t}</div>`);
+screen.innerHTML+=`
+<div class="mode-switch">
+  <input 
+    type="radio" 
+    id="single" 
+    name="mode" 
+    checked 
+    onchange="doubleRound=false"
+  >
+  <label for="single" class="mode-option">
+    <span class="check">✔</span>
+    Tek Karşılaşma
+  </label>
+
+  <input 
+    type="radio" 
+    id="double" 
+    name="mode" 
+    onchange="doubleRound=true"
+  >
+  <label for="double" class="mode-option">
+    <span class="check">✔</span>
+    Çift Karşılaşma
+  </label>
+</div>
+
+<div class="btn-row">
+<button onclick="reshuffleTeams()">Tekrar Kura</button>
+<button onclick="startLeague()">Ligi Başlat</button>
+</div></div>`;
+}
+
+/* LEAGUE */
+function startLeague(){
+stats={};results={};
+teams.forEach(t=>stats[t]={o:0,g:0,m:0,p:0,sk:0,sy:0});
+rounds=createRoundRobin([...teams]);
+if(doubleRound){
+let second=rounds.map(r=>r.map(m=>m.includes("BAY")?m:[m[1],m[0]]));
+rounds=[...rounds,...second];
+}
+currentRound=0;playedMatches=0;
+renderLeague();
+}
+function createRoundRobin(list){
+let arr=[...list];
+if(arr.length%2!==0)arr.push("BAY");
+let res=[];
+for(let r=0;r<arr.length-1;r++){
+let m=[];
+for(let i=0;i<arr.length/2;i++)m.push([arr[i],arr[arr.length-1-i]]);
+res.push(m);arr.splice(1,0,arr.pop());
+}
+return res;
+}
+
+/* RENDER */
+function renderLeague(){
+fromChampion=false;
+screen.innerHTML=`<div class="card"><b>Fikstür</b></div>`;
+rounds.forEach((round,ri)=>{
+screen.innerHTML+=`<div class="card"><b>${ri+1}. Tur</b>`;
+round.forEach((m,mi)=>{
+if(m.includes("BAY")){
+screen.innerHTML+=`<div class="match">${m.find(x=>x!=="BAY")} (BAY)</div>`;
+}else{
+let active=ri===currentRound;
+let key=`${ri}-${mi}`,res=results[key];
+screen.innerHTML+=`
+<div class="match ${res?'done':''}">
+<div class="teams">
+<div class="team ${res?.win===m[0]?'win':res?.lose===m[0]?'lose':''} ${active&&!res?'click':''}"
+onclick="${active&&!res?`openOverlay(${mi})`:''}">${m[0]}</div>
+<div class="vs">
+  ${res ? res.score : "VS"}
+</div>
+<div class="team ${res?.win===m[1]?'win':res?.lose===m[1]?'lose':''} ${active&&!res?'click':''}"
+onclick="${active&&!res?`openOverlay(${mi})`:''}">${m[1]}</div>
+</div>
+</div>`;
+}
+});
+screen.innerHTML+=`</div>`;
+});
+screen.innerHTML+=`<button onclick="renderTable(false)">Puan Durumu</button>`;
+}
+
+/* OVERLAY */
+function openOverlay(mi){
+let m=rounds[currentRound][mi];
+overlayBtns.innerHTML=`
+<div style="display:flex;flex-direction:column;gap:10px">
+  <button onclick="pickWinner('${m[0]}','${m[1]}',${mi},1)">
+    ${m[0]} (1 Fark)
+  </button>
+  <button onclick="pickWinner('${m[0]}','${m[1]}',${mi},2)">
+    ${m[0]} (2 Fark)
+  </button>
+
+  <button onclick="pickWinner('${m[1]}','${m[0]}',${mi},1)">
+    ${m[1]} (1 Fark)
+  </button>
+  <button onclick="pickWinner('${m[1]}','${m[0]}',${mi},2)">
+    ${m[1]} (2 Fark)
+  </button>
+</div>
+`;
+overlay.style.display="flex";
+}
+function closeOverlay(){overlay.style.display="none"}
+
+/* RESULT */
+function pickWinner(win,lose,mi,diff){
+closeOverlay();
+let key=`${currentRound}-${mi}`;if(results[key])return;
+let score =
+  diff===1
+    ? (win===rounds[currentRound][mi][0] ? "2-1" : "1-2")
+    : (win===rounds[currentRound][mi][0] ? "2-0" : "0-2");
+
+results[key]={win,lose,score};
+
+stats[win].g++;
+stats[lose].m++;
+
+stats[win].o++;
+stats[lose].o++;
+
+/* PUAN */
+if(diff===1){
+  stats[win].p+=2;
+  stats[lose].p+=1;
+  stats[win].sk+=2; stats[win].sy+=1;
+  stats[lose].sk+=1; stats[lose].sy+=2;
+}else{
+  stats[win].p+=3;
+  stats[lose].p+=0;
+  stats[win].sk+=2; stats[win].sy+=0;
+  stats[lose].sk+=0; stats[lose].sy+=2;
+}
+playedMatches++;
+let total=rounds[currentRound].filter(m=>!m.includes("BAY")).length;
+if(playedMatches===total){
+rounds[currentRound].forEach(m=>{if(m.includes("BAY"))stats[m.find(x=>x!=="BAY")].p+=1;});
+currentRound++;playedMatches=0;
+if(currentRound>=rounds.length){renderChampion();return;}
+}
+renderLeague();
+}
+
+function renderTable(fromEnd){
+fromChampion=fromEnd;
+let sorted=Object.entries(stats).sort((a,b)=>b[1].p-a[1].p);
+
+screen.innerHTML=`
+<div class="card">
+<b>Puan Durumu</b>
+
+<div class="standings">
+
+  <div class="standing-header">
+    <div>#</div>
+    <div>Takım</div>
+    <div>O</div>
+    <div>G</div>
+    <div>M</div>
+    <div>Set</div>
+    <div>P</div>
+  </div>
+
+  ${sorted.map(([t,s],i)=>`
+    <div class="standing-row">
+      <div class="standing-rank">${i+1}</div>
+      <div class="standing-team">${t}</div>
+      <div>${s.o}</div>
+      <div>${s.g}</div>
+      <div>${s.m}</div>
+      <div class="standing-set">${s.sk}-${s.sy}</div>
+      <div class="standing-points">${s.p}</div>
+    </div>
+  `).join("")}
+
+</div>
+
+<button onclick="${fromChampion?'renderChampion()':'renderLeague()'}">Geri</button>
+</div>`;
+}
+
+
+/* END */
+function renderChampion(){
+screen.innerHTML=`
+<div class="card">
+<h2>🏆 Şampiyon</h2>
+<div class="standing-points">${Object.entries(stats).sort((a,b)=>b[1].p-a[1].p)[0][0]}</div>
+<button onclick="renderTable(true)">Puan Durumu</button>
+<button onclick="location.reload()">Yeni Lig</button>
+</div>`;
+}
+</script>
+</body>
+</html>

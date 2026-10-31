@@ -1,0 +1,546 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Karambol Kriket w/ DartBot</title>
+
+<style>
+body{margin:0;background:#0b1220;color:#e5e7eb;font-family:system-ui}
+.app{max-width:900px;margin:auto;padding:12px;position:relative}
+h1{text-align:center}
+.top-right{position:absolute;top:10px;right:16px;font-size:14px;opacity:.9}
+.card{background:#111827;border-radius:16px;padding:14px;margin-bottom:12px}
+button{width:100%;padding:14px;font-size:18px;border:none;border-radius:14px;background:#22c55e;color:#000;margin-top:10px}
+button.gray{background:#374151;color:#fff}
+select{width:100%;padding:12px;font-size:18px;border-radius:12px;margin-top:10px}
+.screen{display:none}
+.active{display:block}
+.board{border-top:2px solid #374151;margin-top:10px}
+.row{display:grid;grid-template-columns:1fr 60px 1fr;border-bottom:1px solid #374151}
+.cell{height:46px;display:flex;align-items:center;justify-content:center;font-size:22px}
+.mid{font-weight:700}
+.popup{position:fixed;inset:0;background:rgba(0,0,0,.85);display:none;align-items:center;justify-content:center}
+.popup-inner{background:#111827;padding:22px;border-radius:18px;width:90%;max-width:380px;text-align:center}
+.throw{margin:6px 0;font-size:18px}
+.win{font-size:34px;color:#22c55e}
+.lose{font-size:34px;color:#ef4444}
+@keyframes pulse {
+  0%{transform:scale(1)}
+  50%{transform:scale(1.08)}
+  100%{transform:scale(1)}
+}
+#coin .popup-inner{
+  animation:pulse 1.2s infinite;
+}
+
+.status{
+  display:flex;
+  justify-content:space-between;
+  margin-bottom:10px;
+}
+.stat{
+  flex:1;
+  text-align:center;
+  padding:10px;
+  opacity:.4;
+  font-weight:700;
+}
+.stat.active{
+  opacity:1;
+  border-bottom:3px solid #22c55e;
+}
+
+.popup{
+  backdrop-filter: blur(6px);
+}
+
+.fab{
+  position:fixed;
+  right:18px;
+  bottom:18px;
+  width:60px;
+  height:60px;
+  border-radius:50%;
+  background:#22c55e;
+  font-size:28px;
+  border:none;
+  box-shadow:0 10px 25px rgba(0,0,0,.4);
+}
+.fab:active{
+  transform:scale(.92);
+}
+
+@media(max-width:768px){
+  h1{font-size:22px}
+  .cell{font-size:18px;height:40px}
+  button{font-size:16px}
+}
+
+@media(max-width:480px){
+  .cell{font-size:16px;height:36px}
+  .fab{width:52px;height:52px;font-size:24px}
+}
+
+
+
+</style>
+</head>
+
+<body>
+<div class="app">
+<h1>🎯 Karambol Kriket w/ DartBot</h1>
+<div id="levelInfo" class="top-right"></div>
+
+<div id="start" class="card screen active">
+<h2>Maç Türü</h2>
+<button onclick="startGame()">Oyuna Başla</button>
+
+<h2>Dart Bot Seviyesi</h2>
+<select id="botLevel">
+  <option value="1">Level 1</option><option value="2">Level 2</option>
+  <option value="3">Level 3</option><option value="4">Level 4</option>
+  <option value="5">Level 5</option><option value="6">Level 6</option>
+  <option value="7">Level 7</option><option value="8">Level 8</option>
+  <option value="9">Level 9</option><option value="10">Level 10</option><option value="11">İnsanüstü</option>
+
+</select>
+</div>
+
+<div id="coin" class="popup">
+  <div class="popup-inner">
+    <div id="coinText" style="font-size:26px;font-weight:700">
+      🎲 Başlangıç Kurası
+    </div>
+    <div id="coinSub" style="margin-top:10px;opacity:.7">
+      Atan belirleniyor...
+    </div>
+  </div>
+</div>
+
+<div id="game" class="card screen">
+<div class="status">
+  <div id="pStat" class="stat active">👤 SEN</div>
+  <div id="bStat" class="stat">🤖 BOT</div>
+</div>
+
+<button class="fab" onclick="endPlayer()">➤</button>
+
+<div id="board" class="board"></div>
+<button class="gray" onclick="undo()">UNDO (Bu El)</button>
+<button class="gray" onclick="restart()">🔄 Oyunu Baştan Başlat</button>
+</div>
+</div>
+
+<div id="popup" class="popup">
+  <div class="popup-inner" id="popupContent"></div>
+</div>
+
+<script>
+const targets=["20","19","18","17","16","15","14","13","12","D","T","B","H"];
+const marks=["","/","X","⭕"];
+const ring=[20,1,18,4,13,6,10,15,2,17,3,19,7,16,8,11,14,9,12,5];
+
+let scores,turn="player",snapshot,botLevel=5,matchScore=[0,0],bestOf=1;
+let throwCount = 0;
+let botMemory = null;
+
+/* === GAME START === */
+function startGame(){
+  botLevel = parseInt(document.getElementById("botLevel").value);
+  document.getElementById("levelInfo").textContent = `🤖 Dart Bot Level: ${botLevel}`;
+
+  scores = [Array(13).fill(0), Array(13).fill(0)];
+  snapshot = JSON.parse(JSON.stringify(scores));
+
+  document.getElementById("coin").style.display = "flex";
+  document.getElementById("coinText").textContent = "🎲 Başlangıç Kurası";
+  document.getElementById("coinSub").textContent = "Atan belirleniyor...";
+
+  setTimeout(() => {
+    turn = Math.random() < 0.5 ? "player" : "bot";
+    document.getElementById("coinText").textContent =
+      turn === "player" ? "🎯 SEN BAŞLIYORSUN" : "🤖 DART BOT BAŞLIYOR";
+    document.getElementById("coinSub").textContent = "Hazırlan...";
+  }, 1200);
+
+  setTimeout(() => {
+    document.getElementById("coin").style.display = "none";
+    show("game");
+    render();
+    updateTurn();
+    if (turn === "bot") botTurn();
+  }, 2000);
+}
+
+
+function restart(){ show("start"); }
+
+function show(id){
+  document.querySelectorAll(".screen").forEach(s=>s.classList.remove("active"));
+  document.getElementById(id).classList.add("active");
+}
+
+/* === RENDER BOARD === */
+function render(){
+  board.innerHTML="";
+  targets.forEach((t,i)=>{
+    let r=document.createElement("div");r.className="row";
+    let l=document.createElement("div");l.className="cell";
+    l.textContent=marks[scores[0][i]];
+    l.onclick=()=>{
+      if(turn!=="player")return;
+      snapshot=JSON.parse(JSON.stringify(scores));
+      scores[0][i]=Math.min(3,scores[0][i]+1);
+      render();checkWin();
+    };
+    let m=document.createElement("div");m.className="cell mid";m.textContent=t;
+    let rt=document.createElement("div");rt.className="cell";
+    rt.textContent=marks[scores[1][i]];
+    r.append(l,m,rt);board.appendChild(r);
+  });
+}
+
+function updateTurn(){
+  document.getElementById("pStat").classList.toggle("active",turn==="player");
+  document.getElementById("bStat").classList.toggle("active",turn==="bot");
+}
+
+/* === UNDO ACTION === */
+function undo(){
+  if(turn!=="player")return;
+  scores=JSON.parse(JSON.stringify(snapshot));
+  render();
+}
+
+/* === PLAYER END === */
+function endPlayer(){
+  snapshot=JSON.parse(JSON.stringify(scores));
+  turn="bot";
+  updateTurn();
+  botTurn();
+}
+
+/* === BOT AI === */
+function levelAcc(){
+  const table={
+    1:{hit:30, n1:28, n2:23, rnd:18, bull:1},
+    2:{hit:35, n1:29, n2:20, rnd:15, bull:1},
+    3:{hit:40, n1:30, n2:18, rnd:11, bull:1},
+    4:{hit:45, n1:32, n2:15, rnd:7,  bull:1},
+    5:{hit:50, n1:30, n2:14, rnd:5,  bull:1},
+    6:{hit:55, n1:27, n2:12, rnd:5,  bull:1},
+    7:{hit:55, n1:28, n2:12, rnd:4,  bull:1},
+    8:{hit:60, n1:26, n2:10, rnd:3,  bull:1},
+    9:{hit:65, n1:24, n2:8,  rnd:2,  bull:1},
+    10:{hit:70,n1:22, n2:6,  rnd:1,  bull:1},
+    11:{hit:83,n1:12, n2:3,  rnd:1,  bull:1} // İnsanüstü
+  };
+  return table[botLevel];
+}
+
+function endgameTarget(){
+  // 20–12 hepsi kapalı mı?
+  let numbersClosed = true;
+  for(let i=0;i<=8;i++){
+    if(scores[1][i] < 3) numbersClosed = false;
+  }
+  if(!numbersClosed) return null;
+
+  let D = scores[1][9] < 3;
+  let T = scores[1][10] < 3;
+  let B = scores[1][11] < 3;
+  let H = scores[1][12] < 3;
+
+  // 1️⃣ House açık → 20
+  if(H) return 20;
+
+  // 2️⃣ House kapalı, Triple açık → 20
+  if(!H && T) return 20;
+
+  // 3️⃣ Triple kapalı, Double açık → 16
+  if(!H && !T && D) return 16;
+
+  // 4️⃣ Sadece Bull / House kaldıysa
+  if(!D && !T && (B || H)) return "B";
+
+  return null;
+}
+
+
+
+function nextTarget(){
+  for(let i=0;i<=8;i++) if(scores[1][i]<3) return parseInt(targets[i]);
+  if(scores[1][10]<3) return "T";
+  if(scores[1][9]<3) return "D";
+  if(scores[1][12]<3) return "H";
+  if(scores[1][11]<3) return "B";
+  return null;
+}
+
+function fallbackTarget(){
+  // 1️⃣ X olan sayı
+  for(let i=0;i<=8;i++) if(scores[1][i]===2) return parseInt(targets[i]);
+  // 2️⃣ / olan sayı
+  for(let i=0;i<=8;i++) if(scores[1][i]===1) return parseInt(targets[i]);
+  // 3️⃣ ana hedef
+  return nextTarget();
+}
+
+function botTurn(){
+throwCount = 0; // HER BOT ELİ BAŞINDA
+botMemory = {
+  firstHit: null,      // 1. okun gittiği yer
+  houseTry: scores[1][12] < 3  // House açık mı?
+};
+  popup.style.display="flex";
+  popupContent.innerHTML="<h3>Dart Bot Atıyor</h3>";
+  let throws=[],i=0;
+  let iv=setInterval(()=>{
+    let t=botThrow();
+    throws.push(t);
+throwCount++;
+    popupContent.innerHTML+=`<div class="throw">${i+1}. Ok: ${t.text}</div>`;
+    i++;
+    if(i===3){ clearInterval(iv); setTimeout(()=>botWrite(throws),800); }
+  },900);
+}
+
+function botThrow(){
+
+  let target = nextTarget();
+let eg = endgameTarget();
+if(eg !== null && !botMemory.houseTry){
+  target = eg;
+}
+
+
+if(target === "H"){
+  target = "B"; // House hedeflenmez, bull üzerinden oynanır
+}
+
+if(!botMemory.houseTry && endgameTarget() === null){
+  target = fallbackTarget();
+}
+
+// HOUSE açıksa ve 1. ok atıldıysa
+if(botMemory.houseTry && botMemory.firstHit !== null && scores[1][12] < 3){
+  target = botMemory.firstHit;
+}
+
+
+
+  const acc = levelAcc(); // {hit,n1,n2,rnd,bull}
+let roll = Math.random() * 100;
+let landed;
+
+// 🎯 HEDEFİ TUTTU MU?
+if (roll <= acc.hit) {
+  landed = target;
+} else {
+  roll -= acc.hit;
+
+  // ↔️ ±1 KOMŞU
+  if (roll <= acc.n1) {
+    let idx = ring.indexOf(target);
+if(idx === -1){
+  landed = target; // sayı değilse komşu hesabı yapma
+}else{
+  let dir = Math.random() < 0.5 ? -1 : 1;
+  landed = ring[(idx + dir + 20) % 20];
+}
+
+  }
+  // ↔️ ±2 KOMŞU
+  else if (roll <= acc.n1 + acc.n2) {
+    let idx = ring.indexOf(target);
+if(idx === -1){
+  landed = target;
+}else{
+  let dir = Math.random() < 0.5 ? -2 : 2;
+  landed = ring[(idx + dir + 20) % 20];
+}
+
+  }
+  // 🎯 BULL
+  else if (roll <= acc.n1 + acc.n2 + acc.bull) {
+    landed = "B";
+  }
+  // ❓ SAÇMA AMA MÜMKÜN
+  else {
+    landed = ring[Math.floor(Math.random() * ring.length)];
+  }
+}
+
+// 🧠 HOUSE HAFIZA GÜNCELLEME
+if(botMemory.houseTry){
+  if(botMemory.firstHit === null){
+    botMemory.firstHit = landed;
+  }else if(landed !== botMemory.firstHit){
+    botMemory.houseTry = false;
+  }
+}
+
+ if(landed === "B"){
+  const bullTable = {
+    1:{b:6, rb:1},
+    2:{b:7, rb:1},
+    3:{b:8, rb:1},
+    4:{b:10, rb:2},
+    5:{b:12, rb:3},
+    6:{b:20, rb:5},
+    7:{b:25, rb:7},
+    8:{b:30, rb:10},
+    9:{b:35, rb:12},
+    10:{b:40, rb:15},
+    11:{b:55, rb:25} // İnsanüstü
+  };
+
+  let r = Math.random() * 100;
+
+
+  let rates = bullTable[botLevel];
+
+  if(r < rates.rb){
+    return {num:"B", bull:2, text:"Redbull"};
+  }
+  if(r < rates.rb + rates.b){
+    return {num:"B", bull:1, text:"Bull"};
+  }
+
+  // kaçtı → single
+  let n = ring[Math.floor(Math.random() * ring.length)];
+  return {num:n, mult:1, text:`${n} Single`};
+}
+
+
+const sdTable={
+  1:{s:92,t:6,d:2},
+  2:{s:90,t:8,d:2},
+  3:{s:88,t:9,d:3},
+  4:{s:86,t:10,d:4},
+  5:{s:84,t:11,d:5},
+  6:{s:82,t:12,d:6},
+  7:{s:80,t:13,d:7},
+  8:{s:78,t:14,d:8},
+  9:{s:76,t:15,d:9},
+  10:{s:74,t:17,d:9},
+  11:{s:60,t:25,d:15} // İnsanüstü
+};
+
+const boostTable = {
+  1:1.2, 2:1.2, 3:1.2,
+  4:1.5, 5:1.5, 6:1.5,
+  7:1.8, 8:1.8,
+  9:2.0, 10:2.0,
+  11:2.5 // İnsanüstü
+};
+
+
+
+  let r=Math.random()*100;
+let rates=sdTable[botLevel];
+let boostedRates = {...rates};
+
+// 🎯 SON OK PSİKOLOJİSİ
+if(botMemory.firstHit !== null && throwCount === 3){
+  boostedRates.s = Math.min(boostedRates.s + (botLevel), 100);
+  boostedRates.t = Math.max(boostedRates.t - (botLevel/2), 0);
+  boostedRates.d = Math.max(boostedRates.d - (botLevel/2), 0);
+}
+
+// 🎯 ÖZEL HEDEF BOOST (T için 20, D için 16)
+
+// Triple için 20 deniyorsa
+if(target === 20 && scores[1][10] < 3){
+  boostedRates.t = Math.min(boostedRates.t * boostTable[botLevel], 100);
+  boostedRates.s = Math.max(
+    boostedRates.s - (boostedRates.t - rates.t),
+    0
+  );
+}
+
+// Double için 16 deniyorsa
+if(target === 16 && scores[1][9] < 3 && scores[1][10] >= 3){
+  boostedRates.d = Math.min(boostedRates.d * boostTable[botLevel], 100);
+  boostedRates.s = Math.max(
+    boostedRates.s - (boostedRates.d - rates.d),
+    0
+  );
+}
+
+let mult=1;
+
+if(r > boostedRates.s && r <= boostedRates.s + boostedRates.t){
+  mult = 3;
+}
+else if(r > boostedRates.s + boostedRates.t){
+  mult = 2;
+}
+
+
+
+  return {num:landed,mult,text:`${landed} ${["Single","Double","Triple"][mult-1]}`};
+}
+
+/* === BOT WRITE TO SCOREBOARD === */
+function botWrite(throws){
+  let nums=throws.map(t=>t.num);
+  let same=nums.every(n=>n===nums[0]);
+  let D=9,T=10,B=11,H=12;
+
+  if(same && scores[1][H]<3){
+    scores[1][H]++;
+    popupContent.innerHTML+="<div class='throw'>HOUSE</div>";
+  }else{
+    throws.forEach(t=>{
+// 🧠 SAYI KAPANDIYSA VE HOUSE KAPALIYSA
+if(scores[1][12] >= 3){ // house kapalı
+  let idx = targets.indexOf(String(t.num));
+  if(idx !== -1 && scores[1][idx] === 2){
+    // Bu ok sayıyı kapatıyor → sonraki oklar boşa gitmesin
+    botMemory.houseTry = false;
+  }
+}
+
+      if(t.num==="B"){
+        scores[1][B]=Math.min(3,scores[1][B]+t.bull);return;
+      }
+      let idx=targets.indexOf(String(t.num));
+      if(t.mult===3){
+        if(scores[1][T]<3) scores[1][T]++;
+        else scores[1][idx]=3;
+        return;
+      }
+      if(t.mult===2){
+        if(scores[1][D]<3) scores[1][D]++;
+        else scores[1][idx]=Math.min(3,scores[1][idx]+2);
+        return;
+      }
+      scores[1][idx]=Math.min(3,scores[1][idx]+1);
+    });
+  }
+
+  popup.style.display="none";
+  turn="player"; updateTurn(); render(); checkWin();
+}
+
+/* === CHECK WIN === */
+function checkWin(){
+  let p=scores[0].every(v=>v>=3);
+  let b=scores[1].every(v=>v>=3);
+  if(!p&&!b)return;
+  popup.style.display="flex";
+  popupContent.innerHTML = p
+ ? "<div class='win'>🏆 KAZANDIN</div><div>Yeni maç başlıyor...</div>"
+ : "<div class='lose'>😈 KAYBETTİN</div><div>Bir daha dene...</div>";
+
+
+  setTimeout(()=>{
+    popup.style.display="none";
+    show("start");
+  },2000);
+}
+</script>
+</body>
+</html>
