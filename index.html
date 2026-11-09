@@ -1,0 +1,139 @@
+<!DOCTYPE html>
+<html lang="tr" data-theme="gece" class="booting">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Bözer Gaming</title>
+<meta name="description" content="Americano, Somali, dart, kura ve lig için skor tabloları. Oyunların hesabına kaydedilir, arkadaşların canlı izler.">
+<meta name="theme-color" content="#15122c">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-title" content="Bözer Gaming">
+<meta property="og:title" content="Bözer Gaming">
+<meta property="og:description" content="Masadaki oyunun skor tablosu. Skorunu tut, oyunun hesabına kaydedilsin, arkadaşların canlı izlesin.">
+<meta property="og:image" content="assets/icons/og.png">
+<link rel="manifest" href="manifest.webmanifest">
+<link rel="icon" href="assets/icons/favicon.svg" type="image/svg+xml">
+<link rel="icon" href="assets/icons/icon-192.png" type="image/png" sizes="192x192">
+<link rel="apple-touch-icon" href="assets/icons/apple-touch-icon.png">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="preconnect" href="https://cdn.jsdelivr.net" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Archivo:wdth,wght@62..125,300..900&display=swap">
+<link rel="stylesheet" href="assets/css/app.css?v=2.0.1">
+<script>
+  try { var t = JSON.parse(localStorage.getItem('bg.theme')); if (t) document.documentElement.setAttribute('data-theme', t); } catch (e) {}
+</script>
+</head>
+<body>
+<a class="skip-link" href="#view">İçeriğe geç</a>
+<header class="topbar" id="topbar"></header>
+<main id="view" tabindex="-1">
+  <div class="boot-screen" aria-hidden="true">
+    <div class="rack rack-boot"><div class="rack-tiles"><span class="tile tile-red rack-tile"><b>B</b><i></i></span><span class="tile tile-blue rack-tile"><b>Ö</b><i></i></span><span class="tile tile-black rack-tile"><b>Z</b><i></i></span><span class="tile tile-yellow rack-tile"><b>E</b><i></i></span><span class="tile tile-red rack-tile"><b>R</b><i></i></span></div><div class="rack-bar"><span>Gaming</span></div></div>
+  </div>
+</main>
+<nav class="tabbar" id="tabbar" aria-label="Alt menü"></nav>
+<div id="toasts" aria-live="polite"></div>
+<noscript><p class="noscript">Bözer Gaming’i kullanmak için tarayıcınızda JavaScript açık olmalı.</p></noscript>
+
+<!-- ============ KURALLAR VE KULLANIM METİNLERİ ============ -->
+<template id="tpl-rules-americano">
+  <ul>
+    <li>Oyun 2 adet tam deste (52*2=104) ve 2 adet Job ile toplamda 106 kağıtla oynanır.</li>
+    <li>Dağıtıcı, 106 kağıdı karıştırıp sol tarafında bulunan oyuncuya desteyi kestirir. Desteyi kesen oyuncu kestiği kısmın en altındaki kağıdı açıp kalan desteyi de açık kağıdın üstüne koyar. Eğer açılan kağıt Job ise kesen oyuncu o tur için alır. Dağıtıcı oyunu sağından başlayarak saat yönünün tersinde dağıtır, Job kesen oyuncuya normal dağıtması gerekenden 1 kağıt eksik dağıtır.</li>
+    <li>Dağıtıcının sağındaki oyuncuya 14, diğer tüm oyunculara 13 kağıt dağıtılır. 14 kağıt dağıtılan oyuncu ilk tur ortadan kağıt çekmez, atarak başlar.</li>
+    <li>Atılacak kağıtlar masanın ortasına üst üste atılır. Oyuncular, solundaki oyuncunun attığı her kağıdı alabilir. Aynı zamanda solundaki oyuncunun haricinde diğer oyuncuların attığı kağıtları da öncelik sırasına göre ve ceza 1 kağıt çekmek şartıyla, her turda en fazla 3 kez alabilir.</li>
+    <li>Öncelik sırası, kağıt atan kişiden sonra oyun yönündeki kişi öncelik sahibidir, almayacağını söylerse öncelik bir sonraki oyuncuya geçer ve tüm oyuncular arasında bu kuralla devam eder.</li>
+    <li>Bir oyuncu ceza çekmemesi durumunda 13, 1 ceza çekerse 15, 2 ceza çekerse 17, 3 ceza çekerse 19 kağıda sahip olabilir. Sıra oyuncuya geldiğinde solundaki oyuncudan veya ortadan kağıt alır, kağıdı atmadığı ve per açıp işlemediği sürece kağıt sayısı çifttir. Kağıdı attıktan sonra kağıt sayısı yine tek sayı kalır. (13,15,17,19)</li>
+    <li>Oyunda per açabilmek için öncelikle o elin kuralını uygulamak gerekir. Mevcut kuralı uygulamadan per açılamaz, işlenemez.</li>
+    <li>Seri, küt ve çift olmak üzere 3 farklı per açma şekli vardır. Çift per sadece "Çift" kural elinde, el başında kuralı uygulamak için açılabilir. Diğer hiçbir turda veya çift turu devamında başka çift açılamaz.</li>
+    <li>Kağıtların sıralaması: A-2-3-4-5-6-7-8-9-10-J-Q-K</li>
+    <li>Seri: ♠️♦️♣️♥️ olmak üzere 4 kağıt türünden herhangi birinde ardışık sıralı perleri temsil eder. Q-K-A veya A-2-3 perleri yapılabilir, K-A-2 peri yapılamaz. Örneğin ♦️5 - ♦️6 - ♦️7 --&gt; 3lü seri için uygundur.</li>
+    <li>Küt: ♠️♦️♣️♥️ türlerinin aynı değerdeki kağıtlarının 3 tanesi 3lü küt, 4ünün de tamamlanması 4lü küt anlamına gelir. Örneğin ♠️8 - ♦️8 - ♣️8 --&gt; 3lü küt açmak için uygun bir perdir.</li>
+    <li>Çift: Herhangi bir kağıdın aynısı ile oluşturulur. Örneğin ♣️Q - ♣️Q --&gt; 1 adet çift anlamına gelir. Çift eli kuralı için 3 çift açmak gerekir. Bu kural haricinde oyunun hiçbir turunda/elinde çift açılamaz</li>
+    <li>Herhangi bir oyuncu tur kuralını uygulamadan işleme yapamaz.</li>
+    <li>Her turda oyun dağıtıldığı el, oyun sırası 1 kez daha gelmeden tur kuralını açmak için el uygun olsa dahi per açılamaz. Oyuncuya 2.kez sıra geldiği zaman tur kuralını açabilir.</li>
+    <li>Tur kuralının açıldığı sırada başka per açma veya işlek işleme yapılamaz. Tur kuralı uygulandığı zaman sadece kurala uygun per/perler açılabilir. Oyuncu per veya işlek için 1 kez daha sıra gelmesini beklemek zorundadır.</li>
+    <li>Oyunda bitiş, tüm kağıtlarını per açarak veya işleyerek masaya indirdikten sonra bitiş kağıdını ortaya atmak şartıyla yapılabilir. Örneğin oyuncunun elinde ♠️8 ♠️9 ♠️10 --&gt; peri kaldı ise bunu masaya koyarak bitemez, mutlaka ortaya bitiş kağıdı atmak zorundadır.</li>
+    <li>Oyunda Job harici bir kağıtla bitmek -25 puandır. / veya - ile gösterilir. Çift elinde normal kağıtla bitilirse biten oyuncu -50 puan alır ve diğer oyuncular elinde kalan sayıların toplamının 2 katını yer.</li>
+    <li>Job'la bitiş -50 puandır ve diğer oyuncular elinde kalan sayıların toplamının 2 katını yer. X ile gösterilir. Çift elinde Job ile bitilirse XX ile -100 puan alınır ve diğer oyuncular elindeki sayıların toplamının 4 katını yer.</li>
+    <li>İşlek kağıt veya Job atmak (eğer bitmiyorsa) +25 puan cezadır.</li>
+    <li>Yerde açılan perlerde Job'u başkası tarafından alınan oyuncu +25 puan ceza yer.</li>
+    <li>Hatalı el açıp geri toplamak +25 puan cezadır.</li>
+    <li>Oyun bittiğinde elde kalan sayılar toplanırken 2-3-4-5-6-7-8-9-10 --&gt; kendi sayısal değerleri olarak sayılır. J-Q-K-A --&gt; 10 puan değerindedir. Job ise 25 puan sayılır.</li>
+    <li>Oyuncu son kağıdını atmadan, o elde yaptığı işlekleri/perleri vb. geri alabilir, başka yere işleyebilir.</li>
+    <li>Çift elinde yazılan ceza 2 kat yazılır.</li>
+    <li>Konken: Düz okey gibi tüm kağıtların per oluşturup, bitiş kağıdının ortaya atılmasıyla biter.</li>
+    <li>En düşük toplam puana sahip oyuncu kazanır.</li>
+  </ul>
+</template>
+
+<template id="tpl-info-americano">
+  <ul>
+    <li>2-5 kişi ile oynanabilir.</li>
+    <li>Sol sütunda kural eli güncel olarak gösterilir.</li>
+    <li>Bir kural satırında tüm oyunculara puan yazılmadan, altta kalan diğer sütunlar hesaba katılmaz. Mevcut kuraldaki tüm oyuncuların puan hanesi doldurulduğu anda puanlar otomatik olarak toplanıp ara toplama yazılır ve sıra bir alttaki kurala geçer.</li>
+    <li>Oyunda bazı kuralları oynamak istemiyorsanız, o elde oyunculara 0 puan girebilirsiniz. Aksi halde kural eli, oyunculara puan girilmediği için sabit kalır.</li>
+    <li>Bir oyuncuya ceza yazmak için, ceza satırının oyuncuya denkgelen hücresine tıklayarak yazabilirsiniz. Bir oyuncuya en fazla 8 ceza yazılabilecek şekilde tasarlanmıştır. Daha fazla ceza olması durumunda, oyuncuya puan olarak ekleyebilirsiniz.</li>
+    <li>Ceza hücreleri 8 cezadan sonra başa döner ve sıfırlanır. Yanlış ceza işlenmesi durumunda tıklayarak en başa dönüp tekrar işleyebilirsiniz.</li>
+    <li>Normal bitişler için "-" veya "/" yazabilirsiniz. Job bitişler için "X" yazabilirsiniz. Çift elinde Job ile bitiş yapılırsa "XX" de yazabilirsiniz.</li>
+    <li>"Joker" eline geçildiği zaman (çift eli tamamen doldurulduktan sonra) ekrana otomatik olarak "Joker Eli için Kura Çek" tuşu gelir. Konken eli dahil olmak üzere tüm kurallar arasında kura çekilir. Kura sonucu sayfanın sol üstünde gösterilir.</li>
+    <li>Joker eli doldurulduktan sonra ekranın en altına "Kazanma Şansları" butonu gelir. Bu buton sayesinde, liderle diğer oyuncuların arasındaki puan farklarını ve Konken elinde kazanmak için yapmanız gereken stratejileri öğrenebilirsiniz.</li>
+    <li>"Konken" eli için tüm oyuncuların puanları girildikten 3 saniye sonra oyunun sonucu ve sıralama gösterilir.</li>
+  </ul>
+</template>
+
+<template id="tpl-info-dartbot">
+  <ul>
+    <li>Karambol Kriket oyun kuralları geçerlidir.</li>
+    <li>11 farklı seviye bottan oluşur. Bot seviyesi arttıkça zorluk artar.</li>
+    <li>Botun temel hedefi house atmak, sonrasında da kalan kuralları tamamlamaktır.</li>
+    <li>Kuralları bilmiyorsanız dart bölümündeki YouTube videosuna girerek öğrenebilirsiniz.</li>
+  </ul>
+</template>
+
+<template id="tpl-info-kura">
+  <ul>
+    <li>3 moddan oluşur: Çekiliş, Grup Kurası ve Turnuva.</li>
+    <li>"Çekiliş Yap" modunda; katılımcı ve kazanacak kişi sayısı girerek, yazacağınız isimler içerisinden kazananı rastgele belirleyebilirsiniz.</li>
+    <li>"Grup Kurası" modu ile; yazacağınız kişileri, istediğiniz grup sayısına rastgele olarak bölebilirsiniz.</li>
+    <li>Turnuva modu ile; Grup Kurası gibi gruplara ayırıp, sonrasında rastgele eşleşmelerle eleme usulü turnuva şampiyonu belirleyebilirsiniz.</li>
+    <li>Turnuva Modu'nda 4 veya 8 takımda problem yaşanmaz, takım sayısı tek sayı ise ve BAY geçme durumu söz konusuysa hata verir.</li>
+    <li>Turnuva başladıktan sonra maça tıklayarak kazananı seçerek diğer turlara geçiş yapabilirsiniz.</li>
+  </ul>
+</template>
+
+<template id="tpl-info-lig">
+  <ul>
+    <li>İstediğiniz takım sayısında lig oluşturabilirsiniz.</li>
+    <li>"Tek Karşılaşma" , "Çift Karşılaşma" seçenekleriyle oluşan takımların birbiriyle kaç kez karşılaşacağını belirleyin.</li>
+    <li>Maça tıklayarak maçın galibini seçin. 1 Fark (2-1); kazanan takım 2 puan alır, kaybeden takım 1 puan alır. 2 Fark (2-0); kazanan takım 3 puan alır, kaybeden takım puan alamaz.</li>
+    <li>Takım sayısı tek sayı ise BAY geçecek takım rastgele belirlenir. BAY geçen takım 1 puan alır. O turdaki bütün maçlar girildikten sonra puan durumuna yazılır.</li>
+  </ul>
+</template>
+
+<template id="tpl-info-somali">
+  <ul>
+    <li>İsim yazma ekranında takımları karıştır tuşu ile rastgele masa yerleşimi yapabilirsiniz.</li>
+    <li>Başlangıç sayısı ekranından, kaç puandan düşüleceğini girin. (Genellikle 10'dan düşülür)</li>
+    <li>Bahis ekranında gireceğiniz miktarla, sayısı kaçtan hesaplanacağını belirleyin.</li>
+    <li>Oyun başladıktan sonra "İşlem Yap" tuşu ile düz bitiş, okey bitiş veya gösterge için veri girin.</li>
+    <li>Oyunda her tur kaydedilir ve "Güncel Durum" butonu sayesinde turlar ve genel toplama ulaşılabilir.</li>
+  </ul>
+</template>
+
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script src="assets/js/config.js?v=2.0.1"></script>
+<script src="assets/js/core.js?v=2.0.1"></script>
+<script src="assets/js/api.js?v=2.0.1"></script>
+<script src="assets/js/home.js?v=2.0.1"></script>
+<script src="assets/js/auth.js?v=2.0.1"></script>
+<script src="assets/js/profile.js?v=2.0.1"></script>
+<script src="assets/js/social.js?v=2.0.1"></script>
+<script src="assets/js/admin.js?v=2.0.1"></script>
+<script src="assets/js/host.js?v=2.0.1"></script>
+<script src="assets/js/watch.js?v=2.0.1"></script>
+<script src="assets/js/app.js?v=2.0.1"></script>
+</body>
+</html>

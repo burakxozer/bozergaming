@@ -1,0 +1,400 @@
+@import url("https://fonts.googleapis.com/css2?family=Archivo:wdth,wght@62..125,300..900&display=swap");
+/* =====================================================================
+   Bözer Gaming — oyun ekranları için ortak görünüm
+   Yalnızca renk, yazı tipi ve köşe yuvarlaklığı değişir.
+   Oyunların kuralları ve işleyişi aynen korunur.
+   ===================================================================== */
+
+html[data-bg-game] {
+  --sk-bg: #15122c;
+  --sk-panel: #1d1a3d;
+  --sk-soft: #262150;
+  --sk-row1: #1a1738;
+  --sk-row2: #221e47;
+  --sk-line: #39337a;
+  --sk-text: #f4eee2;
+  --sk-muted: #aca7cf;
+  --sk-accent: #f5b62a;
+  --sk-accent-shade: #b9850f;
+  --sk-accent-ink: #231902;
+  --sk-red: #ec4a43;
+  --sk-green: #3ccf86;
+  --sk-blue: #6f9bff;
+  --sk-input-bg: #17143a;
+  --sk-shadow: 0 18px 44px rgba(4, 2, 18, 0.45);
+  color-scheme: dark;
+}
+html[data-bg-game][data-bg-theme="cuha"] {
+  --sk-bg: #0d2a22;
+  --sk-panel: #12382d;
+  --sk-soft: #184537;
+  --sk-row1: #0f3027;
+  --sk-row2: #164034;
+  --sk-line: #2a6252;
+  --sk-text: #f3efe1;
+  --sk-muted: #a9c8b9;
+  --sk-red: #ef5148;
+  --sk-green: #4be39a;
+  --sk-blue: #7fb0ff;
+  --sk-input-bg: #0f3127;
+}
+html[data-bg-game][data-bg-theme="gunduz"] {
+  --sk-bg: #f4efe4;
+  --sk-panel: #fffdf8;
+  --sk-soft: #f3ecde;
+  --sk-row1: #fbf7ee;
+  --sk-row2: #f1e9d9;
+  --sk-line: #ddd1b9;
+  --sk-text: #1e1a2e;
+  --sk-muted: #615b7a;
+  --sk-accent: #f2b01e;
+  --sk-accent-shade: #c08510;
+  --sk-accent-ink: #221800;
+  --sk-red: #d9342d;
+  --sk-green: #1fa363;
+  --sk-blue: #2f63de;
+  --sk-input-bg: #ffffff;
+  --sk-shadow: 0 18px 44px rgba(60, 40, 10, 0.18);
+  color-scheme: light;
+}
+
+/* ---------- Ortak ---------- */
+html[data-bg-game] *:not(.bgx-keep) {
+  font-family: "Archivo", system-ui, -apple-system, "Segoe UI", Roboto, Arial, sans-serif;
+}
+html[data-bg-game] body {
+  -webkit-font-smoothing: antialiased;
+  -webkit-tap-highlight-color: transparent;
+}
+html[data-bg-game] ::selection {
+  background: rgba(245, 182, 42, 0.35);
+}
+html[data-bg-game] button {
+  font-weight: 700;
+  letter-spacing: 0.005em;
+  transition: filter 0.12s, transform 0.08s;
+}
+html[data-bg-game] button:active {
+  transform: translateY(1px);
+}
+html[data-bg-game] h1,
+html[data-bg-game] h2 {
+  font-stretch: 115%;
+  font-weight: 850;
+  letter-spacing: -0.005em;
+}
+/* Site içinde açıldığında başlık üst çubukta zaten var */
+html[data-bg-embedded][data-bg-game="kura"] h1,
+html[data-bg-embedded][data-bg-game="lig"] h1,
+html[data-bg-embedded][data-bg-game="dart-mac"] h1,
+html[data-bg-embedded][data-bg-game="dart-turnuva"] h1,
+html[data-bg-embedded][data-bg-game="dartbot"] h1 {
+  display: none;
+}
+
+/* ---------- Kura Çek & Lig ---------- */
+html[data-bg-game="kura"][data-bg-theme],
+html[data-bg-game="lig"][data-bg-theme] {
+  --bg: var(--sk-bg);
+  --panel: var(--sk-panel);
+  --soft: var(--sk-soft);
+  --text: var(--sk-text);
+  --accent: var(--sk-accent);
+  --lose: var(--sk-red);
+  --border: var(--sk-line);
+}
+html[data-bg-game="kura"] .card,
+html[data-bg-game="lig"] .card {
+  border: 1px solid var(--sk-line);
+  border-radius: 18px;
+}
+html[data-bg-game="kura"] button,
+html[data-bg-game="lig"] button {
+  color: var(--sk-accent-ink);
+  box-shadow: 0 2px 0 var(--sk-accent-shade);
+}
+html[data-bg-game="kura"] .overlay-box button[onclick^="closeOverlay"],
+html[data-bg-game="lig"] .overlay-box button[onclick^="closeOverlay"] {
+  background: var(--sk-soft) !important;
+  color: var(--sk-text) !important;
+  box-shadow: none;
+  border: 1px solid var(--sk-line);
+}
+html[data-bg-game="kura"] input,
+html[data-bg-game="lig"] input:not([type="radio"]) {
+  background: var(--sk-input-bg);
+  color: var(--sk-text);
+  border: 1px solid var(--sk-line);
+  outline: none;
+}
+html[data-bg-game="kura"] input:focus,
+html[data-bg-game="lig"] input:focus {
+  border-color: var(--sk-accent);
+  box-shadow: 0 0 0 3px rgba(245, 182, 42, 0.22);
+}
+html[data-bg-game="kura"] input::placeholder,
+html[data-bg-game="lig"] input::placeholder {
+  color: var(--sk-muted);
+  opacity: 0.8;
+}
+html[data-bg-game="kura"] .overlay-box,
+html[data-bg-game="lig"] .overlay-box {
+  border: 1px solid var(--sk-line);
+  box-shadow: var(--sk-shadow);
+}
+/* Kura: "Ana Sayfa" çubuğu içerikle aynı genişlikte ve hep erişilebilir */
+html[data-bg-game="kura"] .app {
+  padding-bottom: 8px;
+}
+html[data-bg-game="kura"] .bottom-bar {
+  position: sticky;
+  bottom: 0;
+  z-index: 5;
+  max-width: 900px;
+  margin: 0 auto;
+  box-sizing: border-box;
+  padding: 18px 12px 14px;
+  background: linear-gradient(to bottom, transparent, var(--sk-bg) 45%);
+}
+html[data-bg-game="kura"] .bottom-bar button {
+  background: var(--sk-soft);
+  color: var(--sk-text);
+  border: 1px solid var(--sk-line);
+  box-shadow: none;
+}
+html[data-bg-game="lig"] .standing-row:nth-child(even) {
+  background: var(--sk-row2);
+}
+html[data-bg-game="lig"] .radio label {
+  background: var(--sk-soft);
+}
+html[data-bg-game="lig"] .mode-switch input:checked + .mode-option {
+  background: var(--sk-panel);
+}
+html[data-bg-game="lig"] .team.win::after {
+  color: var(--sk-green);
+}
+
+/* ---------- Somali ---------- */
+html[data-bg-game="somali"] body {
+  background: var(--sk-bg);
+  color: var(--sk-text);
+}
+html[data-bg-game="somali"] .card {
+  background: var(--sk-panel);
+  border: 1px solid var(--sk-line);
+}
+html[data-bg-game="somali"] button {
+  background: var(--sk-accent);
+  color: var(--sk-accent-ink);
+  box-shadow: 0 2px 0 var(--sk-accent-shade);
+}
+html[data-bg-game="somali"] button.secondary {
+  background: var(--sk-soft);
+  color: var(--sk-text);
+  box-shadow: none;
+  border: 1px solid var(--sk-line);
+}
+html[data-bg-game="somali"] button.danger {
+  background: var(--sk-red);
+  color: #fff;
+  box-shadow: none;
+}
+html[data-bg-game="somali"] input {
+  background: var(--sk-input-bg);
+  color: var(--sk-text);
+  border: 1px solid var(--sk-line);
+  outline: none;
+}
+html[data-bg-game="somali"] input:focus {
+  border-color: var(--sk-accent);
+}
+html[data-bg-game="somali"] input[type="checkbox"] {
+  width: 22px;
+  height: 22px;
+  padding: 0;
+  margin: 0 8px 0 0;
+  vertical-align: middle;
+  accent-color: var(--sk-accent);
+}
+html[data-bg-game="somali"] label {
+  display: flex;
+  align-items: center;
+  margin: 4px 0 12px;
+}
+html[data-bg-game="somali"] .team {
+  border-color: var(--sk-line);
+  background: var(--sk-panel);
+}
+html[data-bg-game="somali"] hr {
+  border-top-color: var(--sk-line);
+}
+html[data-bg-game="somali"] .money {
+  color: var(--sk-accent);
+}
+
+/* ---------- Dart: maç & turnuva ---------- */
+html[data-bg-game="dart-mac"][data-bg-theme],
+html[data-bg-game="dart-turnuva"][data-bg-theme] {
+  --bg: var(--sk-bg);
+  --panel: var(--sk-panel);
+  --line: var(--sk-line);
+  --row1: var(--sk-row1);
+  --row2: var(--sk-row2);
+  --text: var(--sk-text);
+  --accent: var(--sk-accent);
+}
+html[data-bg-game="dart-mac"] .card,
+html[data-bg-game="dart-turnuva"] .card {
+  border: 1px solid var(--sk-line);
+  border-radius: 18px;
+}
+html[data-bg-game="dart-mac"] button:not(.undo-btn):not(.reset-btn):not(.info-btn),
+html[data-bg-game="dart-turnuva"] button {
+  color: var(--sk-accent-ink);
+}
+html[data-bg-game="dart-mac"] .board {
+  border-color: var(--sk-line);
+}
+html[data-bg-game="dart-mac"] .score {
+  background: rgba(0, 0, 0, 0.22);
+}
+html[data-bg-game="dart-mac"] .cell:active,
+html[data-bg-game="dart-turnuva"] .cell:active {
+  background: var(--sk-soft);
+}
+html[data-bg-game="dart-mac"] .popup-card {
+  background: var(--sk-panel);
+  border: 1px solid var(--sk-line);
+}
+html[data-bg-game="dart-mac"] input,
+html[data-bg-game="dart-turnuva"] input[type="number"] {
+  background: var(--sk-input-bg);
+  color: var(--sk-text);
+  border: 1px solid var(--sk-line);
+  outline: none;
+}
+html[data-bg-game="dart-turnuva"] input[type="text"] {
+  background-color: var(--sk-input-bg);
+  color: var(--sk-text);
+  caret-color: var(--sk-text);
+  -webkit-text-fill-color: var(--sk-text);
+  border: 1px solid var(--sk-line);
+}
+html[data-bg-game="dart-turnuva"] input[type="radio"],
+html[data-bg-game="dart-turnuva"] input[type="checkbox"] {
+  accent-color: var(--sk-accent);
+}
+html[data-bg-game="dart-turnuva"] .info-bar,
+html[data-bg-game="dart-turnuva"] .overlay .box {
+  background: var(--sk-soft);
+}
+html[data-bg-game="dart-turnuva"] .match {
+  background: var(--sk-row1);
+}
+html[data-bg-game="dart-turnuva"] .circle,
+html[data-bg-game="dart-mac"] .circle {
+  border-color: var(--sk-text);
+}
+
+/* ---------- Dartbot ---------- */
+html[data-bg-game="dartbot"] body {
+  background: var(--sk-bg);
+  color: var(--sk-text);
+}
+html[data-bg-game="dartbot"] .card {
+  background: var(--sk-panel);
+  border: 1px solid var(--sk-line);
+  border-radius: 18px;
+}
+html[data-bg-game="dartbot"] button {
+  background: var(--sk-accent);
+  color: var(--sk-accent-ink);
+  box-shadow: 0 2px 0 var(--sk-accent-shade);
+}
+html[data-bg-game="dartbot"] button.gray {
+  background: var(--sk-soft);
+  color: var(--sk-text);
+  box-shadow: none;
+  border: 1px solid var(--sk-line);
+}
+html[data-bg-game="dartbot"] .fab {
+  box-shadow: 0 10px 25px rgba(0, 0, 0, 0.4);
+}
+html[data-bg-game="dartbot"] select {
+  background: var(--sk-input-bg);
+  color: var(--sk-text);
+  border: 1px solid var(--sk-line);
+}
+html[data-bg-game="dartbot"] .row,
+html[data-bg-game="dartbot"] .board {
+  border-color: var(--sk-line);
+}
+html[data-bg-game="dartbot"] .popup-inner {
+  background: var(--sk-panel);
+  border: 1px solid var(--sk-line);
+  box-shadow: var(--sk-shadow);
+}
+html[data-bg-game="dartbot"] .stat.active {
+  border-bottom-color: var(--sk-accent);
+}
+
+/* ---------- Americano ----------
+   Oyunun kendi tema düğmesi (🎨) korunur. Varsayılan (temasız) görünüm
+   sitenin temasına uyar; diğer Americano temaları aynen çalışır. */
+html[data-bg-game="americano"] body:not([class*="theme-"]) {
+  --bg: #15122c;
+  --card: #1d1a3d;
+  --line: #3b357a;
+  --text: #f4eee2;
+  --blue: #7ea2ff;
+  --red: #ff6f67;
+  --green: #4ade80;
+  --ara: #3d3012;
+}
+html[data-bg-game="americano"][data-bg-theme="cuha"] body:not([class*="theme-"]) {
+  --bg: #0d2a22;
+  --card: #12382d;
+  --line: #2a6252;
+  --text: #f3efe1;
+  --blue: #8db8ff;
+  --red: #ff7a72;
+  --green: #5ee9a0;
+  --ara: #3a3414;
+}
+html[data-bg-game="americano"][data-bg-theme="gunduz"] body:not([class*="theme-"]) {
+  --bg: #f4efe4;
+  --card: #fffdf8;
+  --line: #d8ccb2;
+  --text: #1e1a2e;
+  --blue: #2f63de;
+  --red: #d9342d;
+  --green: #16a34a;
+  --ara: #fff1d6;
+}
+html[data-bg-game="americano"] h1 {
+  letter-spacing: 0.06em;
+}
+html[data-bg-game="americano"] .card {
+  border: 1px solid var(--line);
+}
+html[data-bg-game="americano"] button {
+  border-radius: 10px;
+  font-weight: 650;
+}
+html[data-bg-game="americano"] .popupBox {
+  border: 1px solid var(--line);
+  border-radius: 18px;
+  box-shadow: var(--sk-shadow);
+}
+html[data-bg-game="americano"] th,
+html[data-bg-game="americano"] td {
+  font-variant-numeric: tabular-nums;
+}
+html[data-bg-game="americano"] input.cell {
+  font-weight: 600;
+}
+html[data-bg-game="americano"] input:focus {
+  outline: 2px solid var(--blue);
+  outline-offset: -1px;
+}
