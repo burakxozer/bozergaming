@@ -221,7 +221,7 @@
     function markEnded(text) {
       ended = true;
       setState('ended');
-      showCover(`${BG.tile('B', 'red', 'tile-s')}<h2>Yayın bitti</h2><p>${esc(text || (info.full_name || info.username) + ' oyundan çıktı.')}</p>
+      showCover(`${BG.tile('B', 'amber', 'tile-s')}<h2>Yayın bitti</h2><p>${esc(text || (info.full_name || info.username) + ' oyundan çıktı.')}</p>
         <div class="row-actions"><a class="btn btn-soft" href="#/arkadaslar">Arkadaşlar</a>${info.owner_id !== BG.store.me.id ? `<button class="btn btn-primary" type="button" data-msg>${icon('message', 18)}Mesaj gönder</button>` : ''}</div>`);
       const b = cover.querySelector('[data-msg]');
       if (b) b.addEventListener('click', () => BG.chat.openDrawer(info.username));
@@ -286,7 +286,7 @@
         if (gone) return;
         root.querySelector('.wb-text strong').textContent = 'Yayın açılamadı';
         setState('ended');
-        showCover(`${BG.tile('?', 'black', 'tile-s')}<h2>Bu yayını izleyemezsin</h2><p>${esc(e.message)}</p><div class="row-actions"><a class="btn btn-soft" href="#/arkadaslar">Arkadaşlara dön</a></div>`);
+        showCover(`${BG.tile('?', 'ink', 'tile-s')}<h2>Bu yayını izleyemezsin</h2><p>${esc(e.message)}</p><div class="row-actions"><a class="btn btn-soft" href="#/arkadaslar">Arkadaşlara dön</a></div>`);
       }
     })();
 

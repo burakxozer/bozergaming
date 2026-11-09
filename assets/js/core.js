@@ -201,7 +201,8 @@
   /* ---------------- İkonlar (24×24, çizgi) ---------------- */
   const I = {
     home: '<path d="M3.5 10.5 12 3.5l8.5 7"/><path d="M5.5 9v11h13V9"/>',
-    tiles: '<rect x="3.5" y="4" width="7.5" height="10" rx="1.6"/><rect x="13" y="4" width="7.5" height="10" rx="1.6"/><path d="M3 18.5h18"/>',
+    tiles: '<rect x="3.5" y="4.5" width="7.5" height="15" rx="1.6"/><rect x="13" y="4.5" width="7.5" height="15" rx="1.6"/><path d="M3.5 12h7.5M13 12h7.5"/>',
+    chart: '<path d="M5 20v-7"/><path d="M12 20V5"/><path d="M19 20v-10"/><path d="M3 20.5h18"/>',
     users: '<circle cx="9" cy="8.2" r="3.4"/><path d="M2.8 19.5c.9-3.4 3.3-5.2 6.2-5.2s5.3 1.8 6.2 5.2"/><path d="M15.6 4.9a3.4 3.4 0 0 1 0 6.6"/><path d="M17.7 14.6c1.8.7 3 2.3 3.5 4.9"/>',
     message: '<path d="M20.5 11.6a8.1 8.1 0 0 1-11.8 7.2L3.5 20l1.3-4.6a8.1 8.1 0 1 1 15.7-3.8z"/>',
     user: '<circle cx="12" cy="8" r="4"/><path d="M4.5 20.5c1-3.8 4-5.8 7.5-5.8s6.5 2 7.5 5.8"/>',
@@ -229,6 +230,7 @@
     userPlus: '<circle cx="9.5" cy="8" r="3.8"/><path d="M2.8 20c.9-3.7 3.6-5.6 6.7-5.6 1.6 0 3 .5 4.1 1.3"/><path d="M18.5 13v6M15.5 16h6"/>',
     userX: '<circle cx="9.5" cy="8" r="3.8"/><path d="M2.8 20c.9-3.7 3.6-5.6 6.7-5.6 1.6 0 3 .5 4.1 1.3"/><path d="M16.2 14.2l4.6 4.6M20.8 14.2l-4.6 4.6"/>',
     camera: '<path d="M4 8.3h3.2l1.6-2.5h6.4l1.6 2.5H20V19H4z"/><circle cx="12" cy="13.3" r="3.4"/>',
+    eraser: '<path d="M8.5 20.5 3.8 15.8a1.6 1.6 0 0 1 0-2.3l9.4-9.4a1.6 1.6 0 0 1 2.3 0l4.6 4.6a1.6 1.6 0 0 1 0 2.3l-9.9 9.5"/><path d="M8.5 20.5H20.5"/><path d="m8 10.5 6 6"/>',
     upload: '<path d="M12 15.5v-11"/><path d="M7.5 9 12 4.5 16.5 9"/><path d="M4.5 15v3.5a2 2 0 0 0 2 2h11a2 2 0 0 0 2-2V15"/>',
     image: '<rect x="3.5" y="4.5" width="17" height="15" rx="2"/><circle cx="9" cy="10" r="1.7"/><path d="M20.5 16.5l-5-5-8.5 8"/>',
     key: '<circle cx="8" cy="15" r="3.8"/><path d="M10.8 12.2 19 4"/><path d="M16 7l2.6 2.6"/><path d="M13.6 9.4l2 2"/>',
@@ -256,12 +258,45 @@
   };
   BG.iconEl = (name, size) => BG.frag(BG.icon(name, size));
 
-  /* ---------------- Okey taşı (imza öğesi) ---------------- */
-  /** color: red | blue | black | yellow | joker */
-  BG.tile = function (text, color, extraClass) {
-    return `<span class="tile tile-${color || 'red'}${extraClass ? ' ' + extraClass : ''}" aria-hidden="true"><b>${BG.esc(text)}</b><i></i></span>`;
+  /* ---------------- Skor tabelası kapakçığı (imza öğesi) ---------------- */
+  /** tone: ink | amber | coral | mint | sky | violet */
+  BG.tile = function (text, tone, extraClass) {
+    return `<span class="tile tile-${tone || 'ink'}${extraClass ? ' ' + extraClass : ''}" aria-hidden="true"><b>${BG.esc(text)}</b></span>`;
   };
-  /** Rozet: küçük okey taşı içinde sayı */
+  /** Her karakter ayrı kapakçıkta (logo, sayılar) */
+  BG.flapRow = function (text, tone, extraClass) {
+    return Array.from(String(text))
+      .map((ch) => (ch === ' ' ? '<span class="tile-space" aria-hidden="true"></span>' : BG.tile(ch, tone, extraClass)))
+      .join('');
+  };
+  /** Tabela gibi dönerek yerine oturma (sayfa açılışında bir kez) */
+  BG.flipIn = function (root) {
+    if (!root) return;
+    if (window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches) return;
+    const pool = 'ABCDEFGHIKLMNOPRSTUVYZÇÖŞÜ0123456789';
+    root.querySelectorAll('.tile').forEach((cell, i) => {
+      const b = cell.querySelector('b');
+      if (!b) return;
+      const target = b.textContent;
+      const flips = 6 + i * 2;
+      let n = 0;
+      const step = () => {
+        if (!cell.isConnected) return;
+        cell.classList.remove('flip-tick');
+        void cell.offsetWidth;
+        cell.classList.add('flip-tick');
+        if (n >= flips) {
+          b.textContent = target;
+          return;
+        }
+        b.textContent = pool[Math.floor(Math.random() * pool.length)];
+        n++;
+        setTimeout(step, 60);
+      };
+      setTimeout(step, 140 + i * 45);
+    });
+  };
+  /** Rozet: küçük tabela kutusunda sayı */
   BG.countBadge = function (n) {
     if (!n) return '';
     return `<span class="count-tile" aria-label="${n} yeni">${n > 99 ? '99+' : n}</span>`;
@@ -301,17 +336,17 @@
 
   /* ---------------- Oyun kataloğu ---------------- */
   BG.GAMES = {
-    americano: { key: 'americano', file: 'americano.html', name: 'Americano', glyph: 'A', color: 'red', activity: 'Americano oynuyor', group: 'americano' },
-    somali: { key: 'somali', file: 'somali.html', name: 'Somali', glyph: '13', color: 'yellow', activity: 'Somali oynuyor', group: 'somali' },
-    kura: { key: 'kura', file: 'kura-cek.html', name: 'Kura Çek', glyph: '✣', color: 'joker', activity: 'Kura çekiyor', group: 'kura' },
-    lig: { key: 'lig', file: 'lig.html', name: 'Lig Oluştur', glyph: '1', color: 'black', activity: 'Lig yönetiyor', group: 'lig' },
-    dartbot: { key: 'dartbot', file: 'dart/dartbot-v1.html', name: 'Dartbot', glyph: '20', color: 'blue', activity: 'Dartbot ile oynuyor', group: 'dart' },
-    'dart-turnuva': { key: 'dart-turnuva', file: 'dart/dart-turnuva.html', name: 'Dart Turnuva', glyph: '20', color: 'blue', activity: 'Dart turnuvasında', group: 'dart' },
-    'dart-mac': { key: 'dart-mac', file: 'dart/dart-mac.html', name: 'Dart Maç', glyph: '20', color: 'blue', activity: 'Dart maçında', group: 'dart' },
+    americano: { key: 'americano', file: 'americano.html', name: 'Americano', glyph: 'A', color: 'coral', activity: 'Americano oynuyor', group: 'americano' },
+    somali: { key: 'somali', file: 'somali.html', name: 'Somali', glyph: '13', color: 'amber', activity: 'Somali oynuyor', group: 'somali' },
+    kura: { key: 'kura', file: 'kura-cek.html', name: 'Kura Çek', glyph: 'K', color: 'mint', activity: 'Kura çekiyor', group: 'kura' },
+    lig: { key: 'lig', file: 'lig.html', name: 'Lig Oluştur', glyph: '1', color: 'violet', activity: 'Lig yönetiyor', group: 'lig' },
+    dartbot: { key: 'dartbot', file: 'dart/dartbot-v1.html', name: 'Dartbot', glyph: '20', color: 'sky', activity: 'Dartbot ile oynuyor', group: 'dart' },
+    'dart-turnuva': { key: 'dart-turnuva', file: 'dart/dart-turnuva.html', name: 'Dart Turnuva', glyph: '20', color: 'sky', activity: 'Dart turnuvasında', group: 'dart' },
+    'dart-mac': { key: 'dart-mac', file: 'dart/dart-mac.html', name: 'Dart Maç', glyph: '20', color: 'sky', activity: 'Dart maçında', group: 'dart' },
   };
   BG.gameTile = (key, extra) => {
     const g = BG.GAMES[key];
-    return g ? BG.tile(g.glyph, g.color, extra) : BG.tile('?', 'black', extra);
+    return g ? BG.tile(g.glyph, g.color, extra) : BG.tile('?', 'ink', extra);
   };
 
   /* ---------------- Tema ---------------- */

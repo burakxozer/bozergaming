@@ -27,6 +27,31 @@
     return rows;
   };
   BG.games.invalidate = () => (BG.games.cache = null);
+  /** Yarım kalan oyunu kapat: listeden kaldırır, kaldığı yerden devam edilemez */
+  BG.games.close = async function (o) {
+    const g = BG.GAMES[o.game] || {};
+    const ok = await BG.confirm({
+      title: 'Oyun kapatılsın mı?',
+      text: `${g.name || 'Bu'} oyunu kapatınca kaldığın yerden devam edemezsin.`,
+      okText: 'Oyunu kapat',
+      danger: true,
+    });
+    if (!ok) return false;
+    try {
+      if (o.local) BG.ls.del('bg.local.' + o.game);
+      else {
+        await BG.api.rpc('bg_delete_game', { p_id: o.id });
+        BG.ls.del('bg.backup.' + o.id);
+      }
+      BG.games.invalidate();
+      BG.bus.emit('games-changed');
+      BG.toast({ type: 'success', text: 'Oyun kapatıldı' });
+      return true;
+    } catch (e) {
+      BG.toastError(e);
+      return false;
+    }
+  };
   BG.games.localSaves = function () {
     return BG.ls
       .keys('bg.local.')
@@ -38,8 +63,9 @@
   function resumeItem(o) {
     const g = BG.GAMES[o.game] || {};
     const finished = o.status === 'finished';
-    return BG.frag(`
+    const li = BG.frag(`
       <li class="resume-item">
+        <button class="icon-btn resume-close" type="button" aria-label="${esc(g.name || 'Oyunu')} oyununu kapat" title="Oyunu kapat">${icon('x', 18)}</button>
         <a class="resume-link" href="#/oyun/${esc(o.game)}?devam=${esc(o.id)}">
           ${BG.gameTile(o.game, 'tile-s')}
           <span class="resume-text">
@@ -53,6 +79,8 @@
           </span>
         </a>
       </li>`);
+    li.querySelector('.resume-close').addEventListener('click', () => BG.games.close(o));
+    return li;
   }
 
   /* ---------- Ana sayfa ---------- */
@@ -62,11 +90,9 @@
     const root = BG.frag(`
       <div class="page home">
         <section class="hero ${me ? 'is-member' : ''}">
-          <div class="rack" role="img" aria-label="Bözer Gaming">
-            <div class="rack-tiles">
-              ${BG.tile('B', 'red', 'rack-tile')}${BG.tile('Ö', 'blue', 'rack-tile')}${BG.tile('Z', 'black', 'rack-tile')}${BG.tile('E', 'yellow', 'rack-tile')}${BG.tile('R', 'red', 'rack-tile')}
-            </div>
-            <div class="rack-bar"><span>Gaming</span></div>
+          <div class="board" role="img" aria-label="Bözer Gaming">
+            <div class="board-row board-main">${BG.flapRow('BÖZER', 'ink')}</div>
+            <div class="board-row board-sub">${BG.flapRow('GAMING', 'amber')}</div>
           </div>
           <div class="hero-copy">
             ${
@@ -134,7 +160,13 @@
                     <div class="mode-actions"><a class="btn btn-primary btn-sm" href="#/oyun/dart-mac">${icon('play', 16)}Başla</a></div>
                   </li>
                 </ul>
-                <a class="video-link" href="https://www.youtube.com/watch?v=mSMOEP9QWJk" target="_blank" rel="noopener">${icon('video', 18)}<span>Karambol Kriket nasıl oynanır? YouTube’da izle</span>${icon('external', 14)}</a>
+                <a class="yt-card" href="https://www.youtube.com/watch?v=mSMOEP9QWJk" target="_blank" rel="noopener" aria-label="Karambol Kriket nasıl oynanır? Videoyu YouTube’da aç (yeni sekme)">
+                  <span class="yt-thumb" aria-hidden="true"><span class="yt-play">${icon('play', 20)}</span></span>
+                  <span class="yt-text">
+                    <strong>Karambol Kriket nasıl oynanır?</strong>
+                    <span class="yt-src">YouTube’da izle${icon('external', 14)}</span>
+                  </span>
+                </a>
                 <p class="game-resume" hidden></p>
               </div>
             </article>
@@ -245,6 +277,10 @@
       resumeSec.hidden = !items.length;
     }
 
+    if (!BG._boardFlipped) {
+      BG._boardFlipped = true;
+      requestAnimationFrame(() => BG.flipIn(root.querySelector ? root.querySelector('.board') : null));
+    }
     renderLive();
     renderResume();
     const offs = [BG.bus.on('friends', renderLive), BG.bus.on('games-changed', () => { BG.games.invalidate(); renderResume(); })];
@@ -279,7 +315,7 @@
       const shown = rows.filter((r) => filter === 'all' || r.status === filter);
       list.innerHTML = '';
       if (!shown.length) {
-        list.innerHTML = `<li class="empty">${BG.tile('?', 'black', 'tile-s')}<p>${
+        list.innerHTML = `<li class="empty">${BG.tile('?', 'ink', 'tile-s')}<p>${
           filter === 'finished' ? 'Henüz biten oyunun yok.' : 'Kayıtlı oyunun yok. Bir oyun açtığında otomatik kaydedilir.'
         }</p><a class="btn btn-soft btn-sm" href="#/">Oyunlara göz at</a></li>`;
         return;
@@ -353,7 +389,7 @@
   /* ---------- Alt bilgi ---------- */
   BG.footerHtml = function () {
     return `<footer class="site-foot">
-      <div class="foot-brand">${BG.tile('B', 'red', 'tile-xs')}<span>Bözer Gaming</span></div>
+      <div class="foot-brand">${BG.tile('B', 'amber', 'tile-xs')}<span>Bözer Gaming</span></div>
       <nav class="foot-links">
         <a href="#/iletisim">İletişim</a>
         <button type="button" class="link-btn" data-theme-pick>${BG.icon('palette', 16)}Tema</button>

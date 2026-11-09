@@ -149,12 +149,12 @@
       const playing = users.filter((u) => u.online && u.game).length;
       const fresh = users.filter((u) => new Date(u.created_at).getTime() > weekAgo).length;
       root.querySelector('.stat-strip').innerHTML = [
-        [total, 'üye', 'black'],
-        [on, 'çevrimiçi', 'blue'],
-        [playing, 'oyunda', 'red'],
-        [fresh, 'son 7 günde katıldı', 'yellow'],
+        [total, 'üye', 'ink'],
+        [on, 'çevrimiçi', 'mint'],
+        [playing, 'oyunda', 'amber'],
+        [fresh, 'son 7 günde katıldı', 'sky'],
       ]
-        .map(([n, l, c]) => `<span class="stat">${BG.tile(String(n), c, 'tile-s')}<span>${esc(l)}</span></span>`)
+        .map(([n, l, c]) => `<span class="stat"><span class="flap-num">${BG.flapRow(String(n), c, 'tile-s')}</span><span>${esc(l)}</span></span>`)
         .join('');
     }
 

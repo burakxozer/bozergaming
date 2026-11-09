@@ -10,7 +10,7 @@
 
   function benefitsAside() {
     return `<aside class="auth-aside" aria-label="Üyelik avantajları">
-      <div class="aside-rack">${BG.tile('B', 'red', 'tile-s')}${BG.tile('Ö', 'blue', 'tile-s')}${BG.tile('Z', 'black', 'tile-s')}${BG.tile('E', 'yellow', 'tile-s')}${BG.tile('R', 'red', 'tile-s')}</div>
+      <div class="aside-board" role="img" aria-label="Bözer Gaming">${BG.flapRow('BÖZER', 'ink', 'tile-s')}</div>
       <h2>Üyelikle gelenler</h2>
       <ul class="benefits">
         <li>${icon('cloudCheck')}<div><strong>Oyunun kaybolmaz</strong><span>Her hamle hesabına kaydedilir. Sekmeyi kapatsan da kaldığın yerden devam edersin.</span></div></li>

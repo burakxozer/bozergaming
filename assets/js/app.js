@@ -40,7 +40,7 @@
     const authed = BG.isAuthed();
     topbar.innerHTML = `
       <div class="topbar-inner">
-        <a class="brand" href="#/" aria-label="Bözer Gaming ana sayfa">${BG.tile('B', 'red', 'tile-xs')}<span class="brand-name">Bözer Gaming</span></a>
+        <a class="brand" href="#/" aria-label="Bözer Gaming ana sayfa">${BG.tile('B', 'amber', 'tile-xs')}<span class="brand-name">Bözer Gaming</span></a>
         <nav class="nav" aria-label="Ana menü">
           ${navLink('/', 'tiles', 'Oyunlar')}
           ${authed ? navLink('/arkadaslar', 'users', 'Arkadaşlar', 'requests') : ''}

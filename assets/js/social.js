@@ -39,6 +39,109 @@
     return refreshing;
   };
 
+  /* ================= Arkadaş istatistikleri ================= */
+  social.stats = new Map();
+  social.statsLoaded = false;
+  social.refreshStats = async function () {
+    if (!BG.isAuthed()) return;
+    try {
+      const rows = (await BG.api.rpc('bg_friends_stats', {})) || [];
+      social.stats = new Map(rows.map((r) => [r.user_id, r]));
+      social.statsLoaded = true;
+      BG.bus.emit('friend-stats');
+    } catch (e) {
+      console.warn('[social] stats', e);
+    }
+  };
+  function statsLine(f) {
+    if (f.relation !== 'friend' || !social.statsLoaded) return '';
+    const st = social.stats.get(f.user_id);
+    if (!st || !st.games_played) return '<span class="person-stats">Henüz oyun oynamadı</span>';
+    const fav = st.favorite_game && BG.GAMES[st.favorite_game];
+    return `<span class="person-stats"><span><b>${st.games_played}</b> oyun</span>${
+      fav ? `<span>En çok ${esc(fav.name)}</span>` : ''
+    }${st.last_played_at ? `<span>Son oyun ${esc(BG.fmt.ago(st.last_played_at))}</span>` : ''}</span>`;
+  }
+
+  const monthYear = (d) => {
+    try {
+      return new Date(d).toLocaleDateString('tr-TR', { month: 'long', year: 'numeric' });
+    } catch (e) {
+      return '';
+    }
+  };
+
+  /** Arkadaşın profil kartı: oyun sayıları, en çok oynadıkları, son oyunları */
+  social.openProfile = function (f) {
+    const body = BG.h('div.fp');
+    body.innerHTML = '<p class="loading-row">Yükleniyor…</p>';
+    const m = BG.modal({ title: f.full_name || f.username, body, size: 'm' });
+    body.addEventListener('click', (e) => {
+      if (e.target.closest('[data-close]')) m.close();
+    });
+    BG.api
+      .rpc('bg_friend_profile', { p_user: f.user_id })
+      .then((p) => {
+        const g = p.game && BG.GAMES[p.game];
+        const status = p.online ? (g ? g.activity : 'Çevrimiçi') : p.last_seen_at ? 'Son görülme ' + BG.fmt.ago(p.last_seen_at) : 'Çevrimdışı';
+        const per = Object.entries(p.per_game || {})
+          .filter(([k, n]) => BG.GAMES[k] && n > 0)
+          .sort((a, b) => b[1] - a[1])
+          .slice(0, 5);
+        const max = per.length ? per[0][1] : 1;
+        const recent = (p.recent || []).filter((r) => BG.GAMES[r.game]);
+        body.innerHTML = `
+          <div class="fp-head">
+            ${BG.avatar(p, { size: 64, online: !!p.online })}
+            <div class="fp-id">
+              <span class="muted">@${esc(p.username)}</span>
+              <span class="fp-status ${p.online ? (p.game ? 'is-playing' : 'is-on') : ''}">${esc(status)}</span>
+            </div>
+            ${p.live && p.session_id ? `<a class="btn btn-live btn-sm" href="#/izle/${esc(p.session_id)}" data-close><span class="live-dot"></span>İzle</a>` : ''}
+          </div>
+          <div class="fp-stats">
+            <div class="fp-stat"><span class="flap-num">${BG.flapRow(String(p.games_played || 0), 'amber', 'tile-s')}</span><span>oyun oynadı</span></div>
+            <div class="fp-stat"><span class="flap-num">${BG.flapRow(String(p.games_finished || 0), 'ink', 'tile-s')}</span><span>oyunu bitirdi</span></div>
+            <div class="fp-stat"><span class="flap-num">${BG.flapRow(String(p.friends_count || 0), 'ink', 'tile-s')}</span><span>arkadaşı var</span></div>
+          </div>
+          ${
+            per.length
+              ? `<section class="fp-sec"><h3>En çok oynadıkları</h3><ul class="fp-bars">${per
+                  .map(
+                    ([k, n]) => `<li>${BG.gameTile(k, 'tile-xs')}<span class="fp-bar-name">${esc(BG.GAMES[k].name)}</span>
+                      <span class="fp-bar"><i style="width:${Math.max(8, Math.round((n / max) * 100))}%"></i></span><b>${n}</b></li>`
+                  )
+                  .join('')}</ul></section>`
+              : '<p class="fp-empty">Henüz oyun oynamadı.</p>'
+          }
+          ${
+            recent.length
+              ? `<section class="fp-sec"><h3>Son oyunları</h3><ul class="fp-recent">${recent
+                  .map(
+                    (r) => `<li>${BG.gameTile(r.game, 'tile-xs')}
+                      <span class="fp-r-text"><strong>${esc(BG.GAMES[r.game].name)}</strong>${r.title ? `<span>${esc(r.title)}</span>` : ''}</span>
+                      <span class="fp-r-meta">${
+                        r.is_live
+                          ? `<a class="chip chip-live" href="#/izle/${esc(r.id)}" data-close><span class="live-dot"></span>Canlı</a>`
+                          : r.status === 'finished'
+                          ? '<em class="chip chip-done">Bitti</em>'
+                          : '<em class="chip chip-active">Devam ediyor</em>'
+                      }<time>${esc(BG.fmt.ago(r.updated_at))}</time></span></li>`
+                  )
+                  .join('')}</ul></section>`
+              : ''
+          }
+          <p class="fp-meta"><span>Üyelik: ${esc(monthYear(p.member_since))}</span>${
+            p.friends_since ? `<span>Arkadaşlığınız: ${esc(monthYear(p.friends_since))}</span>` : ''
+          }</p>
+          <div class="fp-actions"><a class="btn btn-primary" href="#/mesajlar/${esc(p.username)}" data-close>${icon('message', 18)}Mesaj gönder</a></div>`;
+      })
+      .catch((e) => {
+        body.innerHTML = `<p class="loading-row">${esc(e.message)}</p>`;
+      });
+    return m;
+  };
+
   social.statusText = function (f) {
     if (!f || f.relation !== 'friend') return '';
     if (f.online) {
@@ -206,6 +309,7 @@
     let actions = '';
     if (f.relation === 'friend') {
       actions = `${f.live && f.session_id ? `<a class="btn btn-live btn-sm" href="#/izle/${esc(f.session_id)}"><span class="live-dot"></span>İzle</a>` : ''}
+        <button class="btn btn-ghost btn-sm" type="button" data-act="profile" title="Etkinlik">${icon('chart', 16)}<span class="hide-s">Etkinlik</span></button>
         <a class="btn btn-soft btn-sm" href="#/mesajlar/${esc(f.username)}">${icon('message', 16)}<span class="hide-s">Mesaj</span></a>
         <button class="icon-btn" type="button" data-act="remove" aria-label="Arkadaşlıktan çıkar" title="Arkadaşlıktan çıkar">${icon('userX')}</button>`;
     } else if (f.relation === 'incoming') {
@@ -215,9 +319,16 @@
       actions = `<span class="muted small hide-s">Yanıt bekleniyor</span><button class="btn btn-ghost btn-sm" type="button" data-act="cancel">Geri al</button>`;
     }
     const statusCls = f.relation === 'friend' && f.online ? (f.game ? 'is-playing' : 'is-on') : '';
-    li.innerHTML = `${BG.avatar(f, { size: 46, online: f.relation === 'friend' ? !!f.online : undefined })}
-      <div class="person-text"><strong>${esc(f.full_name || f.username)}</strong><span>@${esc(f.username)}</span>
-      ${f.relation === 'friend' ? `<span class="person-status ${statusCls}">${esc(social.statusText(f))}</span>` : ''}</div>
+    const name = esc(f.full_name || f.username);
+    li.innerHTML = `${
+      f.relation === 'friend'
+        ? `<button class="avatar-btn" type="button" data-act="profile" aria-label="${name} profilini aç">${BG.avatar(f, { size: 46, online: !!f.online })}</button>`
+        : BG.avatar(f, { size: 46 })
+    }
+      <div class="person-text">${
+        f.relation === 'friend' ? `<button class="name-btn" type="button" data-act="profile">${name}</button>` : `<strong>${name}</strong>`
+      }<span>@${esc(f.username)}</span>
+      ${f.relation === 'friend' ? `<span class="person-status ${statusCls}">${esc(social.statusText(f))}</span>` : ''}${statsLine(f)}</div>
       <div class="person-actions">${actions}</div>`;
     li.addEventListener('click', (e) => {
       const b = e.target.closest('[data-act]');
@@ -227,6 +338,7 @@
       else if (a === 'decline') social.respond(f.request_id, false);
       else if (a === 'cancel') social.remove(f, 'İstek geri alınsın mı?');
       else if (a === 'remove') social.remove(f);
+      else if (a === 'profile') social.openProfile(f);
     });
     return li;
   }
@@ -264,7 +376,7 @@
       const sf = root.querySelector('#secFriends');
       sf.querySelector('.count-text').textContent = fr.length ? fr.filter((f) => f.online).length + ' çevrimiçi, ' + fr.length + ' arkadaş' : '';
       const ul = sf.querySelector('ul');
-      if (!fr.length) ul.innerHTML = `<li class="empty">${BG.tile('?', 'black', 'tile-s')}<p>Henüz arkadaşın yok. Kullanıcı adını yazarak arkadaş ekleyebilirsin.</p></li>`;
+      if (!fr.length) ul.innerHTML = `<li class="empty">${BG.tile('?', 'ink', 'tile-s')}<p>Henüz arkadaşın yok. Kullanıcı adını yazarak arkadaş ekleyebilirsin.</p></li>`;
       else ul.replaceChildren(...fr.map(friendRow));
       const so = root.querySelector('#secOutgoing');
       so.hidden = !out.length;
@@ -322,8 +434,18 @@
 
     render();
     social.refreshFriends();
-    const off = BG.bus.on('friends', render);
-    return { node: root, cleanup: off };
+    social.refreshStats();
+    // İstatistikler sayfa açıkken de tazelensin (en fazla 30 saniyede bir)
+    let statsAt = Date.now();
+    const onFriends = () => {
+      render();
+      if (Date.now() - statsAt > 30000) {
+        statsAt = Date.now();
+        social.refreshStats();
+      }
+    };
+    const offs = [BG.bus.on('friends', onFriends), BG.bus.on('friend-stats', render)];
+    return { node: root, cleanup: () => offs.forEach((f) => f()) };
   };
 
   /* ================= Sohbet ================= */
@@ -385,9 +507,10 @@
       el.querySelector('.th-avatar').innerHTML = BG.avatar(f, { size: 40, online: f.relation === 'friend' ? !!f.online : undefined });
       el.querySelector('.th-status').textContent = f.relation === 'friend' ? social.statusText(f) : '@' + f.username;
       el.querySelector('.th-actions').innerHTML =
-        f.relation === 'friend' && f.live && f.session_id
+        (f.relation === 'friend' && f.live && f.session_id
           ? `<a class="btn btn-live btn-sm" href="#/izle/${esc(f.session_id)}"><span class="live-dot"></span>İzle</a>`
-          : '';
+          : '') +
+        `<button class="icon-btn" type="button" data-clear aria-label="Sohbeti temizle" title="Sohbeti temizle">${icon('eraser')}</button>`;
       const can = f.relation === 'friend';
       form.hidden = !can;
       note.hidden = can;
@@ -439,6 +562,43 @@
       if (keepScroll === 'older') msgsBox.scrollTop = msgsBox.scrollHeight - prevH + prevTop;
       else if (keepScroll !== 'stay' || atBottom) msgsBox.scrollTop = msgsBox.scrollHeight;
     }
+
+    async function clearThread() {
+      if (!msgs.some((m) => m.id)) {
+        BG.toast({ type: 'info', text: 'Temizlenecek mesaj yok.' });
+        return;
+      }
+      const name = person.full_name || person.username;
+      const ok = await BG.confirm({
+        title: 'Sohbet temizlensin mi?',
+        text: `Bu sohbetteki mesajlar senin için silinecek. ${name} kendi mesajlarını görmeye devam eder.`,
+        okText: 'Sohbeti temizle',
+        danger: true,
+      });
+      if (!ok) return;
+      try {
+        await BG.api.rpc('bg_clear_thread', { p_other: person.user_id });
+        msgs = [];
+        noMore = true;
+        render();
+        BG.bus.emit('conversations');
+        BG.api
+          .rpc('bg_unread_count', {})
+          .then((n) => {
+            if (typeof n === 'number') {
+              BG.store.unread = n;
+              BG.bus.emit('counts');
+            }
+          })
+          .catch(() => {});
+        BG.toast({ type: 'success', text: 'Sohbet temizlendi' });
+      } catch (e) {
+        BG.toastError(e);
+      }
+    }
+    el.querySelector('.thread-head').addEventListener('click', (e) => {
+      if (e.target.closest('[data-clear]')) clearThread();
+    });
 
     async function markRead() {
       try {
@@ -569,7 +729,7 @@
         const rows = (await BG.api.rpc('bg_conversations', {})) || [];
         if (!el.isConnected) return;
         if (!rows.length) {
-          list.innerHTML = `<li class="empty">${BG.tile('?', 'black', 'tile-s')}<p>Henüz mesajın yok. “Yeni” ile bir arkadaşına yaz.</p></li>`;
+          list.innerHTML = `<li class="empty">${BG.tile('?', 'ink', 'tile-s')}<p>Henüz mesajın yok. “Yeni” ile bir arkadaşına yaz.</p></li>`;
           return;
         }
         list.innerHTML = '';
@@ -646,7 +806,7 @@
     const narrow = () => window.matchMedia('(max-width: 820px)').matches;
     destroyers.push(chat.mountList(convPane, { active: username, onOpen: (u) => BG.router.go('/mesajlar/' + u) }));
     if (!username) {
-      threadPane.innerHTML = `<div class="empty thread-placeholder">${BG.tile('B', 'red')}<p>Bir sohbet seç ya da yeni bir mesaj başlat.</p></div>`;
+      threadPane.innerHTML = `<div class="empty thread-placeholder">${BG.tile('B', 'amber')}<p>Bir sohbet seç ya da yeni bir mesaj başlat.</p></div>`;
     } else {
       threadPane.innerHTML = '<p class="loading-row">Yükleniyor…</p>';
       resolvePerson(username).then((p) => {
