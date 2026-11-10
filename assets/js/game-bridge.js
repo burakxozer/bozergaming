@@ -14,7 +14,8 @@
     'lig.html': 'lig',
     'dart-mac.html': 'dart-mac',
     'dart-turnuva.html': 'dart-turnuva',
-    'dartbot-v1.html': 'dartbot'
+    'dartbot-v1.html': 'dartbot',
+    'dart-lig.html': 'dart-lig'
   };
   var file = decodeURIComponent((location.pathname.split('/').pop() || '').toLowerCase());
   var KEY = FILES[file] || '';
@@ -660,6 +661,109 @@
       return {
         title: 'Sen – Dartbot (seviye ' + (botLevel === 11 ? 'insanüstü' : botLevel) + ')',
         summary: scores ? 'Kapatılan: sen ' + closed(scores[0]) + '/13, bot ' + closed(scores[1]) + '/13' : ''
+      };
+    }
+  };
+
+  /* ---------------- DART LİG ---------------- */
+  // Ekranlar oyunun kendi çizim işlevleriyle değişir; hangisinin açık olduğunu izle
+  var DL_VIEW = 'renderPlayerCount';
+  var DL_HTML_VIEWS = ['count', 'teamCount', 'players', 'renderScoring'];
+  if (KEY === 'dart-lig') {
+    ['renderPlayerCount', 'renderScoring', 'renderTeamsPreview', 'renderLeague', 'renderTable', 'renderDartMatch', 'renderChampion'].forEach(function (n) {
+      var f = window[n];
+      if (typeof f !== 'function') return;
+      window[n] = function () {
+        DL_VIEW = n;
+        return f.apply(this, arguments);
+      };
+    });
+  }
+  function dlView() {
+    if ($('count')) return 'count';
+    if ($('teamCount')) return 'teamCount';
+    if (document.querySelector('#screen .player-name')) return 'players';
+    return DL_VIEW;
+  }
+  A['dart-lig'] = {
+    getState: function () {
+      var view = dlView();
+      var md = $('modal');
+      return {
+        v: 1,
+        view: view,
+        playerCount: playerCount,
+        teamCount: teamCount,
+        players: copy(players),
+        teams: copy(teams),
+        rounds: copy(rounds),
+        stats: copy(stats),
+        results: copy(results),
+        currentRound: currentRound,
+        doubleRound: doubleRound,
+        winPoints: winPoints,
+        byePoints: byePoints,
+        leagueFirstTo: leagueFirstTo,
+        scoringMode: scoringMode,
+        setRules: copy(setRules),
+        byeAwarded: Array.from(byeAwarded),
+        activeMatch: copy(activeMatch),
+        dart: copy(dart),
+        html: DL_HTML_VIEWS.indexOf(view) >= 0 ? htmlWithValues($('screen')) : '',
+        modal: md && !md.classList.contains('hidden') ? $('modalBox').innerHTML : ''
+      };
+    },
+    restore: function (s) {
+      if (!s || !s.view) return false;
+      playerCount = s.playerCount || 0;
+      teamCount = s.teamCount || 0;
+      players = s.players || [];
+      teams = s.teams || [];
+      rounds = s.rounds || [];
+      stats = s.stats || {};
+      results = s.results || {};
+      currentRound = s.currentRound || 0;
+      doubleRound = !!s.doubleRound;
+      if (s.winPoints != null) winPoints = s.winPoints;
+      if (s.byePoints != null) byePoints = s.byePoints;
+      if (s.leagueFirstTo != null) leagueFirstTo = s.leagueFirstTo;
+      scoringMode = s.scoringMode === 'sets' ? 'sets' : 'win';
+      if (s.setRules && s.setRules.length) setRules = s.setRules;
+      byeAwarded = new Set(s.byeAwarded || []);
+      activeMatch = s.activeMatch || null;
+      if (s.dart) dart = s.dart;
+      if (DL_HTML_VIEWS.indexOf(s.view) >= 0 && s.html) {
+        $('screen').innerHTML = s.html;
+        if (s.view === 'renderScoring') DL_VIEW = 'renderScoring';
+      } else if (typeof window[s.view] === 'function') window[s.view]();
+      else renderLeague();
+      var md = $('modal');
+      md.classList.add('hidden');
+      // maç sonucu penceresi açıksa geri gelsin (sonuç fikstüre işlenmeden kalmasın)
+      if (s.modal && /recordDartWinner\(/.test(s.modal) && activeMatch) {
+        $('modalBox').innerHTML = s.modal;
+        md.classList.remove('hidden');
+      }
+      return true;
+    },
+    isInitial: function () {
+      var c = $('count');
+      return dlView() === 'count' && !!c && !c.value;
+    },
+    isFinished: function () {
+      return DL_VIEW === 'renderChampion';
+    },
+    meta: function () {
+      var total = 0;
+      (rounds || []).forEach(function (r) {
+        r.forEach(function (m) {
+          if (m.indexOf('BAY') < 0) total++;
+        });
+      });
+      var played = Object.keys(results || {}).length;
+      return {
+        title: teams && teams.length ? names(teams) : 'Lig kurulumu',
+        summary: total ? played + '/' + total + ' maç oynandı' + (activeMatch && activeMatch.teams ? ', oynanan maç: ' + activeMatch.teams.join(' – ') : '') : ''
       };
     }
   };

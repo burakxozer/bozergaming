@@ -97,7 +97,7 @@
               <span class="muted">@${esc(p.username)}</span>
               <span class="fp-status ${p.online ? (p.game ? 'is-playing' : 'is-on') : ''}">${esc(status)}</span>
             </div>
-            ${p.live && p.session_id ? `<a class="btn btn-live btn-sm" href="#/izle/${esc(p.session_id)}" data-close><span class="live-dot"></span>İzle</a>` : ''}
+            ${p.live && p.session_id ? `<a class="btn btn-live btn-sm" href="${esc(BG.watchHref(p.game, p.session_id, p.user_id || p.id))}" data-close><span class="live-dot"></span>İzle</a>` : ''}
           </div>
           <div class="fp-stats">
             <div class="fp-stat"><span class="flap-num">${BG.flapRow(String(p.games_played || 0), 'amber', 'tile-s')}</span><span>oyun oynadı</span></div>
@@ -308,7 +308,7 @@
     const li = BG.frag(`<li class="person-row" data-id="${esc(f.user_id)}"></li>`);
     let actions = '';
     if (f.relation === 'friend') {
-      actions = `${f.live && f.session_id ? `<a class="btn btn-live btn-sm" href="#/izle/${esc(f.session_id)}"><span class="live-dot"></span>İzle</a>` : ''}
+      actions = `${f.live && f.session_id ? `<a class="btn btn-live btn-sm" href="${esc(BG.watchHref(f.game, f.session_id, f.user_id))}"><span class="live-dot"></span>İzle</a>` : ''}
         <button class="btn btn-ghost btn-sm" type="button" data-act="profile" title="Etkinlik">${icon('chart', 16)}<span class="hide-s">Etkinlik</span></button>
         <a class="btn btn-soft btn-sm" href="#/mesajlar/${esc(f.username)}">${icon('message', 16)}<span class="hide-s">Mesaj</span></a>
         <button class="icon-btn" type="button" data-act="remove" aria-label="Arkadaşlıktan çıkar" title="Arkadaşlıktan çıkar">${icon('userX')}</button>`;
@@ -508,7 +508,7 @@
       el.querySelector('.th-status').textContent = f.relation === 'friend' ? social.statusText(f) : '@' + f.username;
       el.querySelector('.th-actions').innerHTML =
         (f.relation === 'friend' && f.live && f.session_id
-          ? `<a class="btn btn-live btn-sm" href="#/izle/${esc(f.session_id)}"><span class="live-dot"></span>İzle</a>`
+          ? `<a class="btn btn-live btn-sm" href="${esc(BG.watchHref(f.game, f.session_id, f.user_id))}"><span class="live-dot"></span>İzle</a>`
           : '') +
         `<button class="icon-btn" type="button" data-clear aria-label="Sohbeti temizle" title="Sohbeti temizle">${icon('eraser')}</button>`;
       const can = f.relation === 'friend';

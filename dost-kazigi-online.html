@@ -1,0 +1,2481 @@
+<!doctype html>
+<html lang="tr">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no, viewport-fit=cover" />
+<meta name="theme-color" content="#03100a" />
+<title>Dost Kazığı Online · Bözer Gaming</title>
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@600;700;800;900&family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet" />
+<link rel="stylesheet" href="assets/css/bg-table.css?v=2.2.0" />
+<style>
+:root{--gold:#e6c15a;--gold-hi:#fad87b;--gold-lo:#a37a24;--ink:#f8f1dd;--mint:#7cf0b5;--glass:#060e0adb;--head:"Cinzel",serif;--body:"Plus Jakarta Sans",sans-serif}#root,.App,body,html{height:100%;margin:0;overflow:hidden;width:100%}body{-webkit-tap-highlight-color:transparent;background:#03100a;color:#f8f1dd;color:var(--ink);overscroll-behavior:none;user-select:none;-webkit-user-select:none}body,button{font-family:Plus Jakarta Sans,sans-serif;font-family:var(--body)}button{cursor:pointer}*{box-sizing:border-box}@keyframes popIn{0%{opacity:0;transform:scale(.94) translateY(10px)}}@keyframes fadeIn{0%{opacity:0}}@keyframes breathe{to{opacity:.78;text-shadow:0 0 34px #fad87be6}}@keyframes dealIn{0%{opacity:0;translate:-80px 40px}}@keyframes seatGlow{to{box-shadow:0 0 0 3px #fad87b,0 0 56px #f5b83dd9,0 0 120px #f5b83d59,0 18px 40px #00000080;box-shadow:0 0 0 3px var(--gold-hi),0 0 56px #f5b83dd9,0 0 120px #f5b83d59,0 18px 40px #00000080}}@keyframes grpPulse{0%{filter:brightness(1.45);transform:scale(1.2)}to{filter:brightness(1);transform:scale(1)}}@keyframes badgePop{0%{transform:scale(1.7)}60%{transform:scale(.9)}to{transform:scale(1)}}@keyframes tickIn{0%{opacity:0;transform:translate(-50%,10px)}}@keyframes bannerAnim{0%{opacity:0;transform:translate(-50%,14px) scale(.92)}14%{opacity:1;transform:translate(-50%) scale(1)}78%{opacity:1}to{opacity:0;visibility:hidden}}@keyframes trophy{to{transform:translateY(-6px) scale(1.05)}}@keyframes rot{0%,20%{transform:rotate(0)}50%,80%{transform:rotate(-90deg)}to{transform:rotate(0)}}@keyframes ribbon{to{transform:translateX(-50%) translateY(-2px)}}.game-root{background:radial-gradient(ellipse at 50% 45%,#0f3a25 0,#06190f 55%,#020805 100%);inset:0;position:fixed}.stage-wrap{inset:0;overflow:hidden;position:fixed}.stage{left:0;position:absolute;top:0;transform-origin:0 0}.table-scene{inset:0;position:absolute}.felt{background:radial-gradient(ellipse at 50% 45%,#1b6e42 0,#145734 34%,#0d4327 62%,#072b18 100%);box-shadow:0 0 0 14px #3b1c10,0 0 0 16px #24110a,0 0 0 18px #e6c15a6b,0 40px 90px #000000bf,inset 0 0 140px #0000008c;height:640px;top:64px;z-index:1}.felt,.felt:after{border-radius:50%;position:absolute}.felt:after{background-image:url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='160' height='160'><filter id='n'><feTurbulence type='fractalNoise' baseFrequency='.9' numOctaves='2' stitchTiles='stitch'/></filter><rect width='100%' height='100%' filter='url(%23n)'/></svg>");content:"";inset:0;mix-blend-mode:overlay;opacity:.22;pointer-events:none}.felt-ring{border:1.5px solid #e6c15a2e;border-radius:50%;inset:26px}.felt-logo,.felt-ring{pointer-events:none;position:absolute}.felt-logo{color:#e6c15a29;font-family:Cinzel,serif;font-family:var(--head);font-size:16px;font-weight:800;left:50%;letter-spacing:.6em;top:89%;transform:translateX(-50%);white-space:nowrap}.pc{background:linear-gradient(155deg,#fffdf6,#f6f0e1 60%,#ebe1cb);border-radius:calc(var(--cw)*.085);box-shadow:inset 0 0 0 calc(var(--cw)*.035) #fffdf6,inset 0 0 0 calc(var(--cw)*.045) #aa823259,0 1px 0 #cfc5ad,0 2px 0 #b4a98f,0 7px 14px #0006;color:#17171c;flex-shrink:0;overflow:hidden;position:relative}.pc.red{color:#c2182f}.pc .idx{align-items:center;display:flex;flex-direction:column;font-family:Cinzel,serif;font-family:var(--head);font-weight:800;line-height:.86;position:absolute}.pc .idx.tl{left:calc(var(--cw)*.07);top:calc(var(--cw)*.07)}.pc .idx.br{bottom:calc(var(--cw)*.07);right:calc(var(--cw)*.07);transform:rotate(180deg)}.pc .idx .r{font-size:calc(var(--cw)*.3);letter-spacing:-.04em}.pc.ten .idx .r{font-size:calc(var(--cw)*.25);letter-spacing:-.1em}.pc .idx .s{font-size:calc(var(--cw)*.2);margin-top:calc(var(--cw)*.02)}.pc .pip{display:grid;font-size:calc(var(--cw)*.56);inset:0;line-height:1;place-items:center;position:absolute}.pc .pip.ace{font-size:calc(var(--cw)*.8)}.pc .face{align-items:center;background:linear-gradient(160deg,#e6c15a38,#e6c15a0a);border:1px solid #aa823299;border-radius:calc(var(--cw)*.05);box-shadow:inset 0 0 0 2px #fffdf6cc,inset 0 0 0 3px #aa82324d;display:flex;flex-direction:column;inset:21% 19%;justify-content:center;position:absolute}.face .fl{font-family:Cinzel,serif;font-family:var(--head);font-size:calc(var(--cw)*.4);font-weight:900;line-height:.9}.face .fs{font-size:calc(var(--cw)*.18)}.face-ic{color:#b8860b}.pc.job{background:radial-gradient(circle at 50% 38%,#4a2490 0,#2a1258 55%,#160930 100%);box-shadow:inset 0 0 0 calc(var(--cw)*.03) #160930,inset 0 0 0 calc(var(--cw)*.045) #e6c15a,0 2px 0 #0c0420,0 7px 14px #00000073;box-shadow:inset 0 0 0 calc(var(--cw)*.03) #160930,inset 0 0 0 calc(var(--cw)*.045) var(--gold),0 2px 0 #0c0420,0 7px 14px #00000073;color:#f5d77a}.job-idx span{color:#ffe79a;font-family:Cinzel,serif;font-family:var(--head);font-size:calc(var(--cw)*.2);font-weight:900;line-height:.95;text-shadow:0 0 8px #ffd778b3}.job-center{align-items:center;display:flex;filter:drop-shadow(0 0 8px rgba(245,215,122,.55));flex-direction:column;gap:2px;inset:0;justify-content:center;position:absolute}.job-word{font-family:Cinzel,serif;font-family:var(--head);font-size:calc(var(--cw)*.22);font-weight:900;letter-spacing:.12em}.pcb{background:linear-gradient(155deg,#8e1c27,#5e0e16);border-radius:calc(var(--cw)*.085);box-shadow:0 0 0 1px #0006,0 4px 10px #00000073;flex-shrink:0;padding:calc(var(--cw)*.06)}.pcb-in{background:repeating-linear-gradient(45deg,#e6c15a38 0 1.5px,#0000 1.5px 7px),repeating-linear-gradient(-45deg,#e6c15a38 0 1.5px,#0000 1.5px 7px);border:1px solid #e6c15abf;border-radius:calc(var(--cw)*.05);display:grid;height:100%;place-items:center;width:100%}.pcb-medal{aspect-ratio:1;background:radial-gradient(circle,#8e1c27,#4a0a10);border:1px solid #e6c15a;border:1px solid var(--gold);border-radius:50%;color:#e6c15a;color:var(--gold);display:grid;font-family:Cinzel,serif;font-family:var(--head);font-size:calc(var(--cw)*.16);font-weight:900;place-items:center;width:48%}.seat{-webkit-backdrop-filter:blur(14px);backdrop-filter:blur(14px);background:linear-gradient(160deg,#102219f0,#060e0af0);border:1px solid #e6c15a2e;border-left:4px solid var(--team);border-radius:18px;box-shadow:0 18px 40px #00000073,inset 0 1px #ffffff0f;padding:10px 12px;position:absolute;transition:transform .3s,box-shadow .3s,border-color .3s,opacity .3s;z-index:10}.seat:not(.active){opacity:.94}.seat.active{animation:seatGlow 1.3s ease-in-out infinite alternate;border-color:#f5b83d;box-shadow:0 0 0 2px #f5b83d,0 0 36px #f5b83d99,0 0 90px #f5b83d40,0 18px 40px #00000080;transform:scale(1.045);z-index:12}.seat.hl{animation:none;border-color:#7cf0b5;border-color:var(--mint);box-shadow:0 0 0 2px #7cf0b5bf,0 0 32px #7cf0b559}.seat.hov{box-shadow:0 0 0 3px #7cf0b5,0 0 50px #7cf0b599;box-shadow:0 0 0 3px var(--mint),0 0 50px #7cf0b599;transform:scale(1.05)}.seat-ribbon{animation:ribbon .7s ease-in-out infinite alternate;background:linear-gradient(90deg,#fad87b,#e6a93a);background:linear-gradient(90deg,var(--gold-hi),#e6a93a);box-shadow:0 4px 16px #f5b83db3;color:#1d1404;font-size:12px;left:50%;letter-spacing:.2em;padding:4px 16px;top:-14px;transform:translateX(-50%)}.seat-hint,.seat-ribbon{border-radius:99px;font-weight:800;position:absolute;white-space:nowrap;z-index:20}.seat-hint{background:#7cf0b5;background:var(--mint);bottom:-12px;color:#062314;font-size:11px;padding:3px 10px;right:14px}.seat-head{align-items:center;display:flex;gap:10px;height:36px}.avatar{background:radial-gradient(circle at 30% 30%,#fff8,#0000 45%),var(--team);border-radius:50%;box-shadow:0 0 0 2px #00000073;color:#111;display:grid;flex-shrink:0;font-family:Cinzel,serif;font-family:var(--head);font-size:17px;font-weight:900;height:36px;place-items:center;position:relative;width:36px}.timer-ring{height:44px;inset:-4px;position:absolute;transform:rotate(-90deg);width:44px}.timer-ring circle{fill:none;stroke-width:3}.tr-bg{stroke:#ffffff26}.tr-fg{stroke:#fad87b;stroke:var(--gold-hi);stroke-linecap:round;transition:stroke-dashoffset .1s linear}.seat-meta{flex:1 1;min-width:0}.seat-name{color:#f8f1dd;color:var(--ink);font-size:16px;font-weight:700;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}.seat-tags{display:flex;gap:5px;margin-top:3px}.tag{background:#ffffff12;border-radius:5px;color:#b9c4bc;font-size:9.5px;font-weight:800;letter-spacing:.08em;padding:2px 6px;white-space:nowrap}.tag.team{background:#ffffff0f;color:var(--team)}.tag.you{background:#e6c15a;background:var(--gold);color:#1d1404}.tag.mate{background:#7cf0b529;color:#7cf0b5;color:var(--mint)}.hidden-hand{align-items:center;display:flex;gap:8px}.hh-fan{height:34px;position:relative;width:62px}.hh-anchor,.hh-card{position:absolute;top:0}.hh-anchor{height:34px;pointer-events:none;right:0;width:24px}.hh-num{color:#f8f1dd;color:var(--ink);font-family:Cinzel,serif;font-family:var(--head);font-size:18px;font-weight:800;min-width:14px}.gstack{margin-top:8px;position:relative}.grp{position:absolute;top:2px;transition:left .38s cubic-bezier(.3,.7,.3,1),transform .25s}.grp>.pc{position:relative;z-index:2}.grp.under{filter:brightness(.9) saturate(.9);top:8px}.grp.top.hl{transform:translateY(-6px)}.grp.top.hl>.pc{box-shadow:0 0 0 3px #7cf0b5,0 0 26px #7cf0b5bf;box-shadow:0 0 0 3px var(--mint),0 0 26px #7cf0b5bf}.grp.top.hov{transform:translateY(-8px) scale(1.06)}.grp.pulse{animation:grpPulse .7s ease-out}.grp.pulse .gbadge{animation:badgePop .6s ease-out}.glayer{background:linear-gradient(160deg,#f7f1e3,#ded4bd);border:1px solid #3c280a59;border-radius:7px;box-shadow:0 2px 4px #00000059;inset:0;z-index:1}.gbadge,.glayer{position:absolute}.gbadge{background:linear-gradient(180deg,#fad87b,#d9a23a);background:linear-gradient(180deg,var(--gold-hi),#d9a23a);border-radius:7px;bottom:6px;box-shadow:0 2px 6px #0000008c;color:#1a1003;font-size:16px;font-weight:900;left:4px;padding:1px 7px;z-index:5}.gbadge.sm{bottom:3px;font-size:12px;left:2px;padding:0 5px}.gbadge.fly{font-size:15px}.g-more{align-items:center;background:#e6c15a14;border:1px dashed #e6c15a8c;border-radius:8px;color:#e6c15a;color:var(--gold);display:flex;flex-direction:column;font-size:12px;font-weight:800;gap:4px;justify-content:center;left:0;position:absolute;top:6px;width:28px}.gslot{pointer-events:none}.gempty,.gslot{position:absolute;top:2px}.gempty{border:1.5px dashed #ffffff1f;border-radius:8px;color:#ffffff40;display:grid;font-size:12px;left:0;letter-spacing:.1em;place-items:center}.center{align-items:center;display:flex;gap:22px;justify-content:space-between;position:absolute;z-index:5}.zone-label{color:#f8f1dd99;font-size:11px;font-weight:700;letter-spacing:.22em;margin-bottom:8px;text-align:center;text-transform:uppercase;white-space:nowrap}.start-area{background:#0003;border:1px solid #e6c15a29;border-radius:16px;min-height:222px;padding:10px;position:relative;width:272px}.start-grid{grid-gap:10px 5px;display:grid;gap:10px 5px;grid-template-columns:repeat(4,58px);justify-content:center}.sgrp{height:81px;position:relative;transition:transform .2s;width:58px}.s-card{position:absolute}.sgrp.hl{transform:translateY(-4px)}.sgrp.hl .pc{box-shadow:0 0 0 3px #7cf0b5,0 0 20px #7cf0b5b3;box-shadow:0 0 0 3px var(--mint),0 0 20px #7cf0b5b3}.sgrp.hov{transform:translateY(-6px) scale(1.1)}.start-landing{left:50%;pointer-events:none;position:absolute;top:55%;transform:translate(-50%,-50%)}.zone-empty{color:#ffffff4d;font-size:12px;grid-column:1/-1;padding:46px 0;text-align:center}.middle-area{background:#00000024;border:1.5px dashed #e6c15a47;border-radius:16px;padding:10px;transition:box-shadow .2s,border-color .2s;width:190px}.table-scene.dragging .middle-area{border-color:#e6c15aa6;box-shadow:0 0 30px #e6c15a38}.middle-area.hl{border-color:#7cf0b5;border-color:var(--mint);border-style:solid;box-shadow:0 0 30px #7cf0b559}.middle-area.hov{box-shadow:0 0 0 3px #e6c15ae6,0 0 44px #e6c15a80}.mid-fan{position:relative;width:168px}.m-card{position:absolute;top:0;transition:left .35s,transform .35s}.middle-area.hl .m-card.top{box-shadow:0 0 0 3px #7cf0b5,0 0 24px #7cf0b5b3;box-shadow:0 0 0 3px var(--mint),0 0 24px #7cf0b5b3}.mid-empty{border:1.5px dashed #ffffff2e;border-radius:8px;color:#fff6;display:grid;font-size:12px;padding:8px;place-items:center;position:absolute;text-align:center;top:0}.mid-landing{pointer-events:none;position:absolute;top:0}.deck-area{align-items:center;display:flex;flex-direction:column;width:88px}.deck-stack{height:90px;position:relative;width:64px}.deck-card{position:absolute}.deck-count{color:#e6c15a;color:var(--gold);font-family:Cinzel,serif;font-family:var(--head);font-size:18px;font-weight:800;margin-top:10px}.hand{height:210px;position:absolute;top:678px;z-index:30}.hand.enabled:before{background:radial-gradient(ellipse,#f5b83d61,#0000 70%);bottom:-30px;content:"";height:150px;left:6%;pointer-events:none;position:absolute;right:6%}.hcard{position:absolute;top:4px;touch-action:none;transform-origin:50% 100%;transition:transform .28s cubic-bezier(.3,.8,.3,1),filter .2s}.hand.enabled .hcard{cursor:grab}.hand.idle .hcard{filter:brightness(.8) saturate(.85)}.hcard .pc{transition:transform .2s,box-shadow .2s}.hand.enabled .hcard:not(.dragging):hover .pc{transform:translateY(-16px)}.hcard.sel .pc{box-shadow:0 0 0 3px #fad87b,0 0 32px #fad87bbf,0 10px 20px #00000080;box-shadow:0 0 0 3px var(--gold-hi),0 0 32px #fad87bbf,0 10px 20px #00000080}.hcard.dragging{cursor:grabbing;pointer-events:none;transition:none}.hcard.dragging .pc{box-shadow:0 0 0 2px #fad87b,0 30px 50px #0009;box-shadow:0 0 0 2px var(--gold-hi),0 30px 50px #0009}.hand-landing{left:50%;pointer-events:none;position:absolute;top:4px;transform:translateX(-50%)}.turn-info{background:#060e0adb;background:var(--glass);border:1px solid #e6c15a33;border-radius:18px;box-shadow:0 18px 40px #0006;display:flex;flex-direction:column;gap:10px;height:180px;justify-content:center;padding:18px;position:absolute;top:708px;transition:border-color .3s,box-shadow .3s;width:290px;z-index:10}.turn-info.mine{border-color:#f5b83d;box-shadow:0 0 44px #f5b83d61,0 18px 40px #0006}.ti-big{animation:breathe 1.3s ease-in-out infinite alternate;color:#fad87b;color:var(--gold-hi);font-family:Cinzel,serif;font-family:var(--head);font-size:32px;font-weight:900;letter-spacing:.05em;text-shadow:0 0 20px #fad87b99}.ti-timer{background:#ffffff14;border-radius:99px;height:22px;overflow:hidden;position:relative}.ti-bar{background:linear-gradient(90deg,#e6a93a,#fad87b);background:linear-gradient(90deg,#e6a93a,var(--gold-hi));height:100%;transition:width .1s linear}.ti-timer span{color:#fff;display:grid;font-size:12px;font-weight:800;inset:0;place-items:center;position:absolute;text-shadow:0 1px 3px #000}.ti-hint{color:#f8f1dda6;font-size:12.5px;line-height:1.45}.ti-small{color:#f8f1dd8c;font-size:11px;font-weight:700;letter-spacing:.22em;text-transform:uppercase}.ti-name{font-family:Cinzel,serif;font-family:var(--head);font-size:26px;font-weight:800}.ti-name,.ticker{color:#f8f1dd;color:var(--ink)}.ticker{align-items:center;animation:tickIn .4s ease-out;background:#050c09d9;border:1px solid #e6c15a40;border-radius:99px;box-shadow:0 8px 24px #0006;display:flex;font-size:15px;gap:10px;padding:8px 18px;pointer-events:none;position:absolute;top:534px;transform:translateX(-50%);white-space:nowrap;z-index:8}.ticker i{border-radius:50%;height:10px;width:10px}.tk-card{border-radius:3px}.tk-card .face,.tk-card .idx.br,.tk-card .job-center,.tk-card .job-idx.br,.tk-card .pip{display:none}.banner{animation:bannerAnim 1.7s ease forwards;background:radial-gradient(ellipse,#000000c7,#0000 70%);padding:26px 90px;pointer-events:none;position:absolute;text-align:center;top:300px;transform:translateX(-50%);z-index:40}.banner b{color:#fad87b;color:var(--gold-hi);display:block;font-family:Cinzel,serif;font-family:var(--head);font-size:58px;font-weight:900;text-shadow:0 4px 30px #000c,0 0 40px #fad87b80;white-space:nowrap}.banner span{color:#f8f1dd;color:var(--ink);font-size:14px;letter-spacing:.3em;text-transform:uppercase;white-space:nowrap}.picker-wrap{position:absolute;top:528px;transform:translateX(-50%);z-index:45}.picker{align-items:flex-start;animation:popIn .25s ease-out;background:#08120df7;border:1px solid #7cf0b5;border:1px solid var(--mint);border-radius:18px;box-shadow:0 0 40px #7cf0b54d,0 20px 50px #0009;display:flex;gap:14px;padding:14px 46px 14px 16px;position:relative;width:660px}.picker-body{flex:1 1}.picker-title{color:#fad87b;color:var(--gold-hi);font-family:Cinzel,serif;font-family:var(--head);font-size:20px;font-weight:800;margin-bottom:10px}.picker-opts{grid-gap:8px;display:grid;gap:8px;grid-template-columns:1fr 1fr}.picker-opt{background:#7cf0b514;border:1px solid #7cf0b559;border-radius:12px;color:#f8f1dd;color:var(--ink);padding:9px 12px;text-align:left;transition:background .15s,transform .15s}.picker-opt:hover{background:#7cf0b538;transform:translateY(-1px)}.picker-opt b{display:block;font-size:14px}.picker-opt span{color:#f8f1ddb3;font-size:11.5px}.picker-cancel{background:#ffffff14;border:1px solid #ffffff26;border-radius:50%;color:#f8f1dd;color:var(--ink);display:grid;height:30px;place-items:center;position:absolute;right:10px;top:10px;width:30px}.topbar{align-items:center;display:flex;gap:8px;height:40px;position:absolute;top:8px;z-index:20}.topbar.left{left:18px}.topbar.right{justify-content:flex-end;width:452px}.brand{display:flex;flex-direction:column;line-height:1.05;margin-right:8px}.brand-eye{color:#e6c15a;color:var(--gold);font-size:9px;font-weight:800;letter-spacing:.3em}.brand-name{color:#f8f1dd;color:var(--ink);font-family:Cinzel,serif;font-family:var(--head);font-size:18px;font-weight:800}.brand-name,.chip{white-space:nowrap}.chip{align-items:center;background:#050c09b8;border:1px solid #e6c15a38;border-radius:99px;color:#f8f1ddb3;display:flex;font-size:11px;font-weight:700;gap:4px;height:32px;letter-spacing:.12em;padding:0 12px}.chip b{font-size:14px}.chip b,.chip.icon{color:#fad87b;color:var(--gold-hi)}.chip.icon{padding:0 9px}.score-btn{align-items:center;background:linear-gradient(180deg,#e6c15a38,#e6c15a14);border:1px solid #e6c15a73;border-radius:99px;color:#fad87b;color:var(--gold-hi);display:flex;font-size:13px;font-weight:800;gap:10px;height:34px;padding:0 14px;transition:transform .15s,filter .15s}.score-btn:hover{filter:brightness(1.1);transform:translateY(-1px)}.sc-mini{align-items:center;color:#f8f1dd;color:var(--ink);display:flex;gap:4px}.sc-mini i{height:8px;width:8px}.ibtn,.sc-mini i{border-radius:50%}.ibtn{background:#050c09b8;border:1px solid #e6c15a38;color:#f8f1dd;color:var(--ink);display:grid;height:34px;place-items:center;transition:border-color .2s,transform .2s;width:34px}.ibtn:hover{border-color:#e6c15a;border-color:var(--gold);transform:translateY(-1px)}.flight-layer{inset:0;pointer-events:none;position:fixed;z-index:60}.flight{left:0;position:absolute;top:0;will-change:transform}.flight>.pc{position:relative;z-index:2}.modal-back{animation:fadeIn .2s;-webkit-backdrop-filter:blur(6px);backdrop-filter:blur(6px);background:#020604a8;display:grid;inset:0;padding:2vh 2vw;place-items:center;position:fixed;z-index:80}.modal{animation:popIn .3s cubic-bezier(.2,.9,.3,1.2);background:linear-gradient(160deg,#12241bf7,#060e0afa);border:1px solid #e6c15a59;border-radius:22px;box-shadow:0 30px 90px #000000b3,inset 0 1px #ffffff0f;color:#f8f1dd;color:var(--ink);max-height:94vh;overflow:auto;padding:clamp(16px,3vh,30px) clamp(16px,3vw,32px);position:relative;width:min(520px,96vw)}.modal.wide{width:min(980px,96vw)}.modal-x{background:#ffffff0f;border:1px solid #ffffff1f;border-radius:50%;color:#f8f1dd;color:var(--ink);display:grid;height:32px;place-items:center;position:absolute;right:12px;top:12px;width:32px}.eyebrow{color:#e6c15a;color:var(--gold);font-size:11px;font-weight:800;letter-spacing:.3em;text-transform:uppercase}.m-title{color:#f8f1dd;color:var(--ink);font-family:Cinzel,serif;font-family:var(--head);font-size:clamp(20px,3.2vw,32px);font-weight:900;margin:4px 0 16px}.m-title.big{color:#fad87b;color:var(--gold-hi);font-size:clamp(24px,4vw,44px);margin-bottom:4px}.m-sub{color:#f8f1ddb3;margin:0 0 8px}.m-note{color:#f8f1dd8c;font-size:12px;margin:12px 0}.sb-cards{grid-gap:10px;display:grid;gap:10px;grid-template-columns:repeat(auto-fit,minmax(170px,1fr));margin-bottom:14px}.sb-card{background:#ffffff0a;border:1px solid #ffffff14;border-radius:14px;border-top:3px solid var(--team);padding:12px 14px;position:relative}.sb-card.lead{background:#e6c15a1a;border-color:#e6c15a80;border-top-color:var(--team)}.lead-crown{color:#fad87b;color:var(--gold-hi);position:absolute;right:10px;top:10px}.sb-team{color:var(--team);font-size:10px;font-weight:800;letter-spacing:.2em;text-transform:uppercase}.sb-names{font-size:14px;font-weight:700;margin:2px 0 6px}.sb-score{color:#fad87b;color:var(--gold-hi);font-family:Cinzel,serif;font-family:var(--head);font-size:30px;font-weight:900}.hist-wrap{border:1px solid #ffffff14;border-radius:12px;overflow-x:auto}.hist{border-collapse:collapse;font-size:13px;width:100%}.hist td,.hist th{border-bottom:1px solid #ffffff0f;padding:7px 8px;text-align:center;white-space:nowrap}.hist th{background:#00000040;color:#f8f1dd8c;font-size:10px;letter-spacing:.12em}.hist th.cur{color:#fad87b;color:var(--gold-hi)}.hist td.tname{font-weight:700;text-align:left}.hist td.tname .team-dot{margin-right:8px}.hist td.bonus{color:#7cf0b5;color:var(--mint);font-weight:800}.hist td.ttotal{color:#fad87b;color:var(--gold-hi);font-family:Cinzel,serif;font-family:var(--head);font-size:15px;font-weight:900}.team-dot{border-radius:50%;display:inline-block;flex-shrink:0;height:9px;width:9px}.btn-ghost,.btn-gold{align-items:center;border-radius:14px;display:inline-flex;font-size:15px;font-weight:800;gap:8px;justify-content:center;letter-spacing:.04em;padding:13px 20px;transition:transform .15s,filter .15s,background .15s;width:100%}.btn-gold{background:linear-gradient(180deg,#fad87b,#d9a23a);background:linear-gradient(180deg,var(--gold-hi),#d9a23a);border:none;box-shadow:0 10px 30px #e6c15a4d,inset 0 1px #fff9;color:#1a1003}.btn-ghost{background:#ffffff0d;border:1px solid #e6c15a4d;color:#f8f1dd;color:var(--ink)}.btn-ghost:hover,.btn-gold:hover{filter:brightness(1.07);transform:translateY(-2px)}.btn-ghost:active,.btn-gold:active{transform:scale(.98)}.btn-gold.lg{font-size:17px;padding:16px}.m-actions{display:flex;gap:10px;margin-top:16px}.m-actions.col{flex-direction:column}.re-grid{grid-gap:10px;display:grid;gap:10px;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));margin-bottom:16px}.re-card{background:#ffffff0a;border-radius:14px;border-top:3px solid var(--team);padding:12px 14px}.re-head{align-items:center;color:var(--team);font-weight:800;margin-bottom:8px}.re-head,.re-row{display:flex;gap:8px}.re-row{font-size:13.5px;justify-content:space-between;padding:3px 0}.re-row small{color:#f8f1dd80}.re-row.total{border-top:1px solid #ffffff1a;font-weight:800;margin-top:6px;padding-top:7px}.re-row.grand span:last-child{color:#fad87b;color:var(--gold-hi);font-family:Cinzel,serif;font-family:var(--head);font-size:18px;font-weight:900}.re-bonus{background:#7cf0b51f;border-radius:8px;color:#7cf0b5;color:var(--mint);font-size:12px;font-weight:800;margin:6px 0;padding:4px 8px}.gameover,.re-bonus{text-align:center}.trophy{animation:trophy 1.6s ease-in-out infinite alternate;color:#fad87b;color:var(--gold-hi);display:grid;filter:drop-shadow(0 0 24px rgba(250,216,123,.7));place-items:center}.podium{display:flex;flex-direction:column;gap:6px;margin:14px 0}.pod{align-items:center;background:#ffffff0a;border-left:4px solid var(--team);border-radius:12px;display:flex;gap:12px;padding:10px 14px}.pod.first{background:linear-gradient(90deg,#e6c15a3d,#e6c15a0a)}.pod-rank{color:#fad87b;color:var(--gold-hi);font-family:Cinzel,serif;font-family:var(--head);font-weight:900;width:28px}.pod-name{flex:1 1;font-weight:700;text-align:left}.pod-score{font-family:Cinzel,serif;font-family:var(--head);font-size:20px;font-weight:900}.confetti{inset:0;pointer-events:none;position:fixed;z-index:81}.rules{grid-gap:10px;display:grid;gap:10px;grid-template-columns:1fr 1fr;margin-bottom:16px}.rule{background:hsla(0,0%,100%,.035);border:1px solid #ffffff0f;border-radius:12px;padding:10px 12px}.rule b{color:#fad87b;color:var(--gold-hi);font-size:13px}.rule p{color:#f8f1ddcc;font-size:12.5px;line-height:1.5;margin:3px 0 0}.pause-opts{display:flex;flex-direction:column;gap:8px;margin-bottom:6px}.opt-toggle{align-items:center;background:#ffffff0a;border:1px solid #ffffff1a;border-radius:12px;color:#f8f1dd;color:var(--ink);display:flex;font-size:14px;gap:10px;padding:12px 14px}.opt-toggle b{color:#f8f1dd80;margin-left:auto}.opt-toggle.on b{color:#7cf0b5;color:var(--mint)}.start-screen{grid-gap:4vw;align-items:center;background:radial-gradient(ellipse at 28% 40%,#186a3f 0,#0d4327 32%,#072b18 65%,#03140b 100%);display:grid;gap:4vw;grid-template-columns:1.1fr 1fr;inset:0;overflow:auto;padding:4vh 6vw;position:fixed}.start-screen:before{background-image:url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='160' height='160'><filter id='n'><feTurbulence type='fractalNoise' baseFrequency='.9' numOctaves='2' stitchTiles='stitch'/></filter><rect width='100%' height='100%' filter='url(%23n)'/></svg>");content:"";inset:0;mix-blend-mode:overlay;opacity:.25;pointer-events:none;position:absolute}.ss-hero,.ss-panel{position:relative;z-index:1}.ss-title{background:linear-gradient(180deg,#fff3c4,#e6c15a 60%,#b8862e);background:linear-gradient(180deg,#fff3c4,var(--gold) 60%,#b8862e);-webkit-background-clip:text;background-clip:text;color:#0000;filter:drop-shadow(0 6px 30px rgba(0,0,0,.6));font-family:Cinzel,serif;font-family:var(--head);font-size:clamp(40px,7vw,100px);font-weight:900;line-height:.95;margin:10px 0 14px}.ss-sub{color:#f8f1ddc7;font-size:clamp(13px,1.2vw,16px);line-height:1.6;max-width:470px}.ss-fan{display:flex;margin-top:6vh;padding-left:30px}.ss-card{animation:dealIn .7s cubic-bezier(.2,.8,.3,1) both;margin-left:-44px}.ss-card:first-child{margin-left:0}.ss-panel{animation:popIn .5s ease-out;-webkit-backdrop-filter:blur(16px);backdrop-filter:blur(16px);background:#060e0acc;border:1px solid #e6c15a4d;border-radius:24px;box-shadow:0 30px 80px #0000008c;max-height:92vh;overflow:auto;padding:clamp(16px,3vh,28px)}.ss-label{color:#f8f1dd99;display:block;font-size:11px;font-weight:800;letter-spacing:.22em;margin:14px 0 8px;text-transform:uppercase}.ss-panel>.ss-label:first-child{margin-top:0}.ss-input{background:#ffffff0d;border:1px solid #e6c15a40;border-radius:12px;color:#f8f1dd;color:var(--ink);font-family:Plus Jakarta Sans,sans-serif;font-family:var(--body);font-size:15px;outline:none;padding:11px 14px;-webkit-user-select:text;user-select:text;width:100%}.ss-input:focus{border-color:#e6c15a;border-color:var(--gold)}.opt-row{grid-gap:8px;display:grid;gap:8px;grid-template-columns:repeat(3,1fr)}.opt{align-items:center;background:#ffffff0a;border:1px solid #ffffff1a;border-radius:12px;color:#f8f1dd;color:var(--ink);display:flex;flex-direction:column;gap:2px;padding:10px 8px;transition:border-color .15s,background .15s,transform .15s}.opt b{font-size:14px}.opt span{color:#f8f1dd8c;font-size:10.5px}.opt.on{background:linear-gradient(180deg,#e6c15a3d,#e6c15a0f);border-color:#e6c15a;border-color:var(--gold);box-shadow:0 0 0 1px #e6c15a4d,0 8px 20px #e6c15a1f}.opt:hover{transform:translateY(-1px)}.tgl-row{grid-gap:8px;display:grid;gap:8px;grid-template-columns:1fr 1fr;margin-top:14px}.tgl{align-items:center;background:#ffffff0a;border:1px solid #ffffff1a;border-radius:12px;color:#f8f1dd;color:var(--ink);display:flex;gap:10px;padding:10px 12px;text-align:left}.tgl div{display:flex;flex:1 1;flex-direction:column}.tgl b{font-size:13px}.tgl span{color:#f8f1dd8c;font-size:10.5px}.sw{background:#ffffff26;border-radius:99px;flex-shrink:0;height:20px;position:relative;transition:background .2s;width:36px}.sw em{background:#fff;border-radius:50%;height:16px;left:2px;position:absolute;top:2px;transition:transform .2s;width:16px}.tgl.on .sw{background:#d9a23a}.tgl.on .sw em{transform:translateX(16px)}.ss-actions{display:flex;flex-direction:column;gap:8px;margin-top:18px}@media (max-height:560px){.ss-fan{display:none}.ss-title{font-size:44px}.start-screen{padding:3vh 4vw}.rules{grid-template-columns:1fr 1fr}}@media (max-width:700px){.rules,.start-screen{grid-template-columns:1fr}}.small-scale .seat-name{font-size:21px}.small-scale .tag{font-size:11.5px;padding:2px 5px}.small-scale .seat-tags{gap:4px}.small-scale .zone-label{font-size:15px;letter-spacing:.12em}.small-scale .ti-hint{font-size:17px}.small-scale .ti-small{font-size:15px}.small-scale .ticker{font-size:20px}.small-scale .gbadge{font-size:19px}.small-scale .chip{font-size:13px;height:36px}.small-scale .chip b{font-size:17px}.small-scale .brand-name{font-size:21px}@media (max-height:560px){.ss-sub{display:none}.ss-panel{padding:14px 16px 0}.ss-label{margin:8px 0 5px}.opt{padding:7px 6px}.opt span{display:none}.tgl{padding:7px 10px}.tgl span{display:none}.ss-actions{background:linear-gradient(180deg,#060e0a00,#060e0afa 30%);bottom:0;flex-direction:row;margin:10px -16px 0;padding:10px 16px 14px;position:sticky}.ss-actions>*{white-space:nowrap}.ss-actions .btn-gold.lg{flex:1.6 1;font-size:15px;padding:12px}}.rotate-notice{display:none}@media (orientation:portrait) and (max-width:900px){.rotate-notice{align-items:center;background:#04110a;color:#f8f1dd;color:var(--ink);display:flex;flex-direction:column;gap:10px;inset:0;justify-content:center;padding:30px;position:fixed;text-align:center;z-index:200}.rotate-notice b{color:#fad87b;color:var(--gold-hi);font-family:Cinzel,serif;font-family:var(--head);font-size:24px}.rotate-notice span{color:#f8f1ddb3}.rot-ic{animation:rot 2.4s ease-in-out infinite;color:#e6c15a;color:var(--gold)}}
+/* =====================================================================
+   v2.2 · Bözer Gaming eklemeleri (online masa, fotoğraf, bot işareti)
+   ===================================================================== */
+.hidden {
+  display: none !important;
+}
+body:not(.in-game) .rotate-notice {
+  display: none !important;
+}
+:root {
+  --t-bg: #03100a;
+  --t-panel: #ffffff0a;
+  --t-panel-2: #060e0ae6;
+  --t-sheet: linear-gradient(160deg, #12241bf7, #060e0afa);
+  --t-line: #e6c15a33;
+  --t-line-2: #e6c15a73;
+  --t-text: #f8f1dd;
+  --t-muted: #f8f1dda6;
+  --t-accent: #e6c15a;
+  --t-accent-hi: #fad87b;
+  --t-primary: linear-gradient(180deg, #fad87b, #d9a23a);
+  --t-primary-ink: #1d1404;
+  --t-btn: #ffffff0d;
+  --t-good: #7cf0b5;
+  --t-felt: radial-gradient(ellipse at 50% 45%, #1b6e42 0, #145734 34%, #0d4327 62%, #072b18 100%);
+  --t-felt-edge: #3b1c10;
+  --t-display: var(--head);
+  --t-radius: 16px;
+  --peek-top: 58px;
+}
+#net {
+  background: radial-gradient(ellipse at 28% 40%, #186a3f 0, #0d4327 32%, #072b18 65%, #03140b 100%);
+  font-family: var(--body);
+  user-select: text;
+  -webkit-user-select: text;
+}
+.t-btn,
+.t-input,
+.t-seg button {
+  font-family: var(--body);
+}
+.t-lobby-title h2,
+.t-room-title h2,
+.t-sheet-head h3,
+.t-chat-head h3,
+.t-felt-in b,
+.t-gate h3 {
+  font-weight: 800;
+  letter-spacing: 0.02em;
+}
+.t-chat,
+.t-sheet-wrap,
+.t-peek {
+  font-family: var(--body);
+  user-select: text;
+  -webkit-user-select: text;
+}
+/* başlangıç: oyun türü sekmeleri */
+.mode-tabs {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 4px;
+  padding: 4px;
+  border-radius: 14px;
+  background: #ffffff0a;
+  border: 1px solid #e6c15a33;
+  margin-bottom: 4px;
+}
+.mode-tabs button {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  border: 0;
+  border-radius: 11px;
+  padding: 10px 8px;
+  background: transparent;
+  color: #f8f1ddb3;
+  font-weight: 800;
+  font-size: 13px;
+  letter-spacing: 0.04em;
+}
+.mode-tabs button[aria-selected='true'] {
+  background: linear-gradient(180deg, #fad87b, #d9a23a);
+  color: #1d1404;
+}
+.ss-input:disabled {
+  opacity: 0.75;
+}
+.ss-note {
+  margin: 6px 0 0;
+  font-size: 11.5px;
+  line-height: 1.45;
+  color: #f8f1dd8c;
+}
+/* fotoğraf ve bot işareti */
+.avatar .av-ph {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  border-radius: 50%;
+  object-fit: cover;
+  box-shadow: 0 0 0 2px var(--team);
+}
+.seat-name .bt,
+.ti-name .bt {
+  font-weight: 800;
+  color: #f8f1dd8c;
+  font-size: 0.86em;
+}
+.seat.away .avatar {
+  filter: grayscale(0.75) brightness(0.8);
+}
+/* üst çubuk: sohbet, izleyiciler, bağlantı */
+.topbar {
+  pointer-events: none; /* telefonda büyüyen çubuğun boş yeri alttaki koltuğu kapatmasın */
+}
+.topbar > * {
+  pointer-events: auto;
+}
+.topbar .ibtn {
+  position: relative;
+}
+/* izleyici: arkadaşının koltuğuna dokunarak onun kartlarını izler */
+.seat.can-watch {
+  cursor: pointer;
+}
+.seat.can-watch:hover {
+  border-color: #e6c15a8c;
+}
+.topbar .net-pill {
+  font-size: 11px;
+  font-weight: 700;
+  padding: 0 10px;
+  height: 30px;
+  display: inline-flex;
+  align-items: center;
+  border-radius: 99px;
+  background: #ef6f6c26;
+  border: 1px solid #ef6f6c8c;
+  color: #ffd1cc;
+  white-space: nowrap;
+}
+.topbar .t-viewers {
+  height: 32px;
+  padding: 0 10px;
+  border-radius: 99px;
+  background: #050c09b8;
+  border: 1px solid #e6c15a38;
+  color: var(--gold-hi);
+  gap: 5px;
+}
+.topbar .t-viewers b {
+  font-size: 13px;
+}
+.chip.spec-chip {
+  gap: 8px;
+  letter-spacing: 0.06em;
+  color: var(--gold-hi);
+}
+.chip.spec-chip select {
+  background: #ffffff12;
+  color: #f8f1dd;
+  border: 1px solid #e6c15a4d;
+  border-radius: 99px;
+  padding: 3px 8px;
+  font: 700 12px var(--body);
+  max-width: 150px;
+}
+.chip.spec-chip option {
+  color: #111;
+}
+/* bildirim */
+.dk-toasts {
+  position: fixed;
+  top: 14px;
+  left: 50%;
+  transform: translateX(-50%);
+  z-index: 95;
+  display: grid;
+  gap: 6px;
+  justify-items: center;
+  pointer-events: none;
+}
+.dk-toast {
+  padding: 9px 16px;
+  border-radius: 12px;
+  background: #060e0af2;
+  border: 1px solid #e6c15a59;
+  color: #f8f1dd;
+  font: 600 13.5px var(--body);
+  box-shadow: 0 12px 30px #0008;
+  animation: popIn 0.2s ease-out;
+  transition: opacity 0.3s;
+}
+.dk-toast.err {
+  border-color: #ef6f6c;
+  color: #ffd1cc;
+}
+.dk-toast.good {
+  border-color: #7cf0b5;
+}
+.dk-toast.out {
+  opacity: 0;
+}
+
+</style>
+</head>
+<body>
+<noscript>Bu oyunu oynamak için JavaScript'i etkinleştirin.</noscript>
+<div id="start" class="start-screen hidden"></div>
+<section id="net" class="t-screen hidden" aria-label="Online masalar"></section>
+<div id="game" class="game-root hidden">
+  <div class="stage-wrap">
+    <div class="stage" id="stage" style="height:900px">
+      <div class="table-scene" id="scene">
+        <div class="felt" id="felt" style="left:60px"><div class="felt-ring"></div><div class="felt-logo">BÖZER GAMING</div></div>
+        <div id="tops"></div>
+        <div id="centerBox"></div>
+        <div id="seats"></div>
+        <div id="handBox"></div>
+        <div id="turnBox"></div>
+        <div id="tickerBox"></div>
+        <div id="pickerBox"></div>
+        <div id="bannerBox"></div>
+      </div>
+    </div>
+  </div>
+  <div class="flight-layer" id="flights"></div>
+</div>
+<div id="modals"></div>
+<div id="toastBox" class="dk-toasts" aria-live="polite"></div>
+<div class="rotate-notice"><svg class="lucide rot-ic" width="54" height="54" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect width="14" height="20" x="5" y="2" rx="2" ry="2"/><path d="M12 18h.01"/></svg><b>Cihazını yatay çevir</b><span>Eşli Dost Kazığı yatay ekranda oynanır.</span></div>
+<script src="assets/js/bg-table.js?v=2.2.0"></script>
+<script>
+/* ---- engine.js ---- */
+/* =====================================================================
+   EŞLİ DOST KAZIĞI · Oyun motoru
+   Kurallar özgün oyunla aynıdır. Karıştırma tohumlu üreteçle yapılır;
+   böylece online masada herkes aynı hamle kaydından aynı oyunu kurar.
+   ===================================================================== */
+(function (root) {
+  'use strict';
+  const RANKS = ['2', '3', '4', '5', '6', '7', '8', '9', '10', 'J', 'Q', 'K', 'A'];
+  const ALL = RANKS.concat(['JOB']);
+  const SUITS = ['S', 'H', 'D', 'C'];
+  const SUIT_SYM = { S: '♠︎', H: '♥︎', D: '♦︎', C: '♣︎' };
+  const TEAMS = {
+    2: { players: 4, start: 8 },
+    3: { players: 6, start: 6 },
+    4: { players: 8, start: 4 },
+  };
+  const TEAM_COLORS = ['#E6C15A', '#4FB3E8', '#EF6F6C', '#8FD694'];
+
+  /** Kart puanı: 2–9 kendi değeri, 3'lü 30, 10/J/Q/K/A 10, Job 60 */
+  const points = (rank) => (rank === 'JOB' ? 60 : rank === '3' ? 30 : ['10', 'J', 'Q', 'K', 'A'].includes(rank) ? 10 : Number(rank));
+  const rankIndex = (r) => ALL.indexOf(r);
+  const last = (a) => a[a.length - 1];
+  const sumCards = (cards) => cards.reduce((a, c) => a + points(c.rank), 0);
+  const partner = (st, p) => (p + st.n / 2) % st.n;
+  const nextSeat = (st, p) => (p + st.dir + st.n) % st.n;
+  const teamOf = (st, p) => p % (st.n / 2);
+  const teamName = (st, t) => `${st.players[t].name} & ${st.players[t + st.n / 2].name}`;
+  const targetKey = (t) => (t.type === 'front' ? 'front:' + t.seat : t.type === 'start' ? 'start:' + t.value : t.type);
+
+  /* ---------------- tohumlu rastgelelik ---------------- */
+  function rand(st) {
+    let a = (st.rs = (st.rs + 0x6d2b79f5) | 0);
+    let t = Math.imul(a ^ (a >>> 15), 1 | a);
+    t = (t + Math.imul(t ^ (t >>> 7), 61 | t)) ^ t;
+    return ((t ^ (t >>> 14)) >>> 0) / 4294967296;
+  }
+  function shuffle(st, arr) {
+    const a = arr.slice();
+    for (let i = a.length - 1; i > 0; i--) {
+      const j = Math.floor(rand(st) * (i + 1));
+      [a[i], a[j]] = [a[j], a[i]];
+    }
+    return a;
+  }
+  function makeDeck() {
+    const d = [];
+    for (let t = 0; t < 2; t++) for (const s of SUITS) for (const r of RANKS) d.push({ id: `c${t}${s}${r}`, rank: r, suit: s });
+    for (let t = 0; t < 4; t++) d.push({ id: `job${t}`, rank: 'JOB', suit: t % 2 ? 'R' : 'B' });
+    return d;
+  }
+
+  /* ---------------- durum ---------------- */
+  function emit(st, e) {
+    e.seq = ++st.seq;
+    st.ev.push(e);
+    if (st.ev.length > 300) st.ev.splice(0, st.ev.length - 120);
+    return e;
+  }
+  /** Yeni oyun: names oyuncu adları (4/6/8), seed tohum */
+  function newGame(cfg) {
+    const n = cfg.names.length;
+    const teams = n / 2;
+    if (!TEAMS[teams]) throw new Error('Oyuncu sayısı 4, 6 ya da 8 olmalı');
+    const seed = (cfg.seed || 1) >>> 0;
+    return {
+      n,
+      teams,
+      players: cfg.names.map((name) => ({ name })),
+      scores: new Array(teams).fill(0),
+      history: [],
+      round: -1,
+      totalRounds: 2 * n,
+      phase: 'idle',
+      hands: Array.from({ length: n }, () => []),
+      fronts: Array.from({ length: n }, () => []),
+      start: [],
+      startCards: [],
+      middle: [],
+      deck: [],
+      dir: 1,
+      starter: 0,
+      current: 0,
+      dealNo: 0,
+      dealsTotal: 0,
+      moveNo: 0,
+      lastRound: null,
+      rs: seed | 0,
+      seq: 0,
+      ev: [],
+    };
+  }
+  /** Tur kurulumu: yön, başlayan, karıştırma, başlangıç kartları */
+  function setupRound(st) {
+    const cfg = TEAMS[st.teams];
+    const n = st.n;
+    const r = st.round;
+    st.dir = r < n ? 1 : -1;
+    st.starter = r < n ? r : (n - (r - n)) % n;
+    st.current = st.starter;
+    const deck = shuffle(st, makeDeck());
+    const startCards = deck.splice(0, cfg.start);
+    const groups = [];
+    startCards.forEach((c) => {
+      const g = groups.find((x) => x.value === c.rank);
+      if (g) g.cards.push(c);
+      else groups.push({ value: c.rank, cards: [c] });
+    });
+    st.phase = 'dealing';
+    st.deck = deck;
+    st.start = groups;
+    st.startCards = startCards;
+    st.middle = [];
+    st.hands = Array.from({ length: n }, () => []);
+    st.fronts = Array.from({ length: n }, () => []);
+    st.dealNo = 0;
+    st.dealsTotal = (108 - cfg.start - 5 * n) / (4 * n) + 1;
+    st.lastRound = null;
+    emit(st, { t: 'round', round: st.round, dir: st.dir, starter: st.starter, start: startCards.map((c) => c.id) });
+  }
+  /** Dağıtım: her oyuncuya 4 kart (son dağıtımda 5), sıradaki oyuncudan başlayarak */
+  function deal(st) {
+    if (st.phase !== 'dealing') return null;
+    const k = st.dealNo === st.dealsTotal - 1 ? 5 : 4;
+    const order = [];
+    for (let a = 0; a < k; a++)
+      for (let t = 0; t < st.n; t++) {
+        const seat = (st.current + t * st.dir + 2 * st.n) % st.n;
+        const card = st.deck.shift();
+        if (!card) continue;
+        st.hands[seat].push(card);
+        order.push({ seat, id: card.id });
+      }
+    st.dealNo++;
+    st.phase = 'playing';
+    emit(st, { t: 'deal', no: st.dealNo, total: st.dealsTotal, order });
+    return order;
+  }
+
+  /* ---------------- hamleler ---------------- */
+  /** Kartın işlenebileceği yerler (şekli önemsiz, değer eşleşir) */
+  function targetsFor(st, card) {
+    const r = card.rank;
+    const out = [];
+    st.start.forEach((g) => g.value === r && out.push({ type: 'start', value: r }));
+    const top = last(st.middle);
+    if (top && top.rank === r) out.push({ type: 'middle' });
+    for (let i = 0; i < st.n; i++) {
+      const g = last(st.fronts[i]);
+      if (g && g.value === r) out.push({ type: 'front', seat: i });
+    }
+    return out;
+  }
+  /** Hedefin oynayana göre türü: own | partner | opp | start | middle | push */
+  function targetType(st, p, t) {
+    if (t.type !== 'front') return t.type;
+    if (t.seat === p) return 'own';
+    if (t.seat === partner(st, p)) return 'partner';
+    return 'opp';
+  }
+  function parseTarget(key) {
+    if (key === 'push' || key === 'middle') return { type: key };
+    let m = /^front:(\d)$/.exec(key || '');
+    if (m) return { type: 'front', seat: +m[1] };
+    m = /^start:(\w+)$/.exec(key || '');
+    if (m && ALL.includes(m[1])) return { type: 'start', value: m[1] };
+    return null;
+  }
+  /** Hamlenin masaya etkisi (sıra ilerlemeden önce) */
+  function applyMove(st, p, cardId, target) {
+    const hand = st.hands[p];
+    const idx = hand.findIndex((c) => c.id === cardId);
+    const card = hand.splice(idx, 1)[0];
+    const fx = { player: p, card, target, kind: 'push' };
+    let group = null;
+    let dest = null;
+    if (target.type === 'push') st.middle.push(card);
+    else if (target.type === 'middle') {
+      const under = st.middle.pop();
+      group = { value: card.rank, cards: [under, card] };
+      dest = nextSeat(st, p);
+    } else if (target.type === 'start') {
+      const i = st.start.findIndex((g) => g.value === target.value);
+      group = st.start.splice(i, 1)[0];
+      group.cards.push(card);
+      dest = nextSeat(st, p);
+    } else {
+      const fr = st.fronts[target.seat];
+      const g = last(fr);
+      g.cards.push(card);
+      if (target.seat === p || target.seat === partner(st, p)) {
+        fr.pop();
+        group = g;
+        dest = nextSeat(st, target.seat);
+      } else {
+        fx.kind = 'stay';
+        fx.count = g.cards.length;
+      }
+    }
+    if (group) {
+      fx.kind = 'shift';
+      fx.dest = dest;
+      fx.value = group.value;
+      fx.moved = group.cards.map((c) => c.id);
+      const fr = st.fronts[dest];
+      const top = last(fr);
+      if (top && top.value === group.value) {
+        top.cards.push(...group.cards);
+        fx.merged = true;
+        fx.count = top.cards.length;
+      } else {
+        fr.push(group);
+        fx.count = group.cards.length;
+      }
+    }
+    return fx;
+  }
+  /** Tur sonu puanı: önündeki grupların toplamı, iki eşin önü boşsa takıma −100 */
+  function scoreRound(st) {
+    const half = st.n / 2;
+    const pts = st.fronts.map((fr) => fr.reduce((a, g) => a + sumCards(g.cards), 0));
+    const cnt = st.fronts.map((fr) => fr.reduce((a, g) => a + g.cards.length, 0));
+    const teams = Array.from({ length: half }, (_, a) => {
+      const l = a;
+      const r = a + half;
+      const bonus = cnt[l] === 0 && cnt[r] === 0;
+      const raw = pts[l] + pts[r];
+      return { team: a, seats: [l, r], pts: [pts[l], pts[r]], cards: [cnt[l], cnt[r]], raw, bonus, total: bonus ? -100 : raw };
+    });
+    st.scores = st.scores.map((s, t) => s + teams[t].total);
+    const rec = { round: st.round + 1, dir: st.dir, teams };
+    st.history.push(rec);
+    st.lastRound = rec;
+    st.phase = 'roundEnd';
+    emit(st, { t: 'roundEnd', rec });
+  }
+  /** Kart oyna. target: {type:'front',seat} | {type:'start',value} | {type:'middle'} | {type:'push'} */
+  function play(st, p, cardId, target) {
+    if (st.phase !== 'playing') return { ok: false, err: 'Şu anda kart oynanmıyor.' };
+    if (st.current !== p) return { ok: false, err: 'Sıra sende değil.' };
+    const card = st.hands[p].find((c) => c.id === cardId);
+    if (!card || !target) return { ok: false, err: 'Kart elinde değil.' };
+    const ts = targetsFor(st, card);
+    if (target.type === 'push') {
+      if (ts.length) return { ok: false, err: 'Bu kart masada bir yere işleniyor, ortaya atılamaz.' };
+    } else if (!ts.some((t) => targetKey(t) === targetKey(target))) return { ok: false, err: 'Bu kart oraya işlenemez.' };
+    const fx = applyMove(st, p, cardId, target);
+    st.current = nextSeat(st, p);
+    st.moveNo++;
+    emit(st, { t: 'play', fx: { player: p, card: card.id, target: targetKey(target), kind: fx.kind, dest: fx.dest, merged: !!fx.merged, count: fx.count || 1 } });
+    let dealt = null;
+    if (st.hands.every((h) => h.length === 0)) {
+      if (st.dealNo < st.dealsTotal) {
+        st.phase = 'dealing';
+        dealt = deal(st);
+      } else scoreRound(st);
+    }
+    return { ok: true, fx, dealt };
+  }
+  /** Sonraki tur (ilk tur dahil) ya da oyun sonu */
+  function nextRound(st) {
+    if (st.phase !== 'idle' && st.phase !== 'roundEnd') return { ok: false, err: 'Tur bitmedi.' };
+    st.round++;
+    if (st.round >= st.totalRounds) {
+      st.phase = 'gameOver';
+      emit(st, { t: 'gameOver' });
+      return { ok: true, over: true };
+    }
+    setupRound(st);
+    const dealt = deal(st);
+    return { ok: true, dealt };
+  }
+  /** Kazanan takım(lar): en düşük puan */
+  function winners(st) {
+    const m = Math.min(...st.scores);
+    return st.scores.map((s, i) => (s === m ? i : -1)).filter((i) => i >= 0);
+  }
+  function clone(st) {
+    const ev = st.ev;
+    st.ev = ev.slice(-30);
+    const c = JSON.parse(JSON.stringify(st));
+    st.ev = ev;
+    return c;
+  }
+
+  root.DK = {
+    RANKS,
+    ALL,
+    SUITS,
+    SUIT_SYM,
+    TEAMS,
+    TEAM_COLORS,
+    points,
+    rankIndex,
+    last,
+    sumCards,
+    partner,
+    nextSeat,
+    teamOf,
+    teamName,
+    targetKey,
+    parseTarget,
+    rand,
+    makeDeck,
+    newGame,
+    setupRound,
+    deal,
+    targetsFor,
+    targetType,
+    applyMove,
+    play,
+    nextRound,
+    scoreRound,
+    winners,
+    clone,
+  };
+})(typeof window !== 'undefined' ? window : globalThis);
+
+/* ---- ai.js ---- */
+/* =====================================================================
+   EŞLİ DOST KAZIĞI · Botlar (özgün oyundaki değerlendirmeyle aynı)
+   kolay: çoğu zaman rastgele · orta: en iyi hamle · zor: hafızalı
+   ===================================================================== */
+(function (root) {
+  'use strict';
+  const DK = root.DK;
+  const { points, last, sumCards, partner, targetType, targetsFor } = DK;
+
+  /** Önde, en üstteki grubun altında kalan değerler */
+  const buried = (st, p) => new Set(st.fronts[p].slice(0, -1).map((g) => g.value));
+  function seen(st, rank) {
+    let n = st.middle.filter((c) => c.rank === rank).length;
+    st.fronts.forEach((fr) => fr.forEach((g) => g.value === rank && (n += g.cards.length)));
+    st.start.forEach((g) => g.value === rank && (n += g.cards.length));
+    return n;
+  }
+  function scoreTarget(st, p, card, t, level) {
+    const kind = targetType(st, p, t);
+    const mate = partner(st, p);
+    let s;
+    if (kind === 'own' || kind === 'partner') {
+      const g = last(st.fronts[t.seat]);
+      s = (kind === 'own' ? 1000 : 900) + sumCards(g.cards) + points(card.rank);
+      if (level === 'zor') {
+        const fr = st.fronts[t.seat];
+        const under = fr[fr.length - 2];
+        if (under && st.hands[p].some((c) => c.id !== card.id && c.rank === under.value)) s += 120;
+      }
+    } else if (kind === 'start') {
+      const g = st.start.find((x) => x.value === t.value);
+      s = 700 + sumCards(g.cards) + points(card.rank);
+    } else if (kind === 'middle') s = 700 + 2 * points(card.rank);
+    else {
+      const g = last(st.fronts[t.seat]);
+      s = 400 + points(card.rank) + 2 * g.cards.length;
+    }
+    if (level === 'zor' && s < 900 && (buried(st, p).has(card.rank) || buried(st, mate).has(card.rank))) s -= 260;
+    return s + 0.5 * Math.random();
+  }
+  function scorePush(st, p, card, level) {
+    let s = 200 - points(card.rank);
+    if (level === 'zor') {
+      s += 4 * seen(st, card.rank);
+      const mate = partner(st, p);
+      if (buried(st, p).has(card.rank) || buried(st, mate).has(card.rank)) s -= 60;
+    }
+    return s + 3 * Math.random();
+  }
+  /** En iyi hamle: {cardId, target} */
+  function choose(st, p, level) {
+    level = level || 'orta';
+    const opts = [];
+    for (const card of st.hands[p]) {
+      const ts = targetsFor(st, card);
+      if (ts.length) ts.forEach((t) => opts.push({ cardId: card.id, target: t, score: scoreTarget(st, p, card, t, level) }));
+      else opts.push({ cardId: card.id, target: { type: 'push' }, score: scorePush(st, p, card, level) });
+    }
+    if (!opts.length) return null;
+    if (level === 'kolay' && Math.random() < 0.55) return opts[Math.floor(Math.random() * opts.length)];
+    return opts.reduce((a, b) => (b.score > a.score ? b : a));
+  }
+  root.DKAI = { choose };
+})(typeof window !== 'undefined' ? window : globalThis);
+
+/* ---- sound.js ---- */
+/* =====================================================================
+   EŞLİ DOST KAZIĞI · Sesler (özgün oyundaki sentez sesleri)
+   ===================================================================== */
+(function (root) {
+  'use strict';
+  let ctx = null;
+  let on = true;
+  function noise(c, dur, freq, gain, q) {
+    q = q == null ? 1.2 : q;
+    const len = Math.floor(c.sampleRate * dur);
+    const buf = c.createBuffer(1, len, c.sampleRate);
+    const d = buf.getChannelData(0);
+    for (let i = 0; i < len; i++) d[i] = (2 * Math.random() - 1) * (1 - i / len) ** 2;
+    const src = c.createBufferSource();
+    src.buffer = buf;
+    const f = c.createBiquadFilter();
+    f.type = 'bandpass';
+    f.frequency.value = freq;
+    f.Q.value = q;
+    const g = c.createGain();
+    g.gain.value = gain;
+    src.connect(f).connect(g).connect(c.destination);
+    src.start();
+  }
+  function tone(c, freq, dur, gain, type, delay) {
+    const o = c.createOscillator();
+    const g = c.createGain();
+    o.type = type || 'sine';
+    o.frequency.value = freq;
+    const t = c.currentTime + (delay || 0);
+    g.gain.setValueAtTime(1e-4, t);
+    g.gain.exponentialRampToValueAtTime(gain, t + 0.012);
+    g.gain.exponentialRampToValueAtTime(1e-4, t + dur);
+    o.connect(g).connect(c.destination);
+    o.start(t);
+    o.stop(t + dur + 0.05);
+  }
+  function play(kind) {
+    if (!on) return;
+    try {
+      if (!ctx) ctx = new (window.AudioContext || window.webkitAudioContext)();
+      if (ctx.state === 'suspended') ctx.resume();
+      const c = ctx;
+      if (kind === 'flick') noise(c, 0.07, 2600, 0.35);
+      else if (kind === 'deal') noise(c, 0.05, 3200, 0.22);
+      else if (kind === 'place') {
+        noise(c, 0.09, 900, 0.4);
+        tone(c, 140, 0.12, 0.12);
+      } else if (kind === 'merge') {
+        tone(c, 660, 0.18, 0.08, 'triangle');
+        tone(c, 990, 0.25, 0.07, 'triangle', 0.07);
+      } else if (kind === 'slide') noise(c, 0.32, 1400, 0.3, 0.6);
+      else if (kind === 'turn') {
+        tone(c, 880, 0.22, 0.06, 'sine');
+        tone(c, 1320, 0.3, 0.05, 'sine', 0.09);
+      } else if (kind === 'tick') tone(c, 1200, 0.06, 0.05, 'square');
+      else if (kind === 'error') tone(c, 180, 0.18, 0.08, 'sawtooth');
+      else if (kind === 'round') [523, 659, 784].forEach((f, i) => tone(c, f, 0.35, 0.07, 'triangle', 0.11 * i));
+      else if (kind === 'win') [523, 659, 784, 1047, 1319].forEach((f, i) => tone(c, f, 0.5, 0.08, 'triangle', 0.13 * i));
+    } catch (e) {}
+  }
+  root.DKS = {
+    play,
+    setOn: (v) => (on = !!v),
+    unlock: () => {
+      try {
+        if (!ctx) ctx = new (window.AudioContext || window.webkitAudioContext)();
+        if (ctx.state === 'suspended') ctx.resume();
+      } catch (e) {}
+    },
+  };
+})(typeof window !== 'undefined' ? window : globalThis);
+
+/* ---- ui.js ---- */
+/* =====================================================================
+   EŞLİ DOST KAZIĞI · Arayüz ve oyun akışı
+   Özgün oyunun masası, kartları, canlandırmaları ve kuralları korunur.
+   Botlara karşı (bu cihazda ya da hesaba kayıtlı) ve online masa.
+   ===================================================================== */
+(function () {
+  'use strict';
+  const DK = window.DK;
+  const AI = window.DKAI;
+  const SND = window.DKS;
+  const NET = window.BGT || null;
+  const TC = DK.TEAM_COLORS;
+  const $ = (s, el) => (el || document).querySelector(s);
+  const $$ = (s, el) => Array.from((el || document).querySelectorAll(s));
+  const esc = (t) => String(t == null ? '' : t).replace(/[&<>"']/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' })[c]);
+  const sleep = (ms) => new Promise((r) => setTimeout(r, ms));
+  const reduceMotion = !!(window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches);
+  const embedded = (() => {
+    try {
+      return window.parent !== window;
+    } catch (e) {
+      return true;
+    }
+  })();
+  function el(html) {
+    const t = document.createElement('template');
+    t.innerHTML = html.trim();
+    return t.content.firstElementChild;
+  }
+  const now = () => (NET ? NET.now() : Date.now());
+
+  /* ---------------- simgeler ---------------- */
+  const P = {
+    crown: '<path d="M11.562 3.266a.5.5 0 0 1 .876 0L15.39 8.87a1 1 0 0 0 1.516.294L21.183 5.5a.5.5 0 0 1 .798.519l-2.834 10.246a1 1 0 0 1-.956.734H5.81a1 1 0 0 1-.957-.734L2.02 6.02a.5.5 0 0 1 .798-.519l4.276 3.664a1 1 0 0 0 1.516-.294z"/><path d="M5 21h14"/>',
+    sparkles: '<path d="M9.937 15.5A2 2 0 0 0 8.5 14.063l-6.135-1.582a.5.5 0 0 1 0-.962L8.5 9.936A2 2 0 0 0 9.937 8.5l1.582-6.135a.5.5 0 0 1 .963 0L14.063 8.5A2 2 0 0 0 15.5 9.937l6.135 1.581a.5.5 0 0 1 0 .964L15.5 14.063a2 2 0 0 0-1.437 1.437l-1.582 6.135a.5.5 0 0 1-.963 0z"/><path d="M20 3v4"/><path d="M22 5h-4"/><path d="M4 17v2"/><path d="M5 18H3"/>',
+    x: '<path d="M18 6 6 18"/><path d="m6 6 12 12"/>',
+    trophy: '<path d="M10 14.66v1.626a2 2 0 0 1-.976 1.696A5 5 0 0 0 7 21.978"/><path d="M14 14.66v1.626a2 2 0 0 0 .976 1.696A5 5 0 0 1 17 21.978"/><path d="M18 9h1.5a1 1 0 0 0 0-5H18"/><path d="M4 22h16"/><path d="M6 9a6 6 0 0 0 12 0V3a1 1 0 0 0-1-1H7a1 1 0 0 0-1 1z"/><path d="M6 9H4.5a1 1 0 0 1 0-5H6"/>',
+    ccw: '<path d="M3 12a9 9 0 1 0 9-9 9.75 9.75 0 0 0-6.74 2.74L3 8"/><path d="M3 3v5h5"/>',
+    cw: '<path d="M21 12a9 9 0 1 1-9-9c2.52 0 4.93 1 6.74 2.74L21 8"/><path d="M21 3v5h-5"/>',
+    house: '<path d="M15 21v-8a1 1 0 0 0-1-1h-4a1 1 0 0 0-1 1v8"/><path d="M3 10a2 2 0 0 1 .709-1.528l7-5.999a2 2 0 0 1 2.582 0l7 5.999A2 2 0 0 1 21 10v9a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/>',
+    vol: '<path d="M11 4.702a.705.705 0 0 0-1.203-.498L6.413 7.587A1.4 1.4 0 0 1 5.416 8H3a1 1 0 0 0-1 1v6a1 1 0 0 0 1 1h2.416a1.4 1.4 0 0 1 .997.413l3.383 3.384A.705.705 0 0 0 11 19.298z"/><path d="M16 9a5 5 0 0 1 0 6"/><path d="M19.364 18.364a9 9 0 0 0 0-12.728"/>',
+    mute: '<path d="M11 4.702a.705.705 0 0 0-1.203-.498L6.413 7.587A1.4 1.4 0 0 1 5.416 8H3a1 1 0 0 0-1 1v6a1 1 0 0 0 1 1h2.416a1.4 1.4 0 0 1 .997.413l3.383 3.384A.705.705 0 0 0 11 19.298z"/><line x1="22" x2="16" y1="9" y2="15"/><line x1="16" x2="22" y1="9" y2="15"/>',
+    play: '<polygon points="6 3 20 12 6 21 6 3"/>',
+    book: '<path d="M12 7v14"/><path d="M3 18a1 1 0 0 1-1-1V4a1 1 0 0 1 1-1h5a4 4 0 0 1 4 4 4 4 0 0 1 4-4h5a1 1 0 0 1 1 1v13a1 1 0 0 1-1 1h-6a3 3 0 0 0-3 3 3 3 0 0 0-3-3z"/>',
+    click: '<path d="M14 4.1 12 6"/><path d="m5.1 8-2.9-.8"/><path d="m6 12-1.9 2"/><path d="M7.2 2.2 8 5.1"/><path d="M9.037 9.69a.498.498 0 0 1 .653-.653l11 4.5a.5.5 0 0 1-.074.949l-4.349 1.041a1 1 0 0 0-.74.739l-1.04 4.35a.5.5 0 0 1-.95.074z"/>',
+    layers: '<path d="M12.83 2.18a2 2 0 0 0-1.66 0L2.6 6.08a1 1 0 0 0 0 1.83l8.58 3.91a2 2 0 0 0 1.66 0l8.58-3.9a1 1 0 0 0 0-1.83z"/><path d="M2 12a1 1 0 0 0 .58.91l8.6 3.91a2 2 0 0 0 1.65 0l8.58-3.9A1 1 0 0 0 22 12"/><path d="M2 17a1 1 0 0 0 .58.91l8.6 3.91a2 2 0 0 0 1.65 0l8.58-3.9A1 1 0 0 0 22 17"/>',
+    chart: '<path d="M3 3v16a2 2 0 0 0 2 2h16"/><path d="M18 17V9"/><path d="M13 17V5"/><path d="M8 17v-3"/>',
+    max: '<path d="M8 3H5a2 2 0 0 0-2 2v3"/><path d="M21 8V5a2 2 0 0 0-2-2h-3"/><path d="M3 16v3a2 2 0 0 0 2 2h3"/><path d="M16 21h3a2 2 0 0 0 2-2v-3"/>',
+    pause: '<rect x="14" y="4" width="4" height="16" rx="1"/><rect x="6" y="4" width="4" height="16" rx="1"/>',
+    phone: '<rect width="14" height="20" x="5" y="2" rx="2" ry="2"/><path d="M12 18h.01"/>',
+    chat: '<path d="M7.9 20A9 9 0 1 0 4 16.1L2 22Z"/><path d="M8 12h.01"/><path d="M12 12h.01"/><path d="M16 12h.01"/>',
+    eye: '<path d="M2.062 12.348a1 1 0 0 1 0-.696 10.75 10.75 0 0 1 19.876 0 1 1 0 0 1 0 .696 10.75 10.75 0 0 1-19.876 0"/><circle cx="12" cy="12" r="3"/>',
+    users: '<path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M22 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/>',
+  };
+  const icon = (k, size, sw, cls) =>
+    `<svg class="lucide${cls ? ' ' + cls : ''}" width="${size || 18}" height="${size || 18}" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="${sw || 2}" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">${P[k]}</svg>`;
+
+  /* ---------------- kartlar ---------------- */
+  const isRed = (s) => s === 'H' || s === 'D' || s === 'R';
+  function cardHTML(c, w, cls, style, attrs) {
+    w = w || 84;
+    const st = `width:${w}px;height:${Math.round(1.4 * w)}px;--cw:${w}px;${style || ''}`;
+    if (c.rank === 'JOB') {
+      const idx = '<span>J</span><span>O</span><span>B</span>';
+      return `<div class="pc job ${cls || ''}" style="${st}" ${attrs || ''}><div class="idx tl job-idx">${idx}</div><div class="job-center">${icon('crown', 0.34 * w, 1.6)}<div class="job-word">JOB</div></div><div class="idx br job-idx">${idx}</div></div>`;
+    }
+    const s = DK.SUIT_SYM[c.suit];
+    const face = ['J', 'Q', 'K'].includes(c.rank);
+    const fic = c.rank === 'K' ? icon('crown', 0.18 * w, 2, 'face-ic') : c.rank === 'Q' ? icon('sparkles', 0.18 * w, 2, 'face-ic') : '';
+    const mid = face
+      ? `<div class="face">${fic}<span class="fl">${c.rank}</span><span class="fs">${s}</span></div>`
+      : `<div class="pip ${c.rank === 'A' ? 'ace' : ''}">${s}</div>`;
+    return `<div class="pc ${isRed(c.suit) ? 'red' : ''} ${c.rank === '10' ? 'ten' : ''} ${cls || ''}" style="${st}" ${attrs || ''}><div class="idx tl"><span class="r">${c.rank}</span><span class="s">${s}</span></div>${mid}<div class="idx br"><span class="r">${c.rank}</span><span class="s">${s}</span></div></div>`;
+  }
+  const backHTML = (w, cls, style, attrs) =>
+    `<div class="pcb ${cls || ''}" style="width:${w}px;height:${Math.round(1.4 * w)}px;--cw:${w}px;${style || ''}" ${attrs || ''}><div class="pcb-in"><div class="pcb-medal">BG</div></div></div>`;
+  const rankLabel = (r) => (r === 'JOB' ? 'Job' : r);
+
+  /* ---------------- ayarlar ---------------- */
+  const SET_KEY = 'edk-settings';
+  const SAVE_KEY = 'edk-save-v1';
+  const DEF = { teams: 2, timer: 0, difficulty: 'orta', clickMode: false, sound: true, name: 'Oyuncu' };
+  const NAMES = ['Ayşe', 'Mehmet', 'Zeynep', 'Mustafa', 'Elif', 'Emre', 'Fatma', 'Burak', 'Selin', 'Kerem', 'Deniz', 'Cem', 'Ebru', 'Oğuz', 'Gizem', 'Murat', 'Hülya', 'Serkan', 'Derya', 'Tolga', 'Esra', 'Kaan', 'Merve', 'Barış', 'Nazlı', 'Volkan', 'Pınar', 'Hakan'];
+  const LEVELS = [
+    { id: 'kolay', label: 'Kolay' },
+    { id: 'orta', label: 'Orta' },
+    { id: 'zor', label: 'Zor' },
+  ];
+  function loadSet() {
+    try {
+      return Object.assign({}, DEF, JSON.parse(localStorage.getItem(SET_KEY) || '{}'));
+    } catch (e) {
+      return Object.assign({}, DEF);
+    }
+  }
+  function saveSet() {
+    try {
+      localStorage.setItem(SET_KEY, JSON.stringify(G.set));
+    } catch (e) {}
+  }
+
+  /* ---------------- genel durum ---------------- */
+  const G = {
+    set: loadSet(),
+    st: null, // motor durumu
+    view: null, // canlandırma sırasında gösterilen ara durum
+    me: 0,
+    spect: false,
+    mode: 'offline', // offline | bots | online
+    net: null,
+    rules: null,
+    anim: false,
+    VQ: [],
+    sel: null,
+    picker: null,
+    drag: null,
+    hover: null,
+    pulse: null,
+    ticker: null,
+    paused: false,
+    modal: null,
+    roundOpen: false,
+    lay: { W: 1280, scale: 1, ox: 0, oy: 0 },
+    deadline: 0,
+    pauseAt: 0,
+  };
+  window.__DKG = G;
+  const level = () => (G.rules && G.rules.level) || G.set.difficulty || 'orta';
+  const turnSec = () => (G.rules ? G.rules.turn | 0 : G.set.timer | 0);
+  const V = () => G.view || G.st;
+
+  /* ---------------- sahne ölçüsü ---------------- */
+  function layout() {
+    const w = window.innerWidth;
+    const h = window.innerHeight;
+    const scale = Math.min(h / 900, w / 1280);
+    const W = Math.min(2000, w / scale);
+    G.lay = { W, scale, ox: (w - W * scale) / 2, oy: (h - 900 * scale) / 2 };
+    const stg = $('#stage');
+    stg.style.width = W + 'px';
+    stg.style.transform = `translate(${G.lay.ox}px, ${G.lay.oy}px) scale(${scale})`;
+    $('#scene').classList.toggle('small-scale', scale < 0.62);
+  }
+  function seatXY(n, W, sh) {
+    const L = 178;
+    const R = W - 178;
+    const M = W / 2;
+    const d = sh || 0; // 8 kişide üst çubuk büyüdüğünde köşe ve orta yan koltuklar biraz aşağı kayar
+    if (n === 4) return [null, [R, 380], [M, 140], [L, 380]];
+    if (n === 6) return [null, [R, 560], [R, 250], [M, 140], [L, 250], [L, 560]];
+    return [null, [R, 612], [R, 376 + d], [R, 140 + d], [M, 140], [L, 140 + d], [L, 376 + d], [L, 612]];
+  }
+
+  /* ---------------- oyuncu bilgisi ---------------- */
+  function seatInfo(p) {
+    if (G.net) return G.net.who(p);
+    const s = G.st;
+    const me = p === 0 && NET && NET.authed() ? NET.me() : null;
+    return { name: s.players[p].name, avatar_url: me ? me.avatar_url : '', bot: p !== 0, away: false, me: p === 0 };
+  }
+  const pname = (v, p) => v.players[p].name;
+  function photoHTML(p) {
+    const w = seatInfo(p);
+    const src = NET && w.avatar_url ? NET.avatarUrl(w.avatar_url) : '';
+    return src ? `<img class="av-ph" src="${esc(src)}" alt="" loading="lazy" decoding="async" onerror="this.remove()">` : '';
+  }
+  const botTag = (p) => {
+    const w = seatInfo(p);
+    return w.bot ? ` <span class="bt" title="${w.away ? 'Bağlantısı koptu, yerine bot oynuyor' : 'Bot'}">(B)</span>` : '';
+  };
+
+  /* =====================================================================
+     ÇİZİM
+     ===================================================================== */
+  function targetKeys() {
+    const v = V();
+    if (!v || v.phase !== 'playing') return new Set();
+    if (G.picker) return new Set(G.picker.targets.map(DK.targetKey));
+    const id = G.drag ? G.drag.id : G.sel;
+    if (!id) return new Set();
+    const c = v.hands[G.me] && v.hands[G.me].find((x) => x.id === id);
+    if (!c) return new Set();
+    return new Set(DK.targetsFor(v, c).map(DK.targetKey));
+  }
+  const HINT = { own: 'Kendine işle · kayar', partner: 'Eşine işle · kayar', opp: 'Rakibe kitle · kalır' };
+
+  function gstackHTML(groups, seat, w, hl, hov, pulse) {
+    const step = Math.round(0.6 * w);
+    const o = groups.length;
+    const shown = groups.slice(-3);
+    const hidden = o - shown.length;
+    const off = hidden > 0 ? 34 : 0;
+    const slotOff = o + 1 > 3 ? 34 : 0;
+    const h2 = Math.min(o, 2);
+    const ph = Math.round(1.4 * w);
+    let html = `<div class="gstack" style="height:${ph + 8}px">`;
+    if (hidden > 0) html += `<div class="g-more" style="height:${ph}px" title="Altta ${hidden} grup daha var">${icon('layers', 15)}<span>+${hidden}</span></div>`;
+    shown.forEach((g, i) => {
+      const top = i === shown.length - 1;
+      const layers = Math.min(g.cards.length - 1, 3);
+      let ly = '';
+      for (let k = 0; k < layers; k++) ly += `<div class="glayer" style="transform:translate(${3 * (layers - k)}px,${3 * (layers - k)}px)"></div>`;
+      html += `<div class="grp ${top ? 'top' : 'under'} ${top && hl ? 'hl' : ''} ${top && hov ? 'hov' : ''} ${top && pulse ? 'pulse' : ''}" style="left:${off + i * step}px;z-index:${i + 1};width:${w}px;height:${ph}px" ${top ? `data-front-top="${seat}"` : ''}>${ly}${cardHTML(g.cards[g.cards.length - 1], w)}<div class="gbadge">${g.cards.length}×</div></div>`;
+    });
+    html += `<div class="gslot" data-front-slot="${seat}" style="left:${slotOff + h2 * step}px;width:${w}px;height:${ph}px"></div>`;
+    if (!o) html += `<div class="gempty" style="width:${w}px;height:${ph}px">Boş</div>`;
+    return html + '</div>';
+  }
+  function seatHTML(v, p, x, y, self, keys) {
+    const n = v.n;
+    const small = n <= 6;
+    const m = small ? 320 : 300;
+    const gh = small ? 200 : 180;
+    const team = DK.teamOf(v, p);
+    const fr = v.fronts[p] || [];
+    const cnt = fr.reduce((a, g) => a + g.cards.length, 0);
+    const key = 'front:' + p;
+    const active = v.phase === 'playing' && v.current === p && !G.anim;
+    const hl = keys.has(key);
+    const hov = hl && G.hover === key;
+    let hint = null;
+    if (hl) {
+      const kind = DK.targetType(v, G.me, { type: 'front', seat: p });
+      hint = HINT[kind] || null;
+    }
+    const pulse = G.pulse && G.pulse.key === key && Date.now() - G.pulse.t < 900;
+    const mate = DK.partner(v, G.me) === p;
+    const w = seatInfo(p);
+    const hidden = self
+      ? ''
+      : `<div class="hidden-hand"><div class="hh-fan">${Array.from({ length: Math.min(v.hands[p].length, 5) })
+          .map((_, i) => backHTML(24, 'hh-card', `right:${9 * i}px;z-index:${5 - i}`))
+          .join('')}<div class="hh-anchor" data-seat-hand="${p}"></div></div><span class="hh-num">${v.hands[p].length}</span></div>`;
+    const ring = active && (self && !G.spect) && turnSec() ? `<svg class="timer-ring" viewBox="0 0 44 44"><circle cx="22" cy="22" r="19" class="tr-bg"></circle><circle cx="22" cy="22" r="19" class="tr-fg" stroke-dasharray="${(2 * Math.PI * 19).toFixed(2)}" stroke-dashoffset="0"></circle></svg>` : '';
+    const canWatch = G.spect && G.net && !self && G.net.watchable().includes(p);
+    return `<div class="seat ${active ? 'active' : ''} ${hl ? 'hl' : ''} ${hov ? 'hov' : ''} ${self ? 'self' : ''} ${w.away ? 'away' : ''} ${canWatch ? 'can-watch' : ''}"${canWatch ? ' title="Bu oyuncunun kartlarını izle"' : ''} style="left:${x - m / 2}px;top:${y - gh / 2}px;width:${m}px;height:${gh}px;--team:${TC[team]}" data-drop="${key}" data-seat="${p}">
+      ${active ? `<div class="seat-ribbon">${self && !G.spect ? 'SIRA SENDE' : 'SIRADA'}</div>` : ''}
+      ${hl && hint ? `<div class="seat-hint">${hint}</div>` : ''}
+      <div class="seat-head">
+        <div class="avatar"><span>${esc(pname(v, p).charAt(0))}</span>${photoHTML(p)}${ring}</div>
+        <div class="seat-meta"><div class="seat-name">${esc(pname(v, p))}${botTag(p)}</div>
+          <div class="seat-tags"><span class="tag team">TAKIM ${team + 1}</span>${self && !G.spect ? '<span class="tag you">SEN</span>' : ''}${mate && !G.spect ? '<span class="tag mate">EŞİN</span>' : ''}<span class="tag muted">Önü ${cnt}</span></div></div>
+        ${hidden}
+      </div>
+      ${gstackHTML(fr, p, small ? 96 : 84, hl, hov, pulse)}
+    </div>`;
+  }
+  function centerHTML(v, keys) {
+    const W = G.lay.W;
+    const hov = G.hover;
+    let starts = v.start
+      .map((g) => {
+        const k = 'start:' + g.value;
+        const cards = g.cards
+          .slice(0, 3)
+          .map((c, i) => cardHTML(c, 58, 's-card', `top:${-3 * i}px;left:${3 * i}px`))
+          .join('');
+        return `<div class="sgrp ${keys.has(k) ? 'hl' : ''} ${hov === k ? 'hov' : ''}" data-drop="${k}" data-start-group="${esc(g.value)}">${cards}${g.cards.length > 1 ? `<div class="gbadge sm">${g.cards.length}×</div>` : ''}</div>`;
+      })
+      .join('');
+    if (!v.start.length) starts += '<div class="zone-empty">Tümü kitlendi</div>';
+    const mid = v.middle.slice(-4);
+    const midHL = keys.has('middle');
+    let mids = mid
+      .map((c, i) => {
+        const top = i === mid.length - 1;
+        return cardHTML(c, 96, 'm-card ' + (top ? 'top' : ''), `left:${64 - 22 * (mid.length - 1 - i)}px;z-index:${i + 1};transform:rotate(${top ? 0 : i % 2 ? 4 : -5}deg)`, top ? 'data-middle-top' : '');
+      })
+      .join('');
+    if (!v.middle.length) mids += `<div class="mid-empty" style="left:64px;width:96px;height:${1.4 * 96}px">Kartı buraya at</div>`;
+    mids += `<div class="mid-landing" data-middle-landing style="left:64px;width:96px;height:${1.4 * 96}px"></div>`;
+    const deckN = v._deckN != null ? v._deckN : v.deck.length;
+    const deck = deckN > 0 ? [0, 1, 2].map((i) => backHTML(64, 'deck-card', `top:${-3 * i}px;left:${2 * i}px`)).join('') : '';
+    return `<div class="center" style="left:${W / 2 - 300}px;top:252px;width:600px;height:270px" data-drop="middle">
+      <div class="start-area"><div class="zone-label">Başlangıç Kartları</div><div class="start-grid">${starts}</div><div class="start-landing" data-start-landing style="width:58px;height:${58 * 1.4}px"></div></div>
+      <div class="middle-area ${midHL ? 'hl' : ''} ${hov === 'middle' ? 'hov' : ''}" data-drop="middle" data-middle-pile><div class="zone-label">Orta · ${v.middle.length} kart</div><div class="mid-fan" style="height:${1.4 * 96}px">${mids}</div></div>
+      <div class="deck-area"><div class="zone-label">Deste</div><div class="deck-stack" data-deck>${deck}</div><div class="deck-count">${deckN}</div></div>
+    </div>`;
+  }
+  const HAND_W = 140;
+  function sortedHand(cards) {
+    return cards.slice().sort((a, b) => DK.rankIndex(a.rank) - DK.rankIndex(b.rank) || a.suit.localeCompare(b.suit));
+  }
+  function handHTML(v) {
+    const W = G.lay.W;
+    const cards = sortedHand(v.hands[G.me] || []);
+    const enabled = canAct();
+    const span = 112 * (cards.length - 1) + HAND_W;
+    const mid = (cards.length - 1) / 2;
+    const items = cards
+      .map((c, i) => {
+        const dragging = G.drag && G.drag.id === c.id && G.drag.moved;
+        const sel = G.sel === c.id;
+        const rot = 4 * (i - mid);
+        const tf = dragging ? `translate(${G.drag.dx}px, ${G.drag.dy - 20}px) rotate(0deg) scale(1.08)` : `translate(0px, ${4 * Math.abs(i - mid) - (sel ? 34 : 0)}px) rotate(${rot}deg)`;
+        return `<div class="hcard ${dragging ? 'dragging' : ''} ${sel ? 'sel' : ''}" style="left:${320 - span / 2 + 112 * i}px;transform:${tf};z-index:${dragging ? 50 : i + 1}" data-hand-card="${c.id}">${cardHTML(c, HAND_W)}</div>`;
+      })
+      .join('');
+    return `<div class="hand ${enabled ? 'enabled' : 'idle'}" style="left:${W / 2 - 320}px;width:640px" data-hand-area><div class="hand-landing" data-hand-landing style="width:${HAND_W}px;height:196px"></div>${items}</div>`;
+  }
+  function turnInfoHTML(v) {
+    const W = G.lay.W;
+    const mine = canAct();
+    let body;
+    if (v.phase === 'playing' && !G.anim) {
+      if (v.current === G.me && !G.spect) {
+        const ts = turnSec();
+        body = `<div class="ti-big">SIRA SENDE</div>${ts > 0 ? '<div class="ti-timer"><div class="ti-bar" style="width:100%"></div><span></span></div>' : ''}<div class="ti-hint">${
+          G.set.clickMode ? 'Kartı sürükle, ya da seç → hedefe tıkla · Çift tıkla: ortaya at' : 'Kartı sürükleyip hedefe ya da ortaya bırak'
+        }</div>`;
+      } else body = `<div class="ti-small">Sırada</div><div class="ti-name">${esc(pname(v, v.current))}${botTag(v.current)}</div><div class="ti-hint">${G.anim ? 'Kart oynanıyor…' : 'Düşünüyor…'}</div>`;
+    } else if (v.phase === 'playing') body = `<div class="ti-small">Sırada</div><div class="ti-name">${esc(pname(v, v.current))}</div><div class="ti-hint">Kart oynanıyor…</div>`;
+    else if (v.phase === 'roundEnd') body = '<div class="ti-small">Tur bitti</div><div class="ti-name">Puanlar</div>';
+    else if (v.phase === 'gameOver') body = '<div class="ti-small">Oyun bitti</div><div class="ti-name">Sonuçlar</div>';
+    else body = '<div class="ti-small">Masa hazırlanıyor</div><div class="ti-name">Dağıtım</div>';
+    return `<div class="turn-info ${mine ? 'mine' : ''}" style="left:${W / 2 + 314}px">${body}</div>`;
+  }
+  /** Telefonda (küçük ölçek) üst çubuklar büyür: düğmeler dokunulacak, yazılar okunacak boyda kalır.
+   *  Büyüme, üst ortadaki koltuğa ve köşe koltuklarına değmeyecek kadar sınırlanır. */
+  function fitTops(n) {
+    const s = G.lay.scale;
+    const W = G.lay.W;
+    if (s >= 0.62) return 0;
+    const want = Math.min(2.3, 28 / (34 * s));
+    const room = W / 2 - (n === 8 ? 150 : 160) - 18 - 24;
+    const maxShift = n === 8 ? 48 : 0;
+    const vLimit = n === 8 ? (50 + maxShift - 16) / 40 : 3;
+    let bottom = 0;
+    $$('#tops .topbar').forEach((bar) => {
+      let w = 0;
+      let c = 0;
+      for (const ch of bar.children) {
+        if (ch.offsetWidth) {
+          w += ch.offsetWidth;
+          c++;
+        }
+      }
+      w += Math.max(0, c - 1) * 8;
+      const k = Math.max(1, Math.min(want, vLimit, room / Math.max(w, 1)));
+      if (k < 1.02) return;
+      bar.style.transformOrigin = bar.classList.contains('right') ? '100% 0' : '0 0';
+      bar.style.transform = `scale(${k.toFixed(3)})`;
+      bottom = Math.max(bottom, 8 + 40 * k + 8);
+    });
+    return n === 8 ? Math.min(maxShift, Math.max(0, Math.ceil(bottom - 50))) : 0;
+  }
+  function topHTML(v) {
+    const W = G.lay.W;
+    const left = `<div class="topbar left">
+      ${embedded && G.lay.scale < 0.62 ? '' : '<div class="brand"><span class="brand-eye">BÖZER GAMING</span><span class="brand-name">Eşli Dost Kazığı</span></div>'}
+      <div class="chip">TUR <b>${Math.min(v.round + 1, v.totalRounds) || 1}</b>/${v.totalRounds}</div>
+      <div class="chip">DAĞITIM <b>${v.dealNo}</b>/${v.dealsTotal || '–'}</div>
+      <div class="chip icon" title="${v.dir === 1 ? '1. yarı' : '2. yarı'}">${icon(v.dir === 1 ? 'ccw' : 'cw', 15)}</div>
+      ${G.spect && G.st ? specHTML() : ''}
+    </div>`;
+    const net = G.net
+      ? `<span class="net-pill ${G.net.fails > 1 ? '' : 'hidden'}" id="netPill">Bağlantı bekleniyor</span><span class="t-viewers" id="viewersPill" ${G.viewers && G.viewers.length && !G.spect ? '' : 'hidden'} title="${esc((G.viewers || []).map((x) => x.name).join(', '))}">${icon('eye', 15)}<b>${(G.viewers || []).length}</b></span><button class="ibtn chat-btn" data-a="chat" aria-label="Masa sohbeti" id="btnChat">${icon('chat', 17)}</button>`
+      : '';
+    const right = `<div class="topbar right" style="left:${W - 560}px;width:542px">
+      ${net}
+      <button class="score-btn" data-a="score">${icon('chart', 15)}${v.scores.map((s, t) => `<span class="sc-mini"><i style="background:${TC[t]}"></i>${s}</span>`).join('')}</button>
+      <button class="ibtn" data-a="rules" aria-label="Kurallar">${icon('book', 17)}</button>
+      <button class="ibtn" data-a="sound" aria-label="Ses">${icon(G.set.sound ? 'vol' : 'mute', 17)}</button>
+      ${embedded ? '' : `<button class="ibtn" data-a="full" aria-label="Tam ekran">${icon('max', 17)}</button>`}
+      <button class="ibtn" data-a="menu" aria-label="Menü">${icon('pause', 17)}</button>
+    </div>`;
+    return left + right;
+  }
+  function specHTML() {
+    const seats = G.net ? G.net.watchable() : [];
+    if (!seats.includes(G.me)) seats.unshift(G.me);
+    const opts = seats.map((p) => `<option value="${p}" ${p === G.me ? 'selected' : ''}>${esc(G.st.players[p].name)}</option>`).join('');
+    return `<div class="chip spec-chip">${icon('eye', 15)}<span>İzliyorsun</span><select id="specSel" aria-label="İzlenen oyuncu" ${seats.length < 2 ? 'disabled' : ''}>${opts}</select></div>`;
+  }
+  function tickerHTML() {
+    const t = G.ticker;
+    if (!t || G.picker) return '';
+    return `<div class="ticker" style="left:${G.lay.W / 2}px"><i style="background:${TC[t.team]}"></i><b>${esc(t.name)}</b>${cardHTML(t.card, 22, 'tk-card')}<span>${esc(t.text)}</span></div>`;
+  }
+  function pickerHTML(v) {
+    const pk = G.picker;
+    if (!pk) return '';
+    const c = (v.hands[G.me] || []).find((x) => x.id === pk.cardId);
+    if (!c) return '';
+    const lab = rankLabel(c.rank);
+    const opts = pk.targets
+      .map((t, i) => {
+        const kind = DK.targetType(v, G.me, t);
+        const info =
+          kind === 'own'
+            ? ['Kendi grubun', 'kart eklenir, grup sıradakine kayar']
+            : kind === 'partner'
+              ? [`Eşin ${pname(v, t.seat)}`, 'grup eşinin sıradakine kayar']
+              : kind === 'opp'
+                ? [`Rakip ${pname(v, t.seat)}`, 'grup rakibin önünde kalır']
+                : kind === 'start'
+                  ? ['Başlangıç kartları', 'grup sıradaki oyuncuya kitlenir']
+                  : ['Ortadaki kart', '2 kart sıradaki oyuncuya kitlenir'];
+        const cnt = t.type === 'front' ? DK.last(v.fronts[t.seat]).cards.length : t.type === 'start' ? v.start.find((g) => g.value === t.value).cards.length : 1;
+        return `<button class="picker-opt" data-pick="${i}"><b>${esc(info[0])}</b><span>${lab} × ${cnt + 1} · ${info[1]}</span></button>`;
+      })
+      .join('');
+    return `<div class="picker-wrap" style="left:${G.lay.W / 2}px"><div class="picker"><div class="picker-card">${cardHTML(c, 58)}</div><div class="picker-body"><div class="picker-title">${lab} nereye işlensin?</div><div class="picker-opts">${opts}</div></div><button class="picker-cancel" data-pick="x" aria-label="Vazgeç">${icon('x', 16)}</button></div></div>`;
+  }
+  function render() {
+    const v = V();
+    if (!v) return;
+    const keys = targetKeys();
+    $('#tops').innerHTML = topHTML(v);
+    const pos = seatXY(v.n, G.lay.W, fitTops(v.n));
+    let seats = '';
+    for (let k = 1; k < v.n; k++) {
+      const p = (G.me + k) % v.n;
+      seats += seatHTML(v, p, pos[k][0], pos[k][1], false, keys);
+    }
+    seats += seatHTML(v, G.me, G.lay.W / 2 - 306 - (v.n <= 6 ? 160 : 150), v.n <= 6 ? 790 : 798, true, keys);
+    const scene = $('#scene');
+    scene.classList.toggle('dragging', !!(G.drag && G.drag.moved));
+    $('#felt').style.width = G.lay.W - 120 + 'px';
+    $('#centerBox').innerHTML = centerHTML(v, keys);
+    $('#seats').innerHTML = seats;
+    $('#handBox').innerHTML = handHTML(v);
+    $('#turnBox').innerHTML = turnInfoHTML(v);
+    $('#tickerBox').innerHTML = tickerHTML();
+    $('#pickerBox').innerHTML = pickerHTML(v);
+    if (NET && G.net) NET.chat.bind($('#btnChat'));
+    paintTimer();
+  }
+  /** Sürükleme sırasında yalnız eli ve vurguları güncelle */
+  function renderLight() {
+    const v = V();
+    if (!v) return;
+    const keys = targetKeys();
+    $('#scene').classList.toggle('dragging', !!(G.drag && G.drag.moved));
+    $$('#seats .seat').forEach((s) => {
+      const p = +s.dataset.seat;
+      const key = 'front:' + p;
+      const hl = keys.has(key);
+      s.classList.toggle('hl', hl);
+      s.classList.toggle('hov', hl && G.hover === key);
+      const top = $('.grp.top', s);
+      if (top) {
+        top.classList.toggle('hl', hl);
+        top.classList.toggle('hov', hl && G.hover === key);
+      }
+      let hint = $('.seat-hint', s);
+      if (hl && !hint) {
+        const kind = DK.targetType(v, G.me, { type: 'front', seat: p });
+        if (HINT[kind]) s.insertAdjacentHTML('afterbegin', `<div class="seat-hint">${HINT[kind]}</div>`);
+      } else if (!hl && hint) hint.remove();
+    });
+    $$('#centerBox .sgrp').forEach((g) => {
+      const k = g.dataset.drop;
+      g.classList.toggle('hl', keys.has(k));
+      g.classList.toggle('hov', G.hover === k);
+    });
+    const mid = $('#centerBox .middle-area');
+    if (mid) {
+      mid.classList.toggle('hl', keys.has('middle'));
+      mid.classList.toggle('hov', G.hover === 'middle');
+    }
+    const hand = sortedHand(v.hands[G.me] || []);
+    const midI = (hand.length - 1) / 2;
+    hand.forEach((c, i) => {
+      const n = $(`#handBox [data-hand-card="${c.id}"]`);
+      if (!n) return;
+      const dragging = G.drag && G.drag.id === c.id && G.drag.moved;
+      const sel = G.sel === c.id;
+      n.classList.toggle('dragging', !!dragging);
+      n.classList.toggle('sel', sel);
+      n.style.zIndex = dragging ? 50 : i + 1;
+      n.style.transform = dragging ? `translate(${G.drag.dx}px, ${G.drag.dy - 20}px) rotate(0deg) scale(1.08)` : `translate(0px, ${4 * Math.abs(i - midI) - (sel ? 34 : 0)}px) rotate(${4 * (i - midI)}deg)`;
+    });
+  }
+
+  /* ---------------- süre göstergesi ---------------- */
+  function timeLeft() {
+    const ts = turnSec();
+    if (!ts || !G.st || G.st.phase !== 'playing') return null;
+    if (G.mode === 'online') return Math.max(0, ((G.st._phaseAt || now()) + ts * 1000 - now()) / 1000);
+    if (!G.deadline) return ts;
+    const t = G.paused ? G.pauseAt : Date.now();
+    return Math.max(0, (G.deadline - t) / 1000);
+  }
+  function paintTimer() {
+    const ts = turnSec();
+    const left = timeLeft();
+    if (left == null) return;
+    const frac = Math.min(1, left / ts);
+    const fg = $('#seats .seat.self .tr-fg');
+    if (fg) fg.setAttribute('stroke-dashoffset', (2 * Math.PI * 19 * (1 - frac)).toFixed(2));
+    const bar = $('#turnBox .ti-bar');
+    if (bar) bar.style.width = frac * 100 + '%';
+    const lab = $('#turnBox .ti-timer span');
+    if (lab) lab.textContent = Math.ceil(left) + ' sn';
+    if (canAct()) {
+      const sec = Math.ceil(left);
+      if (sec !== G.lastTick && sec <= 3 && sec > 0) SND.play('tick');
+      G.lastTick = sec;
+    }
+  }
+  setInterval(() => {
+    if (G.st && !$('#game').classList.contains('hidden')) {
+      paintTimer();
+      if (G.mode !== 'online') checkMyTimer();
+    }
+  }, 100);
+
+  /* =====================================================================
+     UÇUŞLAR (kart ve grup canlandırmaları)
+     ===================================================================== */
+  function rectOf(sel) {
+    const n = typeof sel === 'string' ? $(sel) : sel;
+    if (!n) return null;
+    const r = n.getBoundingClientRect();
+    return { left: r.left, top: r.top, width: r.width, height: r.height };
+  }
+  function fly(o) {
+    return new Promise((resolve) => {
+      const from = o.from;
+      const to = o.to;
+      if (!from || !to || reduceMotion || document.hidden) return resolve();
+      const w = to.width;
+      const h = to.height;
+      let inner;
+      if (o.kind === 'back') inner = backHTML(w);
+      else if (o.kind === 'group') {
+        const cs = o.cards;
+        const k = Math.min(cs.length - 1, 3);
+        let ly = '';
+        for (let i = 0; i < k; i++) ly += `<div class="glayer" style="transform:translate(${3 * (k - i)}px,${3 * (k - i)}px)"></div>`;
+        inner = ly + cardHTML(cs[cs.length - 1], w) + `<div class="gbadge fly">${cs.length}×</div>`;
+      } else inner = cardHTML(o.cards[0], w);
+      const node = el(`<div class="flight ${o.kind === 'group' ? 'group' : ''}" style="width:${w}px;height:${h}px">${inner}</div>`);
+      $('#flights').appendChild(node);
+      const sx = from.left + from.width / 2 - w / 2;
+      const sy = from.top + from.height / 2 - h / 2;
+      const ex = to.left + to.width / 2 - w / 2;
+      const ey = to.top + to.height / 2 - h / 2;
+      const sc = from.width / w;
+      let frames;
+      let easing = 'cubic-bezier(.25,.8,.3,1)';
+      if (o.kind === 'group') {
+        easing = 'cubic-bezier(.5,.05,.25,1)';
+        frames = [
+          { transform: `translate(${sx}px,${sy}px) scale(${sc})`, filter: 'brightness(1)' },
+          { offset: 0.22, transform: `translate(${sx}px,${sy - 8}px) scale(${1.16 * sc})`, filter: 'brightness(1.3) drop-shadow(0 0 22px rgba(250,216,123,.95))' },
+          { offset: 0.34, transform: `translate(${sx}px,${sy - 8}px) scale(${1.12 * sc})`, filter: 'brightness(1.2) drop-shadow(0 0 16px rgba(250,216,123,.8))' },
+          { transform: `translate(${ex}px,${ey}px) scale(1)`, filter: 'brightness(1) drop-shadow(0 0 0 rgba(250,216,123,0))' },
+        ];
+      } else {
+        const mx = (sx + ex) / 2;
+        const my = Math.min(sy, ey) - 50;
+        frames = [
+          { transform: `translate(${sx}px,${sy}px) scale(${sc}) rotate(${o.kind === 'back' ? 0 : -10}deg)` },
+          { offset: 0.5, transform: `translate(${mx}px,${my}px) scale(${((sc + 1) / 2) * 1.08}) rotate(5deg)` },
+          { transform: `translate(${ex}px,${ey}px) scale(1) rotate(0deg)` },
+        ];
+      }
+      const an = node.animate(frames, { duration: o.dur, easing, fill: 'forwards' });
+      let done = false;
+      const fin = () => {
+        if (done) return;
+        done = true;
+        node.remove();
+        resolve();
+      };
+      an.onfinish = fin;
+      setTimeout(fin, o.dur + 400);
+    });
+  }
+  function targetSel(t) {
+    if (t.type === 'front') return `[data-front-top="${t.seat}"]`;
+    if (t.type === 'start') return `[data-start-group="${t.value}"]`;
+    if (t.type === 'middle') return '[data-middle-top]';
+    return '[data-middle-landing]';
+  }
+
+  /* =====================================================================
+     HAMLE MODELİ
+     ===================================================================== */
+  function phaseKey(s) {
+    return s.round + ':' + s.moveNo + ':' + s.phase + ':' + s.current;
+  }
+  function reduce(st, a) {
+    const d = a.data || {};
+    let r;
+    if (a.kind === 'play') {
+      const p = a.seat == null ? -1 : a.seat | 0;
+      const t = DK.parseTarget(d.t);
+      if (p < 0 || p >= st.n || typeof d.cid !== 'string' || !t || (t.type === 'front' && (t.seat < 0 || t.seat >= st.n))) r = { ok: false, err: 'Geçersiz hamle.' };
+      else r = DK.play(st, p, d.cid, t);
+    } else if (a.kind === 'next') r = DK.nextRound(st);
+    else r = { ok: false, err: 'Geçersiz hamle.' };
+    if (r.ok) {
+      const k = phaseKey(st);
+      if (k !== st._pk) {
+        st._pk = k;
+        st._phaseAt = (a.at || now()) + (a.kind === 'next' ? 5600 : r.dealt ? 3800 : 1800);
+      }
+    }
+    return r;
+  }
+  /** Hamleyi uygula ve canlandırma kuyruğuna ekle */
+  function applyUI(a, meta, local) {
+    const before = DK.clone(G.st);
+    const r = reduce(G.st, a);
+    if (!r.ok) {
+      if (local && !(meta && meta.quiet)) {
+        toast(r.err || 'Bu hamle yapılamaz', 'err');
+        SND.play('error');
+      }
+      return r;
+    }
+    G.VQ.push({ a, before, after: DK.clone(G.st), meta: meta || {}, r });
+    if (!G.anim) pump();
+    return r;
+  }
+  function run(a, meta) {
+    if (!G.st) return { ok: false };
+    if (G.net) {
+      const r = G.net.dispatch(a, { meta }) || { ok: false };
+      if (r.ok === false && r.wait && !(meta && meta.quiet)) toast(r.err || 'Bağlantı bekleniyor', 'err');
+      return r;
+    }
+    const r = applyUI(a, meta, true);
+    if (r.ok) save();
+    return r;
+  }
+
+  /* ---------------- canlandırma kuyruğu ---------------- */
+  async function pump() {
+    if (G.anim) return;
+    G.anim = true;
+    clearTimeout(G.botT);
+    while (G.VQ.length) {
+      const job = G.VQ.shift();
+      const fast = G.VQ.length >= 2 || reduceMotion || document.hidden || job.meta.fast || G.fastAnim;
+      try {
+        if (job.a.kind === 'next') await animRound(job, fast);
+        else await animPlay(job, fast);
+      } catch (e) {
+        console.error(e);
+      }
+    }
+    G.view = null;
+    G.anim = false;
+    render();
+    idle();
+  }
+  function tickerOf(v, p, card, target, fx) {
+    let text;
+    if (fx.kind === 'push') text = 'ortaya attı';
+    else if (fx.kind === 'stay') text = `→ ${pname(v, target.seat)} · ${fx.count}× kitlendi`;
+    else text = `${target.type === 'middle' ? 'Ortadaki kart' : target.type === 'start' ? 'Başlangıç kartları' : target.seat === p ? 'Kendi grubu' : 'Eşinin grubu'} → ${pname(v, fx.dest)} · ${fx.count}×`;
+    return { name: pname(v, p), card, text, team: DK.teamOf(v, p), k: Date.now() };
+  }
+  async function animPlay(job, fast) {
+    const { a, before, after } = job;
+    const p = a.seat;
+    const t = DK.parseTarget(a.data.t);
+    const card = before.hands[p].find((c) => c.id === a.data.cid);
+    if (G.sel === a.data.cid) G.sel = null;
+    G.picker = null;
+    if (fast || !card) {
+      G.view = after;
+      if (card) G.ticker = tickerOf(before, p, card, t, DK.applyMove(DK.clone(before), p, card.id, t));
+      render();
+      if (job.r.dealt && !fast) await animDeal(after, job.r.dealt, false);
+      if (after.phase === 'roundEnd') afterRoundEnd(fast);
+      return;
+    }
+    const from = (job.meta && job.meta.fromRect) || rectOf(p === G.me ? `[data-hand-card="${card.id}"]` : `[data-seat-hand="${p}"]`);
+    const s1 = DK.clone(before);
+    s1.hands[p] = s1.hands[p].filter((c) => c.id !== card.id);
+    G.view = s1;
+    render();
+    const to = rectOf(targetSel(t));
+    SND.play('flick');
+    await fly({ kind: 'card', cards: [card], from, to, dur: p === G.me ? 420 : 560 });
+    const sd = DK.clone(before);
+    const fx = DK.applyMove(sd, p, card.id, t);
+    const post = DK.clone(sd);
+    post.current = DK.nextSeat(post, p);
+    post.moveNo++;
+    if (job.r.dealt) post.phase = 'dealing';
+    else if (after.phase !== 'roundEnd') post.phase = after.phase;
+    if (after.phase === 'roundEnd') Object.assign(post, { phase: 'roundEnd', scores: after.scores, history: after.history, lastRound: after.lastRound });
+    if (fx.kind !== 'shift') {
+      G.view = post;
+      if (fx.kind === 'stay') G.pulse = { key: 'front:' + t.seat, t: Date.now() };
+      render();
+      SND.play(fx.kind === 'push' ? 'place' : 'merge');
+    } else {
+      const destTop = DK.last(before.fronts[fx.dest]);
+      const destR = destTop && destTop.value === fx.value ? rectOf(`[data-front-top="${fx.dest}"]`) : rectOf(`[data-front-slot="${fx.dest}"]`);
+      const mid = DK.clone(sd);
+      mid.fronts[fx.dest] = DK.clone(before).fronts[fx.dest];
+      G.view = mid;
+      render();
+      SND.play('merge');
+      const cards = fx.moved.map((id) => findCard(before, id) || card);
+      await fly({ kind: 'group', cards, from: to, to: destR, dur: 1050 });
+      G.view = post;
+      G.pulse = { key: 'front:' + fx.dest, t: Date.now() };
+      render();
+      SND.play('slide');
+    }
+    G.ticker = tickerOf(before, p, card, t, fx);
+    render();
+    await sleep(260);
+    if (job.r.dealt) {
+      await sleep(500);
+      await animDeal(after, job.r.dealt, false);
+    } else if (after.phase === 'roundEnd') {
+      G.view = after;
+      await sleep(1200);
+      afterRoundEnd(false);
+    }
+  }
+  function findCard(st, id) {
+    for (const h of st.hands) for (const c of h) if (c.id === id) return c;
+    for (const fr of st.fronts) for (const g of fr) for (const c of g.cards) if (c.id === id) return c;
+    for (const g of st.start) for (const c of g.cards) if (c.id === id) return c;
+    for (const c of st.middle) if (c.id === id) return c;
+    return null;
+  }
+  function showBanner(text, sub) {
+    const box = $('#bannerBox');
+    box.innerHTML = `<div class="banner" style="left:${G.lay.W / 2}px"><b>${esc(text)}</b><span>${esc(sub)}</span></div>`;
+    setTimeout(() => {
+      if (box.firstElementChild) box.firstElementChild.remove();
+    }, 1800);
+  }
+  async function animDeal(after, order, fast) {
+    const v = DK.clone(after);
+    v.hands = v.hands.map(() => []);
+    v.phase = 'dealing';
+    v._deckN = after.deck.length;
+    G.view = v;
+    render();
+    showBanner(after.dealNo === after.dealsTotal ? 'Son Dağıtım' : `${after.dealNo}. Dağıtım`, `${after.dealsTotal} dağıtımdan ${after.dealNo}.`);
+    if (fast) {
+      G.view = after;
+      render();
+      return;
+    }
+    await sleep(450);
+    const deckR = rectOf('[data-deck]');
+    const step = Math.min(75, 1300 / Math.max(1, order.length));
+    await Promise.all(
+      order.map((o, i) =>
+        sleep(i * step)
+          .then(() => {
+            if (i % 2 === 0) SND.play('deal');
+            const to = rectOf(o.seat === G.me ? '[data-hand-landing]' : `[data-seat-hand="${o.seat}"]`);
+            return fly({ kind: 'back', from: deckR, to, dur: 420 });
+          })
+          .then(() => {
+            const c = after.hands[o.seat].find((x) => x.id === o.id);
+            if (c) v.hands[o.seat].push(c);
+            render();
+          }),
+      ),
+    );
+    await sleep(250);
+    G.view = after;
+    render();
+  }
+  async function animRound(job, fast) {
+    const { after } = job;
+    closeModal('round');
+    G.roundOpen = false;
+    G.ticker = null;
+    if (after.phase === 'gameOver') {
+      G.view = after;
+      render();
+      SND.play('win');
+      showGameOver();
+      return;
+    }
+    const v = DK.clone(after);
+    v.start = [];
+    v.hands = v.hands.map(() => []);
+    v.phase = 'dealing';
+    v.dealNo = 0;
+    const dealtN = job.r.dealt ? job.r.dealt.length : 0;
+    v._deckN = after.deck.length + dealtN + after.startCards.length;
+    G.view = v;
+    render();
+    showBanner(`Tur ${after.round + 1}`, after.round < after.n ? 'İlk yarı' : 'İkinci yarı · yön değişti');
+    if (fast) {
+      G.view = after;
+      render();
+      return;
+    }
+    await sleep(900);
+    const deckR = rectOf('[data-deck]');
+    const land = rectOf('[data-start-landing]');
+    await Promise.all(
+      after.startCards.map((c, i) =>
+        sleep(110 * i)
+          .then(() => {
+            SND.play('deal');
+            return fly({ kind: 'card', cards: [c], from: deckR, to: land, dur: 460 });
+          })
+          .then(() => {
+            const g = v.start.find((x) => x.value === c.rank);
+            if (g) g.cards.push(c);
+            else v.start.push({ value: c.rank, cards: [c] });
+            v._deckN--;
+            render();
+          }),
+      ),
+    );
+    v.start = DK.clone(after).start;
+    await sleep(350);
+    if (job.r.dealt) await animDeal(after, job.r.dealt, false);
+  }
+  function afterRoundEnd() {
+    SND.play('round');
+    G.roundOpen = true;
+    showRoundModal();
+  }
+
+  /* =====================================================================
+     AKIŞ: sıra, botlar, süre
+     ===================================================================== */
+  function canAct() {
+    const s = G.st;
+    if (!s || G.spect || G.anim || G.VQ.length || G.paused) return false;
+    if (s.phase !== 'playing' || s.current !== G.me) return false;
+    if (G.net && !G.net.canAct()) return false;
+    return true;
+  }
+  function idle() {
+    const s = G.st;
+    if (!s) return;
+    if (s.phase === 'playing' && s.current === G.me && !G.spect) {
+      SND.play('turn');
+      if (G.mode !== 'online') {
+        const ts = turnSec();
+        G.deadline = ts ? Date.now() + ts * 1000 : 0;
+        G.myKey = phaseKey(s);
+      }
+    } else G.deadline = 0;
+    if (s.phase === 'gameOver') showGameOver();
+    if (s.phase === 'roundEnd' && !G.roundOpen) {
+      G.roundOpen = true;
+      showRoundModal();
+    }
+    drive();
+  }
+  function checkMyTimer() {
+    const s = G.st;
+    if (!G.deadline || G.paused || !s || s.phase !== 'playing' || s.current !== G.me || G.anim || G.spect) return;
+    if (phaseKey(s) !== G.myKey) return;
+    if (Date.now() >= G.deadline) {
+      G.deadline = 0;
+      toast('Süre doldu — kartın otomatik oynandı', 'err');
+      autoPlay(G.me);
+    }
+  }
+  function autoPlay(p) {
+    const mv = AI.choose(G.st, p, 'orta');
+    if (!mv) return { ok: false };
+    G.picker = null;
+    G.sel = null;
+    return run({ seat: p, kind: 'play', data: { cid: mv.cardId, t: DK.targetKey(mv.target), auto: true } }, { quiet: true });
+  }
+  function drive() {
+    clearTimeout(G.botT);
+    const s = G.st;
+    if (!s || G.anim || G.VQ.length) return;
+    if (G.mode === 'online') return netDrive();
+    if (s.phase !== 'playing') return;
+    const p = s.current;
+    if (p === G.me && !G.autoHuman) return;
+    const key = phaseKey(s);
+    G.botT = setTimeout(function go() {
+      if (G.paused) return (G.botT = setTimeout(go, 300));
+      const s2 = G.st;
+      if (!s2 || phaseKey(s2) !== key || G.anim) return;
+      const mv = AI.choose(s2, p, p === G.me ? 'orta' : level());
+      if (mv) run({ seat: p, kind: 'play', data: { cid: mv.cardId, t: DK.targetKey(mv.target) } }, { quiet: true });
+    }, (650 + 450 * Math.random()) * (G.testMul || 1));
+  }
+  /* ---- online: botları ve süreyi masadaki bağlı ilk oyuncu yürütür ---- */
+  function wake(ms) {
+    ms = Math.max(40, ms | 0);
+    const at = Date.now() + ms;
+    if (G.wakeAt && G.wakeAt <= at && G.wakeAt > Date.now()) return;
+    G.wakeAt = at;
+    setTimeout(() => {
+      if (G.wakeAt === at) G.wakeAt = 0;
+      netDrive();
+    }, ms);
+  }
+  function netDrive() {
+    const N = G.net;
+    const s = G.st;
+    if (!N || !s || G.mode !== 'online' || G.spect || N.closed || G.anim || G.VQ.length) return;
+    if (!N.canAct() || N.busy()) return;
+    const t = now();
+    const key = phaseKey(s);
+    const at = s._phaseAt || t;
+    const tMs = turnSec() * 1000;
+    if (s.phase === 'playing' && s.current === G.me) {
+      if (G.autoHuman) return netBot(G.me, key);
+      if (tMs && t >= at + tMs && fresh('autoKey', key)) {
+        toast('Süre doldu — kartın otomatik oynandı', 'err');
+        const r = autoPlay(G.me);
+        if (!r || r.ok === false) G.autoKey = null;
+      }
+      return;
+    }
+    if (!N.isDriver()) return;
+    if (s.phase === 'idle' || s.phase === 'roundEnd') {
+      const wait = s.phase === 'idle' ? 700 : 9000;
+      if (t >= at + wait) {
+        if (fresh('nextKey', key)) {
+          const r = N.dispatch({ seat: null, kind: 'next' }, { later: true });
+          if (!r || r.ok === false) G.nextKey = null;
+        }
+      } else wake(at + wait - t + 20);
+      return;
+    }
+    if (s.phase !== 'playing') return;
+    const p = s.current;
+    const ctl = N.control(p);
+    if (ctl === 'bot' || ctl === 'away') return netBot(p, key);
+    if (ctl === 'human' && tMs && t >= at + tMs + 3500 && fresh('autoKey', key)) {
+      const r = autoPlay(p);
+      if (!r || r.ok === false) G.autoKey = null;
+    }
+  }
+  /** Aynı aşama için işi bir kez başlat; sunucu reddedip geri alındıysa 5 sn sonra yeniden dene */
+  function fresh(slot, key) {
+    const k = G[slot];
+    if (k && k.key === key && Date.now() - k.at < 5000) return false;
+    G[slot] = { key, at: Date.now() };
+    return true;
+  }
+  function netBot(p, key) {
+    if (!fresh('botKey', key)) return;
+    setTimeout(() => {
+      const s = G.st;
+      if (!s || phaseKey(s) !== key || G.anim) {
+        if (G.botKey && G.botKey.key === key) G.botKey = null;
+        return;
+      }
+      const mv = AI.choose(s, p, p === G.me ? 'orta' : level());
+      const r = mv ? run({ seat: p, kind: 'play', data: { cid: mv.cardId, t: DK.targetKey(mv.target) } }, { quiet: true }) : null;
+      if (!r || r.ok === false) G.botKey = null;
+    }, (650 + 450 * Math.random()) * (G.testMul || 1));
+  }
+
+  /* =====================================================================
+     İNSAN HAMLESİ (sürükle, seç → tıkla, çift tıkla → ortaya)
+     ===================================================================== */
+  function humanTargets(id) {
+    const s = G.st;
+    const c = s && s.hands[G.me] && s.hands[G.me].find((x) => x.id === id);
+    return c ? DK.targetsFor(s, c) : [];
+  }
+  function humanDrop(id, key, rect) {
+    if (!canAct()) return false;
+    const ts = humanTargets(id);
+    if (key === 'middle') {
+      if (!ts.length) doPlay(id, { type: 'push' }, rect);
+      else if (ts.length === 1) doPlay(id, ts[0], rect);
+      else {
+        G.sel = null;
+        G.picker = { cardId: id, targets: ts };
+        render();
+      }
+      return true;
+    }
+    const t = ts.find((x) => DK.targetKey(x) === key);
+    if (t) {
+      doPlay(id, t, rect);
+      return true;
+    }
+    SND.play('error');
+    toast('Bu kart oraya işlenemez', 'err');
+    return false;
+  }
+  function doPlay(id, target, rect) {
+    G.picker = null;
+    G.sel = null;
+    G.deadline = 0;
+    run({ seat: G.me, kind: 'play', data: { cid: id, t: DK.targetKey(target) } }, { fromRect: rect || null });
+  }
+  function dropAt(x, y) {
+    for (const n of document.elementsFromPoint(x, y)) {
+      if (n.closest('[data-hand-card]')) continue;
+      const d = n.closest('[data-drop]');
+      if (d) return d.dataset.drop;
+    }
+    return null;
+  }
+  /** İzleyici bir koltuğa dokununca o oyuncunun kartlarını izler (masa sık yenilendiği için click yerine pointerup) */
+  function onSpectTap(e) {
+    if (!G.spect || !G.st || !G.net || (e.button != null && e.button > 0)) return;
+    if (e.target.closest('button') || e.target.closest('select')) return;
+    const seat = e.target.closest('.seat[data-seat]');
+    if (!seat || +seat.dataset.seat === G.me) return;
+    const p = +seat.dataset.seat;
+    if (G.net.watchable().includes(p)) {
+      G.me = p;
+      render();
+    } else toast('Yalnızca arkadaşlarının kartlarını görebilirsin.', '');
+  }
+  function onHandDown(e) {
+    const hc = e.target.closest('[data-hand-card]');
+    if (!hc || !canAct() || (e.button != null && e.button > 0)) return;
+    e.preventDefault();
+    SND.unlock();
+    const id = hc.dataset.handCard;
+    G.drag = { id, x: e.clientX, y: e.clientY, moved: false, dx: 0, dy: 0 };
+    let lastKey = null;
+    const move = (ev) => {
+      const d = G.drag;
+      if (!d) return;
+      const dx = ev.clientX - d.x;
+      const dy = ev.clientY - d.y;
+      if (!d.moved && Math.hypot(dx, dy) > 8) {
+        d.moved = true;
+        G.sel = null;
+        G.picker = null;
+      }
+      if (d.moved) {
+        d.dx = dx / G.lay.scale;
+        d.dy = dy / G.lay.scale;
+        const k = dropAt(ev.clientX, ev.clientY);
+        if (k !== lastKey) {
+          lastKey = k;
+          G.hover = k;
+        }
+        renderLight();
+      }
+    };
+    const up = (ev) => {
+      window.removeEventListener('pointermove', move);
+      window.removeEventListener('pointerup', up);
+      window.removeEventListener('pointercancel', up);
+      const d = G.drag;
+      G.drag = null;
+      G.hover = null;
+      if (!d) return;
+      const node = $(`[data-hand-card="${d.id}"]`);
+      const r = node ? rectOf(node) : null;
+      if (d.moved) {
+        const k = ev.type === 'pointercancel' ? null : dropAt(ev.clientX, ev.clientY);
+        renderLight();
+        if (k) humanDrop(d.id, k, r);
+        return;
+      }
+      const under = document.elementFromPoint(ev.clientX, ev.clientY);
+      if (!under || !under.closest(`[data-hand-card="${d.id}"]`)) return renderLight();
+      const t = Date.now();
+      if (G.set.clickMode && G.lastTap && G.lastTap.id === d.id && t - G.lastTap.t < 380) {
+        G.lastTap = null;
+        humanDrop(d.id, 'middle', r);
+        return;
+      }
+      G.lastTap = { id: d.id, t };
+      G.picker = null;
+      G.sel = G.sel === d.id ? null : d.id;
+      render();
+    };
+    window.addEventListener('pointermove', move);
+    window.addEventListener('pointerup', up);
+    window.addEventListener('pointercancel', up);
+  }
+  function onSceneClick(e) {
+    const pk = e.target.closest('[data-pick]');
+    if (pk) {
+      const i = pk.dataset.pick;
+      if (i === 'x') {
+        G.picker = null;
+        return render();
+      }
+      const t = G.picker && G.picker.targets[+i];
+      if (t && canAct()) doPlay(G.picker.cardId, t);
+      return;
+    }
+    const b = e.target.closest('button[data-a]');
+    if (b) return topAction(b.dataset.a);
+    if (e.target.closest('[data-hand-card]') || e.target.closest('button') || e.target.closest('select')) return;
+    const d = e.target.closest('[data-drop]');
+    if (!d) return;
+    const key = d.dataset.drop;
+    if (G.picker) {
+      const t = G.picker.targets.find((x) => DK.targetKey(x) === key);
+      if (t && canAct()) doPlay(G.picker.cardId, t);
+      return;
+    }
+    if (G.set.clickMode && G.sel) {
+      if (key === 'middle' && !e.target.closest('[data-middle-pile]')) {
+        G.sel = null;
+        return render();
+      }
+      humanDrop(G.sel, key);
+    }
+  }
+  function topAction(a) {
+    SND.unlock();
+    if (a === 'score') return showScore();
+    if (a === 'rules') return showRules();
+    if (a === 'sound') {
+      G.set.sound = !G.set.sound;
+      SND.setOn(G.set.sound);
+      saveSet();
+      return render();
+    }
+    if (a === 'full') {
+      try {
+        if (document.fullscreenElement) document.exitFullscreen();
+        else document.documentElement.requestFullscreen().catch(() => {});
+      } catch (e) {}
+      return;
+    }
+    if (a === 'menu') return showMenu();
+  }
+
+  /* =====================================================================
+     PENCERELER
+     ===================================================================== */
+  function modal(name, html, opts) {
+    opts = opts || {};
+    closeModal(name);
+    const back = el(`<div class="modal-back" data-modal="${name}"><div class="modal ${opts.wide ? 'wide' : ''} ${opts.cls || ''}">${opts.close ? `<button class="modal-x" data-m="x" aria-label="Kapat">${icon('x', 18)}</button>` : ''}${html}</div></div>`);
+    back.addEventListener('click', (e) => {
+      const b = e.target.closest('[data-m]');
+      if (b && opts.on) opts.on(b.dataset.m, b, back);
+      else if (e.target === back && opts.close && opts.on) opts.on('x', null, back);
+    });
+    $('#modals').appendChild(back);
+    return back;
+  }
+  function closeModal(name) {
+    $$(`#modals [data-modal="${name}"]`).forEach((n) => n.remove());
+  }
+  const teamName = (v, t) => DK.teamName(v, t);
+  function histHTML(v) {
+    const head = Array.from({ length: v.totalRounds })
+      .map((_, i) => `<th class="${i === v.round && v.phase !== 'gameOver' ? 'cur' : ''}">${i + 1}</th>`)
+      .join('');
+    const rows = v.scores
+      .map((sc, t) => {
+        const cells = Array.from({ length: v.totalRounds })
+          .map((_, r) => {
+            const x = v.history[r] && v.history[r].teams[t];
+            return `<td class="${x && x.bonus ? 'bonus' : ''}">${x ? x.total : '–'}</td>`;
+          })
+          .join('');
+        return `<tr><td class="tname"><span class="team-dot" style="background:${TC[t]}"></span>${esc(teamName(v, t))}</td>${cells}<td class="ttotal">${sc}</td></tr>`;
+      })
+      .join('');
+    return `<div class="hist-wrap"><table class="hist"><thead><tr><th>Takım</th>${head}<th>Toplam</th></tr></thead><tbody>${rows}</tbody></table></div>`;
+  }
+  function showScore() {
+    const v = G.st;
+    const lo = Math.min(...v.scores);
+    const cards = v.scores
+      .map(
+        (s, t) =>
+          `<div class="sb-card ${s === lo && v.history.length ? 'lead' : ''}" style="--team:${TC[t]}">${s === lo && v.history.length ? icon('crown', 16, 2, 'lead-crown') : ''}<div class="sb-team">Takım ${t + 1}</div><div class="sb-names">${esc(teamName(v, t))}</div><div class="sb-score">${s}</div></div>`,
+      )
+      .join('');
+    modal('score', `<div class="eyebrow">Skor Tablosu</div><h2 class="m-title">Tur ${Math.min(v.round + 1, v.totalRounds) || 1} / ${v.totalRounds}</h2><div class="sb-cards">${cards}</div>${histHTML(v)}<p class="m-note">Düşük puan kazanır · Her iki oyuncunun önü boşsa takıma −100</p><button class="btn-gold" data-m="x">Oyuna Dön</button>`, {
+      wide: true,
+      close: true,
+      on: (m) => m === 'x' && closeModal('score'),
+    });
+  }
+  const RULES = [
+    ['Deste', 'Çift deste + 4 Job = 108 kart. Kartın şekli önemsizdir; aynı değerdeki kartlar eşleşir (♠Q = ♣Q).'],
+    ['Masa', '2, 3 veya 4 takım (4/6/8 oyuncu). Her oyuncunun eşi tam karşısındaki oyuncudur.'],
+    ['Amaç', 'Kartları rakiplerin önüne kitlemek, kendi ve eşinin önünü boşaltmak. En düşük puanlı takım kazanır.'],
+    ['Hamle', 'Sıra sendeyken elinden yalnızca 1 kart oynarsın. Sadece en üstteki gruplar ve ortadaki en üst kart işlenebilir.'],
+    ['Kendi / Eş grubu', 'Kendi ya da eşinin en üst grubuna aynı değeri işlersen grup büyür ve sıradaki oyuncunun önüne kayar (eşinkinde eşinin sıradakine).'],
+    ['Rakip grubu', 'Rakibin en üst grubuna işlersen grup büyür ve rakibin önünde kalır — kaymaz.'],
+    ['Başlangıç kartları', 'Tur başında açılır (8/6/4 kart). Üzerine kart atılmaz; aynı değeri işlersen tüm grup sıradaki oyuncuya kitlenir.'],
+    ['Orta', 'Ortaya atılan kartlar tek tek yığılır. Ortadaki en üst kartla aynı değeri oynarsan 2 kart sıradakine kitlenir ve alttaki kart açılır.'],
+    ['Boşa atma yok', 'Ortaya attığın kart masada bir yere işleniyorsa otomatik işlenir; birden fazla yer varsa sana sorulur.'],
+    ['Birleşme', 'Kayan grup, gittiği oyuncunun en üst grubuyla aynı değerdeyse birleşir (3×9 + 2×9 = 5×9).'],
+    ['Sıra yönü', '“Sıradaki” oyuncu oyun yönüne göredir: ilk yarı saat yönünün tersine (sağdaki), ikinci yarı saat yönüne (soldaki).'],
+    ['Dağıtım', "Her dağıtımda 4'er kart, son dağıtımda 5'er kart. Tüm 108 kart bitince tur tamamlanır."],
+    ['Puan', "2–9 kendi değeri, 10/J/Q/K/A 10, 3'lü 30, Job 60. İki eşin önü de boşsa takıma −100."],
+    ['Turlar', 'Her oyuncu bir kez saat yönü tersine, bir kez saat yönünde başlar: 4 kişide 8, 6 kişide 12, 8 kişide 16 tur.'],
+  ];
+  const rulesHTML = () => `<div class="rules">${RULES.map(([t, p]) => `<div class="rule"><b>${esc(t)}</b><p>${esc(p)}</p></div>`).join('')}</div>`;
+  function showRules() {
+    modal('rules', `<div class="eyebrow">Nasıl Oynanır</div><h2 class="m-title">Eşli Dost Kazığı</h2>${rulesHTML()}<button class="btn-gold" data-m="x">Anladım</button>`, {
+      wide: true,
+      close: true,
+      on: (m) => m === 'x' && closeModal('rules'),
+    });
+  }
+  function setPaused(on) {
+    if (G.mode === 'online') return;
+    if (on && !G.paused) {
+      G.paused = true;
+      G.pauseAt = Date.now();
+    } else if (!on && G.paused) {
+      G.paused = false;
+      if (G.deadline) G.deadline += Date.now() - G.pauseAt;
+      render();
+      drive();
+    }
+  }
+  function showMenu() {
+    const online = G.mode === 'online';
+    setPaused(true);
+    const s = G.set;
+    let acts;
+    if (G.spect) acts = `<button class="btn-gold" data-m="resume">${icon('play', 16)} Masaya Dön</button>${NET && NET.chat.id ? `<button class="btn-ghost" data-m="chat">${icon('chat', 16)} Masa sohbeti</button>` : ''}<button class="btn-ghost" data-m="home">${icon('house', 16)} İzlemeyi bırak</button>`;
+    else if (online) acts = `<button class="btn-gold" data-m="resume">${icon('play', 16)} Masaya Dön</button><button class="btn-ghost" data-m="chat">${icon('chat', 16)} Masa sohbeti</button><button class="btn-ghost" data-m="quit">${icon('house', 16)} Oyundan çık</button>`;
+    else
+      acts = `<button class="btn-gold" data-m="resume">${icon('play', 16)} Devam Et</button>${G.mode === 'offline' ? `<button class="btn-ghost" data-m="restart">${icon('ccw', 16)} Yeniden Başlat</button>` : ''}<button class="btn-ghost" data-m="home">${icon('house', 16)} Ana Menü</button>`;
+    modal(
+      'menu',
+      `<div class="eyebrow">${online || G.spect ? 'Masa' : 'Oyun Duraklatıldı'}</div><h2 class="m-title">Menü</h2>
+      <div class="pause-opts">${G.spect ? '' : `<button class="opt-toggle ${s.clickMode ? 'on' : ''}" data-m="click">${icon('click', 18)} Tıklayarak oyna <b>${s.clickMode ? 'Açık' : 'Kapalı'}</b></button>`}
+      <button class="opt-toggle ${s.sound ? 'on' : ''}" data-m="snd">${icon(s.sound ? 'vol' : 'mute', 18)} Ses <b>${s.sound ? 'Açık' : 'Kapalı'}</b></button></div>
+      <div class="m-actions col">${acts}</div>${online && !G.spect ? '<p class="m-note">Oyundan çıkarsan koltuğunda bot oynamaya devam eder.</p>' : ''}`,
+      {
+        close: true,
+        on: (m) => {
+          if (m === 'x' || m === 'resume') {
+            closeModal('menu');
+            setPaused(false);
+          } else if (m === 'click') {
+            G.set.clickMode = !G.set.clickMode;
+            saveSet();
+            showMenu();
+          } else if (m === 'snd') {
+            G.set.sound = !G.set.sound;
+            SND.setOn(G.set.sound);
+            saveSet();
+            showMenu();
+          } else if (m === 'restart') {
+            closeModal('menu');
+            G.paused = false;
+            startOffline();
+          } else if (m === 'home') {
+            closeModal('menu');
+            G.paused = false;
+            toLobby();
+          } else if (m === 'chat') {
+            closeModal('menu');
+            setPaused(false);
+            NET.chat.open();
+          } else if (m === 'quit') {
+            closeModal('menu');
+            quitTable();
+          }
+        },
+      },
+    );
+  }
+  function showRoundModal() {
+    const v = G.st;
+    const r = v.lastRound;
+    if (!r || v.phase !== 'roundEnd') return;
+    const last = v.round + 1 >= v.totalRounds;
+    const cards = r.teams
+      .map(
+        (t) => `<div class="re-card" style="--team:${TC[t.team]}"><div class="re-head"><span class="team-dot" style="background:${TC[t.team]}"></span>Takım ${t.team + 1}</div>
+        ${t.seats.map((s, i) => `<div class="re-row"><span>${esc(v.players[s].name)}</span><span>${t.pts[i]} <small>(${t.cards[i]} kart)</small></span></div>`).join('')}
+        ${t.bonus ? '<div class="re-bonus">Çift Temizleme Bonusu −100</div>' : ''}
+        <div class="re-row total"><span>Tur Puanı</span><span>${t.total}</span></div><div class="re-row grand"><span>Yeni Toplam</span><span>${v.scores[t.team]}</span></div></div>`,
+      )
+      .join('');
+    const online = G.mode === 'online';
+    const btn = online
+      ? `<p class="m-note">${last ? 'Sonuçlar birazdan gelecek.' : 'Yeni tur birazdan başlıyor.'}</p><button class="btn-ghost" data-m="x">Kapat</button>`
+      : G.spect
+        ? '<button class="btn-ghost" data-m="x">Kapat</button>'
+        : `<button class="btn-gold" data-m="next">${last ? 'Sonuçları Gör' : 'Sonraki Tur'}</button>`;
+    modal('round', `<div class="eyebrow">Tur Sonucu</div><h2 class="m-title">TUR ${r.round} TAMAMLANDI</h2><div class="re-grid">${cards}</div>${btn}`, {
+      wide: true,
+      on: (m, b) => {
+        if (m === 'x') closeModal('round');
+        if (m === 'next') {
+          b.disabled = true;
+          const res = run({ seat: null, kind: 'next' });
+          if (!res || res.ok === false) b.disabled = false;
+        }
+      },
+    });
+  }
+  function confetti() {
+    const cv = el('<canvas class="confetti" data-confetti></canvas>');
+    document.body.appendChild(cv);
+    const ctx = cv.getContext('2d');
+    const cols = ['#E6C15A', '#FAD87B', '#ffffff', '#EF6F6C', '#4FB3E8', '#8FD694'];
+    const size = () => {
+      cv.width = window.innerWidth;
+      cv.height = window.innerHeight;
+    };
+    size();
+    const ps = Array.from({ length: 180 }, () => ({ x: Math.random() * cv.width, y: -Math.random() * cv.height, w: 6 + 8 * Math.random(), h: 8 + 10 * Math.random(), vy: 1.5 + 3 * Math.random(), vx: 2 * Math.random() - 1, r: Math.random() * Math.PI, vr: 0.2 * Math.random() - 0.1, c: cols[Math.floor(Math.random() * cols.length)] }));
+    let raf;
+    const tick = () => {
+      if (!cv.isConnected) return;
+      ctx.clearRect(0, 0, cv.width, cv.height);
+      ps.forEach((p) => {
+        p.y += p.vy;
+        p.x += p.vx + Math.sin(p.y / 40);
+        p.r += p.vr;
+        if (p.y > cv.height + 20) {
+          p.y = -20;
+          p.x = Math.random() * cv.width;
+        }
+        ctx.save();
+        ctx.translate(p.x, p.y);
+        ctx.rotate(p.r);
+        ctx.fillStyle = p.c;
+        ctx.fillRect(-p.w / 2, -p.h / 2, p.w, p.h);
+        ctx.restore();
+      });
+      raf = requestAnimationFrame(tick);
+    };
+    if (!reduceMotion) tick();
+    window.addEventListener('resize', size);
+    return () => {
+      cancelAnimationFrame(raf);
+      cv.remove();
+    };
+  }
+  function showGameOver() {
+    const v = G.st;
+    if (!v || v.phase !== 'gameOver' || $('#modals [data-modal="over"]')) return;
+    closeModal('round');
+    const win = DK.winners(v);
+    const myTeam = DK.teamOf(v, G.me);
+    const iWon = !G.spect && win.includes(myTeam);
+    const order = v.scores.map((s, t) => ({ s, t })).sort((a, b) => a.s - b.s);
+    const pod = order.map((x, i) => `<div class="pod ${i === 0 ? 'first' : ''}" style="--team:${TC[x.t]}"><span class="pod-rank">${i + 1}.</span><span class="pod-name">${esc(teamName(v, x.t))}</span><span class="pod-score">${x.s}</span></div>`).join('');
+    const online = G.mode === 'online' || G.spect;
+    if (G.net && !G.spect) G.net.finish({ scores: v.scores, winners: win });
+    const stopConf = confetti();
+    modal(
+      'over',
+      `<div class="trophy">${icon('trophy', 54, 1.5)}</div><div class="eyebrow">${iWon ? 'Tebrikler, kazandınız!' : 'Oyun Bitti'}</div>
+      <h2 class="m-title big">${esc(win.map((t) => teamName(v, t)).join(' · '))}</h2><p class="m-sub">${win.length > 1 ? 'Berabere — en düşük puan paylaşıldı' : `Takım ${win[0] + 1} kazandı`}</p>
+      <div class="podium">${pod}</div>${histHTML(v)}
+      <div class="m-actions">${online ? `<button class="btn-gold" data-m="home">${icon('house', 16)} Lobiye Dön</button>` : `<button class="btn-gold" data-m="again">${icon('ccw', 16)} Tekrar Oyna</button><button class="btn-ghost" data-m="home">${icon('house', 16)} Ana Menü</button>`}</div>`,
+      {
+        wide: true,
+        cls: 'gameover',
+        on: (m) => {
+          if (m === 'again') {
+            stopConf();
+            closeModal('over');
+            if (G.mode === 'bots') {
+              toLobby();
+              startGame();
+            } else startOffline();
+          } else if (m === 'home') {
+            stopConf();
+            closeModal('over');
+            toLobby();
+          }
+        },
+      },
+    );
+  }
+  function toast(text, kind) {
+    const box = $('#toastBox');
+    const n = el(`<div class="dk-toast ${kind === 'err' ? 'err' : kind === 'good' ? 'good' : ''}">${esc(text)}</div>`);
+    box.appendChild(n);
+    setTimeout(() => {
+      n.classList.add('out');
+      setTimeout(() => n.remove(), 300);
+    }, 1800);
+  }
+
+  /* =====================================================================
+     KAYIT (bu cihazda, botlara karşı)
+     ===================================================================== */
+  function save() {
+    if (G.mode !== 'offline' || !G.st) return;
+    try {
+      if (G.st.phase === 'gameOver') localStorage.removeItem(SAVE_KEY);
+      else localStorage.setItem(SAVE_KEY, JSON.stringify({ v: 1, st: Object.assign({}, G.st, { ev: [] }), at: Date.now() }));
+    } catch (e) {}
+  }
+  function loadSave() {
+    try {
+      const d = JSON.parse(localStorage.getItem(SAVE_KEY) || 'null');
+      if (d && d.v === 1 && d.st && d.st.players && d.st.phase !== 'gameOver' && d.st.phase !== 'idle') return d;
+    } catch (e) {}
+    return null;
+  }
+
+  /* =====================================================================
+     EKRANLAR: başlangıç, online lobi, oyun
+     ===================================================================== */
+  function showScreen(id) {
+    ['start', 'net', 'game'].forEach((k) => $('#' + k).classList.toggle('hidden', k !== id));
+    document.body.classList.toggle('in-game', id === 'game');
+    if (id === 'game') {
+      layout();
+      if (G.st) render();
+    }
+  }
+  const FAN = [
+    { id: 'h1', rank: 'A', suit: 'S' },
+    { id: 'h2', rank: 'K', suit: 'H' },
+    { id: 'h3', rank: 'JOB', suit: 'R' },
+    { id: 'h4', rank: '3', suit: 'D' },
+    { id: 'h5', rank: 'Q', suit: 'C' },
+  ];
+  function startScreen() {
+    const s = G.set;
+    const authed = !!(NET && NET.authed());
+    const name = authed ? NET.myName() || s.name : s.name;
+    const opt = (on, label, sub, data) => `<button class="opt ${on ? 'on' : ''}" ${data}><b>${label}</b>${sub ? `<span>${sub}</span>` : ''}</button>`;
+    const tgl = (on, ic, label, desc, data) => `<button class="tgl ${on ? 'on' : ''}" ${data}>${icon(ic, 18)}<div><b>${label}</b><span>${desc}</span></div><i class="sw"><em></em></i></button>`;
+    const sv = !authed ? loadSave() : null;
+    $('#start').innerHTML = `
+      <div class="ss-hero">
+        <div class="eyebrow">BÖZER GAMING · Kart Masası</div>
+        <h1 class="ss-title">Eşli Dost<br>Kazığı</h1>
+        <p class="ss-sub">Eşinle aynı takımdasın. Kartlarını rakiplerin önüne kitle, kendi önünü boşalt. Turlar bittiğinde en az puanla kalan takım kazanır.</p>
+        <div class="ss-fan">${FAN.map((c, i) => cardHTML(c, 118, 'ss-card', `transform:rotate(${11 * (i - 2)}deg) translateY(${14 * Math.abs(i - 2)}px);animation-delay:${90 * i}ms`)).join('')}</div>
+      </div>
+      <div class="ss-panel">
+        <div class="mode-tabs" role="tablist" aria-label="Oyun türü"><button role="tab" aria-selected="true" data-k="mode-bots">Botlara karşı</button><button role="tab" aria-selected="false" data-k="mode-online">${icon('users', 15)}Online</button></div>
+        <label class="ss-label" for="pname">Oyuncu adın</label>
+        <input id="pname" class="ss-input" maxlength="14" value="${esc(name)}" ${authed ? 'disabled' : ''}>
+        ${authed ? '<p class="ss-note">Hesabındaki adınla oynarsın. Oyun hesabına kaydedilir, arkadaşların izleyebilir.</p>' : ''}
+        <div class="ss-label">Takım sayısı</div>
+        <div class="opt-row">${[2, 3, 4].map((t) => opt(s.teams === t, t + ' Takım', 2 * t + ' oyuncu · ' + 4 * t + ' tur', `data-k="teams" data-v="${t}"`)).join('')}</div>
+        <div class="ss-label">Hamle süresi</div>
+        <div class="opt-row">${[
+          [0, 'Süresiz'],
+          [10, '10 sn'],
+          [20, '20 sn'],
+        ]
+          .map(([v, l]) => opt(s.timer === v, l, '', `data-k="timer" data-v="${v}"`))
+          .join('')}</div>
+        <div class="ss-label">Bot seviyesi</div>
+        <div class="opt-row">${LEVELS.map((l) => opt(s.difficulty === l.id, l.label, '', `data-k="difficulty" data-v="${l.id}"`)).join('')}</div>
+        <div class="tgl-row">${tgl(s.clickMode, 'click', 'Tıklayarak oyna', 'Seç → hedefe tıkla, çift tıkla → ortaya at', 'data-k="clickMode"')}${tgl(s.sound, 'vol', 'Ses efektleri', 'Dağıtım, işleme ve kayma sesleri', 'data-k="sound"')}</div>
+        <div class="ss-actions">
+          <button class="btn-gold lg" data-k="start">${icon('play', 18)} Oyunu Başlat</button>
+          <button class="btn-ghost hidden" data-k="resume">Kaldığın yerden devam et</button>
+          <button class="btn-ghost" data-k="how">${icon('book', 16)} Nasıl Oynanır</button>
+        </div>
+      </div>`;
+    const resume = $('#start [data-k="resume"]');
+    if (sv) {
+      resume.classList.remove('hidden');
+      resume.textContent = `Kaldığın yerden devam et (Tur ${sv.st.round + 1})`;
+    } else if (authed) {
+      NET.lastBotsTable().then((t) => {
+        if (!t || $('#start').classList.contains('hidden')) return;
+        G.resumeTable = t.id;
+        resume.classList.remove('hidden');
+      });
+    }
+  }
+  function onStartClick(e) {
+    const b = e.target.closest('[data-k]');
+    if (!b) return;
+    SND.unlock();
+    const k = b.dataset.k;
+    const s = G.set;
+    if (k === 'teams') s.teams = +b.dataset.v;
+    else if (k === 'timer') s.timer = +b.dataset.v;
+    else if (k === 'difficulty') s.difficulty = b.dataset.v;
+    else if (k === 'clickMode') s.clickMode = !s.clickMode;
+    else if (k === 'sound') {
+      s.sound = !s.sound;
+      SND.setOn(s.sound);
+    } else if (k === 'start') return startGame();
+    else if (k === 'how') return showRules();
+    else if (k === 'mode-online') return openOnline();
+    else if (k === 'resume') {
+      const sv = loadSave();
+      if (sv) return resumeOffline(sv);
+      if (G.resumeTable && NET) {
+        b.disabled = true;
+        NET.openTable(G.resumeTable, {}).catch((er) => {
+          toast(er.message || 'Masa açılamadı', 'err');
+          b.disabled = false;
+        });
+      }
+      return;
+    } else return;
+    saveSet();
+    startScreen();
+  }
+  function botNames(n, avoid) {
+    const pool = NAMES.filter((x) => x !== avoid);
+    const out = [];
+    while (out.length < n && pool.length) out.push(pool.splice(Math.floor(Math.random() * pool.length), 1)[0]);
+    return out;
+  }
+  function resetLocal() {
+    clearTimeout(G.botT);
+    G.st = null;
+    G.view = null;
+    G.VQ = [];
+    G.anim = false;
+    G.sel = G.picker = G.drag = null;
+    G.ticker = null;
+    G.roundOpen = false;
+    G.paused = false;
+    G.deadline = 0;
+    G.autoKey = G.nextKey = G.botKey = null;
+    $('#modals').innerHTML = '';
+    $$('[data-confetti]').forEach((n) => n.remove());
+    $('#flights').innerHTML = '';
+  }
+  function startGame() {
+    const s = G.set;
+    const inp = $('#pname');
+    if (inp && !inp.disabled) {
+      s.name = inp.value.trim() || 'Oyuncu';
+      saveSet();
+    }
+    if (NET && NET.authed()) {
+      const btn = $('#start [data-k="start"]');
+      if (btn) btn.disabled = true;
+      NET.createBots({ turn: s.timer, level: s.difficulty }, 2 * s.teams, botNames(2 * s.teams - 1, NET.myName()))
+        .catch((e) => toast(e.message || 'Masa açılamadı', 'err'))
+        .finally(() => btn && (btn.disabled = false));
+      return;
+    }
+    startOffline();
+  }
+  function startOffline() {
+    resetLocal();
+    const s = G.set;
+    const n = 2 * s.teams;
+    G.mode = 'offline';
+    G.net = null;
+    G.rules = null;
+    G.me = 0;
+    G.spect = false;
+    SND.setOn(s.sound);
+    G.st = DK.newGame({ names: [s.name || 'Oyuncu'].concat(botNames(n - 1, s.name)), seed: (Math.random() * 2 ** 31) >>> 0 || 7 });
+    showScreen('game');
+    render();
+    run({ seat: null, kind: 'next' });
+  }
+  function resumeOffline(sv) {
+    resetLocal();
+    G.mode = 'offline';
+    G.net = null;
+    G.rules = null;
+    G.me = 0;
+    G.spect = false;
+    SND.setOn(G.set.sound);
+    G.st = sv.st;
+    G.st.ev = [];
+    showScreen('game');
+    render();
+    idle();
+  }
+  function openOnline() {
+    if (!NET) return toast('Online oyun için oyunu Bözer Gaming sitesinden aç.', 'err');
+    resetLocal();
+    showScreen('net');
+    NET.openLobby();
+  }
+  function toLobby() {
+    const toNet = G.mode === 'online' || G.spect;
+    resetLocal();
+    if (G.net) {
+      G.net = null;
+      NET.closeTable(true);
+    }
+    G.mode = 'offline';
+    G.spect = false;
+    G.me = 0;
+    G.rules = null;
+    if (toNet && NET) {
+      showScreen('net');
+      NET.openLobby();
+    } else {
+      if (NET) NET.setRoute('');
+      showScreen('start');
+      startScreen();
+    }
+  }
+  async function quitTable() {
+    if (!G.net) return toLobby();
+    const ok = await NET.confirm('Oyundan çıkılsın mı?', 'Koltuğunda bot oynamaya devam eder. Bu masaya oyuncu olarak geri dönemezsin; istersen izleyebilirsin.', 'Oyundan çık', 'danger');
+    if (!ok) return;
+    await G.net.leave();
+    toLobby();
+  }
+
+  /* ---------------- masa oturumu ---------------- */
+  const GA = {
+    init(table, seats) {
+      const names = [];
+      for (let i = 0; i < table.seats_n; i++) {
+        const st = (seats || []).find((x) => x.seat === i);
+        names.push(st ? NET.seatName(st) || 'Oyuncu' : 'Bot');
+      }
+      const st = DK.newGame({ names, seed: Number(table.seed) || 1 });
+      st._phaseAt = Date.parse(table.started_at) || NET.now();
+      return st;
+    },
+    apply: (st, a) => reduce(st, a),
+    clone: (st) => DK.clone(st),
+    view: () => G.st,
+    applyLocal: (a, meta) => applyUI(a, meta, true),
+    applyRemote(a) {
+      const fresh = G.loaded && now() - a.at < 20000;
+      applyUI(a, { quiet: true, fast: !fresh }, false);
+      return null;
+    },
+    reset(st, why) {
+      G.st = st;
+      G.VQ = [];
+      G.view = null;
+      G.anim = false;
+      G.sel = G.picker = null;
+      render();
+      if (why === 'load') {
+        G.loaded = true;
+        if (st.phase === 'idle' && G.mode === 'bots') return void run({ seat: null, kind: 'next' });
+      }
+      idle();
+    },
+    onSeats() {
+      if (G.st && !G.anim) render();
+    },
+    onStatus(status) {
+      if (status === 'closed') {
+        toast(G.spect ? 'Masa kapandı.' : 'Masa kapandı: oyunda başka oyuncu kalmadı.', 'err');
+        setTimeout(() => toLobby(), 1600);
+      }
+    },
+    onTick() {
+      const pill = $('#netPill');
+      if (pill) pill.classList.toggle('hidden', !(G.net && G.net.fails > 1));
+      if (G.mode === 'online') netDrive();
+    },
+    onSpectate() {
+      G.spect = true;
+      toast('Koltuğunda artık bot oynuyor. Masayı izliyorsun.', 'err');
+      render();
+    },
+  };
+  function startTable(sess) {
+    resetLocal();
+    G.net = sess;
+    G.mode = sess.mode === 'bots' ? 'bots' : 'online';
+    G.rules = Object.assign({ turn: 20, level: 'orta' }, sess.table.rules || {});
+    G.spect = sess.spect;
+    G.me = sess.spect ? sess.watch : sess.mySeat;
+    G.loaded = false;
+    G.viewers = [];
+    SND.setOn(G.set.sound);
+    showScreen('game');
+    sess.start(GA).catch(() => toLobby());
+  }
+  const TABLE_RULES = {
+    defaults: () => ({ turn: 20, level: 'orta' }),
+    form(r) {
+      const seg = (k, v, l, cur) => `<button type="button" data-v="${v}" aria-pressed="${String(cur) === String(v)}">${l}</button>`;
+      return `<div class="t-field"><span class="t-lab">Hamle süresi</span><div class="t-seg" data-seg="turn">${[10, 20, 30, 45].map((v) => seg('turn', v, v + ' sn', r.turn)).join('')}</div></div>
+        <div class="t-field"><span class="t-lab">Bot seviyesi (boş koltuklar ve bağlantısı kopanlar için)</span><div class="t-seg" data-seg="level">${LEVELS.map((l) => seg('level', l.id, l.label, r.level)).join('')}</div></div>`;
+    },
+    read(form, prev) {
+      const r = Object.assign({}, prev || TABLE_RULES.defaults());
+      const t = form.querySelector('[data-seg="turn"] [aria-pressed="true"]');
+      const l = form.querySelector('[data-seg="level"] [aria-pressed="true"]');
+      if (t) r.turn = +t.dataset.v;
+      if (l) r.level = l.dataset.v;
+      return r;
+    },
+    summary: (r, n) => `${n} kişi, ${n / 2} takım · hamle ${r.turn ? r.turn + ' sn' : 'süresiz'} · botlar ${(LEVELS.find((x) => x.id === r.level) || LEVELS[1]).label.toLocaleLowerCase('tr-TR')}`,
+  };
+
+  /* =====================================================================
+     BAŞLAT
+     ===================================================================== */
+  function boot() {
+    SND.setOn(G.set.sound);
+    $('#start').addEventListener('click', onStartClick);
+    $('#start').addEventListener('input', (e) => {
+      if (e.target.id === 'pname') {
+        G.set.name = e.target.value;
+        saveSet();
+      }
+    });
+    $('#scene').addEventListener('pointerdown', onHandDown);
+    $('#scene').addEventListener('pointerup', onSpectTap);
+    $('#scene').addEventListener('click', onSceneClick);
+    $('#scene').addEventListener('change', (e) => {
+      if (e.target.id === 'specSel') {
+        const p = +e.target.value;
+        if (G.spect && G.st && p !== G.me) {
+          G.me = p;
+          render();
+        }
+      }
+    });
+    window.addEventListener('resize', () => {
+      if (!$('#game').classList.contains('hidden')) {
+        layout();
+        render();
+      }
+    });
+    window.addEventListener('orientationchange', () => setTimeout(() => window.dispatchEvent(new Event('resize')), 200));
+    document.addEventListener('keydown', (e) => {
+      if (e.key !== 'Escape') return;
+      if (G.picker) {
+        G.picker = null;
+        render();
+      } else if ($('#modals [data-modal="menu"]')) {
+        closeModal('menu');
+        setPaused(false);
+      } else if ($('#modals [data-modal="score"]')) closeModal('score');
+      else if ($('#modals [data-modal="rules"]')) closeModal('rules');
+    });
+    if (NET) {
+      NET.on('viewers', (list) => {
+        G.viewers = list || [];
+        if (G.st && !G.anim) render();
+      });
+      NET.mount({
+        game: 'dostkazigi-online',
+        name: 'Dost Kazığı',
+        root: $('#net'),
+        seatCounts: [4, 6, 8],
+        defSeats: 4,
+        seatDir: -1,
+        rules: TABLE_RULES,
+        seatTag: (seat, n) => {
+          const t = seat % (n / 2);
+          return `<span class="t-team" style="background:${TC[t]};color:#14110a">Takım ${t + 1}</span>`;
+        },
+        toast: (t, k) => toast(t, k),
+        onPlay: startTable,
+        onBack: () => {
+          showScreen('start');
+          startScreen();
+        },
+      });
+      const q = NET.params;
+      if (q.masa && NET.authed()) {
+        showScreen('net');
+        NET.openTable(q.masa, { watch: q.izle === '1', who: q.kim || '' }).catch((e) => {
+          toast(e.message || 'Masa açılamadı', 'err');
+          NET.openLobby();
+        });
+        return;
+      }
+      if (q.mod === 'online') return openOnline();
+    }
+    showScreen('start');
+    startScreen();
+  }
+  window.__DKT = { render, run, humanDrop, canAct, startOffline, showScore, showMenu };
+  if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', boot);
+  else boot();
+})();
+
+</script>
+</body>
+</html>

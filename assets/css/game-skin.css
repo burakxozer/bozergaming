@@ -88,7 +88,8 @@ html[data-bg-embedded][data-bg-game="kura"] h1,
 html[data-bg-embedded][data-bg-game="lig"] h1,
 html[data-bg-embedded][data-bg-game="dart-mac"] h1,
 html[data-bg-embedded][data-bg-game="dart-turnuva"] h1,
-html[data-bg-embedded][data-bg-game="dartbot"] h1 {
+html[data-bg-embedded][data-bg-game="dartbot"] h1,
+html[data-bg-embedded][data-bg-game="dart-lig"] h1 {
   display: none;
 }
 
@@ -397,4 +398,136 @@ html[data-bg-game="americano"] input.cell {
 html[data-bg-game="americano"] input:focus {
   outline: 2px solid var(--blue);
   outline-offset: -1px;
+}
+
+/* ---------- Dart Lig ---------- */
+html[data-bg-game="dart-lig"][data-bg-theme] {
+  --bg: var(--sk-bg);
+  --panel: var(--sk-panel);
+  --soft: var(--sk-input-bg);
+  --text: var(--sk-text);
+  --accent: var(--sk-accent);
+  --danger: var(--sk-red);
+  --line: var(--sk-line);
+  --blue: var(--sk-blue);
+}
+html[data-bg-game="dart-lig"] body {
+  background: var(--sk-bg);
+  color: var(--sk-text);
+}
+html[data-bg-game="dart-lig"] .card {
+  border: 1px solid var(--sk-line);
+  border-radius: 18px;
+}
+html[data-bg-game="dart-lig"] button {
+  color: var(--sk-accent-ink);
+  box-shadow: 0 2px 0 var(--sk-accent-shade);
+}
+html[data-bg-game="dart-lig"] button.secondary,
+html[data-bg-game="dart-lig"] .match-nav button,
+html[data-bg-game="dart-lig"] .controls button,
+html[data-bg-game="dart-lig"] .rule-row button {
+  background: var(--sk-soft);
+  color: var(--sk-text);
+  border: 1px solid var(--sk-line);
+  box-shadow: none;
+}
+html[data-bg-game="dart-lig"] .controls .undo {
+  background: var(--sk-red);
+  color: #fff;
+  border-color: transparent;
+}
+html[data-bg-game="dart-lig"] .controls .info {
+  background: var(--sk-blue);
+  color: #fff;
+  border-color: transparent;
+}
+html[data-bg-game="dart-lig"] .mode-switch button {
+  background: var(--sk-input-bg);
+  color: var(--sk-muted);
+  border: 1px solid var(--sk-line);
+  box-shadow: none;
+}
+html[data-bg-game="dart-lig"] .mode-switch button.selected {
+  border-color: var(--sk-accent);
+  color: var(--sk-accent);
+}
+html[data-bg-game="dart-lig"] input {
+  background: var(--sk-input-bg);
+  color: var(--sk-text);
+  border: 1px solid var(--sk-line);
+  outline: none;
+}
+html[data-bg-game="dart-lig"] input:focus {
+  border-color: var(--sk-accent);
+  box-shadow: 0 0 0 3px rgba(245, 182, 42, 0.22);
+}
+html[data-bg-game="dart-lig"] input::placeholder {
+  color: var(--sk-muted);
+  opacity: 0.8;
+}
+html[data-bg-game="dart-lig"] .match {
+  background: var(--sk-row1);
+  border-color: var(--sk-line);
+}
+html[data-bg-game="dart-lig"] .match.playable {
+  border-color: var(--sk-line);
+}
+html[data-bg-game="dart-lig"] .match.playable:not(.done) {
+  border-color: rgba(245, 182, 42, 0.55);
+}
+html[data-bg-game="dart-lig"] .match.playable:hover {
+  background: var(--sk-row2);
+}
+html[data-bg-game="dart-lig"] .standing-row {
+  background: var(--sk-row1);
+}
+html[data-bg-game="dart-lig"] .standing-row:nth-child(even) {
+  background: var(--sk-row2);
+}
+html[data-bg-game="dart-lig"] .standing-row:nth-child(2) {
+  border-color: var(--sk-accent);
+}
+html[data-bg-game="dart-lig"] .board {
+  border-color: var(--sk-line);
+}
+html[data-bg-game="dart-lig"] .board-row:nth-child(even) {
+  background: var(--sk-row1);
+}
+html[data-bg-game="dart-lig"] .board-row:nth-child(odd) {
+  background: var(--sk-row2);
+}
+html[data-bg-game="dart-lig"] .cell {
+  border-left-color: var(--sk-line);
+}
+html[data-bg-game="dart-lig"] .dart-cell:active {
+  background: var(--sk-soft);
+}
+html[data-bg-game="dart-lig"] .notice {
+  background: var(--sk-soft);
+  border-left-color: var(--sk-blue);
+}
+html[data-bg-game="dart-lig"] .badge {
+  background: var(--sk-soft);
+}
+html[data-bg-game="dart-lig"] .modal {
+  background: rgba(4, 2, 18, 0.72);
+}
+html[data-bg-game="dart-lig"] .modal-box {
+  background: var(--sk-panel);
+  border: 1px solid var(--sk-line);
+  box-shadow: var(--sk-shadow);
+}
+html[data-bg-game="dart-lig"] .points,
+html[data-bg-game="dart-lig"] .team-header span {
+  color: var(--sk-accent);
+}
+html[data-bg-game="dart-lig"] .win {
+  color: var(--sk-green);
+}
+html[data-bg-game="dart-lig"] .lose {
+  color: var(--sk-red);
+}
+html[data-bg-game="dart-lig"] .mark {
+  border-color: var(--sk-text);
 }

@@ -18,7 +18,18 @@
     kura: [['tpl-info-kura', 'Kura Çek nasıl kullanılır?', 'info']],
     lig: [['tpl-info-lig', 'Lig Oluştur nasıl kullanılır?', 'info']],
     somali: [['tpl-info-somali', 'Somali skor tablosu nasıl kullanılır?', 'info']],
+    'americano-online': [['tpl-rules-americano', 'Americano oyun kuralları', 'book']],
+    'dostkazigi-online': [['tpl-rules-dostkazigi', 'Dost Kazığı oyun kuralları', 'book']],
   };
+  /** Online masa oyunlarına geçen adres parametreleri */
+  const TABLE_PARAMS = ['masa', 'izle', 'kim', 'mod'];
+  function tableQuery(query) {
+    const q = new URLSearchParams();
+    TABLE_PARAMS.forEach((k) => {
+      if (query && query[k]) q.set(k, String(query[k]).slice(0, 80));
+    });
+    return q.toString();
+  }
 
   const host = (BG.host = { cur: null });
   let layer, frame, bar;
@@ -46,11 +57,12 @@
           <div class="gb-right">
             <span class="save-state" data-s="idle" role="status" aria-live="polite"></span>
             <span class="live-pill" hidden title="Arkadaşların bu oyunu canlı izleyebilir"><span class="live-dot"></span><span class="lp-text">Canlı</span><span class="lp-viewers" hidden>${icon('eye', 15)}<b>0</b></span></span>
+            <button class="icon-btn gb-tchat" type="button" aria-label="Masa sohbeti" title="Masa sohbeti" hidden>${icon('chats')}<span class="gb-badge"></span></button>
             <button class="icon-btn gb-chat" type="button" aria-label="Mesajlar">${icon('message')}<span class="gb-badge"></span></button>
             <button class="icon-btn gb-help" type="button" aria-label="Kurallar ve kullanım">${icon('book')}</button>
           </div>
         </header>
-        <iframe class="game-frame" title="Oyun" allow="vibrate"></iframe>
+        <iframe class="game-frame" title="Oyun" allow="vibrate; clipboard-write"></iframe>
       </div>`);
     document.body.appendChild(layer);
     frame = layer.querySelector('.game-frame');
@@ -64,6 +76,12 @@
       BG.chat.openDrawer();
     });
     bar.querySelector('.gb-help').addEventListener('click', helpMenu);
+    bar.querySelector('.gb-tchat').addEventListener('click', () => {
+      try {
+        const w = frame.contentWindow;
+        if (w && w.BGT && w.BGT.chat) w.BGT.chat.toggle();
+      } catch (e) {}
+    });
     frame.addEventListener('load', onFrameLoad);
     window.addEventListener('message', (e) => {
       if (!host.cur || !frame || e.source !== frame.contentWindow) return;
@@ -106,8 +124,18 @@
   function paintBadge() {
     if (!bar) return;
     const n = BG.store.unread || 0;
-    bar.querySelector('.gb-badge').innerHTML = BG.countBadge(n);
+    bar.querySelector('.gb-chat .gb-badge').innerHTML = BG.countBadge(n);
   }
+
+  /** Online masa sohbeti düğmesi: masadaki oyun (bg-table.js) açar, kapatır ve okunmamışı bildirir */
+  host.tableChat = function (on, unread) {
+    if (!bar) return false;
+    const b = bar.querySelector('.gb-tchat');
+    b.hidden = !on || !host.cur;
+    b.querySelector('.gb-badge').innerHTML = on ? BG.countBadge(unread || 0) : '';
+    b.setAttribute('aria-label', on && unread ? `Masa sohbeti, ${unread} yeni mesaj` : 'Masa sohbeti');
+    return true;
+  };
 
   function setSave(s, extra) {
     if (!bar) return;
@@ -382,10 +410,14 @@
     const g = BG.GAMES[key];
     if (!g) return BG.router.go('/', true);
     ensureLayer();
-    const wantResume = opts.resume || null;
+    const wantResume = g.table ? null : opts.resume || null;
+    const tq = g.table ? tableQuery(opts.query) : '';
     if (host.cur && host.cur.key === key && (!wantResume || wantResume === host.cur.sessionId || (wantResume === 'yerel' && !BG.isAuthed()))) {
-      layer.hidden = false;
-      return;
+      // Online masa: başka bir masa ya da mod istendiyse oyunu o adresle yeniden aç
+      if (!g.table || tq === (host.cur.tq || '')) {
+        layer.hidden = false;
+        return;
+      }
     }
     if (host.cur) await host.close({ silent: true, keepRoute: true });
 
@@ -408,11 +440,14 @@
       viewersReady: false,
       savedSomething: false,
       returnTo: opts.returnTo || null,
+      masa: (opts.query && opts.query.masa) || null,
+      tq,
     });
 
     bar.querySelector('.gb-tile').innerHTML = BG.gameTile(key, 'tile-xs');
     bar.querySelector('.gb-title strong').textContent = g.name;
     bar.querySelector('.gb-help').hidden = false;
+    host.tableChat(false);
     setSave('idle');
     paintBadge();
     paintLive();
@@ -456,7 +491,17 @@
       watchViewers();
       paintLive();
     }
-    frame.setAttribute('src', g.file + '?v=' + encodeURIComponent(BG.config.version || '2'));
+    frame.setAttribute('src', g.file + '?v=' + encodeURIComponent(BG.config.version || '2') + (tq ? '&' + tq : ''));
+  };
+
+  /** Online masa oyunu adresi günceller (masa değişti, izleyici oldu…) */
+  host.tableRoute = function (key, q) {
+    const c = host.cur;
+    if (!c || c.key !== key) return;
+    const m = /(?:^|&)masa=([^&]+)/.exec(q || '');
+    c.masa = m ? decodeURIComponent(m[1]) : null;
+    c.tq = q || '';
+    BG.router.silentReplace('/oyun/' + key + (q ? '?' + q : ''));
   };
 
   /** Kaydı hemen gönder (kapatırken) */
@@ -486,6 +531,7 @@
     if (id && BG.isAuthed()) BG.api.rpc('bg_end_live', { p_id: id }).catch(() => {});
     unwatchViewers();
     host.cur = null;
+    host.tableChat(false);
     if (frame) frame.setAttribute('src', 'about:blank');
     if (layer) layer.hidden = true;
     document.documentElement.classList.remove('game-open');

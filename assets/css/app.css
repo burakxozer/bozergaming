@@ -338,6 +338,12 @@ button {
 .tile-violet {
   --tc: #b2a6ff;
 }
+.tile-green {
+  --tc: #5fe08f;
+}
+.tile-rose {
+  --tc: #ff8fb7;
+}
 .tile-xs {
   font-size: 15px;
 }
@@ -2271,6 +2277,18 @@ html.watch-open body {
 }
 .gb-badge:empty {
   display: none;
+}
+/* Online masada "Masa sohbeti" düğmesi de varken dar ekranda oyun adına yer kalsın */
+@media (max-width: 520px) {
+  .gb-right:has(.gb-tchat:not([hidden])) {
+    gap: 2px;
+  }
+  .gb-right:has(.gb-tchat:not([hidden])) .icon-btn {
+    width: 36px;
+  }
+  .gb-right:has(.gb-tchat:not([hidden])) .save-state:empty {
+    display: none;
+  }
 }
 .game-frame {
   flex: 1;

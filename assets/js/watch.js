@@ -284,6 +284,16 @@
         poll = setInterval(() => document.visibilityState === 'visible' && refresh(), 20000);
       } catch (e) {
         if (gone) return;
+        if (e.code === 'P0002') {
+          // Online masa (Americano Online, Dost Kazığı Online): masayı izleyici olarak aç
+          try {
+            const t = await BG.api.rpc('bg_table_state', { p_table: id, p_after: 2147483647 });
+            if (!gone && t && t.table && BG.GAMES[t.table.game]) {
+              BG.router.go(BG.watchHref(t.table.game, id, '').slice(1), true);
+              return;
+            }
+          } catch (e2) {}
+        }
         root.querySelector('.wb-text strong').textContent = 'Yayın açılamadı';
         setState('ended');
         showCover(`${BG.tile('?', 'ink', 'tile-s')}<h2>Bu yayını izleyemezsin</h2><p>${esc(e.message)}</p><div class="row-actions"><a class="btn btn-soft" href="#/arkadaslar">Arkadaşlara dön</a></div>`);

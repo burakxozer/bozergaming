@@ -159,6 +159,10 @@
                     <div><strong>Maç</strong><span>Hızlı skor takibi, en fazla 4 takım</span></div>
                     <div class="mode-actions"><a class="btn btn-primary btn-sm" href="#/oyun/dart-mac">${icon('play', 16)}Başla</a></div>
                   </li>
+                  <li class="mode">
+                    <div><strong>Lig</strong><span>Takımları kurayla eşle, fikstürdeki maçları dart tahtasında oyna</span></div>
+                    <div class="mode-actions"><a class="btn btn-primary btn-sm" href="#/oyun/dart-lig">${icon('play', 16)}Başla</a></div>
+                  </li>
                 </ul>
                 <a class="yt-card" href="https://www.youtube.com/watch?v=mSMOEP9QWJk" target="_blank" rel="noopener" aria-label="Karambol Kriket nasıl oynanır? Videoyu YouTube’da aç (yeni sekme)">
                   <span class="yt-thumb" aria-hidden="true"><span class="yt-play">${icon('play', 20)}</span></span>
@@ -168,6 +172,50 @@
                   </span>
                 </a>
                 <p class="game-resume" hidden></p>
+              </div>
+            </article>
+
+            <article class="game-row" data-game="americano-online">
+              <div class="game-glyph">${BG.gameTile('americano-online', 'tile-l')}</div>
+              <div class="game-main">
+                <h3 class="game-name">Americano Online</h3>
+                <p class="game-desc">Americano’yu kartlarla oyna: iki deste, iki Job, on dört el. Botlara karşı ya da arkadaşlarınla aynı masada.</p>
+                <ul class="modes">
+                  <li class="mode">
+                    <div><strong>Botlara karşı</strong><span>2–5 kişilik masa, süreleri ve bot hızını sen seç</span></div>
+                    <div class="mode-actions"><a class="btn btn-primary btn-sm" href="#/oyun/americano-online?mod=bot">${icon('play', 16)}Başla</a></div>
+                  </li>
+                  <li class="mode">
+                    <div><strong>Online</strong><span>Masa kur ya da katıl, koltuğunu seç, herkes hazır olunca başla</span></div>
+                    <div class="mode-actions"><a class="btn btn-primary btn-sm" href="#/oyun/americano-online?mod=online">${icon('users', 16)}Masalar</a></div>
+                  </li>
+                </ul>
+                <p class="game-resume" hidden></p>
+              </div>
+              <div class="game-actions">
+                <button class="btn btn-ghost btn-sm" type="button" data-doc="tpl-rules-americano" data-title="Americano oyun kuralları">${icon('book', 18)}Kurallar</button>
+              </div>
+            </article>
+
+            <article class="game-row" data-game="dostkazigi-online">
+              <div class="game-glyph">${BG.gameTile('dostkazigi-online', 'tile-l')}</div>
+              <div class="game-main">
+                <h3 class="game-name">Dost Kazığı Online</h3>
+                <p class="game-desc">Eşli kart oyunu: kartlarını rakiplerin önüne kitle, kendi önünü boşalt. En az puanla kalan takım kazanır.</p>
+                <ul class="modes">
+                  <li class="mode">
+                    <div><strong>Botlara karşı</strong><span>4, 6 ya da 8 kişilik masa, eşin ve rakiplerin bot</span></div>
+                    <div class="mode-actions"><a class="btn btn-primary btn-sm" href="#/oyun/dostkazigi-online?mod=bot">${icon('play', 16)}Başla</a></div>
+                  </li>
+                  <li class="mode">
+                    <div><strong>Online</strong><span>Masa kur ya da katıl, eşinin karşısına otur, hazır ol</span></div>
+                    <div class="mode-actions"><a class="btn btn-primary btn-sm" href="#/oyun/dostkazigi-online?mod=online">${icon('users', 16)}Masalar</a></div>
+                  </li>
+                </ul>
+                <p class="game-resume" hidden></p>
+              </div>
+              <div class="game-actions">
+                <button class="btn btn-ghost btn-sm" type="button" data-doc="tpl-rules-dostkazigi" data-title="Dost Kazığı oyun kuralları">${icon('book', 18)}Kurallar</button>
               </div>
             </article>
 
@@ -238,7 +286,7 @@
             <span class="live-text"><strong>${esc(f.full_name || f.username)}</strong><span>${esc(g.activity || 'Oyunda')}</span></span>
             ${
               f.live && f.session_id
-                ? `<a class="btn btn-live btn-sm" href="#/izle/${esc(f.session_id)}"><span class="live-dot"></span>İzle</a>`
+                ? `<a class="btn btn-live btn-sm" href="${esc(BG.watchHref(f.game, f.session_id, f.user_id))}"><span class="live-dot"></span>İzle</a>`
                 : `<span class="muted small">Hazırlanıyor</span>`
             }
           </li>`)

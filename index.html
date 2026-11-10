@@ -20,7 +20,7 @@
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="preconnect" href="https://cdn.jsdelivr.net" crossorigin>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Archivo:wdth,wght@62..125,300..900&display=swap">
-<link rel="stylesheet" href="assets/css/app.css?v=2.1.0">
+<link rel="stylesheet" href="assets/css/app.css?v=2.2.0">
 <script>
   try { var t = JSON.parse(localStorage.getItem('bg.theme')); if (t) document.documentElement.setAttribute('data-theme', t); } catch (e) {}
 </script>
@@ -66,6 +66,26 @@
     <li>Çift elinde yazılan ceza 2 kat yazılır.</li>
     <li>Konken: Düz okey gibi tüm kağıtların per oluşturup, bitiş kağıdının ortaya atılmasıyla biter.</li>
     <li>En düşük toplam puana sahip oyuncu kazanır.</li>
+  </ul>
+</template>
+
+<template id="tpl-rules-dostkazigi">
+  <ul>
+    <li><strong>Deste:</strong> Çift deste ve 4 Job, toplam 108 kart. Kartın şekli önemsizdir; aynı değerdeki kartlar eşleşir (♠Q = ♣Q).</li>
+    <li><strong>Masa:</strong> 2, 3 veya 4 takım (4, 6 ya da 8 oyuncu). Her oyuncunun eşi tam karşısındaki oyuncudur.</li>
+    <li><strong>Amaç:</strong> Kartları rakiplerin önüne kitlemek, kendi ve eşinin önünü boşaltmak. En düşük puanlı takım kazanır.</li>
+    <li><strong>Hamle:</strong> Sıra sendeyken elinden yalnızca 1 kart oynarsın. Sadece en üstteki gruplar ve ortadaki en üst kart işlenebilir.</li>
+    <li><strong>Kendi ve eşinin grubu:</strong> Kendi ya da eşinin en üst grubuna aynı değeri işlersen grup büyür ve sıradaki oyuncunun önüne kayar (eşininkinde eşinin sıradakine).</li>
+    <li><strong>Rakip grubu:</strong> Rakibin en üst grubuna işlersen grup büyür ve rakibin önünde kalır, kaymaz.</li>
+    <li><strong>Başlangıç kartları:</strong> Tur başında açılır (4 kişide 8, 6 kişide 6, 8 kişide 4 kart). Üzerine kart atılmaz; aynı değeri işlersen tüm grup sıradaki oyuncuya kitlenir.</li>
+    <li><strong>Orta:</strong> Ortaya atılan kartlar tek tek yığılır. Ortadaki en üst kartla aynı değeri oynarsan 2 kart sıradakine kitlenir ve alttaki kart açılır.</li>
+    <li><strong>Boşa atma yok:</strong> Ortaya attığın kart masada bir yere işleniyorsa otomatik işlenir; birden fazla yer varsa sana sorulur.</li>
+    <li><strong>Birleşme:</strong> Kayan grup, gittiği oyuncunun en üst grubuyla aynı değerdeyse birleşir (3×9 + 2×9 = 5×9).</li>
+    <li><strong>Sıra yönü:</strong> İlk yarıda saat yönünün tersine (sağdaki), ikinci yarıda saat yönüne (soldaki) oynanır.</li>
+    <li><strong>Dağıtım:</strong> Her dağıtımda 4’er kart, son dağıtımda 5’er kart. Tüm 108 kart bitince tur tamamlanır.</li>
+    <li><strong>Puan:</strong> 2–9 kendi değeri, 10/J/Q/K/A 10, 3’lü 30, Job 60. İki eşin önü de boşsa takıma −100.</li>
+    <li><strong>Turlar:</strong> Her oyuncu bir kez saat yönünün tersine, bir kez saat yönünde başlar: 4 kişide 8, 6 kişide 12, 8 kişide 16 tur.</li>
+    <li><strong>Online masa:</strong> Bağlantın koparsa yerine bot oynar, geri gelince kaldığın yerden devam edersin. Oyundan çıkarsan koltuğunda bot oynamaya devam eder.</li>
   </ul>
 </template>
 
@@ -124,16 +144,16 @@
 </template>
 
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-<script src="assets/js/config.js?v=2.1.0"></script>
-<script src="assets/js/core.js?v=2.1.0"></script>
-<script src="assets/js/api.js?v=2.1.0"></script>
-<script src="assets/js/home.js?v=2.1.0"></script>
-<script src="assets/js/auth.js?v=2.1.0"></script>
-<script src="assets/js/profile.js?v=2.1.0"></script>
-<script src="assets/js/social.js?v=2.1.0"></script>
-<script src="assets/js/admin.js?v=2.1.0"></script>
-<script src="assets/js/host.js?v=2.1.0"></script>
-<script src="assets/js/watch.js?v=2.1.0"></script>
-<script src="assets/js/app.js?v=2.1.0"></script>
+<script src="assets/js/config.js?v=2.2.0"></script>
+<script src="assets/js/core.js?v=2.2.0"></script>
+<script src="assets/js/api.js?v=2.2.0"></script>
+<script src="assets/js/home.js?v=2.2.0"></script>
+<script src="assets/js/auth.js?v=2.2.0"></script>
+<script src="assets/js/profile.js?v=2.2.0"></script>
+<script src="assets/js/social.js?v=2.2.0"></script>
+<script src="assets/js/admin.js?v=2.2.0"></script>
+<script src="assets/js/host.js?v=2.2.0"></script>
+<script src="assets/js/watch.js?v=2.2.0"></script>
+<script src="assets/js/app.js?v=2.2.0"></script>
 </body>
 </html>

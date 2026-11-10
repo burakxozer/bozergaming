@@ -191,7 +191,7 @@
       if (!BG.GAMES[params.key]) return BG.router.go('/', true);
       // Arka planda ana sayfa dursun (doğrudan bağlantıyla gelindiyse)
       if (!currentView || !view.firstElementChild) mount(BG.views.home());
-      BG.host.open(params.key, { resume: query.devam || null });
+      BG.host.open(params.key, { resume: query.devam || null, query });
       paintActive();
     });
   }
