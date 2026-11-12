@@ -51,7 +51,7 @@
         <div class="top-actions">
           ${
             authed
-              ? `<button class="userbtn" type="button" aria-haspopup="menu" aria-expanded="false">${BG.avatar(me, { size: 34 })}<span class="userbtn-name">${esc(String(me.full_name || me.username).split(' ')[0])}</span></button>`
+              ? `<span class="bp-slot"></span><button class="userbtn" type="button" aria-haspopup="menu" aria-expanded="false">${BG.avatar(me, { size: 34 })}<span class="userbtn-name">${esc(String(me.full_name || me.username).split(' ')[0])}</span></button>`
               : `<a class="btn btn-ghost btn-sm" href="#/giris">Giriş yap</a><a class="btn btn-primary btn-sm" href="#/kayit">Kayıt ol</a>`
           }
         </div>
@@ -65,6 +65,7 @@
     if (ub) ub.addEventListener('click', userMenu);
     paintActive();
     app.paintBadges();
+    if (BG.bp) BG.bp.paint();
   };
 
   function userMenu(e) {
@@ -300,6 +301,11 @@
     routes();
 
     BG.bus.on('counts', app.paintBadges);
+    // Yönetici ana sayfa görünümünü değiştirdiyse ana sayfadaysa yeniden çiz
+    BG.bus.on('home-style', () => {
+      const h = location.hash.replace(/^#/, '') || '/';
+      if (h === '/' || h === '') BG.router.resolve();
+    });
     BG.bus.on('route', (r) => {
       BG.router.prevPath = r.from ? r.from.path : null;
     });

@@ -220,6 +220,36 @@
   };
 
   /* ---------------- Profil sayfası ---------------- */
+  /* Masalarda aldığın hediyeler: sayılar ve son gelenler (kimden geldiğini yalnızca sen görürsün) */
+  async function giftShelf(box) {
+    let d;
+    try {
+      d = await BG.api.rpc('bg_gifts_received', {});
+    } catch (e) {
+      return;
+    }
+    if (!box.isConnected) return;
+    const src = (c, x) => `assets/gifts/${encodeURIComponent(c)}${x === 2 ? '@2x' : ''}.webp`;
+    const img = (c) => `<img src="${src(c)}" srcset="${src(c, 2)} 2x" alt="" width="44" height="44" loading="lazy">`;
+    if (!d || !d.total) {
+      box.innerHTML = `<h2 class="gs-title">${icon('gift', 18)}Hediyelerin</h2><p class="muted small">Masada biri sana hediye gönderdiğinde burada görünür.</p>`;
+      box.hidden = false;
+      return;
+    }
+    const games = BG.GAMES || {};
+    box.innerHTML = `<h2 class="gs-title">${icon('gift', 18)}Hediyelerin <span class="muted">${Number(d.total).toLocaleString('tr-TR')}</span></h2>
+      <ul class="gs-grid">${(d.items || []).map((g) => `<li title="${esc(g.name)}">${img(g.code)}<b>×${g.n}</b><span class="sr-only">${esc(g.name)}</span></li>`).join('')}</ul>
+      ${
+        (d.recent || []).length
+          ? `<h3 class="gs-sub">Son gelenler</h3><ul class="gs-recent">${d.recent
+              .slice(0, 5)
+              .map((r) => `<li>${img(r.code)}<span><b>${esc(r.from_name)}</b> · ${esc(r.name)}<small>${esc([games[r.game] && games[r.game].name, BG.fmt.ago(r.created_at)].filter(Boolean).join(', '))}</small></span></li>`)
+              .join('')}</ul>`
+          : ''
+      }`;
+    box.hidden = false;
+  }
+
   BG.views.profile = function () {
     const me = BG.store.me;
     const root = BG.frag(`
@@ -238,6 +268,7 @@
               <a class="btn btn-soft btn-sm" href="#/oyunlarim">${icon('cloud', 16)}Kayıtlı oyunlarım</a>
               <a class="btn btn-soft btn-sm" href="#/arkadaslar">${icon('users', 16)}Arkadaşlarım</a>
             </div>
+            <div class="gift-shelf" hidden></div>
           </section>
 
           <div class="profile-forms">
@@ -449,6 +480,7 @@
     root.querySelector('#logoutBtn').addEventListener('click', () => BG.auth.logout());
 
     paintHead();
+    giftShelf(root.querySelector('.gift-shelf'));
     const off = BG.bus.on('me', () => root.isConnected && paintHead());
     return { node: root, cleanup: off };
   };

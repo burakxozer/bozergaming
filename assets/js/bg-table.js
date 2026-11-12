@@ -40,6 +40,7 @@
     back: '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M15 5l-7 7 7 7" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>',
     wifi: '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M3 9.5a13 13 0 0 1 18 0M6.5 13a8 8 0 0 1 11 0M10 16.5a3 3 0 0 1 4 0" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/><path d="M4 4l16 16" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg>',
   };
+  ICON.gift = '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 11h16v9H4zM3 7h18v4H3zM12 7v13M12 7c-1.5-3-5-3.5-5-1.2C7 7 9.5 7 12 7zm0 0c1.5-3 5-3.5 5-1.2C17 7 14.5 7 12 7z" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linejoin="round"/></svg>';
   T.ICON = ICON;
 
   /* ---------------- site bağlantısı ---------------- */
@@ -177,7 +178,8 @@
 
   /* ---------------- iletişim kutuları ---------------- */
   T.sheet = function (o) {
-    const wrap = el(`<div class="t-sheet-wrap" role="dialog" aria-modal="true" aria-label="${esc(o.title || '')}">
+    // top: açık sohbet panelinin üstünde açılan pencere (ör. sohbetteki Hediye düğmesi)
+    const wrap = el(`<div class="t-sheet-wrap${o.top ? ' is-top' : ''}" role="dialog" aria-modal="true" aria-label="${esc(o.title || '')}">
       <div class="t-sheet${o.wide ? ' is-wide' : ''}">
         <div class="t-sheet-head"><h3>${esc(o.title || '')}</h3><button type="button" class="t-icon" data-x aria-label="Kapat">${ICON.close}</button></div>
         <div class="t-sheet-body"></div>
@@ -423,7 +425,8 @@
         chat.lastId = rows[rows.length - 1].id;
         chat.rows = chat.rows.concat(rows).slice(-150);
         const me = T.me();
-        const fresh = rows.filter((r) => !me || r.user_id !== me.id);
+        if (notify) rows.forEach((r) => T.giftOf(r.body) && giftFx(r));
+        const fresh = rows.filter((r) => (!me || r.user_id !== me.id) && !T.giftOf(r.body));
         if (notify && fresh.length && !chat.isOpen) {
           chat.unread += fresh.length;
           fresh.slice(-2).forEach(peek);
@@ -476,6 +479,10 @@
       ? chat.rows
           .map((r) => {
             const mine = me && r.user_id === me.id;
+            const g = T.giftOf(r.body);
+            if (g)
+              return `<div class="t-msg t-gift"><img src="${giftSrc(g.code)}" srcset="${giftSrc(g.code, 2)} 2x" alt="" loading="lazy">
+                <div class="t-msg-b"><div class="t-msg-h"><b>${esc(mine ? 'Sen' : who(r))}</b><time>${esc(hhmm(r.created_at))}</time></div><p>${esc(g.text)}</p></div></div>`;
             return `<div class="t-msg${mine ? ' is-mine' : ''}">${mine ? '' : T.avatar({ name: who(r), avatar_url: r.avatar_url }, 30)}
               <div class="t-msg-b"><div class="t-msg-h">${mine ? '' : `<b>${esc(who(r))}</b>`}${r.is_player ? '' : '<span class="t-tag">izliyor</span>'}<time>${esc(hhmm(r.created_at))}</time></div><p>${esc(r.body)}</p></div></div>`;
           })
@@ -502,7 +509,7 @@
     $$('#tPeek .t-peek-item').forEach((n) => n.remove());
     if (!chat.panel) {
       chat.panel = el(`<aside class="t-chat" role="dialog" aria-label="Masa sohbeti">
-        <div class="t-chat-head"><h3>Masa sohbeti</h3><button type="button" class="t-icon" data-x aria-label="Kapat">${ICON.close}</button></div>
+        <div class="t-chat-head"><h3>Masa sohbeti</h3><button type="button" class="t-btn is-ghost t-giftbtn" data-gift>${ICON.gift}<span>Hediye</span></button><button type="button" class="t-icon" data-x aria-label="Kapat">${ICON.close}</button></div>
         <div class="t-chat-viewers" hidden></div>
         <div class="t-chat-list"></div>
         <form class="t-chat-form" autocomplete="off"><input class="t-input" maxlength="300" placeholder="Mesaj yaz" aria-label="Mesaj"><button type="submit" class="t-icon is-send" aria-label="Gönder">${ICON.send}</button></form>
@@ -511,6 +518,7 @@
       scrim.addEventListener('click', () => chat.close());
       chat.scrim = scrim;
       $('[data-x]', chat.panel).addEventListener('click', () => chat.close());
+      $('[data-gift]', chat.panel).addEventListener('click', () => T.giftPicker());
       chat.panel.addEventListener('keydown', (e) => {
         if (e.key === 'Escape') {
           e.stopPropagation();
@@ -552,6 +560,82 @@
     emit('chat-open', false);
   };
   chat.toggle = () => (chat.isOpen ? chat.close() : chat.open());
+
+  /* ---------------- hediyeler (BP ile sembolik) ---------------- */
+  const GIFT_RE = /^\[\[gift:([a-z_]+):([0-9a-f-]{36})\]\]\s*(.*)$/;
+  const giftSrc = (code, x) => 'assets/gifts/' + code + (x === 2 ? '@2x' : '') + '.webp';
+  T.giftOf = (body) => {
+    const m = GIFT_RE.exec(body || '');
+    return m ? { code: m[1], to: m[2], text: m[3] } : null;
+  };
+  let giftCat = null;
+  /** Masadaki biri için hediye: oyuncular ve izleyiciler arasından alıcı seçilir */
+  T.giftPicker = async function (toId) {
+    const cur = T.cur;
+    const me = T.me();
+    if (!cur || !me) return;
+    const people = [];
+    ((cur.table && cur.table.seats) || []).forEach((s) => {
+      if (s.kind === 'human' && s.user_id && s.user_id !== me.id && !people.some((p) => p.id === s.user_id))
+        people.push({ id: s.user_id, name: String(s.full_name || s.username || 'Oyuncu').trim(), avatar_url: s.avatar_url, role: 'Oyuncu' });
+    });
+    ((cur.link && cur.link.viewers) || []).forEach((v) => {
+      if (v.user_id && v.user_id !== me.id && !people.some((p) => p.id === v.user_id)) people.push({ id: v.user_id, name: v.name, avatar_url: v.avatar_url, role: 'İzleyici' });
+    });
+    if (!people.length) return T.toast('Masada hediye gönderebileceğin biri yok.', 'info');
+    if (!giftCat) {
+      try {
+        giftCat = await call('bg_gift_catalog');
+      } catch (e) {
+        return T.toast(e.message || 'Hediyeler yüklenemedi', 'err');
+      }
+    }
+    let to = toId && people.some((p) => p.id === toId) ? toId : people[0].id;
+    const TIERS = { standart: 'Standart', ozel: 'Özel', premium: 'Premium', saka: 'Şaka' };
+    const sh = T.sheet({
+      title: 'Hediye gönder',
+      wide: true,
+      top: true,
+      body: `<div class="t-gift-to" role="radiogroup" aria-label="Kime">${people
+        .map((p) => `<button type="button" role="radio" data-to="${p.id}" aria-checked="${p.id === to}">${T.avatar(p, 34)}<span><b>${esc(p.name)}</b><small>${p.role}</small></span></button>`)
+        .join('')}</div>
+        <p class="t-note">Hediye sembolik bir jesttir: BP’si senden düşer, alıcıya BP geçmez. Masadaki herkes görür.</p>
+        ${Object.keys(TIERS)
+          .map((k) => {
+            const list = giftCat.filter((g) => g.tier === k);
+            return list.length ? `<h4 class="t-gift-h">${TIERS[k]}</h4><div class="t-gift-grid">${list.map((g) => `<button type="button" class="t-gift-it" data-code="${g.code}"><img src="${giftSrc(g.code)}" srcset="${giftSrc(g.code, 2)} 2x" alt="" loading="lazy"><span>${esc(g.name)}</span><b>${g.price} BP</b></button>`).join('')}</div>` : '';
+          })
+          .join('')}`,
+    });
+    sh.body.addEventListener('click', async (e) => {
+      const t = e.target.closest('[data-to]');
+      if (t) {
+        to = t.dataset.to;
+        $$('[data-to]', sh.body).forEach((b) => b.setAttribute('aria-checked', String(b === t)));
+        return;
+      }
+      const g = e.target.closest('[data-code]');
+      if (!g || g.disabled) return;
+      $$('[data-code]', sh.body).forEach((b) => (b.disabled = true));
+      try {
+        await call('bg_gift_send', { p_to: to, p_code: g.dataset.code, p_game: T.cfg.game, p_table: cur.id, p_req: uid() });
+        sh.close();
+        chat.fetch(true);
+      } catch (err) {
+        T.toast(err.message || 'Hediye gönderilemedi', 'err');
+        $$('[data-code]', sh.body).forEach((b) => (b.disabled = false));
+      }
+    });
+  };
+  function giftFx(r) {
+    const g = T.giftOf(r.body);
+    if (!g) return;
+    const me = T.me();
+    const fx = el(`<div class="t-giftfx" aria-live="polite"><img src="${giftSrc(g.code, 2)}" alt=""><p><b>${esc(me && r.user_id === me.id ? 'Sen' : who(r))}</b> → ${esc(g.text)}</p></div>`);
+    document.body.appendChild(fx);
+    setTimeout(() => fx.classList.add('is-out'), 2600);
+    setTimeout(() => fx.remove(), 3100);
+  }
 
   /* =====================================================================
      ONLINE LOBİ

@@ -13,14 +13,14 @@
 <meta property="og:description" content="Masadaki oyunun skor tablosu. Skorunu tut, oyunun hesabına kaydedilsin, arkadaşların canlı izlesin.">
 <meta property="og:image" content="assets/icons/og.png">
 <link rel="manifest" href="manifest.webmanifest">
-<link rel="icon" href="assets/icons/favicon.svg?v=2.1.0" type="image/svg+xml">
-<link rel="icon" href="assets/icons/icon-192.png?v=2.1.0" type="image/png" sizes="192x192">
-<link rel="apple-touch-icon" href="assets/icons/apple-touch-icon.png?v=2.1.0">
+<link rel="icon" href="assets/icons/favicon.svg?v=3.0.0" type="image/svg+xml">
+<link rel="icon" href="assets/icons/icon-192.png?v=3.0.0" type="image/png" sizes="192x192">
+<link rel="apple-touch-icon" href="assets/icons/apple-touch-icon.png?v=3.0.0">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="preconnect" href="https://cdn.jsdelivr.net" crossorigin>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Archivo:wdth,wght@62..125,300..900&display=swap">
-<link rel="stylesheet" href="assets/css/app.css?v=2.2.0">
+<link rel="stylesheet" href="assets/css/app.css?v=3.0.0">
 <script>
   try { var t = JSON.parse(localStorage.getItem('bg.theme')); if (t) document.documentElement.setAttribute('data-theme', t); } catch (e) {}
 </script>
@@ -89,6 +89,27 @@
   </ul>
 </template>
 
+<template id="tpl-rules-blackjack">
+  <ul>
+    <li><strong>Amaç:</strong> Elinin toplamını 21’i geçmeden krupiyenin elinden yükseğe çıkarmak. 2–10 kendi değeri, J/Q/K 10, As 1 ya da 11 sayılır.</li>
+    <li><strong>Masa:</strong> 7 pot vardır. Bir oyuncu aynı masada en fazla 2 pota oturabilir. Tur başlaması için en az 2 bağlı pot, kart dağıtılması için en az 2 bahis gerekir.</li>
+    <li><strong>Bahis ve kademeler:</strong> Bronze masada en fazla 10 BP, Silver’da 20 BP, Gold’da 100 BP bahis yapılır. Silver’a girmek için 4.000, Gold’a girmek için 8.000 BP bakiye gerekir. Bahis süresi 15 saniyedir; herkes onaylarsa tur erken başlar.</li>
+    <li><strong>Sabot:</strong> 8 deste karıştırılır, kesme kartı sona yakın bir yere konur ve ilk 3 kart yakılır. Kesme kartı çıkınca o tur tamamlanır, sonraki tur yeni sabotla başlar.</li>
+    <li><strong>Dağıtım:</strong> Her oyuncuya 2 açık kart, krupiyeye 1 açık 1 kapalı kart verilir. Krupiyenin açık kartı As ya da 10 değerindeyse krupiye kapalı karta bakar; blackjack varsa el hemen sonuçlanır.</li>
+    <li><strong>Sigorta:</strong> Krupiyenin açık kartı As ise bahsinin yarısı kadar sigorta alabilirsin. Krupiye blackjack yaparsa sigorta 2’ye 1 öder.</li>
+    <li><strong>Hamleler:</strong> Kart (H), Dur (S), Double (D: bahsi ikiye katla, tek kart al), Split (P: aynı değerdeki iki kartı ayır), Teslim (R: ilk iki kartta, bahsin yarısı geri döner). Her hamle için 15 saniyen var; süre dolarsa elin durur.</li>
+    <li><strong>Split:</strong> En fazla 4 ele kadar ayrılır. Ayrılan asların her birine tek kart verilir ve yeniden ayrılamaz. Ayrılan elde double yapılabilir, teslim olunamaz. Ayrılan elde 21 blackjack sayılmaz.</li>
+    <li><strong>Ön hamle:</strong> Sıra sana gelmeden hamleni seçebilirsin. Sıra geldiğinde hâlâ geçerliyse uygulanır; geçersizse uygulanmaz ve süren yeniden başlar.</li>
+    <li><strong>Krupiye:</strong> 16 ve altında kart çeker, soft 17 dahil 17 ve üstünde durur. Bütün oyuncular battıysa kart çekmez.</li>
+    <li><strong>Ödemeler:</strong> Blackjack 3’e 2, normal kazanç 1’e 1 öder. Berabere kalırsan bahsin geri döner.</li>
+    <li><strong>Bet Behind:</strong> İzleyiciler dolu bir potun arkasına bahis yapabilir. O pot double ya da split yaparsa aynı miktar otomatik eklenir; bakiye yetmezse o turdaki Bet Behind bahsin iade edilir. İzleyici bir turda tek pota bahis yapabilir.</li>
+    <li><strong>Jackpot:</strong> 7 potun hepsi aynı oyuncularla doluyken üst üste 5 turda 7 potun hepsi kazanırsa (split’te bütün eller) jackpot çıkar: her pot sahibine 200/300/400 BP, Bet Behind yapan her izleyiciye 100/200/300 BP (Bronze/Silver/Gold). Bir pot kaybederse, pot sahibi değişirse ya da tur iptal olursa seri sıfırlanır. Kesme kartı seriyi bozmaz.</li>
+    <li><strong>Otomatik bahis:</strong> Açıksa her tur son bahsin tekrar yapılır. Bağlantın kopunca ya da yeni oturum açınca kapanır.</li>
+    <li><strong>Kalkmak:</strong> El oynanırken kalkarsan tur bitince kalkarsın. Bağlantın koparsa otomatik bahis kapanır, sıran geldiğinde süre dolunca elin durur; 3 dakika içinde dönmezsen potun boşalır.</li>
+    <li><strong>İptal:</strong> Bir tur iptal edilirse o turdaki bütün bahisler (ana, ek, sigorta, Bet Behind) iade edilir.</li>
+  </ul>
+</template>
+
 <template id="tpl-info-americano">
   <ul>
     <li>2-5 kişi ile oynanabilir.</li>
@@ -144,16 +165,18 @@
 </template>
 
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-<script src="assets/js/config.js?v=2.2.0"></script>
-<script src="assets/js/core.js?v=2.2.0"></script>
-<script src="assets/js/api.js?v=2.2.0"></script>
-<script src="assets/js/home.js?v=2.2.0"></script>
-<script src="assets/js/auth.js?v=2.2.0"></script>
-<script src="assets/js/profile.js?v=2.2.0"></script>
-<script src="assets/js/social.js?v=2.2.0"></script>
-<script src="assets/js/admin.js?v=2.2.0"></script>
-<script src="assets/js/host.js?v=2.2.0"></script>
-<script src="assets/js/watch.js?v=2.2.0"></script>
-<script src="assets/js/app.js?v=2.2.0"></script>
+<script src="assets/js/config.js?v=3.0.0"></script>
+<script src="assets/js/core.js?v=3.0.0"></script>
+<script src="assets/js/api.js?v=3.0.0"></script>
+<script src="assets/js/bp.js?v=3.0.0"></script>
+<script src="assets/js/home.js?v=3.0.0"></script>
+<script src="assets/js/home3.js?v=3.0.0"></script>
+<script src="assets/js/auth.js?v=3.0.0"></script>
+<script src="assets/js/profile.js?v=3.0.0"></script>
+<script src="assets/js/social.js?v=3.0.0"></script>
+<script src="assets/js/admin.js?v=3.0.0"></script>
+<script src="assets/js/host.js?v=3.0.0"></script>
+<script src="assets/js/watch.js?v=3.0.0"></script>
+<script src="assets/js/app.js?v=3.0.0"></script>
 </body>
 </html>

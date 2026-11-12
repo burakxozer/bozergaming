@@ -175,6 +175,24 @@
               </div>
             </article>
 
+            <article class="game-row" data-game="blackjack">
+              <div class="game-glyph">${BG.gameTile('blackjack', 'tile-l')}</div>
+              <div class="game-main">
+                <h3 class="game-name">Blackjack Royale</h3>
+                <p class="game-desc">7 pozisyonlu canlı blackjack masası. Bözer Points ile bahis, izleyiciler için Bet Behind ve jackpot.</p>
+                <ul class="modes">
+                  <li class="mode">
+                    <div><strong>Online</strong><span>Bronze, Silver ve Gold masalar; arkadaşlarınla otur ya da izle</span></div>
+                    <div class="mode-actions"><a class="btn btn-primary btn-sm" href="#/oyun/blackjack">${icon('users', 16)}Masalar</a></div>
+                  </li>
+                </ul>
+                <p class="game-resume" hidden></p>
+              </div>
+              <div class="game-actions">
+                <button class="btn btn-ghost btn-sm" type="button" data-doc="tpl-rules-blackjack" data-title="Blackjack Royale oyun kuralları">${icon('book', 18)}Kurallar</button>
+              </div>
+            </article>
+
             <article class="game-row" data-game="americano-online">
               <div class="game-glyph">${BG.gameTile('americano-online', 'tile-l')}</div>
               <div class="game-main">

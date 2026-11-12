@@ -237,6 +237,18 @@
     return f || { user_id: id, username: '', full_name: 'Yeni mesaj' };
   }
 
+  /** Masa daveti mesajı: "[[davet:blackjack:<masa>]] metin" */
+  const INVITE_RE = /^\[\[davet:([a-z-]+):([0-9a-f-]{36})\]\]\s*(.*)$/;
+  BG.inviteOf = (body) => {
+    const m = INVITE_RE.exec(body || '');
+    // yalnızca bilinen online masa oyunları (BG.GAMES'in kendi anahtarları) davet kartı olur
+    const g = m && Object.prototype.hasOwnProperty.call(BG.GAMES, m[1]) ? BG.GAMES[m[1]] : null;
+    return g && g.table ? { game: m[1], table: m[2], text: m[3] || g.name + ' masasına davet' } : null;
+  };
+  BG.msgText = (body) => {
+    const inv = BG.inviteOf(body);
+    return inv ? `${BG.GAMES[inv.game].name}: ${inv.text}` : body;
+  };
   async function onIncoming(row) {
     if (!row || !row.sender_id) return;
     BG.bus.emit('message:new', row);
@@ -248,7 +260,10 @@
       type: 'message',
       person: p,
       title: p.full_name || '@' + p.username,
-      text: row.body.length > 140 ? row.body.slice(0, 140) + '…' : row.body,
+      text: (() => {
+        const t = BG.msgText(row.body);
+        return t.length > 140 ? t.slice(0, 140) + '…' : t;
+      })(),
       duration: 3000,
       onClick: () => chat.openDrawer(p.username),
     });
@@ -520,7 +535,15 @@
       const mine = m.sender_id === me.id;
       const b = BG.frag(`<div class="bubble ${mine ? 'mine' : 'theirs'}${m._pending ? ' is-pending' : ''}${m._failed ? ' is-failed' : ''}" data-id="${m.id || ''}">
           <p></p><span class="b-meta"><time>${esc(BG.fmt.clock(m.created_at))}</time>${mine ? `<span class="ticks${m.read_at ? ' is-read' : ''}" title="${m.read_at ? 'Görüldü' : 'Gönderildi'}">${icon(m.read_at ? 'checks' : 'check', 14)}</span>` : ''}</span></div>`);
-      b.querySelector('p').textContent = m.body;
+      const inv = BG.inviteOf(m.body);
+      if (inv) {
+        const g = BG.GAMES[inv.game];
+        b.classList.add('is-invite');
+        b.querySelector('p').replaceWith(
+          BG.frag(`<div class="invite-card">${BG.gameTile(inv.game, 'tile-s')}<div><b>${esc(g.name)}</b><span>${esc(inv.text)}</span></div>
+            <a class="btn btn-primary btn-sm" href="#/oyun/${esc(inv.game)}?masa=${esc(inv.table)}">${mine ? 'Masaya git' : 'Masaya katıl'}</a></div>`),
+        );
+      } else b.querySelector('p').textContent = m.body;
       if (m._failed) {
         const r = BG.h('button.link-btn.retry', { type: 'button' }, 'Gönderilemedi, tekrar dene');
         r.addEventListener('click', () => {
@@ -739,7 +762,7 @@
           const li = BG.frag(`<li><button type="button" class="conv${opts.active === c.username ? ' is-active' : ''}${c.unread ? ' has-unread' : ''}">
               ${BG.avatar(c, { size: 46, online: c.is_friend ? online : undefined })}
               <span class="conv-text"><strong>${esc(c.full_name || c.username)}</strong>
-              <span class="conv-last">${c.last_from_me ? 'Sen: ' : ''}${esc(c.last_body)}</span></span>
+              <span class="conv-last">${c.last_from_me ? 'Sen: ' : ''}${esc(BG.msgText(c.last_body))}</span></span>
               <span class="conv-meta"><time>${esc(BG.fmt.short(c.last_at))}</time>${BG.countBadge(c.unread)}${!c.unread && c.last_from_me && c.last_read ? `<span class="ticks is-read">${icon('checks', 14)}</span>` : ''}</span>
             </button></li>`);
           li.querySelector('button').addEventListener('click', () => opts.onOpen(c.username));

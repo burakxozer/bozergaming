@@ -964,3 +964,29 @@ select.t-input {
     transition: none;
   }
 }
+
+/* ---------------- hediyeler ---------------- */
+.t-sheet-wrap.is-top { z-index: 310; }
+.t-giftbtn { margin-left: auto; margin-right: 6px; min-height: 34px; padding: 4px 12px; gap: 6px; font-size: 13px; }
+.t-giftbtn svg { width: 18px; height: 18px; }
+.t-msg.t-gift { align-items: center; padding: 6px 10px; border-radius: 14px; background: linear-gradient(90deg, rgba(245, 220, 152, .16), rgba(245, 220, 152, .03)); }
+.t-msg.t-gift img { width: 40px; height: 40px; flex: none; }
+.t-gift-to { display: flex; gap: 8px; overflow-x: auto; padding-bottom: 4px; }
+.t-gift-to button { flex: none; display: flex; align-items: center; gap: 8px; padding: 6px 12px 6px 6px; border-radius: 99px; border: 1px solid var(--t-line); background: var(--t-panel); color: var(--t-text); }
+.t-gift-to button span { display: flex; flex-direction: column; align-items: flex-start; line-height: 1.15; }
+.t-gift-to button small { color: var(--t-muted); font-size: 11px; }
+.t-gift-to button[aria-checked='true'] { border-color: var(--t-accent-hi); box-shadow: 0 0 0 2px rgba(245, 220, 152, .25); }
+.t-gift-h { margin: 14px 0 6px; font-size: 13px; letter-spacing: .08em; color: var(--t-accent); }
+.t-gift-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(92px, 1fr)); gap: 8px; }
+.t-gift-it { display: flex; flex-direction: column; align-items: center; gap: 2px; padding: 8px 6px; border-radius: 12px; border: 1px solid var(--t-line); background: var(--t-panel); color: var(--t-text); }
+.t-gift-it img { width: 54px; height: 54px; }
+.t-gift-it span { font-size: 12.5px; font-weight: 700; text-align: center; }
+.t-gift-it b { font-size: 12px; color: var(--t-accent-hi); }
+.t-gift-it:disabled { opacity: .45; }
+.t-giftfx { position: fixed; left: 50%; top: 42%; z-index: 320; transform: translate(-50%, -50%); display: flex; flex-direction: column; align-items: center; gap: 6px;
+  pointer-events: none; animation: tGiftIn .55s cubic-bezier(.2, 1.4, .4, 1) both; }
+.t-giftfx img { width: 120px; height: 120px; filter: drop-shadow(0 12px 24px rgba(0, 0, 0, .55)); }
+.t-giftfx p { margin: 0; padding: 6px 14px; border-radius: 99px; background: rgba(0, 0, 0, .7); color: #fff; font-size: 14px; white-space: nowrap; }
+.t-giftfx.is-out { animation: tGiftOut .45s ease forwards; }
+@keyframes tGiftIn { from { opacity: 0; transform: translate(-50%, -20%) scale(.5); } to { opacity: 1; transform: translate(-50%, -50%) scale(1); } }
+@keyframes tGiftOut { to { opacity: 0; transform: translate(-50%, -90%) scale(.85); } }

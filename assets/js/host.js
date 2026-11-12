@@ -20,6 +20,7 @@
     somali: [['tpl-info-somali', 'Somali skor tablosu nasıl kullanılır?', 'info']],
     'americano-online': [['tpl-rules-americano', 'Americano oyun kuralları', 'book']],
     'dostkazigi-online': [['tpl-rules-dostkazigi', 'Dost Kazığı oyun kuralları', 'book']],
+    blackjack: [['tpl-rules-blackjack', 'Blackjack Royale oyun kuralları', 'book']],
   };
   /** Online masa oyunlarına geçen adres parametreleri */
   const TABLE_PARAMS = ['masa', 'izle', 'kim', 'mod'];
@@ -59,10 +60,15 @@
             <span class="live-pill" hidden title="Arkadaşların bu oyunu canlı izleyebilir"><span class="live-dot"></span><span class="lp-text">Canlı</span><span class="lp-viewers" hidden>${icon('eye', 15)}<b>0</b></span></span>
             <button class="icon-btn gb-tchat" type="button" aria-label="Masa sohbeti" title="Masa sohbeti" hidden>${icon('chats')}<span class="gb-badge"></span></button>
             <button class="icon-btn gb-chat" type="button" aria-label="Mesajlar">${icon('message')}<span class="gb-badge"></span></button>
+            <button class="icon-btn gb-full" type="button" aria-label="Tam ekran" title="Tam ekran">${icon('expand')}</button>
             <button class="icon-btn gb-help" type="button" aria-label="Kurallar ve kullanım">${icon('book')}</button>
           </div>
         </header>
-        <iframe class="game-frame" title="Oyun" allow="vibrate; clipboard-write"></iframe>
+        <iframe class="game-frame" title="Oyun" allow="vibrate; clipboard-write; fullscreen"></iframe>
+        <div class="gl-float" hidden>
+          <button class="gl-fbtn gl-tchat" type="button" aria-label="Masa sohbeti" hidden>${icon('chats', 19)}<span class="gb-badge"></span></button>
+          <button class="gl-fbtn gl-exitfs" type="button" aria-label="Tam ekrandan çık" title="Tam ekrandan çık">${icon('compress', 19)}</button>
+        </div>
       </div>`);
     document.body.appendChild(layer);
     frame = layer.querySelector('.game-frame');
@@ -76,12 +82,25 @@
       BG.chat.openDrawer();
     });
     bar.querySelector('.gb-help').addEventListener('click', helpMenu);
-    bar.querySelector('.gb-tchat').addEventListener('click', () => {
+    const tableChatToggle = () => {
       try {
         const w = frame.contentWindow;
         if (w && w.BGT && w.BGT.chat) w.BGT.chat.toggle();
       } catch (e) {}
-    });
+    };
+    bar.querySelector('.gb-tchat').addEventListener('click', tableChatToggle);
+    layer.querySelector('.gl-tchat').addEventListener('click', tableChatToggle);
+    bar.querySelector('.gb-full').addEventListener('click', () => host.fullscreen());
+    layer.querySelector('.gl-exitfs').addEventListener('click', () => host.fullscreen(false));
+    const onFs = () => {
+      // tarayıcının kendi çıkışı (Esc, geri hareketi): site çubuklarını geri getir
+      if (!fsEl() && layer._realFs) {
+        layer._realFs = false;
+        setFull(false);
+      }
+    };
+    document.addEventListener('fullscreenchange', onFs);
+    document.addEventListener('webkitfullscreenchange', onFs);
     frame.addEventListener('load', onFrameLoad);
     window.addEventListener('message', (e) => {
       if (!host.cur || !frame || e.source !== frame.contentWindow) return;
@@ -130,11 +149,66 @@
   /** Online masa sohbeti düğmesi: masadaki oyun (bg-table.js) açar, kapatır ve okunmamışı bildirir */
   host.tableChat = function (on, unread) {
     if (!bar) return false;
-    const b = bar.querySelector('.gb-tchat');
-    b.hidden = !on || !host.cur;
-    b.querySelector('.gb-badge').innerHTML = on ? BG.countBadge(unread || 0) : '';
-    b.setAttribute('aria-label', on && unread ? `Masa sohbeti, ${unread} yeni mesaj` : 'Masa sohbeti');
+    [bar.querySelector('.gb-tchat'), layer.querySelector('.gl-tchat')].forEach((b) => {
+      b.hidden = !on || !host.cur;
+      b.querySelector('.gb-badge').innerHTML = on ? BG.countBadge(unread || 0) : '';
+      b.setAttribute('aria-label', on && unread ? `Masa sohbeti, ${unread} yeni mesaj` : 'Masa sohbeti');
+    });
     return true;
+  };
+
+  /* ---------------- Tam ekran ----------------
+     Oyun katmanı tarayıcının tam ekranına alınır; site çubukları gizlenir.
+     Tam ekrana izin vermeyen tarayıcılarda (iPhone Safari) site çubukları yine
+     gizlenir, oyun bütün pencereyi kaplar. */
+  const fsEl = () => document.fullscreenElement || document.webkitFullscreenElement || null;
+  const canFs = () =>
+    !!(layer && (document.fullscreenEnabled || document.webkitFullscreenEnabled) && (layer.requestFullscreen || layer.webkitRequestFullscreen));
+  host.isFull = () => !!(layer && layer.classList.contains('is-full'));
+  function setFull(on) {
+    if (!layer) return;
+    layer.classList.toggle('is-full', on);
+    document.documentElement.classList.toggle('game-full', on);
+    layer.querySelector('.gl-float').hidden = !on;
+    const b = bar.querySelector('.gb-full');
+    b.innerHTML = icon(on ? 'compress' : 'expand');
+    b.setAttribute('aria-label', on ? 'Tam ekrandan çık' : 'Tam ekran');
+    b.title = on ? 'Tam ekrandan çık' : 'Tam ekran';
+    try {
+      const w = frame && frame.contentWindow;
+      if (w) setTimeout(() => w.dispatchEvent(new Event('resize')), 60);
+    } catch (e) {}
+  }
+  host.fullscreen = async function (on) {
+    if (!layer || !host.cur) return;
+    if (on === undefined) on = !host.isFull();
+    if (on) {
+      if (canFs() && !fsEl()) {
+        try {
+          await (layer.requestFullscreen ? layer.requestFullscreen({ navigationUI: 'hide' }) : layer.webkitRequestFullscreen());
+        } catch (e) {}
+      }
+      layer._realFs = !!fsEl();
+      setFull(true);
+      const standalone = (window.matchMedia && matchMedia('(display-mode: standalone)').matches) || navigator.standalone;
+      if (!layer._realFs && !standalone && !BG.ls.get('bg.fsHint')) {
+        BG.ls.set('bg.fsHint', 1);
+        BG.toast({
+          type: 'info',
+          title: 'Site çubukları gizlendi',
+          text: 'Bu tarayıcı tam ekrana izin vermiyor. iPhone’da adres çubuğu olmadan oynamak için Safari’de Paylaş → Ana Ekrana Ekle ile Bözer Gaming’i uygulama gibi aç.',
+          duration: 9000,
+        });
+      }
+    } else {
+      layer._realFs = false;
+      if (fsEl()) {
+        try {
+          await (document.exitFullscreen ? document.exitFullscreen() : document.webkitExitFullscreen());
+        } catch (e) {}
+      }
+      setFull(false);
+    }
   };
 
   function setSave(s, extra) {
@@ -530,6 +604,7 @@
     const id = c.sessionId;
     if (id && BG.isAuthed()) BG.api.rpc('bg_end_live', { p_id: id }).catch(() => {});
     unwatchViewers();
+    if (host.isFull()) await host.fullscreen(false);
     host.cur = null;
     host.tableChat(false);
     if (frame) frame.setAttribute('src', 'about:blank');

@@ -205,6 +205,10 @@
     chart: '<path d="M5 20v-7"/><path d="M12 20V5"/><path d="M19 20v-10"/><path d="M3 20.5h18"/>',
     users: '<circle cx="9" cy="8.2" r="3.4"/><path d="M2.8 19.5c.9-3.4 3.3-5.2 6.2-5.2s5.3 1.8 6.2 5.2"/><path d="M15.6 4.9a3.4 3.4 0 0 1 0 6.6"/><path d="M17.7 14.6c1.8.7 3 2.3 3.5 4.9"/>',
     message: '<path d="M20.5 11.6a8.1 8.1 0 0 1-11.8 7.2L3.5 20l1.3-4.6a8.1 8.1 0 1 1 15.7-3.8z"/>',
+    coin: '<ellipse cx="12" cy="7" rx="7" ry="3"/><path d="M5 7v5c0 1.7 3.1 3 7 3s7-1.3 7-3V7"/><path d="M5 12v5c0 1.7 3.1 3 7 3s7-1.3 7-3v-5"/>',
+    gift: '<rect x="3.5" y="8" width="17" height="4.5" rx="1"/><path d="M5 12.5V20a1 1 0 0 0 1 1h12a1 1 0 0 0 1-1v-7.5M12 8v13M12 8c-1.5-3.5-6-4-6-1.5S10 8 12 8zm0 0c1.5-3.5 6-4 6-1.5S14 8 12 8z"/>',
+    expand: '<path d="M4 9V4h5M20 9V4h-5M4 15v5h5M20 15v5h-5"/>',
+    compress: '<path d="M9 4v5H4M15 4v5h5M9 20v-5H4M15 20v-5h5"/>',
     chats: '<path d="M5 4h8a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2H8.5L5 15.8V13a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2z"/><path d="M17.5 9H19a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2v2.8L15.5 18H11a2 2 0 0 1-2-2v-.5"/>',
     user: '<circle cx="12" cy="8" r="4"/><path d="M4.5 20.5c1-3.8 4-5.8 7.5-5.8s6.5 2 7.5 5.8"/>',
     shield: '<path d="M12 3 4.8 6v5.8c0 4.4 3.1 7.7 7.2 9.2 4.1-1.5 7.2-4.8 7.2-9.2V6z"/><path d="M9 12l2.2 2.2L15.5 10"/>',
@@ -347,6 +351,7 @@
     'dart-lig': { key: 'dart-lig', file: 'dart/dart-lig.html', name: 'Dart Lig', glyph: '20', color: 'sky', activity: 'Dart liginde', group: 'dart' },
     'americano-online': { key: 'americano-online', file: 'americano-online.html', name: 'Americano Online', glyph: 'A', color: 'green', activity: 'Americano Online oynuyor', group: 'americano-online', table: true },
     'dostkazigi-online': { key: 'dostkazigi-online', file: 'dost-kazigi-online.html', name: 'Dost Kazığı Online', glyph: 'DK', color: 'rose', activity: 'Dost Kazığı oynuyor', group: 'dostkazigi-online', table: true },
+    blackjack: { key: 'blackjack', file: 'blackjack.html', name: 'Blackjack Royale', glyph: 'BJ', color: 'gold', activity: 'Blackjack Royale masasında', group: 'blackjack', table: true },
   };
   /** Arkadaşı izleme bağlantısı: online masada masaya izleyici olarak, diğerlerinde canlı yayına */
   BG.watchHref = function (game, sessionId, userId) {
