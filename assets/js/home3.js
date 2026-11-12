@@ -106,6 +106,8 @@
           <ul class="hv-resume"></ul>
         </section>
 
+        ${me ? BG.leaderboardHTML() : ''}
+
         <a class="hv-feature" href="#/oyun/blackjack" aria-label="Blackjack Royale masalarına git">
           <img src="assets/shots/blackjack.webp?v=${esc(BG.config.version)}" alt="" loading="eager" decoding="async">
           <span class="hv-feature-shade"></span>
@@ -248,6 +250,7 @@
     renderLive();
     renderResume();
     renderWallet();
+    if (me) BG.mountLeaderboard(root.querySelector('.lb'));
     const offs = [
       BG.bus.on('friends', renderLive),
       BG.bus.on('games-changed', () => {

@@ -7,11 +7,24 @@
   const { esc, icon } = BG;
   const app = (BG.app = {});
 
-  /* ---------------- Çevrimiçi durumu (kalp atışı) ---------------- */
+  /* ---------------- Çevrimiçi durumu (kalp atışı) ve aktif süre ---------------- */
   const presence = (BG.presence = { game: null, session: null, timer: null });
+  // Aktiflik: son kullanıcı etkileşimi ya da oyun olayı. 5 dakika boşta kalınca süre sayımı durur.
+  let lastActive = Date.now();
+  BG.activity = () => (lastActive = Date.now());
+  ['pointerdown', 'keydown', 'wheel', 'touchstart'].forEach((ev) => document.addEventListener(ev, BG.activity, { passive: true, capture: true }));
+  let lastMove = 0;
+  document.addEventListener('pointermove', () => {
+    const n = Date.now();
+    if (n - lastMove > 5000) {
+      lastMove = n;
+      BG.activity();
+    }
+  }, { passive: true });
+  presence.active = () => document.visibilityState === 'visible' && Date.now() - lastActive < 300000;
   presence.beat = function () {
     if (!BG.isAuthed()) return;
-    BG.api.rpc('bg_heartbeat', { p_game: presence.game, p_session: presence.session }).catch(() => {});
+    BG.api.rpc('bg_heartbeat', { p_game: presence.game, p_session: presence.session, p_active: presence.active() }).catch(() => {});
   };
   presence.set = function (game, session) {
     presence.game = game || null;
@@ -45,19 +58,20 @@
           ${navLink('/', 'tiles', 'Oyunlar')}
           ${authed ? navLink('/arkadaslar', 'users', 'Arkadaşlar', 'requests') : ''}
           ${authed ? navLink('/mesajlar', 'message', 'Mesajlar', 'unread') : ''}
+          ${authed ? navLink('/magaza', 'bag', 'Mağaza') : ''}
           ${navLink('/iletisim', 'help', 'İletişim')}
           ${authed && me.is_admin ? navLink('/panel', 'shield', 'Panel', '', 'nav-admin') : ''}
         </nav>
         <div class="top-actions">
           ${
             authed
-              ? `<span class="bp-slot"></span><button class="userbtn" type="button" aria-haspopup="menu" aria-expanded="false">${BG.avatar(me, { size: 34 })}<span class="userbtn-name">${esc(String(me.full_name || me.username).split(' ')[0])}</span></button>`
+              ? `<span class="bp-slot"></span><span class="bell-slot"></span><button class="userbtn" type="button" aria-haspopup="menu" aria-expanded="false">${BG.avatar(me, { size: 34, frame: BG.bp && BG.bp.state ? frameOf(BG.bp.state.frame) : null })}<span class="userbtn-name">${esc(String(me.full_name || me.username).split(' ')[0])}</span></button>`
               : `<a class="btn btn-ghost btn-sm" href="#/giris">Giriş yap</a><a class="btn btn-primary btn-sm" href="#/kayit">Kayıt ol</a>`
           }
         </div>
       </div>`;
     tabbar.innerHTML = authed
-      ? `${navLink('/', 'tiles', 'Oyunlar')}${navLink('/arkadaslar', 'users', 'Arkadaşlar', 'requests')}${navLink('/mesajlar', 'message', 'Mesajlar', 'unread')}${
+      ? `${navLink('/', 'tiles', 'Oyunlar')}${navLink('/arkadaslar', 'users', 'Arkadaşlar', 'requests')}${navLink('/mesajlar', 'message', 'Mesajlar', 'unread')}${navLink('/magaza', 'bag', 'Mağaza')}${
           me.is_admin ? navLink('/panel', 'shield', 'Panel') : ''
         }${navLink('/profil', 'user', 'Profil')}`
       : `${navLink('/', 'tiles', 'Oyunlar')}${navLink('/oyunlarim', 'cloud', 'Kayıtlarım')}${navLink('/iletisim', 'help', 'İletişim')}${navLink('/giris', 'login', 'Giriş')}`;
@@ -67,6 +81,20 @@
     app.paintBadges();
     if (BG.bp) BG.bp.paint();
   };
+
+  function frameOf(productId) {
+    return productId ? String(productId).replace(/^frame_/, '') : null;
+  }
+  BG.myFrame = () => (BG.bp && BG.bp.state ? frameOf(BG.bp.state.frame) : null);
+  // Çerçeve değişince üst menüdeki avatar güncellenir
+  BG.bus.on('bp', () => {
+    const ub = topbar && topbar.querySelector('.userbtn .avatar');
+    const me = BG.store.me;
+    if (ub && me) {
+      const want = BG.myFrame();
+      if ((ub.className.match(/fr-(\w+)/) || [])[1] !== (want || undefined)) ub.outerHTML = BG.avatar(me, { size: 34, frame: want });
+    }
+  });
 
   function userMenu(e) {
     const btn = e.currentTarget;
@@ -78,8 +106,12 @@
     }
     const me = BG.store.me;
     const menu = BG.frag(`<div class="user-menu" role="menu">
-        <div class="um-head">${BG.avatar(me, { size: 44 })}<div><strong>${esc(me.full_name)}</strong><span>@${esc(me.username)}</span></div></div>
+        <div class="um-head">${BG.avatar(me, { size: 44, frame: BG.myFrame() })}<div><strong>${esc(me.full_name)}</strong><span>@${esc(me.username)}</span>${BG.bp && BG.bp.state ? `<span class="um-rank">${BG.rankChip(BG.bp.state.rank)}${BG.prestigeChip(BG.bp.state.prestige, { short: true })}</span>` : ''}</div></div>
         <a role="menuitem" href="#/profil">${icon('user', 18)}Profilim</a>
+        <button role="menuitem" type="button" data-bp-open>${icon('coin', 18)}BP cüzdanım</button>
+        <a role="menuitem" href="#/gorevler">${icon('target', 18)}Görevler <span data-missions-badge>${BG.countBadge(BG.bp && BG.bp.state && BG.bp.state.missions_ready)}</span></a>
+        <a role="menuitem" href="#/magaza">${icon('bag', 18)}Mağaza</a>
+        <a role="menuitem" href="#/profil/ayarlar">${icon('settings', 18)}Profil ayarları</a>
         <a role="menuitem" href="#/oyunlarim">${icon('cloud', 18)}Kayıtlı oyunlarım</a>
         ${me.is_admin ? `<a role="menuitem" href="#/panel">${icon('shield', 18)}Yönetim paneli</a>` : ''}
         <button role="menuitem" type="button" data-theme-pick>${icon('palette', 18)}Tema</button>
@@ -181,7 +213,11 @@
     R.add('/kayit', page(BG.views.register));
     R.add('/iletisim', page(BG.views.contact));
     R.add('/oyunlarim', page(BG.views.saved));
-    R.add('/profil', page(BG.views.profile, authed));
+    R.add('/profil', page(() => BG.views.player({}), authed));
+    R.add('/profil/ayarlar', page(BG.views.profile, authed));
+    R.add('/profil/:id', page(BG.views.player, authed));
+    R.add('/magaza', page(BG.views.store, authed));
+    R.add('/gorevler', page(BG.views.missions, authed));
     R.add('/arkadaslar', page(BG.views.friends, authed));
     R.add('/mesajlar', page(BG.views.messages, authed));
     R.add('/mesajlar/:username', page(BG.views.messages, authed));
@@ -286,7 +322,7 @@
       BG.host.onAuthChanged();
       BG.bus.emit('auth', false);
       const cur = BG.router.current;
-      if (cur && cur.route && /^\/(profil|arkadaslar|mesajlar|panel|izle)/.test(cur.path)) BG.router.go('/', true);
+      if (cur && cur.route && /^\/(profil|arkadaslar|mesajlar|panel|izle|magaza|gorevler)/.test(cur.path)) BG.router.go('/', true);
     }
   };
 
@@ -297,6 +333,16 @@
     topbar = document.getElementById('topbar');
     tabbar = document.getElementById('tabbar');
     BG.api.init();
+    // Paylaşılan profil bağlantısı: index.html?profile=<kullanıcı-id>
+    try {
+      const qp = new URLSearchParams(location.search);
+      const pid = qp.get('profile');
+      if (pid && /^[0-9a-f-]{36}$/i.test(pid)) {
+        qp.delete('profile');
+        const rest = qp.toString();
+        history.replaceState(null, '', location.pathname + (rest ? '?' + rest : '') + '#/profil/' + pid);
+      }
+    } catch (e) {}
     app.renderShell();
     routes();
 

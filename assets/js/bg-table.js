@@ -41,6 +41,15 @@
     wifi: '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M3 9.5a13 13 0 0 1 18 0M6.5 13a8 8 0 0 1 11 0M10 16.5a3 3 0 0 1 4 0" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/><path d="M4 4l16 16" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg>',
   };
   ICON.gift = '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 11h16v9H4zM3 7h18v4H3zM12 7v13M12 7c-1.5-3-5-3.5-5-1.2C7 7 9.5 7 12 7zm0 0c1.5-3 5-3.5 5-1.2C17 7 14.5 7 12 7z" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linejoin="round"/></svg>';
+  const svg = (d) => `<svg viewBox="0 0 24 24" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">${d}</svg>`;
+  ICON.coin = svg('<ellipse cx="12" cy="7" rx="7" ry="3"/><path d="M5 7v5c0 1.7 3.1 3 7 3s7-1.3 7-3V7"/><path d="M5 12v5c0 1.7 3.1 3 7 3s7-1.3 7-3v-5"/>');
+  ICON.lock = svg('<rect x="5" y="10.5" width="14" height="10" rx="2"/><path d="M8.2 10.5V7.8a3.8 3.8 0 0 1 7.6 0v2.7"/>');
+  ICON.smile = svg('<circle cx="12" cy="12" r="8.8"/><path d="M8.3 14.2a4.6 4.6 0 0 0 7.4 0"/><path d="M9 9.6v.2M15 9.6v.2"/>');
+  ICON.bag = svg('<path d="M5.5 8h13l-1 12.5h-11z"/><path d="M9 10.5V7a3 3 0 0 1 6 0v3.5"/>');
+  ICON.target = svg('<circle cx="12" cy="12" r="8.6"/><circle cx="12" cy="12" r="4.8"/><circle cx="12" cy="12" r="1.2" fill="currentColor"/>');
+  ICON.trophy = svg('<path d="M8 4h8v5.2a4 4 0 0 1-8 0z"/><path d="M8 6H5.2a2.8 2.8 0 0 0 2.9 3.8M16 6h2.8a2.8 2.8 0 0 1-2.9 3.8"/><path d="M12 13.2V17M8.5 20.5h7M10 17h4"/>');
+  ICON.swap = svg('<path d="M4.5 8.5h13l-3.5-3.5"/><path d="M19.5 15.5h-13l3.5 3.5"/>');
+  ICON.chatLock = svg('<path d="M20.5 11.6a8.1 8.1 0 0 1-11.8 7.2L3.5 20l1.3-4.6a8.1 8.1 0 1 1 15.7-3.8z"/><rect x="9" y="11" width="6" height="4.5" rx="1"/><path d="M10.3 11V9.6a1.7 1.7 0 0 1 3.4 0V11"/>');
   T.ICON = ICON;
 
   /* ---------------- site bağlantısı ---------------- */
@@ -96,7 +105,44 @@
     p = p || {};
     const src = p.bot ? '' : T.avatarUrl(p.avatar_url);
     const img = src ? `<img src="${esc(src)}" alt="" loading="lazy" decoding="async" onerror="this.remove()">` : '';
-    return `<span class="t-av${p.bot ? ' is-bot' : ''}${extra ? ' ' + extra : ''}" style="--s:${size || 36}px" aria-hidden="true"><span class="t-av-f">${esc(p.bot ? 'B' : initials(p.name))}</span>${img}</span>`;
+    const bd = (!p.bot && p.badge) || null;
+    const fr = bd && bd.frame && /^[a-z]+$/.test(bd.frame) ? ` has-frame fr-${bd.frame}` : '';
+    const pip = bd && bd.rank && p.rankPip ? `<span class="t-av-rank">${T.rankIcon(bd.rank, Math.max(14, Math.round((size || 36) * 0.38)))}</span>` : '';
+    return `<span class="t-av${p.bot ? ' is-bot' : ''}${fr}${extra ? ' ' + extra : ''}" style="--s:${size || 36}px" aria-hidden="true"><span class="t-av-f">${esc(p.bot ? 'B' : initials(p.name))}</span>${img}${pip}</span>`;
+  };
+  /* ---------------- BP Economy (site ile ortak) ---------------- */
+  T.econ = () => {
+    const B = site();
+    return (B && B.bp && B.bp.state) || null;
+  };
+  T.owns = (id) => {
+    const e = T.econ();
+    return !!(e && (e.owned || []).indexOf(id) >= 0);
+  };
+  T.rankIcon = (r, size) => {
+    const B = site();
+    return B && B.rankIcon && r ? B.rankIcon(r, size) : '';
+  };
+  T.rankChip = (r, opts) => {
+    const B = site();
+    return B && B.rankChip && r ? B.rankChip(r, opts) : '';
+  };
+  T.prestigeChip = (n, opts) => {
+    const B = site();
+    return B && B.prestigeChip && n ? B.prestigeChip(n, opts) : '';
+  };
+  /** Profil önizlemesi (site penceresinde): rütbe, BP, istatistik, Arkadaş ekle, Hediye gönder */
+  T.playerCard = function (uid) {
+    const B = site();
+    const me = T.me();
+    if (!B || !B.player || !uid) return;
+    const gift = T.cfg && T.cfg.gift ? () => T.cfg.gift(uid) : () => T.giftPicker(uid);
+    B.player.preview(uid, { gift: me && uid !== me.id ? gift : null });
+  };
+  /** Site etkinliği: oyun olayları da aktif süre sayılır */
+  T.activity = () => {
+    const B = site();
+    if (B && B.activity) B.activity();
   };
   /** İsim + bot işareti */
   T.nameTag = (name, bot) => `${esc(name)}${bot ? ' <span class="t-bot" title="Bot oynuyor">(B)</span>' : ''}`;
@@ -335,6 +381,7 @@
       next.full_name = cur.full_name;
       next.avatar_url = cur.avatar_url;
     }
+    if (next.badge === undefined && cur && cur.user_id === next.user_id) next.badge = cur.badge;
     if (i >= 0) list[i] = next;
     else list.push(next);
     list.sort((a, b) => a.seat - b.seat);
@@ -425,12 +472,15 @@
         chat.lastId = rows[rows.length - 1].id;
         chat.rows = chat.rows.concat(rows).slice(-150);
         const me = T.me();
-        if (notify) rows.forEach((r) => T.giftOf(r.body) && giftFx(r));
-        const fresh = rows.filter((r) => (!me || r.user_id !== me.id) && !T.giftOf(r.body));
+        if (notify) rows.forEach(react);
+        const fresh = rows.filter((r) => (!me || r.user_id !== me.id) && !T.giftOf(r.body) && !T.emojiOf(r.body));
         if (notify && fresh.length && !chat.isOpen) {
           chat.unread += fresh.length;
-          fresh.slice(-2).forEach(peek);
-        }
+          // oyuncunun mesajı avatarının yanında balon olarak görünür; avatarı ekranda olmayanlar (izleyiciler) altta kısa bildirim
+          fresh.slice(-2).forEach((r) => {
+            if (!sayAtAvatar(r)) peek(r);
+          });
+        } else if (notify) fresh.forEach((r) => sayAtAvatar(r));
         paintBadge();
         paintList(true);
       })
@@ -444,8 +494,26 @@
       });
     return chat.fetching;
   };
+  /** Yeni satır: hediye uçar, emoji ve mesaj avatarın yanında görünür */
+  function react(r) {
+    const g = T.giftOf(r.body);
+    if (g) {
+      emit('gift', { from: r.user_id, to: g.to, seat: g.seat, code: g.code, text: g.text, row: r });
+      fx.gift(r.user_id, g.to, g.code, g.seat, r);
+      return;
+    }
+    const m = T.emojiOf(r.body);
+    if (m) {
+      emit('emoji', { from: r.user_id, pack: m.pack, code: m.code, seat: m.seat });
+      fx.emoji(r.user_id, m.pack, m.code, m.seat);
+    }
+  }
+  function sayAtAvatar(r) {
+    emit('say', { from: r.user_id, text: r.body, name: who(r) });
+    return fx.say(r.user_id, r.body);
+  }
   function who(r) {
-    return String(r.full_name || r.username || 'Biri').trim();
+    return String(r.full_name || r.name || r.username || 'Biri').trim();
   }
   function peek(r) {
     let box = $('#tPeek');
@@ -479,12 +547,16 @@
       ? chat.rows
           .map((r) => {
             const mine = me && r.user_id === me.id;
+            const nm = `<button type="button" class="t-msg-name" data-player="${esc(r.user_id)}">${esc(mine ? 'Sen' : who(r))}</button>`;
             const g = T.giftOf(r.body);
             if (g)
               return `<div class="t-msg t-gift"><img src="${giftSrc(g.code)}" srcset="${giftSrc(g.code, 2)} 2x" alt="" loading="lazy">
-                <div class="t-msg-b"><div class="t-msg-h"><b>${esc(mine ? 'Sen' : who(r))}</b><time>${esc(hhmm(r.created_at))}</time></div><p>${esc(g.text)}</p></div></div>`;
-            return `<div class="t-msg${mine ? ' is-mine' : ''}">${mine ? '' : T.avatar({ name: who(r), avatar_url: r.avatar_url }, 30)}
-              <div class="t-msg-b"><div class="t-msg-h">${mine ? '' : `<b>${esc(who(r))}</b>`}${r.is_player ? '' : '<span class="t-tag">izliyor</span>'}<time>${esc(hhmm(r.created_at))}</time></div><p>${esc(r.body)}</p></div></div>`;
+                <div class="t-msg-b"><div class="t-msg-h">${nm}<time>${esc(hhmm(r.created_at))}</time></div><p>${esc(g.text)}</p></div></div>`;
+            const m = T.emojiOf(r.body);
+            if (m)
+              return `<div class="t-msg t-emo${mine ? ' is-mine' : ''}"><img src="${emojiSrc(m.pack, m.code)}" alt="" loading="lazy"><div class="t-msg-b"><div class="t-msg-h">${nm}<time>${esc(hhmm(r.created_at))}</time></div></div></div>`;
+            return `<div class="t-msg${mine ? ' is-mine' : ''}">${mine ? '' : `<button type="button" class="t-msg-av" data-player="${esc(r.user_id)}" aria-label="${esc(who(r))} profili">${T.avatar({ name: who(r), avatar_url: r.avatar_url }, 30)}</button>`}
+              <div class="t-msg-b"><div class="t-msg-h">${mine ? '' : nm}${r.is_player ? '' : '<span class="t-tag">izliyor</span>'}<time>${esc(hhmm(r.created_at))}</time></div><p>${esc(r.body)}</p></div></div>`;
           })
           .join('')
       : '<p class="t-empty">Henüz mesaj yok. Masadakilere ilk sen yaz.</p>';
@@ -500,32 +572,17 @@
     box.innerHTML = v.length ? `${ICON.eye}<span>İzleyenler: ${v.map((x) => esc(x.name)).join(', ')}</span>` : '';
   }
   T.on('viewers', paintViewers);
-  chat.open = function () {
-    if (!chat.id) return;
-    if (!chat.can) return T.toast('Bu masanın sohbetini göremezsin.', 'err');
-    chat.isOpen = true;
-    chat.unread = 0;
-    paintBadge();
-    $$('#tPeek .t-peek-item').forEach((n) => n.remove());
-    if (!chat.panel) {
-      chat.panel = el(`<aside class="t-chat" role="dialog" aria-label="Masa sohbeti">
-        <div class="t-chat-head"><h3>Masa sohbeti</h3><button type="button" class="t-btn is-ghost t-giftbtn" data-gift>${ICON.gift}<span>Hediye</span></button><button type="button" class="t-icon" data-x aria-label="Kapat">${ICON.close}</button></div>
-        <div class="t-chat-viewers" hidden></div>
-        <div class="t-chat-list"></div>
-        <form class="t-chat-form" autocomplete="off"><input class="t-input" maxlength="300" placeholder="Mesaj yaz" aria-label="Mesaj"><button type="submit" class="t-icon is-send" aria-label="Gönder">${ICON.send}</button></form>
-      </aside>`);
-      const scrim = el('<div class="t-chat-scrim"></div>');
-      scrim.addEventListener('click', () => chat.close());
-      chat.scrim = scrim;
-      $('[data-x]', chat.panel).addEventListener('click', () => chat.close());
-      $('[data-gift]', chat.panel).addEventListener('click', () => T.giftPicker());
-      chat.panel.addEventListener('keydown', (e) => {
-        if (e.key === 'Escape') {
-          e.stopPropagation();
-          chat.close();
-        }
-      });
-      const form = $('form', chat.panel);
+  /** Sohbet yazma alanı: Geveze Paketi yoksa okunur ama yazılamaz (paket buradan da alınabilir) */
+  function paintForm() {
+    const p = chat.panel;
+    if (!p) return;
+    const box = $('.t-chat-input', p);
+    const can = T.owns('geveze');
+    box.innerHTML = can
+      ? `<form class="t-chat-form" autocomplete="off"><input class="t-input" maxlength="300" placeholder="Mesaj yaz" aria-label="Mesaj"><button type="submit" class="t-icon is-send" aria-label="Gönder">${ICON.send}</button></form>`
+      : `<div class="t-chat-lock">${ICON.chatLock}<span>Sohbeti okuyabilirsin. Yazmak için <b>Geveze Paketi</b> gerekir.</span><button type="button" class="t-btn is-primary is-sm" data-buy="geveze">50 BP · Al</button></div>`;
+    const form = $('form', box);
+    if (form)
       form.addEventListener('submit', async (e) => {
         e.preventDefault();
         const inp = $('input', form);
@@ -535,18 +592,57 @@
         try {
           await call('bg_table_chat_send', { p_table: chat.id, p_body: body });
           chat.fetch(false);
+          fx.say(T.me() && T.me().id, body);
         } catch (err) {
           inp.value = body;
+          if (/Geveze/.test(err.message || '')) return T.buySheet('geveze');
           T.toast(err.message || 'Mesaj gönderilemedi', 'err');
+        }
+      });
+  }
+  chat.open = function () {
+    if (!chat.id) return;
+    if (!chat.can) return T.toast('Bu masanın sohbetini göremezsin.', 'err');
+    chat.isOpen = true;
+    chat.unread = 0;
+    paintBadge();
+    $$('#tPeek .t-peek-item').forEach((n) => n.remove());
+    if (!chat.panel) {
+      chat.panel = el(`<aside class="t-chat" role="dialog" aria-label="Masa sohbeti">
+        <div class="t-chat-head"><h3>Masa sohbeti</h3>
+          <button type="button" class="t-btn is-ghost t-emobtn" data-emoji title="Emoji tepkisi">${ICON.smile}<span>Emoji</span></button>
+          <button type="button" class="t-btn is-ghost t-giftbtn" data-gift>${ICON.gift}<span>Hediye</span></button>
+          <button type="button" class="t-icon" data-x aria-label="Kapat">${ICON.close}</button></div>
+        <div class="t-chat-viewers" hidden></div>
+        <div class="t-chat-list"></div>
+        <div class="t-chat-input"></div>
+      </aside>`);
+      const scrim = el('<div class="t-chat-scrim"></div>');
+      scrim.addEventListener('click', () => chat.close());
+      chat.scrim = scrim;
+      $('[data-x]', chat.panel).addEventListener('click', () => chat.close());
+      $('[data-gift]', chat.panel).addEventListener('click', () => T.giftPicker());
+      $('[data-emoji]', chat.panel).addEventListener('click', () => T.emojiPicker());
+      chat.panel.addEventListener('click', (e) => {
+        const pl = e.target.closest('[data-player]');
+        if (pl && pl.dataset.player) return T.playerCard(pl.dataset.player);
+        const by = e.target.closest('[data-buy]');
+        if (by) T.buySheet(by.dataset.buy);
+      });
+      chat.panel.addEventListener('keydown', (e) => {
+        if (e.key === 'Escape') {
+          e.stopPropagation();
+          chat.close();
         }
       });
     }
     document.body.appendChild(chat.scrim);
     document.body.appendChild(chat.panel);
+    paintForm();
     paintList(false);
     requestAnimationFrame(() => chat.panel && chat.panel.classList.add('is-open'));
-    const inp = $('input', chat.panel);
-    if (!/Mobi|Android/i.test(navigator.userAgent)) setTimeout(() => inp.focus(), 60);
+    const inp = $('.t-chat-form input', chat.panel);
+    if (inp && !/Mobi|Android/i.test(navigator.userAgent)) setTimeout(() => inp.focus(), 60);
     emit('chat-open', true);
   };
   chat.close = function () {
@@ -561,28 +657,111 @@
   };
   chat.toggle = () => (chat.isOpen ? chat.close() : chat.open());
 
-  /* ---------------- hediyeler (BP ile sembolik) ---------------- */
-  const GIFT_RE = /^\[\[gift:([a-z_]+):([0-9a-f-]{36})\]\]\s*(.*)$/;
+  /* ---------------- sistem satırları: hediye ve emoji ---------------- */
+  const GIFT_RE = /^\[\[gift:([a-z_]+):([0-9a-f-]{36})(?::(\d*))?\]\]\s*(.*)$/;
+  const EMOJI_RE = /^\[\[emoji:(vip|premium):([a-z_]+):(\d*)\]\]$/;
   const giftSrc = (code, x) => 'assets/gifts/' + code + (x === 2 ? '@2x' : '') + '.webp';
+  const emojiSrc = (pack, code, x) => 'assets/emoji/' + pack + '/' + code + (x === 2 ? '@2x' : '') + '.webp';
   T.giftOf = (body) => {
     const m = GIFT_RE.exec(body || '');
-    return m ? { code: m[1], to: m[2], text: m[3] } : null;
+    return m ? { code: m[1], to: m[2], seat: m[3] === '' || m[3] == null ? null : +m[3], text: m[4] } : null;
   };
+  T.emojiOf = (body) => {
+    const m = EMOJI_RE.exec(body || '');
+    return m ? { pack: m[1], code: m[2], seat: m[3] === '' ? null : +m[3] } : null;
+  };
+
+  /* ---------------- mağaza ürünü oyun içinden ---------------- */
+  const PROD = {
+    geveze: { name: 'Geveze Paketi', price: 50, text: 'Americano, Dost Kazığı ve Blackjack masalarında yazılı sohbet gönderebilirsin. Mesajın saatle birlikte sohbette, kısa süre de avatarının yanında balon olarak görünür.' },
+    gifter_pack: { name: 'Gifter Pack', price: 200, text: 'Masadaki arkadaşlarına ve rakiplerine eğlenceli hediyeler gönder! 16 premium sanal hediye, tek seferlik satın alma ve üç online oyunda sınırsız kullanım.' },
+    emoji_vip: { name: 'Blackjack VIP Emoji Paketi', price: 50, text: 'Masada avatarının yanında beliren 16 premium emoji tepkisi.' },
+    emoji_premium: { name: 'Premium Emoji Paketi', price: 100, text: 'Bözer Gaming imzalı 16 premium emoji tepkisi.' },
+  };
+  T.buySheet = async function (id, done) {
+    const B = site();
+    if (!B || !T.authed()) return T.goLogin();
+    let list = [];
+    try {
+      const d = await call('bg_store', {});
+      list = (d.products || []).filter((p) => (id === 'emoji' ? p.kind === 'emoji' : p.id === id));
+    } catch (e) {
+      return T.toast(e.message || 'Mağaza açılamadı', 'err');
+    }
+    const e0 = T.econ();
+    const bal = e0 ? e0.balance : 0;
+    const prev = (p) =>
+      p.kind === 'emoji'
+        ? `<div class="t-buy-prev is-emo">${(EMOJI[(p.meta && p.meta.pack) || 'vip'] || []).map((c) => `<img src="${emojiSrc(p.meta.pack, c)}" alt="" loading="lazy">`).join('')}</div>`
+        : p.kind === 'gifter'
+        ? `<div class="t-buy-prev is-gift">${GIFTS.map((c) => `<img src="${giftSrc(c)}" alt="" loading="lazy">`).join('')}</div>`
+        : '';
+    const sh = T.sheet({
+      title: id === 'emoji' ? 'Emoji paketi' : (PROD[id] && PROD[id].name) || 'Mağaza',
+      top: true,
+      wide: true,
+      body: list
+        .map(
+          (p) => `<div class="t-buy" data-id="${esc(p.id)}">${prev(p)}<h4>${esc(p.name)}</h4><p class="t-text">${esc(p.description)}</p>
+          ${p.owned ? `<p class="t-ok">${ICON.check}SAHİP OLUNDU</p>${p.kind === 'emoji' ? `<button type="button" class="t-btn" data-equip="${esc(p.id)}">Kuşan</button>` : ''}` : `<button type="button" class="t-btn is-primary" data-buy="${esc(p.id)}" ${bal < p.price_bp && bal < p.price ? 'disabled' : ''}>${ICON.coin}${p.price} BP · Satın al</button>${bal < p.price ? `<p class="t-muted">Bakiyen ${bal} BP — ${p.price - bal} BP eksik.</p>` : ''}`}</div>`
+        )
+        .join('') + `<p class="t-note">Ürünler bir kez alınır ve hesabında kalıcıdır. Bakiyen: <b>${bal} BP</b>.</p>`,
+      actions: [{ label: 'Kapat' }],
+    });
+    sh.body.addEventListener('click', async (ev) => {
+      const b = ev.target.closest('[data-buy],[data-equip]');
+      if (!b || b.disabled) return;
+      b.disabled = true;
+      try {
+        if (b.dataset.buy) {
+          const r = await call('bg_store_buy', { p_product: b.dataset.buy });
+          if (B.bp) {
+            B.bp.setBalance(r.balance);
+            await B.bp.refresh();
+          }
+          T.toast((PROD[b.dataset.buy] || {}).name ? PROD[b.dataset.buy].name + ' artık senin.' : 'Satın alındı.', 'good');
+        } else {
+          await call('bg_store_equip', { p_kind: 'emoji', p_product: b.dataset.equip });
+          if (B.bp) await B.bp.refresh();
+        }
+        sh.close();
+        paintForm();
+        if (done) done();
+      } catch (err) {
+        b.disabled = false;
+        T.toast(err.message || 'İşlem yapılamadı', 'err');
+      }
+    });
+  };
+
+  /* ---------------- hediye seçici (Gifter Pack) ---------------- */
+  const GIFTS = ['beer', 'wine', 'whisky', 'raki', 'cocktail', 'poop', 'hotdog', 'hamburger', 'trophy', 'tea', 'coffee', 'flowers', 'baby_bottle', 'gift_box', 'nazar_boncugu', 'okey_token'];
+  const EMOJI = {
+    vip: ['hello_wave', 'applause', 'warm_smile', 'laughing_tears', 'crying', 'angry_tilt', 'shocked', 'cheeky', 'thumbs_up', 'fingers_crossed', 'cool_sunglasses', 'nervous_sweat', 'party_celebration', 'winner_chips', 'bad_beat', 'facepalm'],
+    premium: ['hello_wave', 'applause', 'big_smile', 'laughing_tears', 'crying', 'tilt_angry', 'shocked', 'playful_wink', 'thumbs_up', 'fingers_crossed', 'cool_confident', 'nervous_sweat', 'party_celebration', 'champion_trophy', 'bad_luck', 'facepalm'],
+  };
+  T.EMOJI = EMOJI;
+  T.GIFTS = GIFTS;
   let giftCat = null;
-  /** Masadaki biri için hediye: oyuncular ve izleyiciler arasından alıcı seçilir */
-  T.giftPicker = async function (toId) {
+  /** Masadaki oyunculardan birine hediye (gönderen oyuncu ya da izleyici olabilir).
+   *  opts — kendi masa modeli olan oyunlar (Blackjack) için:
+   *  { game, table, people: [{ id, name, avatar_url, badge, role, seat }], after() } */
+  T.giftPicker = async function (toId, opts) {
+    opts = opts || {};
     const cur = T.cur;
     const me = T.me();
-    if (!cur || !me) return;
+    const tableId = opts.table || (cur && cur.id);
+    const game = opts.game || (T.cfg && T.cfg.game);
+    if (!tableId || !me) return;
+    if (!T.owns('gifter_pack')) return T.buySheet('gifter_pack', () => T.giftPicker(toId, opts));
     const people = [];
-    ((cur.table && cur.table.seats) || []).forEach((s) => {
-      if (s.kind === 'human' && s.user_id && s.user_id !== me.id && !people.some((p) => p.id === s.user_id))
-        people.push({ id: s.user_id, name: String(s.full_name || s.username || 'Oyuncu').trim(), avatar_url: s.avatar_url, role: 'Oyuncu' });
-    });
-    ((cur.link && cur.link.viewers) || []).forEach((v) => {
-      if (v.user_id && v.user_id !== me.id && !people.some((p) => p.id === v.user_id)) people.push({ id: v.user_id, name: v.name, avatar_url: v.avatar_url, role: 'İzleyici' });
-    });
-    if (!people.length) return T.toast('Masada hediye gönderebileceğin biri yok.', 'info');
+    if (opts.people) opts.people.forEach((p) => p.id && p.id !== me.id && people.push(p));
+    else
+      ((cur && cur.table && cur.table.seats) || []).forEach((s) => {
+        if (s.kind === 'human' && s.user_id && s.user_id !== me.id && !s.left_game && !people.some((p) => p.id === s.user_id))
+          people.push({ id: s.user_id, name: String(s.full_name || s.username || 'Oyuncu').trim(), avatar_url: s.avatar_url, badge: s.badge, role: 'Oyuncu' });
+      });
+    if (!people.length) return T.toast('Masada hediye gönderebileceğin başka oyuncu yok.', 'info');
     if (!giftCat) {
       try {
         giftCat = await call('bg_gift_catalog');
@@ -590,22 +769,19 @@
         return T.toast(e.message || 'Hediyeler yüklenemedi', 'err');
       }
     }
-    let to = toId && people.some((p) => p.id === toId) ? toId : people[0].id;
-    const TIERS = { standart: 'Standart', ozel: 'Özel', premium: 'Premium', saka: 'Şaka' };
+    const key = (p) => p.id + ':' + (p.seat == null ? '' : p.seat);
+    let to = key(people.find((p) => p.id === toId) || people[0]);
+    const lvl = fx.level();
     const sh = T.sheet({
       title: 'Hediye gönder',
       wide: true,
       top: true,
       body: `<div class="t-gift-to" role="radiogroup" aria-label="Kime">${people
-        .map((p) => `<button type="button" role="radio" data-to="${p.id}" aria-checked="${p.id === to}">${T.avatar(p, 34)}<span><b>${esc(p.name)}</b><small>${p.role}</small></span></button>`)
+        .map((p) => `<button type="button" role="radio" data-to="${esc(key(p))}" aria-checked="${key(p) === to}">${T.avatar(p, 34)}<span><b>${esc(p.name)}</b><small>${esc(p.role || 'Oyuncu')}</small></span></button>`)
         .join('')}</div>
-        <p class="t-note">Hediye sembolik bir jesttir: BP’si senden düşer, alıcıya BP geçmez. Masadaki herkes görür.</p>
-        ${Object.keys(TIERS)
-          .map((k) => {
-            const list = giftCat.filter((g) => g.tier === k);
-            return list.length ? `<h4 class="t-gift-h">${TIERS[k]}</h4><div class="t-gift-grid">${list.map((g) => `<button type="button" class="t-gift-it" data-code="${g.code}"><img src="${giftSrc(g.code)}" srcset="${giftSrc(g.code, 2)} 2x" alt="" loading="lazy"><span>${esc(g.name)}</span><b>${g.price} BP</b></button>`).join('')}</div>` : '';
-          })
-          .join('')}`,
+        <div class="t-gift-grid">${giftCat.map((g) => `<button type="button" class="t-gift-it" data-code="${g.code}"><img src="${giftSrc(g.code)}" srcset="${giftSrc(g.code, 2)} 2x" alt="" loading="lazy"><span>${esc(g.name)}</span></button>`).join('')}</div>
+        <p class="t-note">Gifter Pack’in sayesinde hediyeler ücretsiz. Masadaki herkes animasyonu görür. İki hediye arasında 5 saniye beklenir.</p>
+        <div class="t-field"><span class="t-lab">Hediye animasyonları (yalnızca bu cihazda)</span><div class="t-seg" data-seg="fx">${[['full', 'Tam'], ['reduced', 'Azaltılmış'], ['off', 'Kapalı']].map(([v, l]) => `<button type="button" data-v="${v}" aria-pressed="${lvl === v}">${l}</button>`).join('')}</div></div>`,
     });
     sh.body.addEventListener('click', async (e) => {
       const t = e.target.closest('[data-to]');
@@ -614,27 +790,334 @@
         $$('[data-to]', sh.body).forEach((b) => b.setAttribute('aria-checked', String(b === t)));
         return;
       }
+      const f = e.target.closest('[data-seg="fx"] button');
+      if (f) {
+        fx.setLevel(f.dataset.v);
+        $$('[data-seg="fx"] button', sh.body).forEach((b) => b.setAttribute('aria-pressed', String(b === f)));
+        return;
+      }
       const g = e.target.closest('[data-code]');
       if (!g || g.disabled) return;
       $$('[data-code]', sh.body).forEach((b) => (b.disabled = true));
+      const [toUser, toSeat] = to.split(':');
       try {
-        await call('bg_gift_send', { p_to: to, p_code: g.dataset.code, p_game: T.cfg.game, p_table: cur.id, p_req: uid() });
+        await call('bg_gift_send', { p_to: toUser, p_code: g.dataset.code, p_game: game, p_table: tableId, p_req: uid(), p_seat: toSeat === '' ? null : +toSeat });
         sh.close();
-        chat.fetch(true);
+        if (opts.after) opts.after();
+        else chat.fetch(true);
       } catch (err) {
         T.toast(err.message || 'Hediye gönderilemedi', 'err');
+        if (/Gifter/.test(err.message || '')) {
+          sh.close();
+          return T.buySheet('gifter_pack');
+        }
         $$('[data-code]', sh.body).forEach((b) => (b.disabled = false));
       }
     });
   };
-  function giftFx(r) {
-    const g = T.giftOf(r.body);
-    if (!g) return;
+
+  /* ---------------- emoji tepkisi ---------------- */
+  /** opts — kendi masa modeli olan oyunlar (Blackjack) için: { game, table, seat: sayı | () => sayı } */
+  T.emojiPicker = function (opts) {
+    opts = opts || {};
+    const cur = T.cur;
+    const e0 = T.econ();
+    const tableId = opts.table || (cur && cur.id);
+    const game = opts.game || (T.cfg && T.cfg.game);
+    if (!tableId || !T.me()) return;
+    const packId = e0 && e0.emoji_pack;
+    if (!packId || !T.owns(packId)) return T.buySheet('emoji', () => T.emojiPicker(opts));
+    const pack = packId === 'emoji_premium' ? 'premium' : 'vip';
+    const sh = T.sheet({
+      title: 'Emoji tepkisi',
+      top: true,
+      body: `<div class="t-emo-grid">${EMOJI[pack].map((c) => `<button type="button" class="t-emo-it" data-emo="${c}" aria-label="${esc(c)}"><img src="${emojiSrc(pack, c)}" srcset="${emojiSrc(pack, c, 2)} 2x" alt="" loading="lazy"></button>`).join('')}</div>
+        <p class="t-note">Seçtiğin emoji kısa süre avatarının yanında görünür; masadaki herkes görür.${T.owns('emoji_vip') && T.owns('emoji_premium') ? ' <button type="button" class="t-link" data-swap>Diğer paketi kuşan</button>' : ''}</p>`,
+    });
+    sh.body.addEventListener('click', async (e) => {
+      if (e.target.closest('[data-swap]')) {
+        try {
+          await call('bg_store_equip', { p_kind: 'emoji', p_product: pack === 'vip' ? 'emoji_premium' : 'emoji_vip' });
+          const B = site();
+          if (B && B.bp) await B.bp.refresh();
+          sh.close();
+          T.emojiPicker(opts);
+        } catch (err) {
+          T.toast(err.message || 'Değiştirilemedi', 'err');
+        }
+        return;
+      }
+      const b = e.target.closest('[data-emo]');
+      if (!b) return;
+      sh.close();
+      const me = T.me();
+      let seat = null;
+      if (opts.seat !== undefined) seat = typeof opts.seat === 'function' ? opts.seat() : opts.seat;
+      else seat = T.cfg && T.cfg.mySeat ? T.cfg.mySeat() : T.cur ? mySeat(T.cur.table) : null;
+      fx.emoji(me && me.id, pack, b.dataset.emo, seat);
+      try {
+        await call('bg_emoji_send', { p_game: game, p_table: tableId, p_code: b.dataset.emo, p_seat: seat == null ? null : seat });
+        chat.fetched = true;
+      } catch (err) {
+        T.toast(err.message || 'Emoji gönderilemedi', 'err');
+      }
+    });
+  };
+
+  /* ---------------- avatar yanında efektler ---------------- */
+  const fx = (T.fx = { q: [], running: false, seen: new Set() });
+  fx.level = () => {
+    try {
+      return localStorage.getItem('bg.giftfx') || 'full';
+    } catch (e) {
+      return 'full';
+    }
+  };
+  fx.setLevel = (v) => {
+    try {
+      localStorage.setItem('bg.giftfx', v);
+    } catch (e) {}
+  };
+  const reduceMo = () => window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+  /** Oyunun verdiği avatar öğesi (kullanıcı kimliği ya da koltuk ile); oyun başlamadıysa bekleme odasındaki avatar */
+  const shown = (e) => {
+    if (!e) return null;
+    const r = e.getBoundingClientRect();
+    return r.width || r.height ? e : null;
+  };
+  function avEl(userId, seat) {
+    let e = null;
+    try {
+      if (T.cfg && T.cfg.avatarEl) e = shown(T.cfg.avatarEl(userId, seat));
+    } catch (x) {}
+    if (!e && userId && /^[0-9a-f-]{36}$/.test(userId)) e = shown(document.querySelector('.t-room .t-avbtn[data-player="' + userId + '"]'));
+    return e;
+  }
+  function center(elm) {
+    const r = elm.getBoundingClientRect();
+    if (!r.width && !r.height) return null;
+    return { x: r.left + r.width / 2, y: r.top + r.height / 2, r };
+  }
+  fx.say = function (userId, text) {
+    const a = userId && avEl(userId);
+    const c = a && center(a);
+    if (!c) return false;
+    const b = el(`<div class="t-say" role="status"></div>`);
+    b.textContent = String(text || '').slice(0, 120);
+    document.body.appendChild(b);
+    const w = b.offsetWidth;
+    const h = b.offsetHeight;
+    const above = c.r.top > h + 24;
+    let x = Math.max(8, Math.min(window.innerWidth - w - 8, c.x - w / 2));
+    const y = above ? c.r.top - h - 10 : c.r.bottom + 10;
+    b.style.left = x + 'px';
+    b.style.top = y + 'px';
+    b.classList.add(above ? 'is-up' : 'is-down');
+    b.style.setProperty('--tail', Math.max(14, Math.min(w - 14, c.x - x)) + 'px');
+    setTimeout(() => b.classList.add('is-out'), 3200);
+    setTimeout(() => b.remove(), 3600);
+    return true;
+  };
+  fx.recent = {};
+  fx.emoji = function (userId, pack, code, seat) {
+    // aynı kişinin aynı emojisi 3 sn içinde ikinci kez oynamaz (kendi gönderdiğin hemen oynar, sunucudan dönen satır tekrarlamaz)
+    const key = userId + ':' + code;
+    if (fx.recent[key] && Date.now() - fx.recent[key] < 3000) return true;
+    fx.recent[key] = Date.now();
+    const a = avEl(userId, seat);
+    const c = a && center(a);
+    const img = el(`<img class="t-emo-pop" src="${emojiSrc(pack, code, 2)}" alt="">`);
+    const size = Math.round(Math.max(56, Math.min(96, c ? c.r.width * 1.25 : 80)));
+    img.style.width = img.style.height = size + 'px';
+    if (c) {
+      img.style.left = c.r.right - size * 0.35 + 'px';
+      img.style.top = c.r.top - size * 0.65 + 'px';
+    } else {
+      img.style.left = window.innerWidth / 2 - size / 2 + 'px';
+      img.style.top = window.innerHeight * 0.4 + 'px';
+    }
+    document.body.appendChild(img);
+    if (reduceMo()) {
+      setTimeout(() => img.remove(), 2200);
+      return !!c;
+    }
+    img.animate(
+      [
+        { transform: 'scale(.2) rotate(-18deg)', opacity: 0 },
+        { transform: 'scale(1.18) rotate(6deg)', opacity: 1, offset: 0.18 },
+        { transform: 'scale(1) rotate(0)', opacity: 1, offset: 0.32 },
+        { transform: 'translateY(-6px) scale(1.04)', opacity: 1, offset: 0.7 },
+        { transform: 'translateY(-26px) scale(.9)', opacity: 0 },
+      ],
+      { duration: 2400, easing: 'cubic-bezier(.2,.8,.3,1)' }
+    ).onfinish = () => img.remove();
+    return !!c;
+  };
+  /** Hediye: gönderenin avatarından alıcının avatarına uçar (kuyrukta, üst üste binmez) */
+  fx.gift = function (from, to, code, seat, row) {
+    if (row && fx.seen.has('g' + row.id)) return;
+    if (row) fx.seen.add('g' + row.id);
+    fx.q.push({ from, to, code, seat, row });
+    if (fx.q.length > 6) fx.q.splice(0, fx.q.length - 6);
+    if (!fx.running) fx.next();
+  };
+  fx.next = function () {
+    const job = fx.q.shift();
+    if (!job) {
+      fx.running = false;
+      return;
+    }
+    fx.running = true;
+    const lvl = fx.level();
+    const toEl = avEl(job.to, job.seat);
+    const fromEl = avEl(job.from);
+    const tc = toEl && center(toEl);
+    if (lvl === 'off' || !tc) {
+      if (lvl !== 'off') giftBanner(job);
+      setTimeout(fx.next, lvl === 'off' ? 0 : 600);
+      return;
+    }
+    const fc = (fromEl && center(fromEl)) || { x: window.innerWidth / 2, y: window.innerHeight + 40 };
+    const size = Math.round(Math.max(54, Math.min(92, tc.r.width * 1.15)));
+    const img = el(`<img class="t-gift-fly" src="${giftSrc(job.code, 2)}" alt="">`);
+    img.style.width = img.style.height = size + 'px';
+    document.body.appendChild(img);
+    const sx = fc.x - size / 2;
+    const sy = fc.y - size / 2;
+    const ex = tc.x - size / 2;
+    const ey = tc.r.top - size * 0.55;
+    const mx = (sx + ex) / 2;
+    const my = Math.min(sy, ey) - Math.max(60, Math.abs(ex - sx) * 0.25);
+    const short = lvl === 'reduced' || reduceMo();
+    const anim = img.animate(
+      short
+        ? [{ transform: `translate(${ex}px,${ey}px) scale(.4)`, opacity: 0 }, { transform: `translate(${ex}px,${ey}px) scale(1)`, opacity: 1, offset: 0.3 }, { transform: `translate(${ex}px,${ey}px) scale(1)`, opacity: 0 }]
+        : [
+            { transform: `translate(${sx}px,${sy}px) scale(.45) rotate(-20deg)`, opacity: 0 },
+            { transform: `translate(${sx}px,${sy - 14}px) scale(.8) rotate(-10deg)`, opacity: 1, offset: 0.1 },
+            { transform: `translate(${mx}px,${my}px) scale(1.25) rotate(8deg)`, opacity: 1, offset: 0.45 },
+            { transform: `translate(${ex}px,${ey}px) scale(1) rotate(0)`, opacity: 1, offset: 0.72 },
+            { transform: `translate(${ex}px,${ey - 6}px) scale(1.06)`, opacity: 1, offset: 0.86 },
+            { transform: `translate(${ex}px,${ey - 18}px) scale(.85)`, opacity: 0 },
+          ],
+      { duration: short ? 1400 : 2600, easing: 'cubic-bezier(.45,.05,.35,1)', fill: 'forwards' }
+    );
+    if (!short)
+      setTimeout(() => {
+        for (let i = 0; i < 12; i++) {
+          const sp = el('<span class="t-spark"></span>');
+          sp.style.left = tc.x + 'px';
+          sp.style.top = tc.r.top + 'px';
+          document.body.appendChild(sp);
+          const ang = (Math.PI * 2 * i) / 12;
+          sp.animate([{ transform: 'translate(-50%,-50%) scale(1)', opacity: 1 }, { transform: `translate(calc(-50% + ${Math.cos(ang) * 46}px), calc(-50% + ${Math.sin(ang) * 46}px)) scale(.3)`, opacity: 0 }], { duration: 650, easing: 'ease-out' }).onfinish = () => sp.remove();
+        }
+      }, 1880);
+    anim.onfinish = () => {
+      img.remove();
+      setTimeout(fx.next, 120);
+    };
+    toEl.classList.add('t-got-gift');
+    setTimeout(() => toEl.classList.remove('t-got-gift'), 2600);
+  };
+  function giftBanner(job) {
+    const r = job.row || {};
+    const g = T.giftOf(r.body || '') || { text: '' };
     const me = T.me();
-    const fx = el(`<div class="t-giftfx" aria-live="polite"><img src="${giftSrc(g.code, 2)}" alt=""><p><b>${esc(me && r.user_id === me.id ? 'Sen' : who(r))}</b> → ${esc(g.text)}</p></div>`);
-    document.body.appendChild(fx);
-    setTimeout(() => fx.classList.add('is-out'), 2600);
-    setTimeout(() => fx.remove(), 3100);
+    const b = el(`<div class="t-giftfx" aria-live="polite"><img src="${giftSrc(job.code, 2)}" alt=""><p><b>${esc(me && job.from === me.id ? 'Sen' : who(r))}</b> → ${esc(g.text)}</p></div>`);
+    document.body.appendChild(b);
+    setTimeout(() => b.classList.add('is-out'), 2000);
+    setTimeout(() => b.remove(), 2500);
+  }
+
+  /* ---------------- maç sonu: ödüller (ÖDÜLLERİ TOPLA) ---------------- */
+  /** Sonuç ekranına ödül kutusu yerleştirir; sonuç oyuncuların bildirimleriyle kesinleşene kadar bekler */
+  T.mountRewards = function (box, tableId) {
+    tableId = tableId || (T.cur && T.cur.id);
+    if (!box || !tableId || !T.authed()) return;
+    box.classList.add('t-rw');
+    box.innerHTML = `<p class="t-rw-wait"><span class="t-spin"></span>Sonuç masadaki oyuncularla doğrulanıyor…</p>`;
+    let tries = 0;
+    let stop = false;
+    const B = site();
+    const me = T.me();
+    async function tick() {
+      if (stop || !box.isConnected) return;
+      tries++;
+      let d;
+      try {
+        d = await call('bg_table_settlement', { p_table: tableId });
+      } catch (e) {
+        if (tries < 40) setTimeout(tick, 3000);
+        return;
+      }
+      if (d.state === 'playing' || d.state === 'none') {
+        box.innerHTML = `<p class="t-rw-wait"><span class="t-spin"></span>Sonuç doğrulanıyor… (${d.reported}/${d.expected} oyuncu bildirdi)</p>`;
+        if (tries < 120) setTimeout(tick, tries < 10 ? 1500 : 3000);
+        return;
+      }
+      if (d.state === 'free') {
+        box.innerHTML = `<p class="t-muted">Bu maç ücretsizdi (tek gerçek oyuncu), BP ödülü ve görev ilerlemesi yok.</p>`;
+        return;
+      }
+      if (d.state === 'disputed' || d.state === 'refunded') {
+        box.innerHTML = `<p class="t-rw-note">Sonuç oyuncular arasında doğrulanamadı; masa ücretin (${d.fee} BP) iade edildi.</p>`;
+        if (B && B.bp) B.bp.refresh();
+        return;
+      }
+      if (d.state === 'void') {
+        box.innerHTML = `<p class="t-muted">Masa kapandığı için bu maçta ödül yok.</p>`;
+        return;
+      }
+      const rows = (d.prizes || []).slice().sort((x, y) => x.place - y.place || x.seat - y.seat);
+      const medal = (p) => (p === 1 ? '🥇' : p === 2 ? '🥈' : p === 3 ? '🥉' : p + '.');
+      const rw = d.reward;
+      box.innerHTML = `<div class="t-rw-h">${ICON.trophy}<b>Ödüller</b><span class="t-muted">Masa ücreti ${d.fee} BP</span></div>
+        <ul class="t-rw-list">${rows
+          .map(
+            (r) => `<li class="${me && r.u === me.id ? 'is-me' : ''}"><span class="t-rw-pl">${r.kind === 'refund' ? '=' : medal(r.place)}</span><span class="t-rw-n">${esc(r.name)}${T.cfg.game === 'dostkazigi-online' ? ` <small class="t-muted">Takım ${r.team + 1}</small>` : ''}</span>
+              <b class="t-rw-bp">${r.kind === 'refund' ? 'iade ' : ''}+${r.bp} BP</b>${r.fc ? `<span class="t-rw-fc">🤝 +${r.fc}</span>` : ''}</li>`
+          )
+          .join('')}</ul>
+        ${
+          rw && !rw.claimed
+            ? `<button type="button" class="t-btn is-primary is-lg t-rw-go">${ICON.coin}ÖDÜLLERİ TOPLA · +${rw.bp} BP${rw.fc ? ' · +' + rw.fc + ' FC' : ''}</button>`
+            : rw && rw.claimed
+            ? `<p class="t-ok">${ICON.check}Ödüllerin hesabına eklendi.</p>`
+            : `<p class="t-muted">Bu maçta sana BP ödülü çıkmadı. Görev ilerlemen işlendi.</p>`
+        }`;
+      const go = $('.t-rw-go', box);
+      if (go)
+        go.addEventListener('click', async () => {
+          go.disabled = true;
+          try {
+            const r = B && B.bp && B.bp.collect ? await B.bp.collect(null, tableId) : await call('bg_rewards_claim', { p_table: tableId });
+            if (r) {
+              burst(go);
+              go.outerHTML = `<p class="t-ok">${ICON.check}+${r.bp} BP${r.fc ? ' ve +' + r.fc + ' Friend Coins' : ''} hesabına eklendi.</p>`;
+            } else go.disabled = false;
+          } catch (e) {
+            go.disabled = false;
+            T.toast(e.message || 'Ödül alınamadı', 'err');
+          }
+        });
+    }
+    tick();
+    return () => (stop = true);
+  };
+  function burst(elm) {
+    if (!elm || reduceMo()) return;
+    const c = center(elm);
+    if (!c) return;
+    for (let i = 0; i < 18; i++) {
+      const sp = el('<span class="t-spark is-gold"></span>');
+      sp.style.left = c.x + 'px';
+      sp.style.top = c.y + 'px';
+      document.body.appendChild(sp);
+      const ang = (Math.PI * 2 * i) / 18;
+      const dist = 50 + Math.random() * 40;
+      sp.animate([{ transform: 'translate(-50%,-50%) scale(1)', opacity: 1 }, { transform: `translate(calc(-50% + ${Math.cos(ang) * dist}px), calc(-50% + ${Math.sin(ang) * dist - 20}px)) scale(.3)`, opacity: 0 }], { duration: 800, easing: 'cubic-bezier(.2,.7,.3,1)' }).onfinish = () => sp.remove();
+    }
   }
 
   /* =====================================================================
@@ -667,10 +1150,11 @@
     const me = T.me();
     const avs = seats
       .filter((s) => s.kind !== 'empty')
-      .map((s) => T.avatar({ name: seatName(s), avatar_url: s.avatar_url, bot: s.kind === 'bot' }, 30))
+      .map((s) => T.avatar({ name: seatName(s), avatar_url: s.avatar_url, bot: s.kind === 'bot', badge: s.badge }, 30))
       .join('');
     const title = t.title || (t.host_name ? t.host_name + ' masası' : 'Masa');
     const rules = T.cfg.rules.summary(t.rules || {}, t.seats_n);
+    const fee = t.mode === 'online' && t.fee ? `<span class="t-chip is-fee" title="Masa ücreti">${ICON.coin}${t.fee} BP</span>` : '';
     let state = '';
     let btn = '';
     if (kind === 'mine') {
@@ -692,7 +1176,7 @@
     const host = t.host_id && me && t.host_id === me.id ? 'Senin masan' : t.host_name ? esc(t.host_name) + ' kurdu' : '';
     return `<article class="t-card">
       <div class="t-card-main">
-        <div class="t-card-top"><h4>${esc(title)}</h4>${state}</div>
+        <div class="t-card-top"><h4>${esc(title)}</h4>${fee}${state}</div>
         <p class="t-card-rules">${esc(rules)}</p>
         <div class="t-card-who"><span class="t-avs">${avs}</span><span class="t-muted">${host}</span></div>
       </div>
@@ -700,6 +1184,28 @@
     </article>`;
   }
 
+  function econBarHTML() {
+    const e = T.econ();
+    if (!e) return '';
+    const mr = e.missions_ready || 0;
+    return `<div class="t-econ">
+        <button type="button" class="t-econ-bp" data-econ="wallet" title="BP cüzdanın">${T.rankIcon(e.rank, 22)}<b>${Number(e.balance || 0).toLocaleString('tr-TR')}</b><small>BP</small>${e.prestige ? T.prestigeChip(e.prestige, { short: true }) : ''}</button>
+        <button type="button" class="t-btn is-ghost" data-econ="missions">${ICON.target}<span>Görevler</span>${mr ? `<span class="t-badge">${mr}</span>` : ''}</button>
+        <button type="button" class="t-btn is-ghost" data-econ="fc" title="Friend Coins → BP">${ICON.swap}<span>${Number(e.fc || 0).toLocaleString('tr-TR')} FC</span></button>
+        <button type="button" class="t-btn is-ghost" data-econ="leader">${ICON.trophy}<span>Liderlik</span></button>
+        ${e.rewards_ready ? `<button type="button" class="t-btn is-primary" data-econ="rewards">${ICON.coin}<span>Ödülleri topla</span><span class="t-badge">${e.rewards_ready}</span></button>` : ''}
+      </div>`;
+  }
+  T.econBarHTML = econBarHTML;
+  /** Site pencereleri: cüzdan, görevler, liderlik (oyunun üstünde açılır) */
+  T.econOpen = function (what) {
+    const B = site();
+    if (!B) return;
+    if (what === 'wallet' || what === 'rewards') return B.bp && B.bp.openPanel('wallet');
+    if (what === 'fc') return B.bp && B.bp.openPanel('fc');
+    if (what === 'missions') return B.missionsModal && B.missionsModal(T.cfg.game);
+    if (what === 'leader') return B.leaderModal && B.leaderModal();
+  };
   function lobbyFrame() {
     return `<div class="t-lobby">
       <div class="t-lobby-head">
@@ -707,9 +1213,20 @@
         <div class="t-lobby-title"><h2>Online masalar</h2><p>Masa kur, arkadaşlarını çağır ya da açık bir masaya otur.</p></div>
         <button type="button" class="t-btn is-primary" data-create>Masa kur</button>
       </div>
+      <div class="t-econ-slot">${econBarHTML()}</div>
       <div class="t-lobby-body"><p class="t-empty">Masalar yükleniyor…</p></div>
     </div>`;
   }
+  // BP değişince lobideki çubuk tazelenir
+  (function watchEcon() {
+    const B = site();
+    if (!B || !B.bus) return;
+    const off = B.bus.on('bp', () => {
+      const slot = $('.t-econ-slot', document);
+      if (slot) slot.innerHTML = econBarHTML();
+    });
+    window.addEventListener('pagehide', off);
+  })();
 
   function paintLobby() {
     const root = rootEl();
@@ -769,6 +1286,7 @@
     root.onclick = async (e) => {
       const b = e.target.closest('button');
       if (!b || b.disabled) return;
+      if (b.dataset.econ) return T.econOpen(b.dataset.econ);
       if (b.hasAttribute('data-back')) {
         stopLobby();
         setRoute('');
@@ -804,7 +1322,40 @@
       opts.title != null
         ? `<div class="t-field"><label class="t-lab" for="tTitle">Masa adı</label><input class="t-input" id="tTitle" maxlength="40" placeholder="${esc((T.myName() || 'Benim') + ' masası')}" value="${esc(opts.title)}"></div>`
         : '';
-    return `<form class="t-form" onsubmit="return false">${title}${seg}<div class="t-rules">${T.cfg.rules.form(rules, n, opts)}</div>${vis}<p class="t-note">Boş kalan koltuklara oyun başlarken bot oturur.</p></form>`;
+    const fee = opts.vis ? feeHTML(rules.fee || 10, n) : '';
+    return `<form class="t-form" onsubmit="return false">${title}${seg}${fee}<div class="t-rules">${T.cfg.rules.form(rules, n, opts)}</div>${vis}<p class="t-note">Boş kalan koltuklara oyun başlarken bot oturur.</p></form>`;
+  }
+  /* ---------------- masa ücreti ve ödül tablosu ---------------- */
+  const FEES = [10, 20, 30, 40, 50, 60, 70];
+  function amPrizes(fee, n) {
+    const i = Math.max(1, Math.min(7, Math.floor(fee / 10))) - 1;
+    const f23 = [15, 35, 45, 60, 75, 90, 105][i];
+    const f4 = [25, 45, 65, 85, 105, 125, 145][i];
+    const f5 = [35, 55, 85, 115, 145, 175, 205][i];
+    const s45 = [10, 30, 45, 60, 75, 90, 105][i];
+    return n === 2 ? [f23, 0] : n === 3 ? [f23, (i + 1) * 10, 0] : n === 4 ? [f4, s45, 0, 0] : n === 5 ? [f5, s45, 0, 0, 0] : [];
+  }
+  const dkPrize = (fee, seats) => Math.round((fee * 3 * Math.floor(seats / 2)) / 4);
+  T.amPrizes = amPrizes;
+  T.dkPrize = dkPrize;
+  /** Ödül özeti: n = ücret ödeyecek gerçek oyuncu sayısı (Americano) / masa koltuk sayısı (Dost Kazığı) */
+  function prizeText(fee, n, seats) {
+    if (T.cfg.game === 'dostkazigi-online') return `Kazanan takımın her oyuncusu <b>${dkPrize(fee, seats || n)} BP</b> alır; kaybeden takım almaz. Bütün takımlar berabere kalırsa ücretler iade edilir.`;
+    if (n < 2) return 'Tek gerçek oyuncuyla (botlara karşı) masa ücretsiz ve ödülsüzdür.';
+    const pr = amPrizes(fee, n);
+    return `${n} gerçek oyuncuyla ödüller: ${pr.map((v, i) => `${i + 1}. <b>${v} BP</b>`).join(' · ')}`;
+  }
+  T.prizeText = prizeText;
+  function feeHTML(fee, n) {
+    const e = T.econ();
+    const max = (e && e.max_fee) || 10;
+    const bal = e ? e.balance : 0;
+    return `<div class="t-field t-feebox"><span class="t-lab">Masa ücreti</span><div class="t-seg t-fee" data-seg="fee">${FEES.map((v) => {
+      const lock = v > max ? 'Rütben bu masayı açmaya yetmiyor' : v > bal ? 'BP bakiyen yetmiyor' : '';
+      return `<button type="button" data-v="${v}" aria-pressed="${v === fee}" ${lock ? `disabled title="${lock}"` : ''}>${v}${lock ? ICON.lock : ''}</button>`;
+    }).join('')}</div>
+      <p class="t-note t-prize" data-prize>${prizeText(fee, Math.min(n, 5), n)}</p>
+      <p class="t-note">Rütbe grubun en fazla <b>${max} BP</b>’lik masa açmana izin veriyor. Ücret, oyun başlarken en az 2 gerçek oyuncu varsa herkesten alınır; ödüller maç sonunda “Ödülleri topla” ile hesaba geçer.</p></div>`;
   }
   function wireForm(body, state) {
     body.addEventListener('click', (e) => {
@@ -817,12 +1368,21 @@
         const r = $('.t-rules', body);
         state.rules = T.cfg.rules.read($('form', body), state.rules);
         r.innerHTML = T.cfg.rules.form(state.rules, state.n, state);
+        const pz = $('[data-prize]', body);
+        if (pz) pz.innerHTML = prizeText(state.rules.fee || 10, Math.min(state.n, 5), state.n);
+      } else if (seg.dataset.seg === 'fee') {
+        state.rules.fee = +b.dataset.v;
+        const pz = $('[data-prize]', body);
+        if (pz) pz.innerHTML = prizeText(state.rules.fee, Math.min(state.n, 5), state.n);
       } else if (seg.dataset.seg === 'vis') state.vis = b.dataset.v;
       else if (T.cfg.rules.onSeg) T.cfg.rules.onSeg(seg, b, body, state);
     });
   }
   function readForm(body, state) {
+    const fee = state.rules.fee;
     state.rules = T.cfg.rules.read($('form', body), state.rules);
+    const on = $('[data-seg="fee"] [aria-pressed="true"]', body);
+    state.rules.fee = on ? +on.dataset.v : fee || 10;
     const t = $('#tTitle', body);
     if (t) state.title = t.value.trim();
     return state;
@@ -839,6 +1399,11 @@
     const state = Object.assign({ n: T.cfg.defSeats, vis: 'friends', title: '', rules: T.cfg.rules.defaults() }, saved || {});
     if (!T.cfg.seatCounts.includes(state.n)) state.n = T.cfg.defSeats;
     state.rules = Object.assign(T.cfg.rules.defaults(), state.rules || {});
+    {
+      const e = T.econ();
+      const max = Math.min((e && e.max_fee) || 10, e ? Math.max(10, Math.floor(e.balance / 10) * 10) : 10);
+      if (!state.rules.fee || state.rules.fee > max) state.rules.fee = Math.min(max, 70) >= 10 ? Math.min(state.rules.fee || 10, max) : 10;
+    }
     const sh = T.sheet({
       title: 'Masa kur',
       body: rulesFormHTML(state.rules, state.n, state),
@@ -1017,8 +1582,9 @@
         const host = s.user_id && s.user_id === t.host_id;
         const ready = s.ready || host;
         const away = s.kind === 'human' && s.away;
+        const av = T.avatar({ name: nm, avatar_url: s.avatar_url, bot: s.kind === 'bot', badge: s.badge, rankPip: true }, 46);
         return `<div class="t-seat${s.seat === mine ? ' is-me' : ''}${ready ? ' is-ready' : ''}" style="--x:${x}%;--y:${y}%">${tag}
-          ${T.avatar({ name: nm, avatar_url: s.avatar_url, bot: s.kind === 'bot' }, 46)}
+          ${s.kind === 'human' && s.user_id ? `<button type="button" class="t-avbtn" data-player="${esc(s.user_id)}" aria-label="${esc(nm)} profili">${av}</button>` : av}
           <span class="t-seat-n">${T.nameTag(nm, s.kind === 'bot')}${s.seat === mine ? ' <span class="t-muted">(sen)</span>' : ''}</span>
           <span class="t-seat-s">${host ? `<span class="t-host">${ICON.crown}Kurucu</span>` : ready ? `<span class="t-ok">${ICON.check}Hazır</span>` : '<span class="t-wait">Bekliyor</span>'}${away ? `<span class="t-away" title="Bağlantısı yok">${ICON.wifi}</span>` : ''}</span>
         </div>`;
@@ -1037,6 +1603,12 @@
       actions = `<p class="t-hint">${me ? 'Oynamak için boş bir koltuğa otur.' : ''}</p>`;
     }
     const visTxt = t.visibility === 'public' ? 'Herkese açık' : 'Arkadaşlarına açık';
+    const nHum = humans.length;
+    const feeBox = t.mode === 'online' && t.fee
+      ? `<div class="t-feeinfo"><div class="t-feeinfo-h">${ICON.coin}<b>Masa ücreti: ${t.fee} BP</b></div>
+          <p>${prizeText(t.fee, Math.max(2, Math.min(nHum, 5)), t.seats_n)}</p>
+          <p class="t-muted">${nHum >= 2 ? `Oyun başlarken ${nHum} gerçek oyuncunun her birinden ${t.fee} BP alınır. Ödüller maç sonunda sonuç ekranından toplanır.` : 'Şu an tek gerçek oyuncu var: böyle başlarsa masa ücretsiz ve ödülsüz oynanır. En az 2 gerçek oyuncu olunca ücret alınır.'}</p></div>`
+      : '';
     box.innerHTML = `
       <div class="t-room-head">
         <button type="button" class="t-btn is-ghost t-back" data-leave>${ICON.back}<span>${isHost ? 'Masayı kapat' : mine != null ? 'Masadan kalk' : 'Geri'}</span></button>
@@ -1050,7 +1622,7 @@
         <div class="t-ring"><div class="t-felt"><div class="t-felt-in"><b>${esc(T.cfg.name)}</b><span>${esc(T.cfg.rules.summary(t.rules || {}, t.seats_n))}</span>${
           isHost ? '<button type="button" class="t-btn is-sm is-ghost" data-rules>Kuralları düzenle</button>' : ''
         }</div></div>${seatHTML}</div>
-        <div class="t-room-side">${actions}<p class="t-note">Oyun sırasında bağlantın koparsa yerine bot oynar, geri gelince kaldığın yerden devam edersin. Oyundan çıkarsan koltuğunda bot oynamaya devam eder.</p></div>
+        <div class="t-room-side">${feeBox}${actions}<p class="t-note">Oyun sırasında bağlantın koparsa yerine bot oynar, geri gelince kaldığın yerden devam edersin. Oyundan çıkarsan koltuğunda bot oynamaya devam eder${t.fee ? ' ve masa ücreti iade edilmez' : ''}.</p></div>
       </div>`;
     chat.bind($('[data-chat]', box));
   };
@@ -1059,6 +1631,7 @@
     const cur = room.cur;
     if (!b || b.disabled || !cur) return;
     if (b.hasAttribute('data-chat')) return;
+    if (b.dataset.player) return T.playerCard(b.dataset.player);
     const t = cur.table;
     const me = T.me();
     const isHost = me && t.host_id === me.id;
@@ -1352,6 +1925,7 @@
       away,
       left: !!s.left_game,
       user_id: s.user_id || null,
+      badge: s.kind === 'human' ? s.badge || null : null,
       me: p === this.mySeat && !this.spect,
       friend: T.isFriend(s.user_id),
     };
@@ -1525,6 +2099,10 @@
     const GA = this.GA;
     this.seq = a.seq;
     this.lastAt = a.at;
+    if (!this.spect && (!this._actAt || Date.now() - this._actAt > 20000)) {
+      this._actAt = Date.now();
+      T.activity();
+    }
     if (window.__BGT_DEBUG) {
       const p0 = this.pending[0];
       (this.dbg = this.dbg || []).push({ seq: a.seq, kind: a.kind, seat: a.seat, data: a.data, mine: !!(p0 && p0.data && a.data && a.data.u && p0.data.u === a.data.u), split: this.split, nr: this.needRebase, pend: this.pending.length });

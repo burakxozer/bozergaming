@@ -256,6 +256,24 @@
     settings: '<circle cx="12" cy="12" r="3"/><path d="M19.4 13.5a7.7 7.7 0 0 0 0-3l2-1.6-2-3.4-2.4 1a7.6 7.6 0 0 0-2.6-1.5L14 2.5h-4l-.4 2.5A7.6 7.6 0 0 0 7 6.5l-2.4-1-2 3.4 2 1.6a7.7 7.7 0 0 0 0 3l-2 1.6 2 3.4 2.4-1a7.6 7.6 0 0 0 2.6 1.5l.4 2.5h4l.4-2.5a7.6 7.6 0 0 0 2.6-1.5l2.4 1 2-3.4z"/>',
     dice: '<rect x="4" y="4" width="16" height="16" rx="3"/><circle cx="8.5" cy="8.5" r="1.1" fill="currentColor"/><circle cx="15.5" cy="15.5" r="1.1" fill="currentColor"/><circle cx="12" cy="12" r="1.1" fill="currentColor"/>',
     alert: '<path d="M12 3.5 2.5 20h19z"/><path d="M12 10v4.5"/><path d="M12 17.2v.1"/>',
+    bell: '<path d="M6.2 16.5V11a5.8 5.8 0 0 1 11.6 0v5.5l1.7 2H4.5z"/><path d="M10 20.5a2.2 2.2 0 0 0 4 0"/>',
+    bag: '<path d="M5.5 8h13l-1 12.5h-11z"/><path d="M9 10.5V7a3 3 0 0 1 6 0v3.5"/>',
+    target: '<circle cx="12" cy="12" r="8.6"/><circle cx="12" cy="12" r="4.8"/><circle cx="12" cy="12" r="1.2" fill="currentColor"/>',
+    star: '<path d="M12 3.6l2.6 5.4 5.9.8-4.3 4.1 1 5.9L12 17l-5.2 2.8 1-5.9-4.3-4.1 5.9-.8z"/>',
+    crown: '<path d="M3.5 8.5l4.3 3.8L12 5.5l4.2 6.8 4.3-3.8-1.6 10H5.1z"/><path d="M5.6 20.5h12.8"/>',
+    medal: '<circle cx="12" cy="14.5" r="5.5"/><path d="M8.6 10.2 6 3.5h4l2 4.2 2-4.2h4l-2.6 6.7"/><path d="M12 12v5"/>',
+    flame: '<path d="M12 21c-4 0-6.5-2.6-6.5-6.2 0-3.6 2.8-5.4 3.4-9.3 2.4 1.6 3.8 3.6 4 6 .8-.7 1.3-1.8 1.4-3 2 1.6 4.2 3.8 4.2 6.5 0 3.5-2.5 6-6.5 6z"/>',
+    swap: '<path d="M4.5 8.5h13l-3.5-3.5"/><path d="M19.5 15.5h-13l3.5 3.5"/>',
+    history: '<path d="M3.8 12a8.2 8.2 0 1 0 2.4-5.8"/><path d="M3.5 4.5v4h4"/><path d="M12 8v4.2l2.8 1.8"/>',
+    smile: '<circle cx="12" cy="12" r="8.8"/><path d="M8.3 14.2a4.6 4.6 0 0 0 7.4 0"/><path d="M9 9.6v.2M15 9.6v.2"/>',
+    sparkle: '<path d="M12 3.5l1.9 5.6 5.6 1.9-5.6 1.9L12 18.5l-1.9-5.6L4.5 11l5.6-1.9z"/>',
+    award: '<circle cx="12" cy="9" r="5.5"/><path d="M8.5 13.5 7 21l5-2.6L17 21l-1.5-7.5"/>',
+    filter: '<path d="M4 5.5h16l-6.2 7.2v5.6l-3.6 2v-7.6z"/>',
+    flag: '<path d="M5.5 21V4"/><path d="M5.5 4.5h11.5l-2.5 4 2.5 4H5.5"/>',
+    ban: '<circle cx="12" cy="12" r="8.8"/><path d="M5.8 5.8l12.4 12.4"/>',
+    chatLock: '<path d="M20.5 11.6a8.1 8.1 0 0 1-11.8 7.2L3.5 20l1.3-4.6a8.1 8.1 0 1 1 15.7-3.8z"/><rect x="9" y="11" width="6" height="4.5" rx="1"/><path d="M10.3 11V9.6a1.7 1.7 0 0 1 3.4 0V11"/>',
+    pen: '<path d="M4 20l1-4.5L16.5 4a2 2 0 0 1 2.9 0l.6.6a2 2 0 0 1 0 2.9L8.5 19z"/><path d="M14.5 6l3.5 3.5"/>',
+    gamepad: '<path d="M7 8h10a4.5 4.5 0 0 1 4.3 5.8l-1 3.4a2.4 2.4 0 0 1-4 1L14 16h-4l-2.3 2.2a2.4 2.4 0 0 1-4-1l-1-3.4A4.5 4.5 0 0 1 7 8z"/><path d="M8 11v3M6.5 12.5h3"/><circle cx="16" cy="11.6" r=".9" fill="currentColor"/><circle cx="17.8" cy="13.4" r=".9" fill="currentColor"/>',
   };
   BG.icon = function (name, size) {
     const s = size || 20;
@@ -320,11 +338,14 @@
     if (url.indexOf('preset:') === 0) return 'assets/avatars/' + url.slice(7) + '.webp';
     return url;
   };
-  /** person: {avatar_url, full_name, username} ; opts: {size, online, ring} */
+  /** person: {avatar_url, full_name, username, frame?, badge?} ; opts: {size, online, ring, frame, rank} */
   BG.avatar = function (person, opts) {
     opts = opts || {};
     const size = opts.size || 40;
     const p = person || {};
+    const badge = p.badge || {};
+    const frame = opts.frame !== undefined ? opts.frame : p.frame !== undefined ? p.frame : badge.frame;
+    const rank = opts.rank !== undefined ? opts.rank : null;
     const src = BG.avatarSrc(p.avatar_url);
     const label = p.full_name || p.username || '';
     const inner = src
@@ -336,8 +357,79 @@
         : opts.online === false
         ? '<span class="presence-dot" title="Çevrimdışı"></span>'
         : '';
-    return `<span class="avatar${opts.ring ? ' has-ring' : ''}" style="--s:${size}px" title="${BG.esc(label)}"><span class="avatar-fallback">${BG.esc(BG.initials(label))}</span>${inner}${dot}</span>`;
+    const fr = frame && BG.FRAMES && BG.FRAMES[frame] ? ` has-frame fr-${frame}` : '';
+    const pip = rank ? `<span class="avatar-rank">${BG.rankIcon(rank, Math.max(14, Math.round(size * 0.36)))}</span>` : '';
+    return `<span class="avatar${opts.ring && !fr ? ' has-ring' : ''}${fr}" style="--s:${size}px" title="${BG.esc(label)}"><span class="avatar-fallback">${BG.esc(BG.initials(label))}</span>${inner}${dot}${pip}</span>`;
   };
+
+  /* ---------------- BP Economy: rütbeler, prestij, çerçeveler ---------------- */
+  /** Rütbe tablosu (şartname): [ad, alt sınır, renk grubu]. Grup 1 yeşil … 7 mor. */
+  BG.RANKS = [
+    ['Stajyer', 0, 1], ['Çömez', 500, 1], ['Çırak', 600, 1], ['Çaylak', 700, 1], ['Acemi', 800, 1],
+    ['Tecrübeli', 950, 2], ['Savaşçı', 1000, 2], ['Muhafız', 1300, 2], ['Seçkin', 1700, 2], ['Uzman', 2000, 2],
+    ['Usta', 2500, 3], ['Şövalye', 3000, 3], ['Komutan', 3500, 3], ['Mareşal', 4000, 3], ['Şampiyon', 4500, 3],
+    ['Gladyatör', 5000, 4], ['Hükümdar', 5500, 4], ['İmparator', 6000, 4], ['Titan', 6500, 4],
+    ['Efsane', 7000, 5], ['Üstat', 7500, 5], ['Başkomutan', 8000, 5], ['İlahi', 8500, 5],
+    ['Ölümsüz', 9000, 6], ['Ebedi', 9500, 6], ['Global', 11000, 7],
+  ];
+  BG.RANK_GROUPS = [null, ['Yeşil', '#3fc272'], ['Mavi', '#4d8dff'], ['Sarı', '#f4c430'], ['Turuncu', '#ff8b2e'], ['Kırmızı', '#f04848'], ['Pembe', '#ff6fb3'], ['Mor', '#a970ff']];
+  BG.PRESTIGE_STEPS = [25000, 50000, 100000, 200000, 400000, 750000, 1250000, 2000000, 3500000, 5000000];
+  BG.FRAMES = { bronz: 'Bronz', gumus: 'Gümüş', altin: 'Altın', neon: 'Neon Mavi', ates: 'Ateş', buz: 'Buz', kraliyet: 'Kraliyet' };
+  BG.rankOf = function (bal) {
+    bal = Number(bal) || 0;
+    let r = 1;
+    BG.RANKS.forEach((x, i) => {
+      if (bal >= x[1]) r = i + 1;
+    });
+    return r;
+  };
+  BG.rankInfo = function (idx) {
+    const i = Math.max(1, Math.min(BG.RANKS.length, idx || 1));
+    const x = BG.RANKS[i - 1];
+    const next = BG.RANKS[i];
+    const grp = x[2];
+    const sameGroup = BG.RANKS.filter((y) => y[2] === grp);
+    return { idx: i, name: x[0], min: x[1], next: next ? next[1] : null, nextName: next ? next[0] : null, grp, group: BG.RANK_GROUPS[grp][0],
+             color: BG.RANK_GROUPS[grp][1], tier: sameGroup.findIndex((y) => y[0] === x[0]) + 1, maxFee: grp * 10 };
+  };
+  BG.roman = (n) => ['I', 'II', 'III', 'IV', 'V', 'VI', 'VII', 'VIII', 'IX', 'X'][Math.max(1, Math.min(10, n || 1)) - 1];
+  /** Rütbe simgesi: renk grubunda altıgen, içinde grup içi kademe kadar şerit; Global yıldızlı */
+  BG.rankIcon = function (idx, size) {
+    const r = BG.rankInfo(idx);
+    const s = size || 18;
+    const id = 'rkg' + r.grp;
+    let inner = '';
+    if (r.idx === BG.RANKS.length) inner = '<path d="M12 6.4l1.7 3.5 3.8.5-2.8 2.7.7 3.8L12 15.1l-3.4 1.8.7-3.8-2.8-2.7 3.8-.5z" fill="#fff"/>';
+    else {
+      const n = r.tier;
+      const h = 2.1;
+      const gap = 1.25;
+      const total = n * h + (n - 1) * gap;
+      let y = 12 - total / 2;
+      for (let k = 0; k < n; k++) {
+        inner += `<path d="M7.6 ${(y + h).toFixed(2)} 12 ${(y).toFixed(2)} 16.4 ${(y + h).toFixed(2)}" fill="none" stroke="#fff" stroke-width="1.55" stroke-linecap="round" stroke-linejoin="round"/>`;
+        y += h + gap;
+      }
+    }
+    return `<svg class="rank-ic g${r.grp}" width="${s}" height="${s}" viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="M12 1.8 20.8 6.9v10.2L12 22.2 3.2 17.1V6.9z" fill="var(--rk-c)" stroke="rgba(0,0,0,.28)" stroke-width="1"/><path d="M12 3.6 19.2 7.8v3.1L12 6.7 4.8 10.9V7.8z" fill="#fff" opacity=".22"/>${inner}</svg>`;
+  };
+  /** Rütbe etiketi: simge + ad (opts.min: yalnızca simge) */
+  BG.rankChip = function (idx, opts) {
+    opts = opts || {};
+    const r = BG.rankInfo(idx);
+    return `<span class="rank-chip g${r.grp}${opts.cls ? ' ' + opts.cls : ''}" title="Rütbe: ${BG.esc(r.name)} (${BG.esc(r.group)})">${BG.rankIcon(r.idx, opts.size || 16)}${opts.min ? '' : `<b>${BG.esc(r.name)}</b>`}</span>`;
+  };
+  BG.prestigeChip = function (n, opts) {
+    if (!n) return '';
+    opts = opts || {};
+    return `<span class="prestige-chip${opts.cls ? ' ' + opts.cls : ''}" title="Prestij ${BG.roman(n)}">${BG.icon('star', opts.size || 12)}<b>${opts.short ? BG.roman(n) : 'Prestij ' + BG.roman(n)}</b></span>`;
+  };
+  /** Sayı: 12.450 */
+  BG.n0 = (n) => (Math.round(Number(n) || 0)).toLocaleString('tr-TR');
+  /** Süre: saniye → "12,5 saat" (tek ondalık, Türkçe) */
+  BG.hours = (secs) => (Math.round(((Number(secs) || 0) / 3600) * 10) / 10).toLocaleString('tr-TR', { minimumFractionDigits: 1, maximumFractionDigits: 1 }) + ' saat';
+  /** Yüzde: %63,4 */
+  BG.pct = (a, b) => (b ? '%' + (Math.round((a / b) * 1000) / 10).toLocaleString('tr-TR', { minimumFractionDigits: 1, maximumFractionDigits: 1 }) : '—');
 
   /* ---------------- Oyun kataloğu ---------------- */
   BG.GAMES = {

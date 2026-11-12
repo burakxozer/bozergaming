@@ -455,6 +455,14 @@
     const c = host.cur;
     if (!c || frame.getAttribute('src') === 'about:blank') return;
     c.loads++;
+    // Aktif süre: oyun içindeki dokunuş / tuş da etkinlik sayılır (v3.1)
+    try {
+      const d = frame.contentDocument;
+      if (d && !d.__bgAct) {
+        d.__bgAct = 1;
+        ['pointerdown', 'keydown', 'wheel', 'touchstart'].forEach((ev) => d.addEventListener(ev, () => BG.activity && BG.activity(), { passive: true, capture: true }));
+      }
+    } catch (e) {}
     const br = bridge();
     if (!br) return;
     if (c.loads === 1 && c.resume && c.resume.state) {

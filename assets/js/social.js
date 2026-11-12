@@ -26,6 +26,7 @@
       .then((rows) => {
         BG.store.friends = rows || [];
         BG.store.requests = BG.store.friends.filter((f) => f.relation === 'incoming').length;
+        social.loadBadges(BG.store.friends.map((f) => f.user_id));
         BG.bus.emit('friends', BG.store.friends);
         BG.bus.emit('counts');
         BG.rt.syncPresence();
@@ -38,6 +39,31 @@
       .finally(() => (refreshing = null));
     return refreshing;
   };
+
+  /* ================= Rütbe / çerçeve rozetleri (v3.1) ================= */
+  social.badges = {};
+  let badgeTimer = null;
+  social.loadBadges = function (ids) {
+    ids = (ids || []).filter((id) => id && !social.badges[id]);
+    if (!ids.length || !BG.isAuthed()) return;
+    clearTimeout(badgeTimer);
+    badgeTimer = setTimeout(async () => {
+      try {
+        const map = (await BG.api.rpc('bg_user_badges', { p_ids: ids })) || {};
+        Object.assign(social.badges, map);
+        BG.bus.emit('badges', map);
+      } catch (e) {}
+    }, 30);
+  };
+  /** Rozetler önbelleğini tazele (BP değişir; dakikada bir yeterli) */
+  setInterval(() => {
+    if (document.visibilityState === 'visible' && BG.isAuthed() && Object.keys(social.badges).length) {
+      const ids = Object.keys(social.badges);
+      social.badges = {};
+      social.loadBadges(ids);
+    }
+  }, 90000);
+  social.badgeOf = (id) => social.badges[id] || null;
 
   /* ================= Arkadaş istatistikleri ================= */
   social.stats = new Map();
@@ -335,14 +361,9 @@
     }
     const statusCls = f.relation === 'friend' && f.online ? (f.game ? 'is-playing' : 'is-on') : '';
     const name = esc(f.full_name || f.username);
-    li.innerHTML = `${
-      f.relation === 'friend'
-        ? `<button class="avatar-btn" type="button" data-act="profile" aria-label="${name} profilini aç">${BG.avatar(f, { size: 46, online: !!f.online })}</button>`
-        : BG.avatar(f, { size: 46 })
-    }
-      <div class="person-text">${
-        f.relation === 'friend' ? `<button class="name-btn" type="button" data-act="profile">${name}</button>` : `<strong>${name}</strong>`
-      }<span>@${esc(f.username)}</span>
+    const bd = social.badgeOf(f.user_id);
+    li.innerHTML = `<button class="avatar-btn" type="button" data-act="page" aria-label="${name} profilini aç">${BG.avatar(f, { size: 46, online: f.relation === 'friend' ? !!f.online : undefined, frame: bd && bd.frame })}</button>
+      <div class="person-text"><span class="person-name-line"><button class="name-btn" type="button" data-act="page">${name}</button>${bd ? BG.rankChip(bd.rank) + BG.prestigeChip(bd.prestige, { short: true }) : ''}</span><span>@${esc(f.username)}${bd ? ` · ${BG.n0(bd.bp)} BP` : ''}</span>
       ${f.relation === 'friend' ? `<span class="person-status ${statusCls}">${esc(social.statusText(f))}</span>` : ''}${statsLine(f)}</div>
       <div class="person-actions">${actions}</div>`;
     li.addEventListener('click', (e) => {
@@ -354,6 +375,7 @@
       else if (a === 'cancel') social.remove(f, 'İstek geri alınsın mı?');
       else if (a === 'remove') social.remove(f);
       else if (a === 'profile') social.openProfile(f);
+      else if (a === 'page') BG.player.open(f.user_id);
     });
     return li;
   }
@@ -419,8 +441,8 @@
         }
         results.innerHTML = '';
         rows.forEach((r) => {
-          const li = BG.frag(`<li class="person-row compact">${BG.avatar(r, { size: 38 })}
-            <div class="person-text"><strong>${esc(r.full_name || r.username)}</strong><span>@${esc(r.username)}</span></div>
+          const li = BG.frag(`<li class="person-row compact"><button class="avatar-btn" type="button" data-player="${esc(r.user_id)}" aria-label="Profili aç">${BG.avatar(r, { size: 38 })}</button>
+            <div class="person-text"><button class="name-btn" type="button" data-player="${esc(r.user_id)}">${esc(r.full_name || r.username)}</button><span>@${esc(r.username)}</span></div>
             <div class="person-actions"></div></li>`);
           const box = li.querySelector('.person-actions');
           const paint = (rel) => {
@@ -459,7 +481,7 @@
         social.refreshStats();
       }
     };
-    const offs = [BG.bus.on('friends', onFriends), BG.bus.on('friend-stats', render)];
+    const offs = [BG.bus.on('friends', onFriends), BG.bus.on('friend-stats', render), BG.bus.on('badges', render)];
     return { node: root, cleanup: () => offs.forEach((f) => f()) };
   };
 

@@ -281,6 +281,12 @@
               <div class="avatar-grid" role="radiogroup" aria-label="Hazır avatarlar"></div>
             </section>
 
+            <section class="panel" id="frameSec">
+              <div class="panel-head"><h2>Profil çerçevesi</h2><a class="link" href="#/magaza">${icon('bag', 16)}Mağaza</a></div>
+              <p class="panel-lead">Satın aldığın çerçevelerden birini seç; profilinde, arkadaş listesinde ve üç online oyunun masalarında görünür.</p>
+              <div class="frame-pick"><p class="muted small">Yükleniyor…</p></div>
+            </section>
+
             <section class="panel">
               <div class="panel-head"><h2>Ad soyad</h2></div>
               <form class="form inline-form" id="nameForm" novalidate>
@@ -326,7 +332,7 @@
 
     function paintHead() {
       const m = BG.store.me;
-      root.querySelector('.pa-slot').innerHTML = BG.avatar(m, { size: 128, ring: true });
+      root.querySelector('.pa-slot').innerHTML = BG.avatar(m, { size: 128, ring: true, frame: BG.myFrame && BG.myFrame() });
       root.querySelector('.profile-name').textContent = m.full_name;
       root.querySelector('.profile-user').textContent = '@' + m.username;
       root.querySelectorAll('.avatar-grid .av-opt').forEach((b) => {
@@ -482,6 +488,39 @@
     paintHead();
     giftShelf(root.querySelector('.gift-shelf'));
     const off = BG.bus.on('me', () => root.isConnected && paintHead());
+    // Profil çerçevesi seçimi (v3.1)
+    const fpick = root.querySelector('.frame-pick');
+    async function paintFrames() {
+      let d;
+      try {
+        d = await BG.api.rpc('bg_store', {});
+      } catch (e) {
+        fpick.innerHTML = `<p class="muted small">${esc(e.message)}</p>`;
+        return;
+      }
+      const owned = (d.products || []).filter((p) => p.kind === 'frame' && p.owned);
+      const cur = d.equipped && d.equipped.frame;
+      const m = BG.store.me;
+      fpick.innerHTML = owned.length
+        ? `<div class="fpick">${[{ id: '', name: 'Çerçevesiz', meta: {} }]
+            .concat(owned)
+            .map((p) => `<button type="button" class="fpick-it${(cur || '') === p.id ? ' is-on' : ''}" data-fr="${esc(p.id)}" aria-pressed="${(cur || '') === p.id}">${BG.avatar(m, { size: 56, frame: p.meta.frame || null })}<span>${esc(p.name.replace(' Çerçeve', ''))}</span></button>`)
+            .join('')}</div>`
+        : `<p class="muted small">Henüz çerçeven yok. <a href="#/magaza">Mağazadan</a> bronzdan kraliyete yedi çerçeveden birini alabilirsin.</p>`;
+    }
+    fpick.addEventListener('click', async (e) => {
+      const b = e.target.closest('[data-fr]');
+      if (!b) return;
+      try {
+        await BG.api.rpc('bg_store_equip', { p_kind: 'frame', p_product: b.dataset.fr || null });
+        await BG.bp.refresh();
+        paintFrames();
+        paintHead();
+      } catch (err) {
+        BG.toastError(err);
+      }
+    });
+    paintFrames();
     return { node: root, cleanup: off };
   };
 })();

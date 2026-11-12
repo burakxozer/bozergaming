@@ -98,7 +98,8 @@
             ${
               me
                 ? `<h1 class="hero-title">Hoş geldin, ${esc(first)}</h1>
-                   <p class="hero-lead">Kaldığın yerden devam et ya da yeni bir oyun aç. Oyunların hesabına kaydediliyor, arkadaşların canlı izleyebiliyor.</p>`
+                   <p class="hero-lead">Kaldığın yerden devam et ya da yeni bir oyun aç. Oyunların hesabına kaydediliyor, arkadaşların canlı izleyebiliyor.</p>
+                   <div class="hv-wallet" data-bp-wallet></div>`
                 : `<h1 class="hero-title">Masadaki oyunun skor tablosu</h1>
                    <p class="hero-lead">Americano, Somali, dart ve daha fazlası için skor tut. Üye olursan oyunların hesabına kaydedilir, yarım kalan oyuna her cihazdan devam edersin, arkadaşların seni canlı izler.</p>
                    <div class="hero-cta">
@@ -109,6 +110,8 @@
             }
           </div>
         </section>
+
+        ${me ? `<div class="section">${BG.leaderboardHTML()}</div>` : ''}
 
         <section class="section" id="liveNow" hidden>
           <div class="section-head"><h2>Şu an oyunda</h2><a class="link" href="#/arkadaslar">Arkadaşlar</a></div>
@@ -349,6 +352,11 @@
     }
     renderLive();
     renderResume();
+    if (me) {
+      const w = root.querySelector('[data-bp-wallet]');
+      if (w) BG.bp.mountWallet(w);
+      BG.mountLeaderboard(root.querySelector('.lb'));
+    }
     const offs = [BG.bus.on('friends', renderLive), BG.bus.on('games-changed', () => { BG.games.invalidate(); renderResume(); })];
     return { node: root, cleanup: () => offs.forEach((f) => f()) };
   };

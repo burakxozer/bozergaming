@@ -21,7 +21,8 @@
     [/jwt expired|invalid jwt|jwt.*(malformed|invalid)|refresh token/i, 'Oturumun sona erdi. Lütfen yeniden giriş yap.'],
     [/rate limit|too many requests|over_request_rate_limit|over_email_send_rate_limit/i, 'Çok fazla deneme yapıldı. Biraz bekleyip tekrar dene.'],
     [/could not find the function|schema cache|pgrst202|function .* does not exist/i, 'Sunucu kurulumu tamamlanmamış. (Yönetici: supabase/kurulum.sql dosyası SQL Editor’de çalıştırılmalı.)'],
-    [/permission denied|42501/i, 'Bu işlem için yetkin yok.'],
+    // yalnızca Postgres'in kendi yetki hatası; sunucunun 42501 kodlu Türkçe açıklamaları (ör. "Geveze Paketi almalısın") olduğu gibi gösterilir
+    [/permission denied/i, 'Bu işlem için yetkin yok.'],
     [/legacy api keys are disabled|invalid api key|no api key/i, 'Sunucu anahtarı geçersiz. (Yönetici: config.js içindeki supabaseKey değerini kontrol edin.)'],
   ];
 
