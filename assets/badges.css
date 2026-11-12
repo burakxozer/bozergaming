@@ -1,0 +1,105 @@
+/* =====================================================================
+   Bözer Gaming 3.1 — rütbe rozetleri, prestij, profil çerçeveleri
+   Site ve oyun masaları (Americano, Dost Kazığı, Blackjack) ortak kullanır.
+   ===================================================================== */
+.g1 { --rk-c: #3fc272; --rk-c2: #1f8a49; }
+.g2 { --rk-c: #4d8dff; --rk-c2: #2456c4; }
+.g3 { --rk-c: #f4c430; --rk-c2: #b88a06; }
+.g4 { --rk-c: #ff8b2e; --rk-c2: #c45a0a; }
+.g5 { --rk-c: #f04848; --rk-c2: #a91d1d; }
+.g6 { --rk-c: #ff6fb3; --rk-c2: #c23a7c; }
+.g7 { --rk-c: #a970ff; --rk-c2: #6a2fd0; }
+.rank-ic { flex: none; display: inline-block; vertical-align: middle; filter: drop-shadow(0 1px 1.5px rgba(0, 0, 0, 0.35)); }
+.rank-chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  padding: 2px 9px 2px 3px;
+  border-radius: 999px;
+  background: color-mix(in srgb, var(--rk-c) 16%, transparent);
+  border: 1px solid color-mix(in srgb, var(--rk-c) 42%, transparent);
+  font-size: 12px;
+  line-height: 18px;
+  white-space: nowrap;
+  vertical-align: middle;
+}
+.rank-chip b { font-weight: 750; letter-spacing: 0.01em; }
+.rank-chip.is-min { padding: 1px; border: 0; background: none; }
+.prestige-chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 3px;
+  padding: 2px 8px;
+  border-radius: 999px;
+  background: linear-gradient(135deg, #4b1f86, #8f3fd6 60%, #5b2a9a);
+  color: #ffe08a;
+  font-size: 11px;
+  line-height: 16px;
+  font-weight: 800;
+  letter-spacing: 0.04em;
+  white-space: nowrap;
+  vertical-align: middle;
+  box-shadow: inset 0 0 0 1px rgba(255, 224, 138, 0.35);
+}
+.prestige-chip svg { fill: #ffe08a; stroke: #ffe08a; }
+
+/* ---- avatar üzerindeki rütbe simgesi ---- */
+.avatar-rank { position: absolute; right: -8%; bottom: -8%; z-index: 4; line-height: 0; }
+
+/* ---- profil çerçeveleri (halka: padding + maske) ---- */
+.has-frame { position: relative; }
+.has-frame::before {
+  content: "";
+  position: absolute;
+  inset: calc(var(--s, 40px) * -0.11);
+  border-radius: 50%;
+  padding: max(2.5px, calc(var(--s, 40px) * 0.085));
+  background: var(--frm);
+  -webkit-mask: linear-gradient(#000 0 0) content-box, linear-gradient(#000 0 0);
+  -webkit-mask-composite: xor;
+  mask: linear-gradient(#000 0 0) content-box exclude, linear-gradient(#000 0 0);
+  pointer-events: none;
+  z-index: 3;
+  filter: drop-shadow(0 0 var(--frg-r, 0) var(--frg, transparent));
+}
+.fr-bronz { --frm: conic-gradient(from 210deg, #6e3f15, #e8a96a, #8f5a28, #f6c793, #6e3f15, #d99556, #7a4a1e, #6e3f15); --frg: rgba(214, 140, 70, 0.35); --frg-r: 3px; }
+.fr-gumus { --frm: conic-gradient(from 200deg, #5f6873, #f4f7fa, #8a939e, #ffffff, #5f6873, #dfe5ea, #6d7682, #5f6873); --frg: rgba(230, 236, 245, 0.4); --frg-r: 3px; }
+.fr-altin { --frm: conic-gradient(from 200deg, #8a5d00, #ffe58a, #c8900e, #fff6cc, #9c6b05, #ffd95a, #b07a08, #8a5d00); --frg: rgba(255, 196, 46, 0.6); --frg-r: 5px; }
+.fr-neon { --frm: conic-gradient(from 0deg, #00f0ff, #2f6bff, #00f0ff, #7b5cff, #00f0ff); --frg: rgba(0, 220, 255, 0.85); --frg-r: 7px; }
+.fr-ates { --frm: conic-gradient(from 0deg, #ff2d00, #ffb000, #ff5a00, #ffe066, #ff3d00, #ff9a00, #ff2d00); --frg: rgba(255, 110, 0, 0.85); --frg-r: 8px; }
+.fr-buz { --frm: conic-gradient(from 140deg, #7fd3ff, #ffffff, #4fb6ff, #e6f9ff, #9fe3ff, #ffffff, #7fd3ff); --frg: rgba(160, 225, 255, 0.75); --frg-r: 6px; }
+.fr-kraliyet { --frm: conic-gradient(from 200deg, #4a1680, #ffd54f, #7d2fbf, #fff0b8, #5b1a8f, #ffc93d, #4a1680); --frg: rgba(200, 120, 255, 0.6); --frg-r: 6px; }
+.fr-neon::before, .fr-ates::before { animation: fr-spin 5s linear infinite; }
+.fr-ates::before { animation-duration: 2.6s; }
+.fr-buz::after {
+  content: "";
+  position: absolute;
+  inset: calc(var(--s, 40px) * -0.16);
+  border-radius: 50%;
+  background: radial-gradient(circle at 18% 22%, #fff 0 1.4px, transparent 2px), radial-gradient(circle at 84% 30%, #dff6ff 0 1.2px, transparent 1.8px),
+    radial-gradient(circle at 70% 88%, #fff 0 1.3px, transparent 2px), radial-gradient(circle at 12% 74%, #c9efff 0 1px, transparent 1.6px);
+  pointer-events: none;
+  z-index: 4;
+  animation: fr-twinkle 2.8s ease-in-out infinite;
+}
+.fr-kraliyet::after {
+  content: "";
+  position: absolute;
+  left: 50%;
+  top: calc(var(--s, 40px) * -0.3);
+  width: calc(var(--s, 40px) * 0.46);
+  height: calc(var(--s, 40px) * 0.27);
+  min-width: 12px;
+  min-height: 7px;
+  transform: translateX(-50%);
+  background: linear-gradient(180deg, #fff3c4, #ffc93d 55%, #c48a00);
+  clip-path: polygon(0 100%, 0 30%, 22% 62%, 50% 0, 78% 62%, 100% 30%, 100% 100%);
+  filter: drop-shadow(0 1px 1px rgba(0, 0, 0, 0.45));
+  z-index: 5;
+  pointer-events: none;
+}
+@keyframes fr-spin { to { transform: rotate(360deg); } }
+@keyframes fr-twinkle { 0%, 100% { opacity: 0.35; } 50% { opacity: 1; } }
+@media (prefers-reduced-motion: reduce) {
+  .fr-neon::before, .fr-ates::before, .fr-buz::after { animation: none; }
+}
