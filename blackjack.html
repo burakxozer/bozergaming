@@ -8,8 +8,8 @@
 <link rel="preconnect" href="https://fonts.googleapis.com" />
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
 <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@600;700;800&family=Manrope:wght@400;500;600;700;800&display=swap" rel="stylesheet" />
-<link rel="stylesheet" href="assets/css/bg-table.css?v=3.1.0" />
-<link rel="stylesheet" href="assets/css/badges.css?v=3.1.0" />
+<link rel="stylesheet" href="assets/css/bg-table.css?v=3.2.0" />
+<link rel="stylesheet" href="assets/css/badges.css?v=3.2.0" />
 <style>
 /* =====================================================================
    Bözer Royale — görünüm: zümrüt keçe, siyah ve altın, sıcak ışık
@@ -197,8 +197,8 @@ html[data-q='high'] .bj-room { filter: blur(2px); }
 .bj-chiplayer { z-index: 6; }
 .bj-cardlayer { z-index: 7; }
 .bj-badges { z-index: 8; }
-.bj-center { z-index: 9; }
-.bj-fx { z-index: 10; }
+.bj-center { z-index: 10; }
+.bj-fx { z-index: 11; }
 .bj-stage { --cw: 80px; }
 
 /* ---------------- kartlar ---------------- */
@@ -769,6 +769,75 @@ html[data-q='low'] .hand-glow, html[data-q='low'] .spot-hl, html[data-q='low'] .
   .mc { min-width: 30px; height: 36px; font-size: 16px; }
 }
 
+/* ---------------- v3.2: elin altındaki karar düğmeleri ----------------
+   H = Kart (mavi) · S = Dur (kırmızı) · D = İkiye katla (yeşil) · SP = Böl (sarı).
+   Sırası gelen elde hemen uygulanır; sırası gelmemiş elde ön karar olur, kırmızı X ile iptal edilir. */
+.bj-acts { position: absolute; inset: 0; pointer-events: none; z-index: 9; }
+.hacts { --g: calc(var(--hb, 40px) * .14); position: absolute; transform: translate(-50%, 0); display: flex; align-items: center; gap: var(--g);
+  padding: var(--g); border-radius: calc(var(--hb, 40px) * .36); pointer-events: auto;
+  background: linear-gradient(180deg, rgba(14, 22, 18, .9), rgba(6, 10, 8, .92)); border: 1px solid rgba(233, 207, 140, .38);
+  box-shadow: 0 6px 18px rgba(0, 0, 0, .55), inset 0 1px 0 rgba(255, 255, 255, .08); animation: bjActsIn .22s ease-out both; }
+.hacts.turn { border-color: rgba(255, 214, 102, .95); box-shadow: 0 0 0 2px rgba(255, 214, 102, .35), 0 0 22px rgba(255, 200, 80, .55), 0 8px 20px rgba(0, 0, 0, .55); animation: bjActsIn .22s ease-out both, bjActsPulse 1.4s ease-in-out .3s infinite; }
+.hacts.sm { --hb2: calc(var(--hb, 40px) * .8); }
+.ha { width: var(--hb2, var(--hb, 40px)); height: var(--hb2, var(--hb, 40px)); display: inline-grid; place-items: center; padding: 0; cursor: pointer;
+  border-radius: calc(var(--hb2, var(--hb, 40px)) * .26); border: 1px solid rgba(255, 255, 255, .42);
+  font: 900 calc(var(--hb2, var(--hb, 40px)) * .44)/1 var(--ui); letter-spacing: -.02em; color: #fff; text-shadow: 0 1px 1px rgba(0, 0, 0, .45);
+  box-shadow: inset 0 -3px 0 rgba(0, 0, 0, .28), inset 0 2px 0 rgba(255, 255, 255, .25), 0 3px 8px rgba(0, 0, 0, .45);
+  transition: transform .12s ease, filter .12s ease; }
+.ha:hover { filter: brightness(1.12); transform: translateY(-1px); }
+.ha:active { transform: translateY(1px) scale(.96); }
+.ha:focus-visible, .ha-x:focus-visible { outline: 3px solid #fff; outline-offset: 2px; }
+.ha.a-hit { background: linear-gradient(180deg, #5aa2ff, #1f62dc); }
+.ha.a-stand { background: linear-gradient(180deg, #ff6b5e, #c4231a); }
+.ha.a-double { background: linear-gradient(180deg, #4ad37c, #13893f); }
+.ha.a-split { background: linear-gradient(180deg, #ffe066, #e0a10b); color: #2b1c00; text-shadow: none; }
+.ha.a-surrender { background: linear-gradient(180deg, #a3a8b4, #5f6573); }
+.ha.on { cursor: default; box-shadow: 0 0 0 2px #fff, 0 0 14px rgba(255, 255, 255, .55), inset 0 -3px 0 rgba(0, 0, 0, .28); }
+.ha-wait { font: 800 calc(var(--hb2, var(--hb, 40px)) * .3)/1 var(--ui); letter-spacing: .06em; text-transform: uppercase; color: #ffe7a6; padding: 0 2px; white-space: nowrap; }
+.ha-x { width: calc(var(--hb2, var(--hb, 40px)) * .82); height: calc(var(--hb2, var(--hb, 40px)) * .82); display: inline-grid; place-items: center; padding: 0; cursor: pointer;
+  border-radius: 50%; border: 2px solid #ffd9d6; background: radial-gradient(circle at 35% 30%, #ff6b60, #c81e14 70%); color: #fff;
+  box-shadow: 0 0 0 2px rgba(200, 30, 20, .35), 0 3px 8px rgba(0, 0, 0, .5); }
+.ha-x svg { width: 58%; height: 58%; fill: none; stroke: currentColor; stroke-width: 3.4; stroke-linecap: round; }
+.ha-x:hover { filter: brightness(1.12); }
+@keyframes bjActsIn { from { opacity: 0; transform: translate(-50%, 6px) scale(.92); } to { opacity: 1; transform: translate(-50%, 0) scale(1); } }
+@keyframes bjActsPulse { 0%, 100% { box-shadow: 0 0 0 2px rgba(255, 214, 102, .35), 0 0 18px rgba(255, 200, 80, .45), 0 8px 20px rgba(0, 0, 0, .55); }
+  50% { box-shadow: 0 0 0 3px rgba(255, 224, 130, .6), 0 0 30px rgba(255, 210, 90, .75), 0 8px 20px rgba(0, 0, 0, .55); } }
+@media (prefers-reduced-motion: reduce) { .hacts, .hacts.turn { animation: none; } }
+html[data-q='low'] .hacts.turn { animation: none; }
+
+/* ---------------- v3.2: yatay telefonda bahis/aksiyon paneli dar, masa büyük ---------------- */
+@media (max-height: 500px) and (orientation: landscape) {
+  .bj-view { grid-template-columns: 1fr clamp(118px, 17vw, 156px); }
+  .bj-controls { gap: 6px; padding: 6px max(6px, env(safe-area-inset-right)) max(6px, env(safe-area-inset-bottom)) 6px; }
+  .ctl-bet { gap: 6px; }
+  .chip-row { gap: 4px; justify-content: center; }
+  .pchip { width: 36px; height: 36px; font-size: 11px; }
+  .cbtn { min-height: 34px; font-size: 10.5px; padding: 3px 4px; gap: 4px; }
+  .cbtn svg { width: 15px; height: 15px; }
+  .ctl-info { display: none; }
+  .act-row { gap: 4px; }
+  .act { min-height: 36px; padding: 3px 2px; border-radius: 10px; }
+  .act i { width: 15px; height: 15px; }
+  .act b { font-size: 9.5px; letter-spacing: .02em; }
+  .ctl-top { gap: 4px; }
+  .ctl-who { font-size: 11.5px; }
+  .ctl-who small { display: none; }
+  .hand-read { display: none; }
+  .ctl-res { gap: 2px; }
+  .ctl-res b { font-size: 22px; }
+  .ctl-res small, .ctl-res span { font-size: 10.5px; }
+  .ar-group { gap: 4px; }
+  .ins-row { gap: 4px; font-size: 11.5px; }
+  .ins-row .t-btn { padding: 6px 8px; font-size: 12px; }
+  .pre-tabs button { padding: 3px 7px; font-size: 11px; }
+}
+
+/* v3.2: telefonda ön hamle açıklaması taşmasın (karar düğmeleri masada da var) */
+@media (max-width: 760px) {
+  .ctl-act.premode .ctl-who small { display: none; }
+  .ctl-who { white-space: normal; overflow-wrap: anywhere; }
+}
+
 </style>
 </head>
 <body>
@@ -780,7 +849,7 @@ html[data-q='low'] .hand-glow, html[data-q='low'] .spot-hl, html[data-q='low'] .
   <footer id="controls" class="bj-controls"></footer>
 </section>
 <aside id="chat" class="bj-chat" hidden aria-label="Masa sohbeti"></aside>
-<script src="assets/js/bg-table.js?v=3.1.0"></script>
+<script src="assets/js/bg-table.js?v=3.2.0"></script>
 <script>
 /* ---- cards.js ---- */
 /* =====================================================================
@@ -884,12 +953,13 @@ html[data-q='low'] .hand-glow, html[data-q='low'] .spot-hl, html[data-q='low'] .
     CHIPS.forEach((c) => {
       let ins = '';
       for (let i = 0; i < 8; i++) ins += `<rect x="45" y="2" width="10" height="15" rx="2" fill="${c.edge}" transform="rotate(${i * 45} 50 50)"/>`;
-      out += `<symbol id="bjchip-${c.v}" viewBox="0 0 100 100">
+      // gövde (yazısız) ayrı: panelden gelen standart dışı bahis değerleri aynı gövdeye kendi yazısıyla çizilir
+      out += `<symbol id="bjchipb-${c.v}" viewBox="0 0 100 100">
         <circle cx="50" cy="50" r="48" fill="${c.base}"/>${ins}
         <circle cx="50" cy="50" r="48" fill="url(#bjChipShade)"/>
         <circle cx="50" cy="50" r="34" fill="${c.inner}" stroke="${c.edge}" stroke-width="2.4" stroke-dasharray="4 3"/>
-        <text x="50" y="${c.v >= 100 ? 58 : 59}" text-anchor="middle" font-family="Manrope, 'Segoe UI', sans-serif" font-weight="800" font-size="${c.v >= 1000 ? 20 : c.v >= 100 ? 24 : 27}" fill="${c.text}">${c.v >= 1000 ? '1K' : c.v}</text>
-      </symbol>`;
+      </symbol>
+      <symbol id="bjchip-${c.v}" viewBox="0 0 100 100"><use href="#bjchipb-${c.v}"/>${chipText(c.v, c.text)}</symbol>`;
     });
     out += `<radialGradient id="bjChipShade" cx="40%" cy="35%" r="70%"><stop offset="0" stop-color="#fff" stop-opacity=".28"/><stop offset=".55" stop-color="#fff" stop-opacity="0"/><stop offset="1" stop-color="#000" stop-opacity=".35"/></radialGradient>`;
     out += '</defs></svg>';
@@ -906,6 +976,25 @@ html[data-q='low'] .hand-glow, html[data-q='low'] .spot-hl, html[data-q='low'] .
     { v: 10, base: '#1f4fa8', inner: '#3366c4', edge: '#f4f1e8', text: '#fff' },
     { v: 5, base: '#b3172b', inner: '#d02a3e', edge: '#f4f1e8', text: '#fff' },
   ];
+  /** Fiş üstündeki değer yazısı: 1.000 → 1K, 2.500 → 2,5K */
+  function chipLabel(v) {
+    if (v >= 1000) {
+      const k = v / 1000;
+      return (Number.isInteger(k) ? String(k) : k.toFixed(1).replace('.', ',')) + 'K';
+    }
+    return String(v);
+  }
+  function chipText(v, color) {
+    const t = chipLabel(v);
+    const fs = t.length >= 4 ? 19 : t.length === 3 ? 24 : 27;
+    return `<text x="50" y="${t.length >= 3 ? 58 : 59}" text-anchor="middle" font-family="Manrope, 'Segoe UI', sans-serif" font-weight="800" font-size="${fs}" fill="${color}">${t}</text>`;
+  }
+  /** Herhangi bir bahis değeri için fiş (standart değil ise en yakın küçük fişin renginde, kendi yazısıyla) */
+  function chipSVG(v) {
+    if (CHIPS.some((c) => c.v === v)) return `<use href="#bjchip-${v}"/>`;
+    const c = CHIPS.find((x) => x.v <= v) || CHIPS[CHIPS.length - 1];
+    return `<use href="#bjchipb-${c.v}"/>${chipText(v, c.text)}`;
+  }
   /** Tutarı fiş yığınına böler (büyükten küçüğe) */
   function chipsFor(amount) {
     let a = Math.max(0, Math.round(amount));
@@ -950,7 +1039,7 @@ html[data-q='low'] .hand-glow, html[data-q='low'] .spot-hl, html[data-q='low'] .
     return { total: soft ? t + 10 : t, soft };
   }
 
-  window.BJCards = { defs, cardHTML, stackHTML, chipsFor, cardName, handValue, value, RANKS, SUITS, CHIPS };
+  window.BJCards = { defs, cardHTML, stackHTML, chipsFor, chipSVG, chipLabel, cardName, handValue, value, RANKS, SUITS, CHIPS };
 })();
 
 /* ---- table.js ---- */
@@ -1792,6 +1881,8 @@ html[data-q='low'] .hand-glow, html[data-q='low'] .spot-hl, html[data-q='low'] .
   const sgn = (n) => (n > 0 ? '+' : n < 0 ? '−' : '±') + fmt(Math.abs(n));
   const CARD_MS = 420; // sunucudaki dağıtım temposu (kart başına)
   const RATIO = 1.4;
+  // kapanmakta olan çerçevede Element.animate null dönebilir: boş bir animasyon nesnesi
+  const NOANIM = () => ({ cancel() {}, finish() {}, onfinish: null, oncancel: null });
   const TURN_MS = 15600;
 
   const PRE_LABEL = { hit: 'KART', stand: 'DUR', double: 'İKİYE KATLA', split: 'BÖL', surrender: 'TESLİM' };
@@ -1848,6 +1939,7 @@ html[data-q='low'] .hand-glow, html[data-q='low'] .spot-hl, html[data-q='low'] .
         <div class="bj-chiplayer"></div>
         <div class="bj-cardlayer"></div>
         <div class="bj-badges"></div>
+        <div class="bj-acts"></div>
         <div class="bj-center" aria-live="polite"></div>
         <div class="bj-fx"></div>
       </div>`;
@@ -1861,6 +1953,7 @@ html[data-q='low'] .hand-glow, html[data-q='low'] .spot-hl, html[data-q='low'] .
     this.lChips = q('.bj-chiplayer');
     this.lCards = q('.bj-cardlayer');
     this.lBadges = q('.bj-badges');
+    this.lActs = q('.bj-acts');
     this.lCenter = q('.bj-center');
     this.lFx = q('.bj-fx');
     this.dealer = window.BJDealer.create(this.lDealer);
@@ -1868,7 +1961,7 @@ html[data-q='low'] .hand-glow, html[data-q='low'] .spot-hl, html[data-q='low'] .
     const port = this.lDealer.querySelector('svg').cloneNode(true);
     port.setAttribute('viewBox', '214 26 172 172');
     port.setAttribute('class', 'msg-face');
-    this.lCenter.innerHTML = `<div class="dmsg" hidden><span class="dmsg-av"></span><div class="dmsg-t"><small>Krupiye Selin</small><strong></strong><span></span></div>
+    this.lCenter.innerHTML = `<div class="dmsg" hidden><span class="dmsg-av"></span><div class="dmsg-t"><small>Krupiye Neriman</small><strong></strong><span></span></div>
       <span class="dmsg-time" hidden><svg viewBox="0 0 44 44" aria-hidden="true"><circle class="bg" cx="22" cy="22" r="19"/><circle class="fg" cx="22" cy="22" r="19"/></svg><b></b></span></div>`;
     this.msg = {
       el: q('.dmsg'),
@@ -1889,6 +1982,13 @@ html[data-q='low'] .hand-glow, html[data-q='low'] .spot-hl, html[data-q='low'] .
     this.lChips.addEventListener('click', (e) => {
       const b = e.target.closest('[data-bb]');
       if (b && this.hooks.onSeat) this.hooks.onSeat('bblist', +b.dataset.bb, b);
+    });
+    // v3.2: elin altındaki karar düğmeleri (sırası gelen el: hemen; bekleyen el: ön karar, X ile iptal)
+    this.lActs.addEventListener('click', (e) => {
+      const b = e.target.closest('button[data-ha]');
+      if (!b || b.disabled || !this.hooks.onHandAct) return;
+      e.stopPropagation();
+      this.hooks.onHandAct(+b.dataset.hand, b.dataset.ha === 'x' ? null : b.dataset.ha, b.dataset.mode);
     });
   };
 
@@ -1917,6 +2017,7 @@ html[data-q='low'] .hand-glow, html[data-q='low'] .spot-hl, html[data-q='low'] .
     this.lGlow.innerHTML = '';
     this.seatSig = [];
     this._badges = '';
+    this._acts = '';
     this._glow = '';
     this._msgKey = '';
     this.ready = false;
@@ -1929,6 +2030,8 @@ html[data-q='low'] .hand-glow, html[data-q='low'] .spot-hl, html[data-q='low'] .
     if (!L) return;
     const s = Math.min(w / L.W, h / L.H);
     this.scale = s;
+    // el altı karar düğmeleri ekranda en az ~32 px görünsün (sahne birimine çevrilir)
+    this.stage.style.setProperty('--hb', Math.round(Math.max(36, Math.min(74, 33 / Math.max(0.2, s)))) + 'px');
     const x = (w - L.W * s) / 2;
     const y = Math.max(0, (h - L.H * s) / 2);
     this.stage.style.transform = `translate(${x}px, ${y}px) scale(${s})`;
@@ -2087,7 +2190,7 @@ html[data-q='low'] .hand-glow, html[data-q='low'] .spot-hl, html[data-q='low'] .
     c.rot = to.rot;
     c.sc = to.sc;
     c.el.classList.add('flying');
-    const a = c.el.animate(k, { duration: Math.max(1, ms), easing: o.easing || 'cubic-bezier(.33,.66,.3,1)' });
+    const a = c.el.animate(k, { duration: Math.max(1, ms), easing: o.easing || 'cubic-bezier(.33,.66,.3,1)' }) || NOANIM();
     c.anim = a;
     a.onfinish = a.oncancel = () => {
       c.el.classList.remove('flying');
@@ -2278,7 +2381,7 @@ html[data-q='low'] .hand-glow, html[data-q='low'] .spot-hl, html[data-q='low'] .
       { transform: stf(to.x, to.y - 6, 1.03), opacity: o.fadeOut ? 0.9 : 1, offset: 0.84 },
       { transform: stf(to.x, to.y, o.fadeOut ? 0.8 : 1), opacity: o.fadeOut ? 0 : 1, offset: 1 },
     ];
-    const a = s.el.animate(k, { duration: Math.max(1, ms), easing: 'cubic-bezier(.35,.6,.3,1)', fill: o.fadeOut ? 'forwards' : 'none' });
+    const a = s.el.animate(k, { duration: Math.max(1, ms), easing: 'cubic-bezier(.35,.6,.3,1)', fill: o.fadeOut ? 'forwards' : 'none' }) || NOANIM();
     s.anim = a;
     a.onfinish = () => {
       if (s.anim === a) s.anim = null;
@@ -2646,7 +2749,7 @@ html[data-q='low'] .hand-glow, html[data-q='low'] .spot-hl, html[data-q='low'] .
         if (ctx.turnHand === hd.id) cls += ' turn';
         h += `<span class="${cls}" style="left:${tx}px;top:${ty}px">${txt}</span>`;
         if (ctx.turnHand === hd.id && st.state === 'PLAYER_TURNS') h += `<span class="turn-arrow" style="left:${b.cx}px;top:${b.y0 - 18}px" aria-hidden="true"></span>`;
-        if (pre[hd.id] && hd.st === 'waiting') h += `<span class="pretag" style="left:${b.cx}px;top:${b.y0 - 22}px">${PRE_LABEL[pre[hd.id]]} · BEKLEMEDE</span>`;
+        if (pre[hd.id] && hd.st === 'waiting' && !ctx.handActs) h += `<span class="pretag" style="left:${b.cx}px;top:${b.y0 - 22}px">${PRE_LABEL[pre[hd.id]]} · BEKLEMEDE</span>`;
         // sonuç etiketi: tur bitince sonuç; bitmeden önce battı / blackjack / teslim hemen görünür
         let res = null;
         if (hd.out && settled) {
@@ -2693,6 +2796,48 @@ html[data-q='low'] .hand-glow, html[data-q='low'] .spot-hl, html[data-q='low'] .
       this.shown.add(f.key);
       if (this.fxLive) this.fxEvent(f);
     });
+  };
+  /* ---------------- el altı karar düğmeleri (v3.2) ---------------- */
+  const HA = {
+    hit: { k: 'H', t: 'Kart çek (Hit)' },
+    stand: { k: 'S', t: 'Dur (Stay)' },
+    double: { k: 'D', t: 'İkiye katla (Double)' },
+    split: { k: 'SP', t: 'Böl (Split)' },
+    surrender: { k: 'T', t: 'Teslim ol' },
+  };
+  Scene.prototype.syncActs = function (st, ctx) {
+    let h = '';
+    if (ctx.handActs) {
+      const flying = new Set();
+      this.cards.forEach((c) => c.flying && flying.add(c.hand));
+      (st.seats || []).forEach((s) => {
+        const hands = s.hands || [];
+        hands.forEach((hd, i) => {
+          if (hd.cards.length < 2 || flying.has(hd.id)) return;
+          const x = ctx.handActs(s, hd, hands.length);
+          if (!x) return;
+          const b = this.handBox(s.no - 1, hands.length, i, hd.cards.length);
+          const small = hands.length > 1 ? ' sm' : '';
+          const top = b.y1 - Math.min(18, (b.y1 - b.y0) * 0.12);
+          const lbl = (a) => `${HA[a].t}${x.mode === 'pre' ? ' — sıran gelince uygulanır' : ''}`;
+          let inner;
+          if (x.pre && HA[x.pre]) {
+            inner = `<span class="ha on a-${x.pre}" title="${HA[x.pre].t}">${HA[x.pre].k}</span><span class="ha-wait">sırada</span>`
+              + `<button type="button" class="ha-x" data-ha="x" data-hand="${hd.id}" data-mode="pre" title="Ön kararı iptal et" aria-label="${HA[x.pre].t} ön kararını iptal et">`
+              + '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M6 6l12 12M18 6 6 18"/></svg></button>';
+          } else {
+            inner = x.acts
+              .map((a) => `<button type="button" class="ha a-${a}" data-ha="${a}" data-hand="${hd.id}" data-mode="${x.mode}" title="${lbl(a)}" aria-label="${lbl(a)}">${HA[a].k}</button>`)
+              .join('');
+          }
+          h += `<div class="hacts ${x.mode}${small}${x.pre ? ' has-pre' : ''}" data-hand="${hd.id}" style="left:${b.cx}px;top:${top}px">${inner}</div>`;
+        });
+      });
+    }
+    if (this._acts !== h) {
+      this.lActs.innerHTML = h;
+      this._acts = h;
+    }
   };
   /** Rozet ilk kez görününce oynayan efektler */
   Scene.prototype.fxEvent = function (f) {
@@ -3037,6 +3182,7 @@ html[data-q='low'] .hand-glow, html[data-q='low'] .spot-hl, html[data-q='low'] .
     this.syncSeats(st, ctx);
     this.syncTurn(st, ctx);
     this.syncBadges(st, ctx);
+    this.syncActs(st, ctx);
     this.syncCenter(st, ctx);
     this.syncShoe(st);
     // krupiye bakışı: sırası gelen pozisyon
@@ -3083,6 +3229,7 @@ html[data-q='low'] .hand-glow, html[data-q='low'] .spot-hl, html[data-q='low'] .
     this.lFx.innerHTML = '';
     this.seatSig = [];
     this._badges = '';
+    this._acts = '';
     this._glow = '';
     this._msgKey = '';
     this.st = null;
@@ -3261,11 +3408,7 @@ html[data-q='low'] .hand-glow, html[data-q='low'] .spot-hl, html[data-q='low'] .
         </div>
       </header>
       <div class="t-econ-slot lb-econ">${T.econBarHTML ? T.econBarHTML() : ''}</div>
-      <div class="lb-tiers">
-        <div class="lb-tier bronze"><b>Bronze</b><span>10 BP masası · giriş eşiği yok</span></div>
-        <div class="lb-tier silver"><b>Silver</b><span>10–20 BP · en az 4.000 BP</span></div>
-        <div class="lb-tier gold"><b>Gold</b><span>10–100 BP · en az 8.000 BP</span></div>
-      </div>
+      <div class="lb-tiers" data-tiers>${tiersStrip()}</div>
       <div class="lb-body"><p class="lb-loading">Masalar yükleniyor…</p></div>`;
     $('[data-create]', box).addEventListener('click', createSheet);
     $('[data-hist]', box).addEventListener('click', historySheet);
@@ -3292,6 +3435,8 @@ html[data-q='low'] .hand-glow, html[data-q='low'] .spot-hl, html[data-q='low'] .
     }
     G.lobby = d;
     $('.lb-bal', box).textContent = fmt(d.me.balance) + ' BP';
+    const ts = $('[data-tiers]', box);
+    if (ts) ts.innerHTML = tiersStrip();
     const all = d.tables || [];
     const mine = all.filter((t) => t.mine || t.seated);
     const friends = all.filter((t) => !t.mine && !t.seated && (t.friends > 0 || t.owner_friend));
@@ -3357,16 +3502,41 @@ html[data-q='low'] .hand-glow, html[data-q='low'] .spot-hl, html[data-q='low'] .
       }
     });
   }
+  /* v3.2: masa seviyeleri panelden yönetilir (bakiye eşiği, bahis değerleri, jackpot) */
+  const TIER_DEF = {
+    bronze: { min_balance: 0, bets: [10], jp_seat: 200, jp_spec: 100 },
+    silver: { min_balance: 4000, bets: [10, 20], jp_seat: 300, jp_spec: 200 },
+    gold: { min_balance: 8000, bets: [10, 20, 100], jp_seat: 400, jp_spec: 300 },
+  };
+  const tiersCfg = () => Object.assign({}, TIER_DEF, (G.lobby && G.lobby.tiers) || {});
+  function betsText(k) {
+    const b = ((tiersCfg()[k] || {}).bets || []).slice().sort((x, y) => x - y);
+    return b.length > 1 ? `${fmt(b[0])}–${fmt(b[b.length - 1])} BP` : `${fmt(b[0] || 0)} BP`;
+  }
+  function tiersStrip() {
+    const c = tiersCfg();
+    return ['bronze', 'silver', 'gold']
+      .map((k) => `<div class="lb-tier ${k}"><b>${TIER[k]}</b><span>${betsText(k)} · ${c[k].min_balance > 0 ? `en az ${fmt(c[k].min_balance)} BP` : 'giriş eşiği yok'}</span></div>`)
+      .join('');
+  }
   function createSheet() {
     const bal = (G.lobby && G.lobby.me.balance) || 0;
-    const tierOk = (k) => bal >= ({ bronze: 0, silver: 4000, gold: 8000 })[k];
+    // v3.2: seviye sınırları ve bahis değerleri panelden gelir
+    const TC = (G.lobby && G.lobby.tiers) || { bronze: { min_balance: 0, bets: [10] }, silver: { min_balance: 4000, bets: [10, 20] }, gold: { min_balance: 8000, bets: [10, 20, 100] } };
+    const tierOk = (k) => bal >= ((TC[k] || {}).min_balance || 0);
+    const tierTxt = (k) => {
+      const c = TC[k] || {};
+      const b = (c.bets || []).slice().sort((x, y) => x - y);
+      const range = b.length > 1 ? `${fmt(b[0])}–${fmt(b[b.length - 1])} BP` : `${fmt(b[0] || 0)} BP`;
+      return c.min_balance > 0 ? `${range} · ${fmt(c.min_balance)}+` : range;
+    };
     const def = tierOk('gold') ? 'gold' : tierOk('silver') ? 'silver' : 'bronze';
     const sh = T.sheet({
       title: 'Masa oluştur',
       body: `<form class="t-form" onsubmit="return false">
         <label class="t-field"><span class="t-lab">Masa adı</span><input class="t-input" name="name" maxlength="40" placeholder="${esc((T.myName() || 'Bözer') + ' masası')}"></label>
         <div class="t-field"><span class="t-lab">Masa seviyesi</span><div class="t-seg tier-seg" data-seg="tier">
-          ${['bronze', 'silver', 'gold'].map((k) => `<button type="button" data-v="${k}" aria-pressed="${k === def}" ${tierOk(k) ? '' : 'disabled'}><b>${TIER[k]}</b><small>${k === 'bronze' ? '10 BP' : k === 'silver' ? '10–20 BP · 4.000+' : '10–100 BP · 8.000+'}</small></button>`).join('')}
+          ${['bronze', 'silver', 'gold'].map((k) => `<button type="button" data-v="${k}" aria-pressed="${k === def}" ${tierOk(k) ? '' : 'disabled'}><b>${TIER[k]}</b><small>${tierTxt(k)}</small></button>`).join('')}
         </div></div>
         <div class="t-field"><span class="t-lab">Kimler görsün?</span><div class="t-seg" data-seg="vis"><button type="button" data-v="public" aria-pressed="true">Herkes</button><button type="button" data-v="private" aria-pressed="false">Özel (arkadaşlarım)</button></div></div>
         <div class="t-field"><span class="t-lab">İzleyiciler</span><div class="t-seg" data-seg="spec"><button type="button" data-v="1" aria-pressed="true">İzleyebilir, Bet Behind yapabilir</button><button type="button" data-v="0" aria-pressed="false">Kapalı</button></div></div>
@@ -3423,6 +3593,7 @@ html[data-q='low'] .hand-glow, html[data-q='low'] .spot-hl, html[data-q='low'] .
         ctx: sceneCtx,
         onSeat: onSeatAct,
         onSettled,
+        onHandAct,
       });
       G.scene.dealer.setReduced(opts.reduced || opts.quality === 'low');
       $('#hud').addEventListener('click', onHud);
@@ -3532,6 +3703,7 @@ html[data-q='low'] .hand-glow, html[data-q='low'] .spot-hl, html[data-q='low'] .
 
   /* ---------------- eşitleme döngüsü ---------------- */
   let syncing = false;
+  G.debugSync = () => ({ syncing, busy: !!G.busy, rt: !!G.rtOk, v: G.v, timer: !!G.syncTimer });
   async function syncNow(full) {
     if (!G.tableId || syncing) return;
     syncing = true;
@@ -3595,6 +3767,7 @@ html[data-q='low'] .hand-glow, html[data-q='low'] .spot-hl, html[data-q='low'] .
       G.rt = B.api
         .channel('bj-' + id.slice(0, 8) + '-' + rid())
         .on('postgres_changes', { event: '*', schema: 'public', table: 'blackjack_live', filter: 'table_id=eq.' + id }, (p) => {
+          if (G.dead) return;
           const st = p.new && p.new.state;
           if (!st || G.tableId !== id || st.v <= G.v) return;
           const prev = G.st;
@@ -3605,7 +3778,7 @@ html[data-q='low'] .hand-glow, html[data-q='low'] .spot-hl, html[data-q='low'] .
           clearTimeout(G.meT);
           G.meT = setTimeout(() => syncNow(), 260 + Math.random() * 200);
         })
-        .on('postgres_changes', { event: 'INSERT', schema: 'public', table: 'blackjack_chat', filter: 'table_id=eq.' + id }, (p) => p.new && onChatRow(p.new))
+        .on('postgres_changes', { event: 'INSERT', schema: 'public', table: 'blackjack_chat', filter: 'table_id=eq.' + id }, (p) => !G.dead && p.new && onChatRow(p.new))
         .subscribe((s) => {
           G.rtOk = s === 'SUBSCRIBED';
           schedule();
@@ -3614,6 +3787,12 @@ html[data-q='low'] .hand-glow, html[data-q='low'] .spot-hl, html[data-q='low'] .
       G.rt = null;
     }
   }
+  // v3.2: çerçeve kapanınca (masadan lobiye/başka sayfaya geçiş) kanal ana sayfadan kaldırılır;
+  // aksi halde eski çerçeve olay almaya devam ediyordu
+  window.addEventListener('pagehide', () => {
+    G.dead = true;
+    unsubscribe();
+  });
   function unsubscribe() {
     if (G.rt) {
       try {
@@ -3646,11 +3825,40 @@ html[data-q='low'] .hand-glow, html[data-q='low'] .spot-hl, html[data-q='low'] .
       turnHand: st.turn ? st.turn.hand : null,
       turnDeadline: st.turn ? st.turn.deadline : null,
       avatar: (u, size) => T.avatar(u, size),
+      handActs: (s, hd, n) => handActs(st, me, s, hd, n),
     };
   }
-  async function call(name, args, okMsg) {
-    if (G.busy) return null;
+  /* v3.2: elin altındaki karar düğmeleri. Sırası gelen elimde hemen uygulanır; sırası gelmemiş elimde
+     ön karar olarak saklanır (kırmızı X ile iptal). Döner: { mode, acts, pre } ya da null */
+  const PRE_STATES = ['INITIAL_DEAL', 'INSURANCE_WINDOW', 'DEALER_PEEK', 'PLAYER_TURNS'];
+  const HAND_ACTS = ['hit', 'stand', 'double', 'split'];
+  function handActs(st, me, s, hd, n) {
+    const id = myId();
+    if (!s.user || !id || s.user.id !== id || hd.cards.length < 2) return null;
+    const x = { seat: s.no, h: hd, n };
+    if (st.state === 'PLAYER_TURNS' && st.turn && st.turn.hand === hd.id) {
+      return { mode: 'turn', acts: HAND_ACTS.filter((a) => legal(x, a)), pre: null };
+    }
+    if (!PRE_STATES.includes(st.state) || hd.st !== 'waiting') return null;
+    const pre = (((me && me.pre) || []).find((p) => p.hand === hd.id) || {}).action || null;
+    return { mode: 'pre', acts: HAND_ACTS.filter((a) => legal(x, a)), pre };
+  }
+  function onHandAct(hand, a, mode) {
+    if (mode === 'turn') {
+      const x = myTurnHand();
+      if (x && x.h.id === hand && a) doAction(a);
+      return;
+    }
+    G.preHand = hand;
+    setPreFor(hand, a);
+  }
+  /* queue: true → önceki istek sürerken gelen tıklama kaybolmaz, sırayla gönderilir (art arda bahis) */
+  async function call(name, args, okMsg, queue) {
+    if (G.busy && !queue) return null;
+    while (G.busy) await G.busyP;
     G.busy = true;
+    let done;
+    G.busyP = new Promise((r) => (done = r));
     $('#controls').classList.add('busy');
     try {
       const r = await rpc(name, Object.assign({ p_table: G.tableId }, args));
@@ -3664,6 +3872,7 @@ html[data-q='low'] .hand-glow, html[data-q='low'] .spot-hl, html[data-q='low'] .
     } finally {
       G.busy = false;
       $('#controls').classList.remove('busy');
+      done();
     }
   }
   function onSeatAct(act, seat) {
@@ -3701,7 +3910,7 @@ html[data-q='low'] .hand-glow, html[data-q='low'] .spot-hl, html[data-q='low'] .
       return;
     }
     SND.play('chip', 2);
-    call('bg_bj_bet', { p_seat: seat, p_amount: amount });
+    call('bg_bj_bet', { p_seat: seat, p_amount: amount }, null, true);
   }
   function placeBB(seat, amount) {
     const st = G.st;
@@ -3768,7 +3977,7 @@ html[data-q='low'] .hand-glow, html[data-q='low'] .spot-hl, html[data-q='low'] .
       const ok = allowedBets();
       if (!ok.includes(G.chip)) G.chip = ok[ok.length - 1] || 10;
       return `<div class="chip-row" role="group" aria-label="${label}">${(st.bets || [])
-        .map((b) => `<button type="button" class="pchip c${b}${G.chip === b ? ' sel' : ''}" data-chip="${b}" ${ok.includes(b) ? '' : 'disabled'} aria-pressed="${G.chip === b}" aria-label="${b} BP fişi"><svg viewBox="0 0 100 100" aria-hidden="true"><use href="#bjchip-${b}"/></svg></button>`)
+        .map((b) => `<button type="button" class="pchip c${b}${G.chip === b ? ' sel' : ''}" data-chip="${b}" ${ok.includes(b) ? '' : 'disabled'} aria-pressed="${G.chip === b}" aria-label="${b} BP fişi"><svg viewBox="0 0 100 100" aria-hidden="true">${window.BJCards.chipSVG(b)}</svg></button>`)
         .join('')}</div>`;
     };
     const turn = myTurnHand();
@@ -3888,13 +4097,13 @@ html[data-q='low'] .hand-glow, html[data-q='low'] .spot-hl, html[data-q='low'] .
     if (b.hasAttribute('data-clear')) {
       for (const s of me.seats || []) {
         const x = st.seats.find((y) => y.no === s.no);
-        if (x && x.bet) await call('bg_bj_bet', { p_seat: s.no, p_amount: 0 });
+        if (x && x.bet) await call('bg_bj_bet', { p_seat: s.no, p_amount: 0 }, null, true);
       }
       return;
     }
     if (b.hasAttribute('data-confirm')) {
       SND.play('chipsStack');
-      return call('bg_bj_bet_confirm', {});
+      return call('bg_bj_bet_confirm', {}, null, true);
     }
     if (b.hasAttribute('data-rebet')) {
       // son bahsi bahsi olmayan pozisyonlara tekrar koy
@@ -3944,11 +4153,16 @@ html[data-q='low'] .hand-glow, html[data-q='low'] .spot-hl, html[data-q='low'] .
     if (navigator.vibrate) navigator.vibrate(12);
     call('bg_bj_act', { p_hand: x.h.id, p_action: a, p_req: rid() });
   }
-  async function setPre(a) {
+  function setPre(a) {
+    const cur = (((G.me || {}).pre || []).find((p) => p.hand === G.preHand) || {});
+    return setPreFor(G.preHand, cur.action === a ? null : a);
+  }
+  /** Bir elin ön kararı: a = hamle, null = iptal */
+  async function setPreFor(hand, a) {
     const me = G.me || {};
-    const hand = G.preHand;
     const cur = ((me.pre || []).find((p) => p.hand === hand) || {});
-    const next = cur.action === a ? null : a;
+    const next = a || null;
+    if ((cur.action || null) === next) return;
     const rev = Math.max(G.preRev[hand] || 0, cur.rev || 0) + 1;
     G.preRev[hand] = rev;
     // iyimser gösterim: sunucu onaylayana kadar seçim görünür
@@ -4259,11 +4473,12 @@ html[data-q='low'] .hand-glow, html[data-q='low'] .spot-hl, html[data-q='low'] .
         <p><b>Krupiye:</b> 16 ve altında kart çeker, soft 17 dahil 17'de durur. Açık kartı As ya da 10 değerindeyse blackjack kontrolü yapar (American hole card).</p>
         <p><b>Ödemeler:</b> galibiyet 1:1, doğal blackjack 3:2, beraberlikte bahis iade, teslimde yarısı iade. Sigorta (krupiye As açınca) ana bahsin yarısıdır, 2:1 öder.</p>
         <p><b>Hamleler:</b> Kart, Dur, İkiye katla (ilk iki kartta, tek kart verilir), Böl (eşit değerli iki kart, en fazla 4 el; bölünmüş aslara tek kart, tekrar bölünmez; bölmeden sonra ikiye katlama serbest, teslim yok), Teslim (geç teslim, ilk iki kartta). Hamle süresi 15 saniye; süre dolarsa DUR uygulanır.</p>
-        <p><b>Ön hamle:</b> Sıran gelmeden kararını seçebilir, değiştirebilir ya da iptal edebilirsin. Sıra gelince son seçim uygulanır; KART yalnızca bir kart demektir. Geçersizleşen ön hamle uygulanmaz, karar süresi verilir.</p>
-        <p><b>Masalar:</b> Bronze en fazla 10 BP · Silver en fazla 20 BP (güncel bakiye en az 4.000 BP) · Gold en fazla 100 BP (en az 8.000 BP). Bahis seviyesi güncel bakiyene göre: 4.000 altı 10 BP, 4.000–7.999 20 BP, 8.000 ve üstü 100 BP. Bir masada en fazla 2 pozisyon. Oyun en az 2 aktif potla başlar.</p>
-        <p><b>Bet Behind:</b> İzleyici bahis aşamasında bir oyuncunun arkasına 10/20/100 BP koyar (turda tek pozisyon). Ana oyuncunun bütün kararlarını takip eder; Double ve Split'te aynı tutarda ek bahis zorunlu alınır. Ek bahis karşılanamazsa o turdaki bütün Bet Behind bahislerin iade edilir.</p>
+        <p><b>El altı düğmeler:</b> Oynadığın her elin altında renkli karar düğmeleri çıkar: <b>H</b> kart (mavi), <b>S</b> dur (kırmızı), <b>D</b> ikiye katla (yeşil), <b>SP</b> böl (sarı). Sırası gelen elde hemen uygulanır; sırası gelmemiş elde ön karar olur.</p>
+        <p><b>Ön hamle:</b> Sıran gelmeden kararını seçebilirsin; seçtiğin karar elin altında “sırada” yazısıyla durur, kırmızı X ile iptal edilir. Sıra gelince seçim uygulanır; KART yalnızca bir kart demektir. Geçersizleşen ön hamle uygulanmaz, karar süresi verilir.</p>
+        <p><b>Masalar:</b> ${['bronze', 'silver', 'gold'].map((k) => `${TIER[k]} ${betsText(k)}${tiersCfg()[k].min_balance > 0 ? ` (güncel bakiye en az ${fmt(tiersCfg()[k].min_balance)} BP)` : ''}`).join(' · ')}. Bahsin, bakiyenin yettiği en yüksek seviyenin bahislerini geçemez. Bir masada en fazla 2 pozisyon. Oyun en az 2 aktif potla başlar.</p>
+        <p><b>Bet Behind:</b> İzleyici bahis aşamasında bir oyuncunun arkasına masanın bahis değerlerinden birini koyar (turda tek pozisyon). Ana oyuncunun bütün kararlarını takip eder; Double ve Split'te aynı tutarda ek bahis zorunlu alınır. Ek bahis karşılanamazsa o turdaki bütün Bet Behind bahislerin iade edilir.</p>
         <p><b>Auto Rebet:</b> Açık pozisyonda her yeni bahis turunda son bahsi bir kez koyar. Bakiye yetmezse bahis koymaz. Pozisyondan kalkınca, masadan ayrılınca ya da bağlantı kopunca kapanır.</p>
-        <p><b>Jackpot:</b> Yedi potun yedisi de aynı turda kazanır ve bu 5 tur üst üste olursa jackpot: pot başına Bronze 200, Silver 300, Gold 400 BP; geçerli Bet Behind'ı olan izleyiciye 100 / 200 / 300 BP. Beraberlik, kayıp, teslim, boş pot ya da pot sahibinin değişmesi seriyi sıfırlar; kesme kartı sıfırlamaz.</p>
+        <p><b>Jackpot:</b> Yedi potun yedisi de aynı turda kazanır ve bu 5 tur üst üste olursa jackpot: pot başına ${['bronze', 'silver', 'gold'].map((k) => `${TIER[k]} ${fmt(tiersCfg()[k].jp_seat)}`).join(', ')} BP; geçerli Bet Behind'ı olan izleyiciye ${['bronze', 'silver', 'gold'].map((k) => fmt(tiersCfg()[k].jp_spec)).join(' / ')} BP. Beraberlik, kayıp, teslim, boş pot ya da pot sahibinin değişmesi seriyi sıfırlar; kesme kartı sıfırlamaz.</p>
       </div>`,
       actions: [{ label: 'Kapat', kind: 'primary' }],
     });
