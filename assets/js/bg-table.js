@@ -28,6 +28,143 @@
   T.esc = esc;
   T.el = el;
 
+  /* ---------------- ses: iPhone / iPad kilidi ve sessiz mod (v3.3) ----------------
+     iOS Safari'de Web Audio ancak bir dokunuşun içinde başlar, uygulama değişince
+     "interrupted" durumunda kalabilir ve telefon yan anahtardan sessize alınmışsa
+     varsayılan olarak susar. Oyunların ses bağlamları buraya kaydolur: her dokunuşta
+     duran bağlam sürdürülür, ilk dokunuşta tek örneklik sessiz ses çalınır (eski iOS),
+     ses oturumu "oynatma" türüne alınır (iOS 17+: navigator.audioSession; daha eskide
+     sessiz, döngülü bir <audio>). Böylece oyun sesleri sessiz modda da duyulur; oyunun
+     ses ayarından kapatılabilir. Oyunun sesi kapalıysa oturum serbest bırakılır. */
+  const AU = (T.audio = T.audio || {});
+  (function () {
+    const ctxs = [];
+    const ua = navigator.userAgent || '';
+    const iOS = /iP(hone|ad|od)/.test(ua) || (navigator.platform === 'MacIntel' && navigator.maxTouchPoints > 1);
+    const KEY = 'bg.snd.silentok';
+    let pref = true;
+    let want = true;
+    let tag = null;
+    try {
+      pref = localStorage.getItem(KEY) !== '0';
+    } catch (e) {}
+    const u16 = (v) => String.fromCharCode(v & 255, (v >> 8) & 255);
+    const u32 = (v) => u16(v & 65535) + u16((v >>> 16) & 65535);
+    function silentSrc() {
+      const n = 2000; // 0,25 sn, 8 kHz, 8 bit, sessiz
+      const head = 'RIFF' + u32(36 + n) + 'WAVEfmt ' + u32(16) + u16(1) + u16(1) + u32(8000) + u32(8000) + u16(1) + u16(8) + 'data' + u32(n);
+      return 'data:audio/wav;base64,' + btoa(head + String.fromCharCode(128).repeat(n));
+    }
+    function session(on) {
+      try {
+        const s = navigator.audioSession;
+        if (s && 'type' in s) {
+          const t = on ? 'playback' : 'auto';
+          if (s.type !== t) s.type = t;
+          return true;
+        }
+      } catch (e) {}
+      return false;
+    }
+    function tagPlay(on) {
+      if (!on) {
+        if (tag && !tag.paused) tag.pause();
+        return;
+      }
+      try {
+        if (!tag) {
+          tag = document.createElement('audio');
+          tag.setAttribute('playsinline', '');
+          tag.setAttribute('x-webkit-airplay', 'deny');
+          tag.preload = 'auto';
+          tag.loop = true;
+          tag.disableRemotePlayback = true;
+          tag.src = silentSrc();
+        }
+        if (tag.paused) {
+          const p = tag.play();
+          if (p && p.catch) p.catch(() => {});
+        }
+      } catch (e) {}
+    }
+    function playthrough() {
+      if (!iOS) return;
+      const on = pref && want && document.visibilityState === 'visible';
+      if (session(pref && want)) return;
+      tagPlay(on);
+    }
+    function resume(c) {
+      if (!c || c.state === 'running' || c.state === 'closed') return;
+      try {
+        const p = c.resume();
+        if (p && p.catch) p.catch(() => {});
+      } catch (e) {}
+    }
+    /** Her dokunuşta: duran bağlamları sürdür, ilk seferde sessiz ses çal, oturumu ayarla */
+    function kick() {
+      let any = false;
+      ctxs.forEach((c) => {
+        if (!c || c.state === 'closed') return;
+        any = true;
+        resume(c);
+        if (!c.__bgKick) {
+          c.__bgKick = true;
+          try {
+            const s = c.createBufferSource();
+            s.buffer = c.createBuffer(1, 1, 22050);
+            s.connect(c.destination);
+            s.start(0);
+          } catch (e) {}
+        }
+      });
+      if (any && want) playthrough();
+    }
+    ['touchstart', 'touchend', 'pointerdown', 'pointerup', 'mousedown', 'click', 'keydown'].forEach((ev) =>
+      window.addEventListener(ev, kick, { capture: true, passive: true }),
+    );
+    document.addEventListener('visibilitychange', () => {
+      if (document.visibilityState === 'visible') {
+        ctxs.forEach(resume);
+        if (want && ctxs.length) playthrough();
+      } else tagPlay(false);
+    });
+    window.addEventListener('pagehide', () => tagPlay(false));
+    AU.iOS = iOS;
+    /** Oyunun ses bağlamını kaydeder (iOS kilidi, kesinti sonrası sürdürme) */
+    AU.add = (c) => {
+      if (!c || ctxs.indexOf(c) >= 0) return c;
+      ctxs.push(c);
+      try {
+        c.addEventListener('statechange', () => {
+          if (c.state === 'interrupted' && document.visibilityState === 'visible') setTimeout(() => resume(c), 300);
+        });
+      } catch (e) {}
+      if (iOS && want) session(pref);
+      return c;
+    };
+    AU.kick = kick;
+    /** Oyunun sesi açık mı (kapalıysa iOS ses oturumu serbest bırakılır, müzik uygulamaları kesilmez) */
+    AU.want = (on) => {
+      want = !!on;
+      if (!want) {
+        session(false);
+        tagPlay(false);
+      } else if (ctxs.length) playthrough();
+    };
+    /** Sessiz modda (yan anahtar) da çal: varsayılan açık */
+    AU.silentOk = () => pref;
+    AU.setSilentOk = (on) => {
+      pref = !!on;
+      try {
+        localStorage.setItem(KEY, pref ? '1' : '0');
+      } catch (e) {}
+      if (!pref) {
+        session(false);
+        tagPlay(false);
+      } else if (want && ctxs.length) playthrough();
+    };
+  })();
+
   const ICON = {
     chat: '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4.5 6.5a2.5 2.5 0 0 1 2.5-2.5h10a2.5 2.5 0 0 1 2.5 2.5v7a2.5 2.5 0 0 1-2.5 2.5H11l-4.2 3.3c-.5.4-1.3 0-1.3-.6V16a2.5 2.5 0 0 1-1-2z" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"/><circle cx="9" cy="10" r="1.1" fill="currentColor"/><circle cx="12" cy="10" r="1.1" fill="currentColor"/><circle cx="15" cy="10" r="1.1" fill="currentColor"/></svg>',
     eye: '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M2.5 12S6 5.5 12 5.5 21.5 12 21.5 12 18 18.5 12 18.5 2.5 12 2.5 12z" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"/><circle cx="12" cy="12" r="3" fill="none" stroke="currentColor" stroke-width="1.8"/></svg>',
@@ -937,20 +1074,23 @@
       img.style.top = window.innerHeight * 0.4 + 'px';
     }
     document.body.appendChild(img);
+    // v3.2: emoji 1 sn daha uzun görünür (giriş ve çıkış aynı hızda, bekleme uzadı)
     if (reduceMo()) {
-      setTimeout(() => img.remove(), 2200);
+      setTimeout(() => img.remove(), 3200);
       return !!c;
     }
-    img.animate(
+    const an = img.animate(
       [
         { transform: 'scale(.2) rotate(-18deg)', opacity: 0 },
-        { transform: 'scale(1.18) rotate(6deg)', opacity: 1, offset: 0.18 },
-        { transform: 'scale(1) rotate(0)', opacity: 1, offset: 0.32 },
-        { transform: 'translateY(-6px) scale(1.04)', opacity: 1, offset: 0.7 },
+        { transform: 'scale(1.18) rotate(6deg)', opacity: 1, offset: 0.127 },
+        { transform: 'scale(1) rotate(0)', opacity: 1, offset: 0.226 },
+        { transform: 'translateY(-6px) scale(1.04)', opacity: 1, offset: 0.788 },
         { transform: 'translateY(-26px) scale(.9)', opacity: 0 },
       ],
-      { duration: 2400, easing: 'cubic-bezier(.2,.8,.3,1)' }
-    ).onfinish = () => img.remove();
+      { duration: 3400, easing: 'cubic-bezier(.2,.8,.3,1)' }
+    );
+    if (an) an.onfinish = () => img.remove();
+    else setTimeout(() => img.remove(), 3400);
     return !!c;
   };
   /** Hediye: gönderenin avatarından alıcının avatarına uçar (kuyrukta, üst üste binmez) */
@@ -990,17 +1130,18 @@
     const my = Math.min(sy, ey) - Math.max(60, Math.abs(ex - sx) * 0.25);
     const short = lvl === 'reduced' || reduceMo();
     const anim = img.animate(
+      // v3.2: hediye alıcının avatarında 1 sn daha uzun kalır (uçuş aynı hızda)
       short
-        ? [{ transform: `translate(${ex}px,${ey}px) scale(.4)`, opacity: 0 }, { transform: `translate(${ex}px,${ey}px) scale(1)`, opacity: 1, offset: 0.3 }, { transform: `translate(${ex}px,${ey}px) scale(1)`, opacity: 0 }]
+        ? [{ transform: `translate(${ex}px,${ey}px) scale(.4)`, opacity: 0 }, { transform: `translate(${ex}px,${ey}px) scale(1)`, opacity: 1, offset: 0.175 }, { transform: `translate(${ex}px,${ey}px) scale(1)`, opacity: 1, offset: 0.8 }, { transform: `translate(${ex}px,${ey}px) scale(1)`, opacity: 0 }]
         : [
             { transform: `translate(${sx}px,${sy}px) scale(.45) rotate(-20deg)`, opacity: 0 },
-            { transform: `translate(${sx}px,${sy - 14}px) scale(.8) rotate(-10deg)`, opacity: 1, offset: 0.1 },
-            { transform: `translate(${mx}px,${my}px) scale(1.25) rotate(8deg)`, opacity: 1, offset: 0.45 },
-            { transform: `translate(${ex}px,${ey}px) scale(1) rotate(0)`, opacity: 1, offset: 0.72 },
-            { transform: `translate(${ex}px,${ey - 6}px) scale(1.06)`, opacity: 1, offset: 0.86 },
+            { transform: `translate(${sx}px,${sy - 14}px) scale(.8) rotate(-10deg)`, opacity: 1, offset: 0.072 },
+            { transform: `translate(${mx}px,${my}px) scale(1.25) rotate(8deg)`, opacity: 1, offset: 0.325 },
+            { transform: `translate(${ex}px,${ey}px) scale(1) rotate(0)`, opacity: 1, offset: 0.52 },
+            { transform: `translate(${ex}px,${ey - 6}px) scale(1.06)`, opacity: 1, offset: 0.899 },
             { transform: `translate(${ex}px,${ey - 18}px) scale(.85)`, opacity: 0 },
           ],
-      { duration: short ? 1400 : 2600, easing: 'cubic-bezier(.45,.05,.35,1)', fill: 'forwards' }
+      { duration: short ? 2400 : 3600, easing: 'cubic-bezier(.45,.05,.35,1)', fill: 'forwards' }
     );
     if (!short)
       setTimeout(() => {
@@ -1013,12 +1154,14 @@
           sp.animate([{ transform: 'translate(-50%,-50%) scale(1)', opacity: 1 }, { transform: `translate(calc(-50% + ${Math.cos(ang) * 46}px), calc(-50% + ${Math.sin(ang) * 46}px)) scale(.3)`, opacity: 0 }], { duration: 650, easing: 'ease-out' }).onfinish = () => sp.remove();
         }
       }, 1880);
-    anim.onfinish = () => {
+    const done = () => {
       img.remove();
       setTimeout(fx.next, 120);
     };
+    if (anim) anim.onfinish = done;
+    else setTimeout(done, short ? 2400 : 3600);
     toEl.classList.add('t-got-gift');
-    setTimeout(() => toEl.classList.remove('t-got-gift'), 2600);
+    setTimeout(() => toEl.classList.remove('t-got-gift'), 3600);
   };
   function giftBanner(job) {
     const r = job.row || {};
@@ -1026,8 +1169,8 @@
     const me = T.me();
     const b = el(`<div class="t-giftfx" aria-live="polite"><img src="${giftSrc(job.code, 2)}" alt=""><p><b>${esc(me && job.from === me.id ? 'Sen' : who(r))}</b> → ${esc(g.text)}</p></div>`);
     document.body.appendChild(b);
-    setTimeout(() => b.classList.add('is-out'), 2000);
-    setTimeout(() => b.remove(), 2500);
+    setTimeout(() => b.classList.add('is-out'), 3000);
+    setTimeout(() => b.remove(), 3500);
   }
 
   /* ---------------- maç sonu: ödüller (ÖDÜLLERİ TOPLA) ---------------- */
@@ -1134,6 +1277,10 @@
     window.addEventListener('pagehide', () => {
       const cur = T.cur;
       const B = site();
+      // v3.2: çerçeve kapanırken gerçek zamanlı kanallar ana sayfadan kaldırılır (eski çerçeve olay almaya devam etmesin)
+      try {
+        if (cur && cur.link) cur.link.close();
+      } catch (e) {}
       if (!cur || !room.cur || !B || !B.api || !B.api.rpcKeepalive) return;
       if (mySeat(cur.table) != null) B.api.rpcKeepalive('bg_table_leave', { p_table: cur.id });
     });
@@ -1326,16 +1473,45 @@
     return `<form class="t-form" onsubmit="return false">${title}${seg}${fee}<div class="t-rules">${T.cfg.rules.form(rules, n, opts)}</div>${vis}<p class="t-note">Boş kalan koltuklara oyun başlarken bot oturur.</p></form>`;
   }
   /* ---------------- masa ücreti ve ödül tablosu ---------------- */
-  const FEES = [10, 20, 30, 40, 50, 60, 70];
-  function amPrizes(fee, n) {
-    const i = Math.max(1, Math.min(7, Math.floor(fee / 10))) - 1;
-    const f23 = [15, 35, 45, 60, 75, 90, 105][i];
-    const f4 = [25, 45, 65, 85, 105, 125, 145][i];
-    const f5 = [35, 55, 85, 115, 145, 175, 205][i];
-    const s45 = [10, 30, 45, 60, 75, 90, 105][i];
-    return n === 2 ? [f23, 0] : n === 3 ? [f23, (i + 1) * 10, 0] : n === 4 ? [f4, s45, 0, 0] : n === 5 ? [f5, s45, 0, 0, 0] : [];
+  /* v3.2: masa ücretleri, rütbe şartları ve ödüller yönetim panelinden gelir (cüzdan özeti → levels) */
+  const DEF_LEVELS = [10, 20, 30, 40, 50, 60, 70].map((fee, i) => ({
+    fee,
+    min_rank: [1, 6, 11, 16, 20, 24, 26][i],
+    am: { 2: [[15, 35, 45, 60, 75, 90, 105][i]], 3: [[15, 35, 45, 60, 75, 90, 105][i], fee], 4: [[25, 45, 65, 85, 105, 125, 145][i], [10, 30, 45, 60, 75, 90, 105][i]], 5: [[35, 55, 85, 115, 145, 175, 205][i], [10, 30, 45, 60, 75, 90, 105][i]] },
+    dk: { 4: Math.round(fee * 1.5), 6: Math.round(fee * 2.25), 8: fee * 3 },
+  }));
+  function levels() {
+    const e = T.econ();
+    const B = site();
+    const l = (e && e.levels) || (B && B.publicSettings && B.publicSettings.levels);
+    return Array.isArray(l) && l.length ? l : DEF_LEVELS;
   }
-  const dkPrize = (fee, seats) => Math.round((fee * 3 * Math.floor(seats / 2)) / 4);
+  /** Ücretin seviye kaydı; seviye kaldırıldıysa en yakın seviyenin ödülleri ücretle orantılanır (sunucuyla aynı kural) */
+  function levelOf(fee) {
+    const L = levels();
+    const ex = L.find((l) => +l.fee === +fee);
+    if (ex) return ex;
+    const near = L.slice().sort((a, b) => Math.abs(a.fee - fee) - Math.abs(b.fee - fee) || a.fee - b.fee)[0];
+    if (!near) return null;
+    const f = fee / Math.max(1, near.fee);
+    const am = {};
+    Object.keys(near.am || {}).forEach((k) => (am[k] = (near.am[k] || []).map((v) => Math.round(v * f))));
+    const dk = {};
+    Object.keys(near.dk || {}).forEach((k) => (dk[k] = Math.round((near.dk[k] || 0) * f)));
+    return { fee, min_rank: near.min_rank, am, dk };
+  }
+  function amPrizes(fee, n) {
+    if (n < 2 || n > 5) return [];
+    const l = levelOf(fee);
+    const a = ((l && l.am && l.am[n]) || []).slice(0, n).map((v) => +v || 0);
+    while (a.length < n) a.push(0);
+    return a;
+  }
+  const dkPrize = (fee, seats) => {
+    const l = levelOf(fee);
+    const v = l && l.dk ? l.dk[seats || 4] : null;
+    return v != null ? +v : Math.round((fee * 3 * Math.floor((seats || 4) / 2)) / 4);
+  };
   T.amPrizes = amPrizes;
   T.dkPrize = dkPrize;
   /** Ödül özeti: n = ücret ödeyecek gerçek oyuncu sayısı (Americano) / masa koltuk sayısı (Dost Kazığı) */
@@ -1346,16 +1522,28 @@
     return `${n} gerçek oyuncuyla ödüller: ${pr.map((v, i) => `${i + 1}. <b>${v} BP</b>`).join(' · ')}`;
   }
   T.prizeText = prizeText;
+  /** v3.3: Americano'da masa ücretlerinde rütbe şartı yok — herkes her ücretle açar (panelden açılabilir).
+      Dost Kazığı'nda her ücret seviyesinin rütbe şartı geçerli. */
+  function rankLocked() {
+    if (T.cfg.game !== 'americano-online') return true;
+    const B = site();
+    return !!(B && B.publicSettings && B.publicSettings.am_rank_lock);
+  }
   function feeHTML(fee, n) {
     const e = T.econ();
     const max = (e && e.max_fee) || 10;
     const bal = e ? e.balance : 0;
-    return `<div class="t-field t-feebox"><span class="t-lab">Masa ücreti</span><div class="t-seg t-fee" data-seg="fee">${FEES.map((v) => {
-      const lock = v > max ? 'Rütben bu masayı açmaya yetmiyor' : v > bal ? 'BP bakiyen yetmiyor' : '';
-      return `<button type="button" data-v="${v}" aria-pressed="${v === fee}" ${lock ? `disabled title="${lock}"` : ''}>${v}${lock ? ICON.lock : ''}</button>`;
+    const rank = (e && e.rank) || 1;
+    const B = site();
+    const locked = rankLocked();
+    const rname = (r) => (B && B.rankInfo ? B.rankInfo(r).name : r + '. rütbe');
+    return `<div class="t-field t-feebox"><span class="t-lab">Masa ücreti</span><div class="t-seg t-fee" data-seg="fee">${levels().map((l) => {
+      const v = +l.fee;
+      const lock = locked && (l.min_rank || 1) > rank ? `Bu masa için en az ${rname(l.min_rank)} rütbesi gerekli` : v > bal ? 'BP bakiyen yetmiyor' : '';
+      return `<button type="button" data-v="${v}" aria-pressed="${v === fee}" ${lock ? `disabled title="${esc(lock)}"` : ''}>${v}${lock ? ICON.lock : ''}</button>`;
     }).join('')}</div>
       <p class="t-note t-prize" data-prize>${prizeText(fee, Math.min(n, 5), n)}</p>
-      <p class="t-note">Rütbe grubun en fazla <b>${max} BP</b>’lik masa açmana izin veriyor. Ücret, oyun başlarken en az 2 gerçek oyuncu varsa herkesten alınır; ödüller maç sonunda “Ödülleri topla” ile hesaba geçer.</p></div>`;
+      <p class="t-note">${locked ? `Rütben en fazla <b>${max} BP</b>’lik masa açmana izin veriyor.` : 'Bütün masa ücretleri herkese açık; bakiyen yettiği sürece istediğin ücreti seç.'} Ücret, oyun başlarken en az 2 gerçek oyuncu varsa herkesten alınır; ödüller maç sonunda “Ödülleri topla” ile hesaba geçer.</p></div>`;
   }
   function wireForm(body, state) {
     body.addEventListener('click', (e) => {
@@ -1401,8 +1589,15 @@
     state.rules = Object.assign(T.cfg.rules.defaults(), state.rules || {});
     {
       const e = T.econ();
-      const max = Math.min((e && e.max_fee) || 10, e ? Math.max(10, Math.floor(e.balance / 10) * 10) : 10);
-      if (!state.rules.fee || state.rules.fee > max) state.rules.fee = Math.min(max, 70) >= 10 ? Math.min(state.rules.fee || 10, max) : 10;
+      // seçili ücret yoksa ya da artık açılamıyorsa: açılabilen en yüksek seviye (bakiye yetmezse en düşük)
+      const rank = (e && e.rank) || 1;
+      const bal = e ? e.balance : 0;
+      const locked = rankLocked();
+      const ok = levels().filter((l) => (!locked || (l.min_rank || 1) <= rank) && +l.fee <= bal).map((l) => +l.fee);
+      if (!ok.includes(state.rules.fee)) {
+        const below = ok.filter((f) => state.rules.fee && f <= state.rules.fee);
+        state.rules.fee = below.length ? Math.max(...below) : ok.length ? ok[0] : +levels()[0].fee;
+      }
     }
     const sh = T.sheet({
       title: 'Masa kur',

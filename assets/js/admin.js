@@ -309,6 +309,325 @@
     });
   }
 
+  /* ---------------- v3.2: Ekonomi ayarları (rütbeler, Blackjack seviyeleri, masa seviyeleri, haftalık destek) ---------------- */
+  const TIER_N = { bronze: 'Bronze', silver: 'Silver', gold: 'Gold' };
+  const AUDIT_KEY = { ranks: 'Rütbeler', prestige: 'Prestij', bj_tiers: 'Blackjack seviyeleri', table_levels: 'Americano / Dost Kazığı masaları', weekly_support: 'Haftalık destek', am_rank_lock: 'Americano rütbe şartı' };
+  /* v3.3: sitenin beklediği veritabanı sürümü (kurulum.sql). Eski veritabanında ekonomi ayarları kaydedilemez. */
+  const DB_WANT = '3.3.0';
+  const verLess = (a, b) => {
+    const p = (v) => String(v || '0').split('.').map((x) => parseInt(x, 10) || 0);
+    const x = p(a);
+    const y = p(b);
+    for (let i = 0; i < 3; i++) if ((x[i] || 0) !== (y[i] || 0)) return (x[i] || 0) < (y[i] || 0);
+    return false;
+  };
+  const dbOldHTML = (have) => `<section class="panel ec-dbold" role="alert">
+      <div class="panel-head"><h2>${icon('alert', 20)}Veritabanı güncel değil</h2></div>
+      <p>Site ${DB_WANT} sürümünde, veritabanı ${have ? esc(have) : '3.2 ya da daha eski'}. Ekonomi ayarlarını (Blackjack seviyeleri, Americano / Dost Kazığı masaları, rütbeler) panelden yönetebilmek için <b>kurulum.sql</b> dosyasını Supabase → SQL Editor’da baştan sona bir kez çalıştır. Mevcut üyeler, bakiyeler ve kayıtlar korunur.</p>
+      <p class="muted small">Çalışınca sonuç satırında “Kurulum tamamlandı · ${DB_WANT}” görünür. Sonra bu sayfayı yenile.</p></section>`;
+  async function econSetPane(root) {
+    const box = root.querySelector('[data-pane="econset"]');
+    if (!box.firstElementChild) box.innerHTML = '<p class="loading-row">Yükleniyor…</p>';
+    let d;
+    try {
+      d = await BG.api.rpc('bg_admin_econ_get', {});
+    } catch (e) {
+      // v3.2 kurulumu yoksa fonksiyon bulunamaz: ham hata yerine ne yapılacağı yazılır
+      const missing = /bg_admin_econ_get|could not find|schema cache|does not exist|PGRST202/i.test(String((e && (e.message || e.code)) || ''));
+      box.innerHTML = missing ? dbOldHTML(null) : `<p class="loading-row">${esc(e.message)}</p>`;
+      return;
+    }
+    if (BG.applyEconSettings) BG.applyEconSettings(d.settings);
+    const ranks = d.ranks || [];
+    const rankOpts = (sel) => ranks.map((r) => `<option value="${r.idx}"${r.idx === sel ? ' selected' : ''}>${r.idx}. ${esc(r.name)}</option>`).join('');
+    const iconOpts = (sel) => Object.keys(BG.RANK_ICONS).map((k) => `<option value="${k}"${k === sel ? ' selected' : ''}>${esc(BG.RANK_ICONS[k])}</option>`).join('');
+    const num = (v, a) => `<input class="input input-sm" type="number" inputmode="numeric" min="0" step="1" value="${v == null ? '' : v}" ${a || ''}>`;
+    const rankRow = (r, i) => `<tr data-rank>
+        <td class="ec-idx">${i + 1}</td>
+        <td class="ec-prev"><span data-prev>${BG.rankIcon(i + 1, 26)}</span></td>
+        <td><input class="input input-sm" data-k="name" maxlength="24" value="${esc(r.name)}" aria-label="Rütbe adı"></td>
+        <td>${num(r.min_bp, `data-k="min_bp" aria-label="Alt sınır (BP)"${i === 0 ? ' readonly' : ''}`)}</td>
+        <td><input type="color" class="ec-color" data-k="color" value="${esc(r.color)}" aria-label="Renk"></td>
+        <td><select class="input input-sm" data-k="icon" aria-label="Simge">${iconOpts(r.icon)}</select></td>
+        <td class="muted small">${r.users != null ? n0(r.users) + ' üye' : '—'}</td>
+        <td>${i === 0 ? '' : `<button class="btn btn-ghost btn-sm" type="button" data-del-rank title="Rütbeyi sil">${icon('trash', 15)}</button>`}</td>
+      </tr>`;
+    const lv = d.table_levels || [];
+    const g = (o, k, i) => (o && o[k] && o[k][i] != null ? o[k][i] : 0);
+    const levelRow = (l) => `<tr data-level>
+        <td>${num(l.fee, 'data-k="fee" aria-label="Masa ücreti"')}</td>
+        <td><select class="input input-sm" data-k="min_rank" aria-label="En düşük rütbe">${rankOpts(l.min_rank)}</select></td>
+        <td>${num(g(l.am, '2', 0), 'data-am="2" data-i="0"')}</td>
+        <td>${num(g(l.am, '3', 0), 'data-am="3" data-i="0"')}${num(g(l.am, '3', 1), 'data-am="3" data-i="1"')}</td>
+        <td>${num(g(l.am, '4', 0), 'data-am="4" data-i="0"')}${num(g(l.am, '4', 1), 'data-am="4" data-i="1"')}</td>
+        <td>${num(g(l.am, '5', 0), 'data-am="5" data-i="0"')}${num(g(l.am, '5', 1), 'data-am="5" data-i="1"')}</td>
+        <td>${num(l.dk && l.dk['4'], 'data-dk="4"')}</td>
+        <td>${num(l.dk && l.dk['6'], 'data-dk="6"')}</td>
+        <td>${num(l.dk && l.dk['8'], 'data-dk="8"')}</td>
+        <td><button class="btn btn-ghost btn-sm" type="button" data-del-level title="Seviyeyi sil">${icon('trash', 15)}</button></td>
+      </tr>`;
+    const bj = d.bj_tiers || {};
+    const w = d.weekly_support || {};
+    const ws = d.weekly_stats || {};
+    const custom = new Set(d.custom || []);
+    const tag = (k) => (custom.has(k) ? '<span class="chip chip-quiet">Panelden değiştirildi</span>' : '<span class="chip chip-quiet">Varsayılan</span>');
+    const amLock = !!d.am_rank_lock;
+    box.innerHTML = `${!d.db_version || verLess(d.db_version, DB_WANT) ? dbOldHTML(d.db_version) : ''}
+      <nav class="ec-jump" aria-label="Ekonomi ayarları bölümleri"><a href="#ec-bj" data-jump="bj">Blackjack</a><a href="#ec-levels" data-jump="levels">Americano ve Dost Kazığı</a><a href="#ec-ranks" data-jump="ranks">Rütbeler</a><a href="#ec-weekly" data-jump="weekly">Haftalık destek</a></nav>
+      <section class="panel ec-sec" data-sec="ranks" id="ec-ranks">
+        <div class="panel-head"><h2>Rütbeler</h2>${tag('ranks')}</div>
+        <p class="panel-lead">Rütbe adı, başladığı BP, rengi ve simgesi. Alt sınırlar yukarıdan aşağı artmalı; ilk rütbe 0 BP’den başlar. Kaydedince bütün üyelerin rütbesi yeni tabloya göre hesaplanır.</p>
+        <div class="am-scroll"><table class="ec-table ec-ranks"><thead><tr><th>#</th><th>Simge</th><th>Ad</th><th>Alt sınır (BP)</th><th>Renk</th><th>Simge türü</th><th>Şu an</th><th></th></tr></thead>
+          <tbody>${ranks.map(rankRow).join('')}</tbody></table></div>
+        <div class="ec-row">
+          <label class="ec-inline">Prestij şu rütbeden itibaren: <select class="input input-sm" data-prestige>${rankOpts((d.prestige || {}).min_rank || 26)}</select></label>
+        </div>
+        <div class="ec-acts"><button class="btn btn-soft" type="button" data-add-rank>${icon('plus', 16)}Rütbe ekle</button>
+          <span class="grow"></span><button class="btn btn-ghost" type="button" data-reset="ranks">Varsayılana dön</button><button class="btn btn-primary" type="button" data-save="ranks">Rütbeleri kaydet</button></div>
+      </section>
+      <section class="panel ec-sec" data-sec="bj" id="ec-bj">
+        <div class="panel-head"><h2>Blackjack seviyeleri</h2>${tag('bj_tiers')}</div>
+        <p class="panel-lead">Her seviyenin fiş değeri, en düşük ve en yüksek bahsi (bahis fiş katlarıyla kurulur; sınırlar fiş değerinin katı olmalı, fiş çift sayı), oturmak için gereken güncel bakiye (0 = şart yok) ve jackpot ödülleri. Kaydedince açık masalar yeni değerlere hemen geçer.</p>
+        <div class="ec-tiers">${['bronze', 'silver', 'gold'].map((k) => {
+          const t = bj[k] || {};
+          const b = (t.bets || []).slice().sort((x, y) => x - y);
+          const chip = t.chip != null ? t.chip : b[0];
+          const lo = t.min_bet != null ? t.min_bet : b[0];
+          const hi = t.max_bet != null ? t.max_bet : b[b.length - 1];
+          return `<div class="ec-tier ${k}" data-tier="${k}"><h3>${TIER_N[k]}</h3>
+            <label>Fiş değeri (BP)${num(chip, 'data-k="chip" step="2"')}</label>
+            <div class="ec-pair"><label>En düşük bahis${num(lo, 'data-k="min_bet"')}</label><label>En yüksek bahis${num(hi, 'data-k="max_bet"')}</label></div>
+            <label>Oturmak için en az bakiye (BP)${num(t.min_balance, 'data-k="min_balance"')}</label>
+            <label>Jackpot, pot başına (BP)${num(t.jp_seat, 'data-k="jp_seat"')}</label>
+            <label>Jackpot, Bet Behind izleyicisine (BP)${num(t.jp_spec, 'data-k="jp_spec"')}</label>
+            <p class="muted small ec-tier-sum" data-sum></p></div>`;
+        }).join('')}</div>
+        <div class="ec-acts"><span class="grow"></span><button class="btn btn-ghost" type="button" data-reset="bj_tiers">Varsayılana dön</button><button class="btn btn-primary" type="button" data-save="bj_tiers">Blackjack ayarlarını kaydet</button></div>
+      </section>
+      <section class="panel ec-sec" data-sec="levels" id="ec-levels">
+        <div class="panel-head"><h2>Americano ve Dost Kazığı masaları</h2>${tag('table_levels')}</div>
+        <p class="panel-lead">Masa ücreti seçenekleri, o ücreti açabilen en düşük rütbe ve ödüller (BP). Americano: oyuncu sayısına göre 1. ve 2. olanın aldığı toplam BP. Dost Kazığı: kazanan takımın her oyuncusuna. Maç başlarken geçerli değerler o maç bitene kadar kullanılır.</p>
+        <label class="ec-switch"><input type="checkbox" data-amlock ${amLock ? 'checked' : ''}><span><b>Americano’da da rütbe şartı uygula</b><small>${amLock ? 'Açık: Americano masa ücretleri de rütbe şartına bağlı.' : 'Kapalı: Americano’da herkes 10–70 BP her ücretle masa açabilir. Rütbe şartı yalnız Dost Kazığı’nda geçerli.'}</small></span></label>
+        <div class="am-scroll"><table class="ec-table ec-levels"><thead><tr><th>Ücret</th><th>En düşük rütbe${amLock ? '' : '<br><small>Dost Kazığı</small>'}</th><th>AM 2 kişi<br><small>1.</small></th><th>AM 3 kişi<br><small>1. · 2.</small></th><th>AM 4 kişi<br><small>1. · 2.</small></th><th>AM 5 kişi<br><small>1. · 2.</small></th><th>DK 4 kişi</th><th>DK 6 kişi</th><th>DK 8 kişi</th><th></th></tr></thead>
+          <tbody>${lv.map(levelRow).join('')}</tbody></table></div>
+        <div class="ec-acts"><button class="btn btn-soft" type="button" data-add-level>${icon('plus', 16)}Seviye ekle</button>
+          <span class="grow"></span><button class="btn btn-ghost" type="button" data-reset="table_levels">Varsayılana dön</button><button class="btn btn-primary" type="button" data-save="table_levels">Masa seviyelerini kaydet</button></div>
+      </section>
+      <section class="panel ec-sec" data-sec="weekly" id="ec-weekly">
+        <div class="panel-head"><h2>Haftalık BP desteği</h2>${tag('weekly_support')}</div>
+        <p class="panel-lead">Bakiyesi hafta içinde eşiğe ya da altına inen üye, Pazartesi 00:00 – Pazar 23:59 (Türkiye saati) arasında bir kez talep eder. Bu hafta: ${n0(ws.claims)} talep · ${n0(ws.bp)} BP · ${n0(ws.eligible)} üye hak kazandı ama henüz almadı.</p>
+        <div class="ec-weekly">
+          <label class="ec-inline"><input type="checkbox" data-k="enabled" ${w.enabled !== false ? 'checked' : ''}> Açık</label>
+          <label>Destek miktarı (BP)${num(w.amount, 'data-k="amount"')}</label>
+          <label>Bakiye eşiği (BP, bu ve altı)${num(w.threshold, 'data-k="threshold"')}</label>
+        </div>
+        <div class="ec-acts"><span class="grow"></span><button class="btn btn-ghost" type="button" data-reset="weekly_support">Varsayılana dön</button><button class="btn btn-primary" type="button" data-save="weekly_support">Haftalık desteği kaydet</button></div>
+      </section>
+      <div class="admin-grid">
+        <section class="panel"><div class="panel-head"><h2>Son ayar değişiklikleri</h2></div>
+          <ul class="bja-log">${(d.audit || []).map((a) => `<li><b>${esc(AUDIT_KEY[a.key] || a.key)}</b> · ${esc(a.by || 'yönetici')}<time>${esc(BG.fmt.dateShort(a.at))} ${esc(BG.fmt.clock(a.at))}</time></li>`).join('') || '<li class="muted">Henüz değişiklik yok.</li>'}</ul></section>
+        <section class="panel"><div class="panel-head"><h2>Ekonomi kayıt hataları</h2></div>
+          <p class="panel-lead">Görev, istatistik ve Friend Coins kayıtlarında bir hata olursa oyun durmaz, burada görünür.</p>
+          <ul class="bja-log">${(d.errors || []).map((e) => `<li><b>${esc(e.ctx)}</b> · ${esc(e.err)}<time>${esc(BG.fmt.dateShort(e.at))} ${esc(BG.fmt.clock(e.at))}</time></li>`).join('') || '<li class="muted">Hata yok.</li>'}</ul></section>
+      </div>`;
+    const $$ = (s, el) => Array.from((el || box).querySelectorAll(s));
+    const intOf = (inp) => {
+      const v = String(inp.value).trim();
+      return /^\d+$/.test(v) ? parseInt(v, 10) : NaN;
+    };
+    const rankTbody = box.querySelector('.ec-ranks tbody');
+    const renumber = () => $$('tr[data-rank]', rankTbody).forEach((tr, i) => (tr.querySelector('.ec-idx').textContent = i + 1));
+    // canlı önizleme: renk ve simge değişince satırdaki rütbe simgesi güncellenir
+    rankTbody.addEventListener('input', (e) => {
+      const tr = e.target.closest('tr[data-rank]');
+      if (!tr || !e.target.matches('[data-k="color"], [data-k="icon"]')) return;
+      const color = tr.querySelector('[data-k="color"]').value;
+      const ic = tr.querySelector('[data-k="icon"]').value;
+      const saved = BG.RANKS;
+      BG.RANKS = [[tr.querySelector('[data-k="name"]').value, 0, color, ic]];
+      tr.querySelector('[data-prev]').innerHTML = BG.rankIcon(1, 26);
+      BG.RANKS = saved;
+    });
+    rankTbody.addEventListener('click', (e) => {
+      const b = e.target.closest('[data-del-rank]');
+      if (!b) return;
+      b.closest('tr').remove();
+      renumber();
+    });
+    box.querySelector('[data-add-rank]').addEventListener('click', () => {
+      const rows = $$('tr[data-rank]', rankTbody);
+      const last = rows[rows.length - 1];
+      const lastMin = last ? intOf(last.querySelector('[data-k="min_bp"]')) || 0 : 0;
+      const tr = BG.frag(`<table><tbody>${rankRow({ name: 'Yeni rütbe', min_bp: lastMin ? lastMin * 2 : 1000, color: '#ffffff', icon: 'galaxy', users: null }, rows.length)}</tbody></table>`).querySelector('tr');
+      rankTbody.appendChild(tr);
+      tr.querySelector('[data-k="name"]').select();
+    });
+    const lvTbody = box.querySelector('.ec-levels tbody');
+    lvTbody.addEventListener('click', (e) => {
+      const b = e.target.closest('[data-del-level]');
+      if (b) b.closest('tr').remove();
+    });
+    box.querySelector('[data-add-level]').addEventListener('click', () => {
+      const rows = $$('tr[data-level]', lvTbody);
+      const lastFee = rows.length ? intOf(rows[rows.length - 1].querySelector('[data-k="fee"]')) || 0 : 0;
+      const fee = lastFee + 10;
+      const tr = BG.frag(`<table><tbody>${levelRow({ fee, min_rank: ranks.length, am: { 2: [Math.round(fee * 1.5)], 3: [Math.round(fee * 1.5), fee], 4: [Math.round(fee * 2), Math.round(fee * 1.5)], 5: [Math.round(fee * 3), Math.round(fee * 1.5)] }, dk: { 4: Math.round(fee * 1.5), 6: Math.round(fee * 2.25), 8: fee * 3 } })}</tbody></table>`).querySelector('tr');
+      lvTbody.appendChild(tr);
+    });
+    function collect(key) {
+      if (key === 'ranks') {
+        return $$('tr[data-rank]', rankTbody).map((tr, i) => ({
+          name: tr.querySelector('[data-k="name"]').value.trim(),
+          min_bp: i === 0 ? 0 : intOf(tr.querySelector('[data-k="min_bp"]')),
+          color: tr.querySelector('[data-k="color"]').value.toLowerCase(),
+          icon: tr.querySelector('[data-k="icon"]').value,
+        }));
+      }
+      if (key === 'bj_tiers') {
+        const o = {};
+        $$('[data-tier]').forEach((el) => {
+          const v = (k) => intOf(el.querySelector(`[data-k="${k}"]`));
+          o[el.dataset.tier] = { chip: v('chip'), min_bet: v('min_bet'), max_bet: v('max_bet'), min_balance: v('min_balance'), jp_seat: v('jp_seat'), jp_spec: v('jp_spec') };
+        });
+        return o;
+      }
+      if (key === 'table_levels') {
+        return $$('tr[data-level]', lvTbody).map((tr) => {
+          const am = {};
+          $$('[data-am]', tr).forEach((inp) => {
+            (am[inp.dataset.am] = am[inp.dataset.am] || [])[+inp.dataset.i] = intOf(inp);
+          });
+          const dk = {};
+          $$('[data-dk]', tr).forEach((inp) => (dk[inp.dataset.dk] = intOf(inp)));
+          return { fee: intOf(tr.querySelector('[data-k="fee"]')), min_rank: +tr.querySelector('[data-k="min_rank"]').value, am, dk };
+        });
+      }
+      if (key === 'weekly_support') {
+        const sec = box.querySelector('[data-sec="weekly"]');
+        return { enabled: sec.querySelector('[data-k="enabled"]').checked, amount: intOf(sec.querySelector('[data-k="amount"]')), threshold: intOf(sec.querySelector('[data-k="threshold"]')) };
+      }
+      return null;
+    }
+    // Blackjack seviye özeti: "10–50 BP · 5 adım: 10, 20, 30, 40, 50"
+    const tierSum = (el) => {
+      const v = (k) => intOf(el.querySelector(`[data-k="${k}"]`));
+      const chip = v('chip');
+      const lo = v('min_bet');
+      const hi = v('max_bet');
+      const out = el.querySelector('[data-sum]');
+      if (!(chip > 0) || !(lo > 0) || !(hi >= lo)) {
+        out.textContent = 'Fiş, en düşük ve en yüksek bahsi gir.';
+        return;
+      }
+      if (chip % 2 || lo % chip || hi % chip) {
+        out.textContent = 'Fiş çift sayı, sınırlar fiş değerinin katı olmalı.';
+        return;
+      }
+      const steps = [];
+      for (let x = lo; x <= hi && steps.length < 9; x += chip) steps.push(x);
+      const n = Math.floor((hi - lo) / chip) + 1;
+      out.textContent = `Masada bahisler: ${steps.map(n0).join(', ')}${n > steps.length ? ' …' : ''} BP (${n} adım)${v('min_balance') > 0 ? ` · oturmak için ${n0(v('min_balance'))} BP` : ' · giriş şartı yok'}`;
+    };
+    $$('[data-tier]').forEach((el) => {
+      tierSum(el);
+      el.addEventListener('input', () => tierSum(el));
+    });
+    const amBox = box.querySelector('[data-amlock]');
+    amBox.addEventListener('change', async () => {
+      amBox.disabled = true;
+      try {
+        await BG.api.rpc('bg_admin_econ_set', { p_key: 'am_rank_lock', p_value: amBox.checked });
+        const s2 = await BG.api.rpc('bg_public_settings', {});
+        if (BG.applyEconSettings) BG.applyEconSettings(s2);
+        BG.toast({ type: 'success', text: amBox.checked ? 'Americano’da rütbe şartı açıldı.' : 'Americano’da bütün masa ücretleri herkese açık.' });
+        econSetPane(root);
+      } catch (e) {
+        BG.toastError(e);
+        amBox.checked = !amBox.checked;
+        amBox.disabled = false;
+      }
+    });
+    box.querySelector('.ec-jump').addEventListener('click', (e) => {
+      const a = e.target.closest('[data-jump]');
+      if (!a) return;
+      e.preventDefault();
+      const sec = box.querySelector(`[data-sec="${a.dataset.jump}"]`);
+      if (sec) sec.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    });
+    // sayı olmayan alanlar NaN → JSON'da null olur; sunucu alan adıyla hata verir
+    const save = async (key, value, btn, msg) => {
+      btn.disabled = true;
+      try {
+        await BG.api.rpc('bg_admin_econ_set', { p_key: key, p_value: value });
+        if (key === 'ranks') {
+          await BG.api.rpc('bg_admin_econ_set', { p_key: 'prestige', p_value: { min_rank: +box.querySelector('[data-prestige]').value } });
+        }
+        const s = await BG.api.rpc('bg_public_settings', {});
+        if (BG.applyEconSettings) BG.applyEconSettings(s);
+        if (BG.bp) BG.bp.refresh();
+        BG.toast({ type: 'success', text: msg });
+        econSetPane(root);
+      } catch (e) {
+        BG.toastError(e);
+        btn.disabled = false;
+      }
+    };
+    $$('[data-save]').forEach((b) =>
+      b.addEventListener('click', () => {
+        const key = b.dataset.save;
+        save(key, collect(key), b, { ranks: 'Rütbeler kaydedildi.', bj_tiers: 'Blackjack seviyeleri kaydedildi.', table_levels: 'Masa seviyeleri kaydedildi.', weekly_support: 'Haftalık destek kaydedildi.' }[key]);
+      }),
+    );
+    $$('[data-reset]').forEach((b) =>
+      b.addEventListener('click', async () => {
+        const key = b.dataset.reset;
+        const ok = await BG.confirm({ title: 'Varsayılana dönülsün mü?', text: `${AUDIT_KEY[key]} şartnamedeki varsayılan değerlere döner.`, okText: 'Varsayılana dön', danger: true });
+        if (!ok) return;
+        save(key, null, b, 'Varsayılan değerlere dönüldü.');
+      }),
+    );
+  }
+
+  /* ---------------- v3.2: açık Americano / Dost Kazığı masaları ---------------- */
+  const GAME_N = { 'americano-online': 'Americano Online', 'dostkazigi-online': 'Dost Kazığı Online' };
+  async function tablesPane(root) {
+    const box = root.querySelector('[data-pane="tables"]');
+    if (!box.firstElementChild) box.innerHTML = '<p class="loading-row">Yükleniyor…</p>';
+    let list;
+    try {
+      list = (await BG.api.rpc('bg_admin_tables', {})) || [];
+    } catch (e) {
+      box.innerHTML = `<p class="loading-row">${esc(e.message)}</p>`;
+      return;
+    }
+    box.innerHTML = `<section class="panel">
+        <div class="panel-head"><h2>Açık online masalar</h2></div>
+        <p class="panel-lead">Lobide bekleyen ve oynanan Americano / Dost Kazığı masaları. Kapatılan masada ücret alınmış ve sonuçlanmamış maç varsa masada kalan oyunculara ücretleri iade edilir. Blackjack masaları Blackjack sekmesinde.</p>
+        <div class="bja-list">${list.map((t) => `<article class="bja-t" data-tid="${esc(t.id)}">
+            <header><b>${esc(t.title || GAME_N[t.game] || t.game)}</b><span class="chip">${esc(GAME_N[t.game] || t.game)}</span><span class="chip chip-quiet">${t.status === 'playing' ? 'Oynanıyor' : 'Lobide'}</span>${t.fee ? `<span class="chip chip-quiet">${n0(t.fee)} BP ücret</span>` : ''}</header>
+            <p class="muted">Kuran ${esc(t.host || '—')} · ${t.seats_n} koltuk · son hareket ${esc(BG.fmt.ago(t.updated_at))}</p>
+            <p class="bja-seats">${(t.players || []).map((p) => `<span class="${p.left ? 'off' : ''}">${p.kind === 'bot' ? '🤖 ' : ''}${esc(p.name || 'Boş')}${p.left ? ' (ayrıldı)' : ''}</span>`).join('') || '<span class="muted">Oturan yok</span>'}</p>
+            <div class="bja-act"><button class="btn btn-danger btn-sm" type="button" data-close-table>Masayı kapat</button></div>
+          </article>`).join('') || '<p class="loading-row">Açık masa yok.</p>'}</div>
+      </section>`;
+    box.querySelectorAll('[data-close-table]').forEach((b) =>
+      b.addEventListener('click', async () => {
+        const id = b.closest('[data-tid]').dataset.tid;
+        const ok = await BG.confirm({ title: 'Masa kapatılsın mı?', text: 'Masadaki oyuncular çıkarılır. Ücret alınmış ve sonuçlanmamış maçta ücretler iade edilir.', okText: 'Masayı kapat', danger: true });
+        if (!ok) return;
+        b.disabled = true;
+        try {
+          await BG.api.rpc('bg_admin_table_close', { p_table: id });
+          BG.toast({ type: 'success', text: 'Masa kapatıldı.' });
+          tablesPane(root);
+        } catch (e) {
+          BG.toastError(e);
+          b.disabled = false;
+        }
+      }),
+    );
+  }
+
   /* ---------------- Ekonomi ekranı ---------------- */
   async function ecoPane(root, days) {
     const box = root.querySelector('[data-pane="eco"]');
@@ -429,7 +748,7 @@
     SHOE_RESHUFFLE: 'Karıştırma', NEXT_ROUND: 'Yeni tur', PAUSED: 'Duraklatıldı', CLOSED: 'Kapandı',
   };
   const CANCELLABLE = ['BETTING_OPEN', 'INITIAL_DEAL', 'INSURANCE_WINDOW', 'DEALER_PEEK', 'PLAYER_TURNS', 'DEALER_TURN'];
-  const ACT = { pause: 'duraklatıldı', resume: 'sürdürüldü', close: 'kapatıldı', cancel_round: 'tur iptal edildi' };
+  const ACT = { pause: 'duraklatıldı', resume: 'sürdürüldü', close: 'kapatıldı', cancel_round: 'tur iptal edildi', force_close: 'hemen kapatıldı (iade)' };
   const WHY = { admin: 'yönetici', shoe_empty: 'kart bitti', min_pots: 'yetersiz pot', paused: 'masa duraklatıldı', closing: 'masa kapandı', closed: 'masa kapandı', owner: 'sahibi kapattı', idle: 'uzun süre boş kaldı' };
   const SRC = { seat: 'ana bahis + sigorta', extra: 'ek bahis (double/split)', bet_behind: 'Bet Behind' };
   const EV = { created: 'Masa açıldı', closed: 'Masa kapandı', closing: 'Kapanış istendi', cancel: 'Tur iptal edildi', jackpot: 'JACKPOT', admin: 'Yönetici işlemi', shoe: 'Yeni sabot', cut: 'Kesme kartı çıktı', pre_invalid: 'Geçersiz ön hamle', bb_refund: 'Bet Behind iadesi (BP yetersiz)', bet_dropped: 'Bahis tahsil edilemedi', tick_error: 'Zamanlayıcı hatası', disconnect: 'Bağlantı koptu' };
@@ -463,7 +782,8 @@
               ${x.closed ? '' : `<div class="bja-act">
                 ${x.status === 'paused' ? '<button class="btn btn-soft btn-sm" type="button" data-bj="resume">Sürdür</button>' : '<button class="btn btn-soft btn-sm" type="button" data-bj="pause">Duraklat</button>'}
                 ${CANCELLABLE.includes(x.state) ? '<button class="btn btn-soft btn-sm" type="button" data-bj="cancel_round">Turu iptal et (iade)</button>' : ''}
-                <button class="btn btn-danger btn-sm" type="button" data-bj="close">Kapat</button></div>`}
+                <button class="btn btn-danger btn-sm" type="button" data-bj="close">Kapat</button>
+                <button class="btn btn-danger btn-sm" type="button" data-bj="force_close" title="Takılan masa için: tur iade edilir, masa hemen kapanır">Hemen kapat (iade)</button></div>`}
               <input type="hidden" value="${esc(x.id)}">
             </article>`,
           )
@@ -486,14 +806,15 @@
         const card = b.closest('.bja-t');
         const id = card.querySelector('input[type=hidden]').value;
         const a = b.dataset.bj;
-        const label = { pause: 'Masa duraklatılsın mı?', resume: 'Masa sürdürülsün mü?', cancel_round: 'Devam eden tur iptal edilsin mi?', close: 'Masa kapatılsın mı?' }[a];
+        const label = { pause: 'Masa duraklatılsın mı?', resume: 'Masa sürdürülsün mü?', cancel_round: 'Devam eden tur iptal edilsin mi?', close: 'Masa kapatılsın mı?', force_close: 'Masa hemen kapatılsın mı?' }[a];
         const text = {
           pause: 'Devam eden tur tamamlanır, yeni tur başlamaz.',
           resume: 'Masa yeniden oyuncu ve bahis kabul eder.',
           cancel_round: 'Turdaki bütün bahisler (ana, ek, sigorta, Bet Behind) iade edilir ve iade kaydına yazılır.',
           close: 'Devam eden tur varsa tamamlanır, sonra masa kapanır ve oyuncular kalkar.',
+          force_close: 'Devam eden turun bütün bahisleri (ana, ek, sigorta, Bet Behind) iade edilir, masa beklemeden kapanır ve oyuncular kalkar. Takılan masalar için.',
         }[a];
-        const ok = await BG.confirm({ title: label, text, okText: { pause: 'Duraklat', resume: 'Sürdür', cancel_round: 'Turu iptal et', close: 'Masayı kapat' }[a], danger: a === 'close' || a === 'cancel_round' });
+        const ok = await BG.confirm({ title: label, text, okText: { pause: 'Duraklat', resume: 'Sürdür', cancel_round: 'Turu iptal et', close: 'Masayı kapat', force_close: 'Hemen kapat' }[a], danger: a === 'close' || a === 'cancel_round' || a === 'force_close' });
         if (!ok) return;
         b.disabled = true;
         try {
@@ -512,22 +833,27 @@
     const root = BG.frag(`
       <div class="page admin">
         <header class="page-head">
-          <div><h1>Yönetim paneli</h1><p class="page-lead">Üyeler ve BP bakiyeleri, BP yönetimi, ekonomi, mağaza ve Blackjack masaları. Şifreler hiçbir zaman görüntülenmez.</p></div>
+          <div><h1>Yönetim paneli</h1><p class="page-lead">Üyeler ve BP bakiyeleri, oyun ekonomisi ayarları (Blackjack seviyeleri, Americano ve Dost Kazığı masa ücretleri ve ödülleri, rütbeler), BP yönetimi, mağaza, Blackjack ve online masalar. Şifreler hiçbir zaman görüntülenmez.</p></div>
           <button class="btn btn-soft" type="button" data-refresh>${icon('refresh', 18)}Yenile</button>
         </header>
+        <div class="admin-dbwarn" hidden></div>
         <nav class="admin-tabs filters" role="tablist" aria-label="Yönetim bölümleri">
           <button class="filter is-on" data-tab="users" role="tab" aria-selected="true">${icon('users', 16)}Üyeler</button>
+          <button class="filter" data-tab="econset" role="tab" aria-selected="false">${icon('settings', 16)}Ekonomi ayarları</button>
           <button class="filter" data-tab="bp" role="tab" aria-selected="false">${icon('coin', 16)}BP yönetimi</button>
           <button class="filter" data-tab="eco" role="tab" aria-selected="false">${icon('chart', 16)}Ekonomi</button>
           <button class="filter" data-tab="store" role="tab" aria-selected="false">${icon('bag', 16)}Mağaza</button>
           <button class="filter" data-tab="reports" role="tab" aria-selected="false">${icon('flag', 16)}Yorum bildirimleri</button>
           <button class="filter" data-tab="bj" role="tab" aria-selected="false">Blackjack</button>
+          <button class="filter" data-tab="tables" role="tab" aria-selected="false">${icon('tiles', 16)}Online masalar</button>
         </nav>
         <div class="admin-pane" data-pane="bp" hidden></div>
         <div class="admin-pane" data-pane="eco" hidden></div>
         <div class="admin-pane" data-pane="store" hidden></div>
         <div class="admin-pane" data-pane="reports" hidden></div>
         <div class="admin-pane" data-pane="bj" hidden></div>
+        <div class="admin-pane" data-pane="econset" hidden></div>
+        <div class="admin-pane" data-pane="tables" hidden></div>
         <div class="stat-strip" aria-live="polite" data-pane-users></div>
         <section class="panel" data-pane-users>
           <div class="table-tools">
@@ -688,8 +1014,20 @@
         draw();
       })
     );
-    const refreshTab = () => (tab === 'bp' ? bpPane(root) : tab === 'eco' ? ecoPane(root) : tab === 'store' ? storePane(root) : tab === 'reports' ? reportsPane(root) : tab === 'bj' ? bjPane(root) : load());
+    const refreshTab = () => (tab === 'bp' ? bpPane(root) : tab === 'eco' ? ecoPane(root) : tab === 'store' ? storePane(root) : tab === 'reports' ? reportsPane(root) : tab === 'bj' ? bjPane(root) : tab === 'econset' ? econSetPane(root) : tab === 'tables' ? tablesPane(root) : load());
     root.querySelector('[data-refresh]').addEventListener('click', refreshTab);
+    // v3.3: veritabanı sürümü siteden eskiyse panelin en üstünde ne yapılacağı yazılır
+    BG.api
+      .rpc('bg_public_settings', {})
+      .then((ps) => {
+        const have = ps && ps.db_version;
+        const w = root.querySelector('.admin-dbwarn');
+        if (w && (!have || verLess(have, DB_WANT))) {
+          w.innerHTML = dbOldHTML(have);
+          w.hidden = false;
+        }
+      })
+      .catch(() => {});
     root.querySelectorAll('[data-tab]').forEach((b) =>
       b.addEventListener('click', () => {
         tab = b.dataset.tab;
@@ -726,6 +1064,7 @@
       if (document.visibilityState !== 'visible') return;
       if (tab === 'users') load();
       else if (tab === 'bj') bjPane(root, true);
+      else if (tab === 'tables') tablesPane(root);
       else if (tab === 'eco') ecoPane(root);
     }, 30000);
     load();

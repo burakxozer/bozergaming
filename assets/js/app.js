@@ -110,6 +110,7 @@
         <a role="menuitem" href="#/profil">${icon('user', 18)}Profilim</a>
         <button role="menuitem" type="button" data-bp-open>${icon('coin', 18)}BP cüzdanım</button>
         <a role="menuitem" href="#/gorevler">${icon('target', 18)}Görevler <span data-missions-badge>${BG.countBadge(BG.bp && BG.bp.state && BG.bp.state.missions_ready)}</span></a>
+        <a role="menuitem" href="#/rutbeler">${icon('trophy', 18)}Rütbeler</a>
         <a role="menuitem" href="#/magaza">${icon('bag', 18)}Mağaza</a>
         <a role="menuitem" href="#/profil/ayarlar">${icon('settings', 18)}Profil ayarları</a>
         <a role="menuitem" href="#/oyunlarim">${icon('cloud', 18)}Kayıtlı oyunlarım</a>
@@ -218,6 +219,7 @@
     R.add('/profil/:id', page(BG.views.player, authed));
     R.add('/magaza', page(BG.views.store, authed));
     R.add('/gorevler', page(BG.views.missions, authed));
+    R.add('/rutbeler', page(BG.views.ranks));
     R.add('/arkadaslar', page(BG.views.friends, authed));
     R.add('/mesajlar', page(BG.views.messages, authed));
     R.add('/mesajlar/:username', page(BG.views.messages, authed));

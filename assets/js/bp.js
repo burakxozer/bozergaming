@@ -40,7 +40,31 @@
   const GAME = { 'americano-online': 'Americano', 'dostkazigi-online': 'Dost Kazığı', blackjack: 'Blackjack' };
   econ.kindLabel = (k) => KIND[k] || k;
   econ.gameLabel = (g) => GAME[g] || 'Site';
-  econ.tierText = (bal) => (bal >= 8000 ? 'Blackjack: Gold kademesi · 100 BP’ye kadar bahis' : bal >= 4000 ? 'Blackjack: Silver kademesi · 20 BP’ye kadar bahis' : 'Blackjack: Bronze kademesi · 10 BP bahis');
+  // v3.2: Blackjack seviyeleri panelden gelir (bakiye eşiği ve bahis değerleri)
+  const TIER_NAME = { bronze: 'Bronze', silver: 'Silver', gold: 'Gold' };
+  // v3.3: fiş değeri + en düşük / en yüksek bahis (eski kayıt biçimi — bahis listesi — da okunur)
+  const tiers = () =>
+    (BG.publicSettings && BG.publicSettings.bj_tiers) || {
+      bronze: { min_balance: 0, chip: 10, min_bet: 10, max_bet: 50 },
+      silver: { min_balance: 0, chip: 20, min_bet: 20, max_bet: 100 },
+      gold: { min_balance: 4000, chip: 50, min_bet: 50, max_bet: 300 },
+    };
+  const tierMax = (t) => (t.max_bet != null ? +t.max_bet : Math.max(0, ...(t.bets || [0])));
+  /** Bakiyenin yettiği en yüksek bahis (oturabildiği seviyeler içinde) */
+  econ.maxBetFor = (bal) => {
+    let m = 0;
+    Object.values(tiers()).forEach((t) => {
+      if ((t.min_balance || 0) <= bal) m = Math.max(m, tierMax(t));
+    });
+    return m || 10;
+  };
+  econ.tierText = (bal) => {
+    let best = 'bronze';
+    ['bronze', 'silver', 'gold'].forEach((k) => {
+      if ((tiers()[k] || {}).min_balance <= bal) best = k;
+    });
+    return `Blackjack: ${TIER_NAME[best]} kademesi · ${fmt(econ.maxBetFor(bal))} BP’ye kadar bahis`;
+  };
   econ.owns = (id) => !!(econ.state && (econ.state.owned || []).indexOf(id) >= 0);
   const reduce = () => window.matchMedia('(prefers-reduced-motion: reduce)').matches;
 
@@ -66,7 +90,7 @@
     if (!econ.state) return;
     const old = econ.state.balance;
     econ.state.balance = Number(b) || 0;
-    econ.state.max_bet = econ.state.balance >= 8000 ? 100 : econ.state.balance >= 4000 ? 20 : 10;
+    econ.state.max_bet = econ.maxBetFor(econ.state.balance);
     econ.state.rank = BG.rankOf(econ.state.balance);
     econ.state.max_fee = BG.rankInfo(econ.state.rank).maxFee;
     const best = econ.state.best_rank || 1;
@@ -170,14 +194,14 @@
     BG.ls.set(key, rank);
     if (rank <= 1) return;
     const r = BG.rankInfo(rank);
-    const ov = BG.frag(`<div class="rankup g${r.grp}" role="dialog" aria-label="Yeni rütbe: ${esc(r.name)}">
+    const ov = BG.frag(`<div class="rankup g${r.grp}" style="${BG.rankStyle(r)}" role="dialog" aria-label="Yeni rütbe: ${esc(r.name)}">
         <div class="rankup-card">
           <div class="rankup-rays" aria-hidden="true"></div>
           <div class="rankup-ic">${BG.rankIcon(rank, 120)}</div>
           <p class="rankup-k">Yeni rütbe</p>
           <h2 class="rankup-name">${esc(r.name)}</h2>
-          <p class="rankup-sub">${esc(r.group)} grubu · ${r.maxFee} BP’ye kadar masa açabilirsin</p>
-          <button class="btn btn-primary" type="button">Harika</button>
+          <p class="rankup-sub">${r.group ? esc(r.group) + ' · ' : ''}${BG.publicSettings && BG.publicSettings.am_rank_lock ? '' : 'Dost Kazığı’nda '}${r.maxFee} BP’ye kadar masa açabilirsin</p>
+          <div class="rankup-acts"><a class="btn btn-ghost" href="#/rutbeler">Rütbeleri gör</a><button class="btn btn-primary" type="button">Harika</button></div>
         </div>
       </div>`);
     document.body.appendChild(ov);
@@ -193,12 +217,65 @@
     });
   };
 
+  /* ---------------- v3.2: haftalık BP desteği ----------------
+     Bakiye hafta içinde eşiğe (100) indiyse Pazartesi 00:00 – Pazar 23:59 arasında bir kez talep edilir.
+     Talep et → 2 sn yükleme animasyonu → BP hesaba yüklenir. */
+  econ.weeklyHTML = function (where) {
+    const s = econ.state;
+    const w = s && s.weekly;
+    if (!w || !w.enabled || !w.eligible) return '';
+    const end = w.week_end ? new Date(w.week_end) : null;
+    return `<div class="bp-weekly${where ? ' is-' + where : ''}" data-weekly role="region" aria-label="Haftalık BP desteği">
+        <span class="bpw-ic" aria-hidden="true">${icon('coin', 26)}</span>
+        <div class="bpw-t"><b>Haftalık ${fmt(w.amount)} BP desteği</b>
+          <span>BP bakiyen bu hafta ${fmt(w.threshold)} ve altına indi. Bu hafta bir kez ${fmt(w.amount)} BP talep edebilirsin${end ? ` · ${esc(BG.fmt.dateShort(new Date(end.getTime() - 60000)))} 23:59’a kadar` : ''}.</span></div>
+        <button class="btn btn-primary bpw-go" type="button" data-weekly-claim>${icon('gift', 17)}Talep et</button>
+        <div class="bpw-load" aria-hidden="true"><i></i></div>
+      </div>`;
+  };
+  econ.claimWeekly = async function (btn) {
+    if (econ.busy) return;
+    const card = btn.closest('[data-weekly]');
+    const w = (econ.state && econ.state.weekly) || {};
+    econ.busy = true;
+    btn.disabled = true;
+    if (card) {
+      card.classList.add('is-loading');
+      card.querySelector('.bpw-t').innerHTML = `<b>${fmt(w.amount || 0)} BP yükleniyor…</b><span>Bakiyen hazırlanıyor, birkaç saniye sür.</span>`;
+      btn.innerHTML = '<span class="bpw-spin" aria-hidden="true"></span>Yükleniyor';
+    }
+    await new Promise((r) => setTimeout(r, 2000));
+    try {
+      const r = await BG.api.rpc('bg_bp_weekly_claim', {});
+      if (card) {
+        card.classList.remove('is-loading');
+        card.classList.add('is-done');
+        card.querySelector('.bpw-t').innerHTML = `<b>+${fmt(r.amount)} BP hesabına yüklendi</b><span>İyi oyunlar! Yeni destek hakkı gelecek hafta.</span>`;
+        btn.remove();
+        econ.burst(card, 22);
+        await econ.flyCoins(card, 12);
+      }
+      econ.state.weekly = r.weekly;
+      econ.setBalance(r.balance);
+      econ.toastGain('+' + fmt(r.amount) + ' BP', 'Haftalık destek hesabına yüklendi');
+      if (card)
+        setTimeout(() => {
+          card.classList.add('is-out');
+          setTimeout(() => card.remove(), 400);
+        }, 2600);
+    } catch (e) {
+      BG.toastError(e);
+      econ.refresh();
+    } finally {
+      econ.busy = false;
+    }
+  };
   /* ---------------- görünümler ---------------- */
   function chipHTML() {
     const s = econ.state;
     if (!s) return '';
     const r = BG.rankInfo(s.rank || BG.rankOf(s.balance));
-    const dot = s.daily_ready || s.missions_ready || s.rewards_ready;
+    const dot = s.daily_ready || s.missions_ready || s.rewards_ready || (s.weekly && s.weekly.eligible);
     return `<button class="bp-chip${dot ? ' has-daily' : ''}" type="button" data-bp-open aria-label="BP bakiyen: ${fmt(s.balance)} BP, rütbe ${esc(r.name)}${s.prestige ? ', Prestij ' + BG.roman(s.prestige) : ''}">
         ${BG.rankIcon(r.idx, 20)}<b data-bp-balance>${fmt(s.balance)}</b><span class="bp-unit">BP</span>${s.prestige ? `<span class="bp-pr" title="Prestij ${BG.roman(s.prestige)}">${icon('star', 11)}${BG.roman(s.prestige)}</span>` : ''}
         ${dot ? '<span class="bp-dot" aria-hidden="true"></span>' : ''}
@@ -233,7 +310,7 @@
     const r = BG.rankInfo(s.rank);
     const span = r.next ? Math.max(1, r.next - r.min) : 1;
     const prog = r.next ? Math.max(0, Math.min(100, ((s.balance - r.min) / span) * 100)) : 100;
-    return `<div class="bp-wallet g${r.grp}">
+    return `${econ.weeklyHTML('home')}<div class="bp-wallet g${r.grp}" style="${BG.rankStyle(r)}">
         <button class="bp-wallet-main" type="button" data-bp-open aria-label="BP cüzdanını aç">
           <span class="bp-wallet-rank">${BG.rankIcon(r.idx, 46)}</span>
           <span class="bp-wallet-txt">
@@ -262,7 +339,16 @@
   econ.paint = function (oldBal) {
     document.querySelectorAll('.bp-slot').forEach((slot) => (slot.innerHTML = BG.isAuthed() ? chipHTML() : ''));
     document.querySelectorAll('.bell-slot').forEach((slot) => (slot.innerHTML = bellHTML()));
-    document.querySelectorAll('[data-bp-wallet]').forEach((w) => (w.innerHTML = econ.walletHTML()));
+    document.querySelectorAll('[data-bp-wallet]').forEach((w) => {
+      // haftalık destek talebi sürerken (yükleniyor / yüklendi) kart yeniden çizimde kaybolmasın
+      const live = w.querySelector('[data-weekly].is-loading, [data-weekly].is-done');
+      w.innerHTML = econ.walletHTML();
+      if (live) {
+        const fresh = w.querySelector('[data-weekly]');
+        if (fresh) fresh.replaceWith(live);
+        else w.prepend(live);
+      }
+    });
     if (oldBal != null && econ.state && oldBal !== econ.state.balance) {
       document.querySelectorAll('[data-bp-balance]').forEach((b) => {
         b.classList.remove('bp-bump', 'bp-drop');
@@ -330,14 +416,15 @@
       const pNext = BG.PRESTIGE_STEPS[pr];
       const pPrev = pr ? BG.PRESTIGE_STEPS[pr - 1] : 0;
       const pProg = pNext ? Math.max(0, Math.min(100, (((st.eligible || 0) - pPrev) / (pNext - pPrev)) * 100)) : 100;
-      panes.wallet.innerHTML = `
-        <div class="bpx-hero g${r.grp}">
+      panes.wallet.innerHTML = `${econ.weeklyHTML('panel')}
+        <div class="bpx-hero g${r.grp}" style="${BG.rankStyle(r)}">
           <div class="bpx-rank">${BG.rankIcon(r.idx, 64)}</div>
           <div class="bpx-amt"><b data-bp-balance>${fmt(st.balance)}</b> <span>BP</span></div>
           <div class="bpx-rkname">${esc(r.name)} <small>· ${esc(r.group)}</small>${pr ? ' ' + BG.prestigeChip(pr) : ''}</div>
           <div class="bp-prog lg" aria-hidden="true"><i style="width:${prog.toFixed(1)}%"></i></div>
-          <p class="muted small">${r.next ? `Sonraki rütbe ${esc(r.nextName)}: ${fmt(r.next)} BP (${fmt(r.next - st.balance)} BP kaldı)` : 'En yüksek temel rütbe: Global. Prestij ilerlemesi aşağıda.'}
-            · En yüksek rütben: <b>${esc(BG.rankInfo(st.best_rank).name)}</b> · Masa ücreti sınırın: <b>${r.maxFee} BP</b></p>
+          <p class="muted small">${r.next ? `Sonraki rütbe ${esc(r.nextName)}: ${fmt(r.next)} BP (${fmt(r.next - st.balance)} BP kaldı)` : `En yüksek rütbe: ${esc(r.name)}. Prestij ilerlemesi aşağıda.`}
+            · En yüksek rütben: <b>${esc(BG.rankInfo(st.best_rank).name)}</b> · ${BG.publicSettings && BG.publicSettings.am_rank_lock ? 'Masa' : 'Dost Kazığı masa'} ücreti sınırın: <b>${r.maxFee} BP</b></p>
+          <a class="btn btn-soft btn-sm bpx-ranks" href="#/rutbeler">${icon('trophy', 16)}Bütün rütbeler</a>
         </div>
         <section class="bpx-sec">
           <h3>${icon('gift', 17)}Günlük bonus</h3>
@@ -351,7 +438,7 @@
           <h3>${icon('star', 17)}Prestij</h3>
           <p class="small">${pr ? `Prestij <b>${BG.roman(pr)}</b>.` : 'Henüz prestij yok.'} Uygun kazanç sayacı: <b>${fmt(st.eligible || 0)}</b>${pNext ? ` / ${fmt(pNext)} (Prestij ${BG.roman(pr + 1)})` : ' — en yüksek prestij'}</p>
           <div class="bp-prog pr" aria-hidden="true"><i style="width:${pProg.toFixed(1)}%"></i></div>
-          <p class="muted small">Prestij yalnızca rütben Global iken yükselir ve kalıcıdır. Sayaca yalnızca oyunlardaki net kazançlar, günlük bonus ve görev ödülleri girer; başlangıç BP’si, yönetici eklemeleri, iadeler ve Friend Coins dönüşümleri girmez.</p>
+          <p class="muted small">Prestij yalnızca rütben ${esc(BG.rankInfo(BG.PRESTIGE_MIN).name)} ve üstüyken yükselir ve kalıcıdır. Sayaca yalnızca oyunlardaki net kazançlar, günlük bonus ve görev ödülleri girer; başlangıç BP’si, yönetici eklemeleri, iadeler ve Friend Coins dönüşümleri girmez.</p>
         </section>
         <section class="bpx-sec bpx-links">
           <a class="btn btn-soft" href="#/magaza">${icon('bag', 18)}Mağaza</a>
@@ -511,7 +598,7 @@
   };
 
   /* ---------------- bildirim merkezi ---------------- */
-  const NIC = { admin_bp: 'shield', rank: 'award', prestige: 'star', reward: 'trophy', refund: 'coin', comment: 'message', gift: 'gift' };
+  const NIC = { admin_bp: 'shield', rank: 'award', prestige: 'star', reward: 'trophy', refund: 'coin', comment: 'message', gift: 'gift', weekly: 'coin', table: 'flag' };
   econ.openNotifications = async function () {
     const body = BG.frag(`<div class="notif"><ul class="notif-list"><li class="muted small">Yükleniyor…</li></ul><button class="btn btn-ghost btn-sm notif-more" type="button" hidden>Daha eski</button></div>`);
     const list = body.querySelector('.notif-list');
@@ -528,7 +615,7 @@
             <span class="notif-b"><b>${esc(n.title)}</b><span>${esc(n.body)}</span><small>${esc(BG.fmt.ago(n.created_at))}</small></span></li>`);
           li.firstElementChild.addEventListener('click', () => {
             BG.closeAllModals();
-            if (n.kind === 'reward' || n.kind === 'admin_bp' || n.kind === 'refund') econ.openPanel(n.kind === 'admin_bp' ? 'history' : 'wallet');
+            if (n.kind === 'reward' || n.kind === 'admin_bp' || n.kind === 'refund' || n.kind === 'weekly') econ.openPanel(n.kind === 'admin_bp' ? 'history' : 'wallet');
             else if (n.kind === 'comment' || n.kind === 'rank' || n.kind === 'prestige') BG.router.go('/profil');
           });
           list.appendChild(li);
@@ -589,6 +676,12 @@
 
   /* ---------------- olaylar ---------------- */
   document.addEventListener('click', (e) => {
+    const wk = e.target.closest('[data-weekly-claim]');
+    if (wk) {
+      e.preventDefault();
+      econ.claimWeekly(wk);
+      return;
+    }
     const d = e.target.closest('[data-bp-daily]');
     if (d) {
       e.preventDefault();
@@ -643,6 +736,108 @@
     if (econ.ch) BG.api.removeChannel(econ.ch);
     econ.ch = null;
   }
+  /* =====================================================================
+     v3.3 RÜTBELER — bütün rütbeler ve BP aralıkları; bakan üyenin rütbesi
+     halka içinde (halka, sonraki rütbeye ilerlemeyi de gösterir)
+     ===================================================================== */
+  /** Rütbe tablosunun aralığı: "2.500 – 2.999 BP" / son rütbe "200.000+ BP" */
+  const rankRange = (r) => (r.next != null ? `${fmt(r.min)} – ${fmt(r.next - 1)} BP` : `${fmt(r.min)}+ BP`);
+  /** Rütbelerin renk grupları; tek rütbelik ardışık gruplar "Üst rütbeler" altında toplanır */
+  function rankGroups() {
+    const out = [];
+    BG.RANKS.forEach((x, i) => {
+      const r = BG.rankInfo(i + 1);
+      const last = out[out.length - 1];
+      if (last && last.color === r.color) last.items.push(r);
+      else out.push({ color: r.color, name: r.group || '', items: [r] });
+    });
+    const merged = [];
+    out.forEach((g) => {
+      const prev = merged[merged.length - 1];
+      if (g.items.length === 1 && prev && prev.top) prev.items.push(g.items[0]);
+      else if (g.items.length === 1) merged.push({ top: true, name: 'Üst rütbeler', items: [g.items[0]] });
+      else merged.push(g);
+    });
+    return merged;
+  }
+  econ.rankRange = rankRange;
+  BG.views = BG.views || {};
+  BG.views.ranks = function () {
+    const root = BG.frag(`<div class="page ranks">
+        <header class="page-head">
+          <div><h1>${icon('trophy', 26)}Rütbeler</h1><p class="page-lead">Rütben güncel BP bakiyene göre belirlenir: bakiyen arttıkça yükselir, azalınca iner. Ulaştığın en yüksek rütbe profilinde kalır.</p></div>
+        </header>
+        <section class="rk-hero" aria-live="polite"></section>
+        <div class="rk-groups"></div>
+      </div>`);
+    const hero = root.querySelector('.rk-hero');
+    const box = root.querySelector('.rk-groups');
+    let scrolled = false;
+    function paint() {
+      const st = BG.isAuthed() ? econ.state : null;
+      const cur = st ? st.rank || BG.rankOf(st.balance) : 0;
+      const best = st ? st.best_rank || cur : 0;
+      const total = BG.RANKS.length;
+      if (st) {
+        const r = BG.rankInfo(cur);
+        const span = r.next ? Math.max(1, r.next - r.min) : 1;
+        const prog = r.next ? Math.max(0, Math.min(100, ((st.balance - r.min) / span) * 100)) : 100;
+        hero.className = `rk-hero g${r.grp}`;
+        hero.setAttribute('style', BG.rankStyle(r));
+        hero.innerHTML = `<div class="rk-ring" style="--p:${prog.toFixed(1)}" role="img" aria-label="Rütben ${esc(r.name)}, sonraki rütbeye %${Math.round(prog)}">
+            <span class="rk-ring-in">${BG.rankIcon(cur, 74)}</span></div>
+          <div class="rk-hero-t">
+            <span class="rk-k">Rütben · ${cur}/${total}</span>
+            <h2>${esc(r.name)}</h2>
+            <p class="rk-sub">${r.group ? esc(r.group) + ' · ' : ''}${esc(rankRange(r))}</p>
+            <p class="rk-bal"><b>${fmt(st.balance)}</b> BP</p>
+            <p class="muted small">${r.next ? `Sonraki rütbe <b>${esc(r.nextName)}</b>: ${fmt(r.next)} BP · ${fmt(r.next - st.balance)} BP kaldı` : 'En yüksek rütbedesin.'}${best > cur ? ` · En yüksek rütben: <b>${esc(BG.rankInfo(best).name)}</b>` : ''}</p>
+          </div>`;
+      } else {
+        hero.className = 'rk-hero is-guest';
+        hero.removeAttribute('style');
+        hero.innerHTML = `<div class="rk-hero-t"><h2>Rütbeni gör</h2><p class="muted">Giriş yapınca rütben bu listede halka içinde görünür.</p><a class="btn btn-primary" href="#/giris">Giriş yap</a></div>`;
+      }
+      const lv = BG.LEVELS || [];
+      const amFree = !(BG.publicSettings && BG.publicSettings.am_rank_lock);
+      box.innerHTML = rankGroups()
+        .map((g) => {
+          const lo = g.items[0];
+          const hi = g.items[g.items.length - 1];
+          const head = g.top ? `${esc(g.name)}` : `${esc(g.name)} rütbeler`;
+          return `<section class="rk-group${g.top ? ' is-top' : ''}" style="${g.top ? '' : BG.rankStyle(lo)}">
+            <header class="rk-gh"><h2>${head}</h2><span class="muted small">${fmt(lo.min)}${hi.next != null ? ' – ' + fmt(hi.next - 1) : '+'} BP</span></header>
+            <ol class="rk-list" start="${lo.idx}">${g.items
+              .map((r) => {
+                const tags = [];
+                lv.filter((l) => l[1] === r.idx && l[1] > 1).forEach((l) => tags.push(`${amFree ? 'Dost Kazığı ' : ''}${l[0]} BP masası`));
+                if (r.idx === BG.PRESTIGE_MIN) tags.push('Prestij başlar');
+                if (best && r.idx === best && best !== cur) tags.push('En yüksek rütben');
+                const state = !cur ? '' : r.idx === cur ? ' is-cur' : r.idx < cur ? ' is-done' : ' is-up';
+                return `<li class="rk-row${state}" style="${BG.rankStyle(r)}" data-rk="${r.idx}"${r.idx === cur ? ' aria-current="true"' : ''}>
+                  <span class="rk-ic">${BG.rankIcon(r.idx, 36)}</span>
+                  <span class="rk-nm"><b>${esc(r.name)}</b><small>${r.idx}. rütbe${tags.length ? ' · ' + tags.map(esc).join(' · ') : ''}</small></span>
+                  <span class="rk-bp">${esc(rankRange(r))}</span>
+                  ${r.idx === cur ? '<em class="rk-you">Sen</em>' : ''}
+                </li>`;
+              })
+              .join('')}</ol></section>`;
+        })
+        .join('');
+      if (cur && !scrolled) {
+        scrolled = true;
+        requestAnimationFrame(() => {
+          const el = box.querySelector('.rk-row.is-cur');
+          if (el && el.getBoundingClientRect().top > window.innerHeight * 0.75) el.scrollIntoView({ block: 'center', behavior: 'smooth' });
+        });
+      }
+    }
+    paint();
+    if (BG.isAuthed() && !econ.state) econ.refresh();
+    const offs = [BG.bus.on('bp', paint), BG.bus.on('econ-settings', paint)];
+    return { node: root, cleanup: () => offs.forEach((f) => f()) };
+  };
+
   BG.bus.on('auth', (on) => {
     if (on) {
       econ.refresh();

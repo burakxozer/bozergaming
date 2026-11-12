@@ -77,7 +77,7 @@
     const am = st.americano || {};
     const dk = st.dostkazigi || {};
     const bj = st.blackjack || {};
-    const body = BG.frag(`<div class="pp-mini g${r.grp}">
+    const body = BG.frag(`<div class="pp-mini g${r.grp}" style="${BG.rankStyle(r)}">
         <div class="pp-mini-top">${BG.avatar(d.user, { size: 84, frame: d.user.frame })}
           <div><h3>${esc(d.user.full_name || d.user.username)}</h3><p class="muted">@${esc(d.user.username)}</p>
           <p class="pp-chips">${BG.rankChip(d.bp.rank)}${BG.prestigeChip(d.bp.prestige)}</p></div>
@@ -123,7 +123,7 @@
     const online = pres && pres.online;
     const now = online && pres.game ? `<span class="pp-now">${BG.gameTile(pres.game, 'tile-xs')}Şu an: ${esc(gname(pres.game))}${pres.session_id && d.relation !== 'self' ? ` · <a href="${esc(BG.watchHref(pres.game, pres.session_id, d.user.id))}">İzle</a>` : ''}</span>` : '';
     const lp = d.last_played;
-    return `<header class="pp-hero g${r.grp}">
+    return `<header class="pp-hero g${r.grp}" style="${BG.rankStyle(r)}">
         <div class="pp-hero-bg" aria-hidden="true"></div>
         <div class="pp-ava">${BG.avatar(d.user, { size: 148, frame: d.user.frame, online: pres ? !!online : undefined })}</div>
         <div class="pp-id">
@@ -137,8 +137,9 @@
           <span class="pp-bp-k" lang="en">Bözer Points</span>
           <span class="pp-bp-v">${BG.rankIcon(r.idx, 34)}<b>${fmt(d.bp.balance)}</b></span>
           <span class="bp-prog" aria-hidden="true"><i style="width:${prog.toFixed(1)}%"></i></span>
-          <small>${r.next ? `${esc(r.nextName)}: ${fmt(r.next)} BP` : 'Global — en yüksek temel rütbe'}</small>
+          <small>${r.next ? `${esc(r.nextName)}: ${fmt(r.next)} BP` : `${esc(r.name)} — en yüksek rütbe`}</small>
           <small>En yüksek rütbe: <b>${esc(BG.rankInfo(d.bp.best_rank).name)}</b></small>
+          <a class="pp-ranks" href="#/rutbeler">${icon('trophy', 14)}Bütün rütbeler</a>
         </div>
       </header>`;
   }
@@ -147,11 +148,11 @@
     const next = d.bp.prestige_next;
     const prev = d.bp.prestige_prev || 0;
     const p = next ? Math.max(0, Math.min(100, ((d.bp.eligible - prev) / (next - prev)) * 100)) : 100;
-    if (!pr && d.bp.rank < BG.RANKS.length && d.relation !== 'self') return '';
+    if (!pr && d.bp.rank < BG.PRESTIGE_MIN && d.relation !== 'self') return '';
     return `<section class="pp-sec pp-prestige">
         <h2>${icon('star', 18)}${pr ? 'GLOBAL · PRESTİJ ' + BG.roman(pr) : 'Prestij'}</h2>
         <div class="bp-prog pr" aria-hidden="true"><i style="width:${p.toFixed(1)}%"></i></div>
-        <p class="muted small">Uygun kazanç: ${fmt(d.bp.eligible)}${next ? ' / ' + fmt(next) + ' (Prestij ' + BG.roman(pr + 1) + ')' : ' — en yüksek prestij'}. Prestij yalnızca rütbe Global iken yükselir ve kalıcıdır.</p>
+        <p class="muted small">Uygun kazanç: ${fmt(d.bp.eligible)}${next ? ' / ' + fmt(next) + ' (Prestij ' + BG.roman(pr + 1) + ')' : ' — en yüksek prestij'}. Prestij yalnızca rütbe ${esc(BG.rankInfo(BG.PRESTIGE_MIN).name)} ve üstüyken yükselir ve kalıcıdır.</p>
       </section>`;
   }
   function gameCard(key, title, rows, secs, accent) {

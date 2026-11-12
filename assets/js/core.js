@@ -363,18 +363,48 @@
   };
 
   /* ---------------- BP Economy: rütbeler, prestij, çerçeveler ---------------- */
-  /** Rütbe tablosu (şartname): [ad, alt sınır, renk grubu]. Grup 1 yeşil … 7 mor. */
-  BG.RANKS = [
-    ['Stajyer', 0, 1], ['Çömez', 500, 1], ['Çırak', 600, 1], ['Çaylak', 700, 1], ['Acemi', 800, 1],
-    ['Tecrübeli', 950, 2], ['Savaşçı', 1000, 2], ['Muhafız', 1300, 2], ['Seçkin', 1700, 2], ['Uzman', 2000, 2],
-    ['Usta', 2500, 3], ['Şövalye', 3000, 3], ['Komutan', 3500, 3], ['Mareşal', 4000, 3], ['Şampiyon', 4500, 3],
-    ['Gladyatör', 5000, 4], ['Hükümdar', 5500, 4], ['İmparator', 6000, 4], ['Titan', 6500, 4],
-    ['Efsane', 7000, 5], ['Üstat', 7500, 5], ['Başkomutan', 8000, 5], ['İlahi', 8500, 5],
-    ['Ölümsüz', 9000, 6], ['Ebedi', 9500, 6], ['Global', 11000, 7],
+  /** Rütbe tablosu: [ad, alt sınır, renk, simge]. v3.2: yönetim panelinden değiştirilir (sunucudan gelir, tarayıcıda saklanır).
+      Aynı renkteki ardışık rütbeler bir grup sayılır; simgedeki şerit sayısı grup içi kademedir. */
+  const RANK_DEF = [
+    ['Stajyer', 0, '#3fc272', 'stripes'], ['Çömez', 500, '#3fc272', 'stripes'], ['Çırak', 600, '#3fc272', 'stripes'], ['Çaylak', 700, '#3fc272', 'stripes'], ['Acemi', 800, '#3fc272', 'stripes'],
+    ['Tecrübeli', 950, '#4d8dff', 'stripes'], ['Savaşçı', 1000, '#4d8dff', 'stripes'], ['Muhafız', 1300, '#4d8dff', 'stripes'], ['Seçkin', 1700, '#4d8dff', 'stripes'], ['Uzman', 2000, '#4d8dff', 'stripes'],
+    ['Usta', 2500, '#f4c430', 'stripes'], ['Şövalye', 3000, '#f4c430', 'stripes'], ['Komutan', 3500, '#f4c430', 'stripes'], ['Mareşal', 4000, '#f4c430', 'stripes'], ['Şampiyon', 4500, '#f4c430', 'stripes'],
+    ['Gladyatör', 5000, '#ff8b2e', 'stripes'], ['Hükümdar', 5500, '#ff8b2e', 'stripes'], ['İmparator', 6000, '#ff8b2e', 'stripes'], ['Titan', 6500, '#ff8b2e', 'stripes'],
+    ['Efsane', 7000, '#f04848', 'stripes'], ['Üstat', 7500, '#f04848', 'stripes'], ['Başkomutan', 8000, '#f04848', 'stripes'], ['İlahi', 8500, '#f04848', 'stripes'],
+    ['Ölümsüz', 9000, '#ff6fb3', 'stripes'], ['Ebedi', 9500, '#ff6fb3', 'stripes'], ['Global', 11000, '#a970ff', 'star'],
+    ['Platin', 15000, '#d5dde9', 'gem'], ['Elmas', 25000, '#7fe0ff', 'diamond'], ['Yüce', 50000, '#9b5de5', 'crown'],
+    ['Kozmik', 100000, '#ff3fbf', 'planet'], ['Galaktik', 200000, '#ffc83d', 'galaxy'],
   ];
-  BG.RANK_GROUPS = [null, ['Yeşil', '#3fc272'], ['Mavi', '#4d8dff'], ['Sarı', '#f4c430'], ['Turuncu', '#ff8b2e'], ['Kırmızı', '#f04848'], ['Pembe', '#ff6fb3'], ['Mor', '#a970ff']];
+  BG.RANK_COLOR_NAMES = { '#3fc272': 'Yeşil', '#4d8dff': 'Mavi', '#f4c430': 'Sarı', '#ff8b2e': 'Turuncu', '#f04848': 'Kırmızı', '#ff6fb3': 'Pembe', '#a970ff': 'Mor',
+    '#d5dde9': 'Platin Gümüşü', '#7fe0ff': 'Buz Mavisi', '#9b5de5': 'Ametist', '#ff3fbf': 'Kozmik Fuşya', '#ffc83d': 'Galaktik Altın' };
+  BG.RANK_ICONS = { stripes: 'Kademe şeritleri', star: 'Yıldız', gem: 'Mücevher', diamond: 'Elmas', crown: 'Taç', planet: 'Gezegen', galaxy: 'Galaksi' };
+  const LS_RANKS = 'bg.ranks.v32';
+  BG.RANKS = (() => {
+    try {
+      const c = JSON.parse(localStorage.getItem(LS_RANKS) || 'null');
+      if (Array.isArray(c) && c.length && c.every((x) => Array.isArray(x) && x.length >= 3)) return c;
+    } catch (e) {}
+    return RANK_DEF.slice();
+  })();
+  // Americano / Dost Kazığı masa seviyeleri: [ücret, en düşük rütbe] (masa ücreti sınırı için)
+  BG.LEVELS = [[10, 1], [20, 6], [30, 11], [40, 16], [50, 20], [60, 24], [70, 26]];
+  BG.PRESTIGE_MIN = 26;
   BG.PRESTIGE_STEPS = [25000, 50000, 100000, 200000, 400000, 750000, 1250000, 2000000, 3500000, 5000000];
   BG.FRAMES = { bronz: 'Bronz', gumus: 'Gümüş', altin: 'Altın', neon: 'Neon Mavi', ates: 'Ateş', buz: 'Buz', kraliyet: 'Kraliyet' };
+  /** Sunucudaki herkese açık ayarlardan rütbe tablosu ve masa seviyeleri (açılışta ve panelde kaydedince) */
+  BG.applyEconSettings = function (r) {
+    if (!r) return;
+    if (Array.isArray(r.ranks) && r.ranks.length) {
+      BG.RANKS = r.ranks.map((x) => [x.name, Number(x.min) || 0, (x.color || '#a970ff').toLowerCase(), x.icon || 'stripes']);
+      try {
+        localStorage.setItem(LS_RANKS, JSON.stringify(BG.RANKS));
+      } catch (e) {}
+    }
+    if (Array.isArray(r.levels) && r.levels.length) BG.LEVELS = r.levels.map((l) => [Number(l.fee) || 0, Number(l.min_rank) || 1]);
+    if (r.prestige_min_rank) BG.PRESTIGE_MIN = r.prestige_min_rank;
+    BG.publicSettings = r;
+    if (BG.bus) BG.bus.emit('econ-settings', r);
+  };
   BG.rankOf = function (bal) {
     bal = Number(bal) || 0;
     let r = 1;
@@ -383,25 +413,60 @@
     });
     return r;
   };
+  /** Rengin koyu tonu (#rrggbb → %38 karartılmış) */
+  function shade(hex, k) {
+    const m = /^#?([0-9a-f]{6})$/i.exec(hex || '');
+    if (!m) return '#333';
+    const n = parseInt(m[1], 16);
+    const f = (v) => Math.max(0, Math.min(255, Math.round(v * (1 - (k == null ? 0.38 : k)))));
+    return '#' + [f(n >> 16), f((n >> 8) & 255), f(n & 255)].map((v) => v.toString(16).padStart(2, '0')).join('');
+  }
+  BG.maxFeeFor = function (idx) {
+    let f = 0;
+    (BG.LEVELS || []).forEach((l) => {
+      if (l[1] <= idx && l[0] > f) f = l[0];
+    });
+    return f;
+  };
   BG.rankInfo = function (idx) {
-    const i = Math.max(1, Math.min(BG.RANKS.length, idx || 1));
-    const x = BG.RANKS[i - 1];
-    const next = BG.RANKS[i];
-    const grp = x[2];
-    const sameGroup = BG.RANKS.filter((y) => y[2] === grp);
-    return { idx: i, name: x[0], min: x[1], next: next ? next[1] : null, nextName: next ? next[0] : null, grp, group: BG.RANK_GROUPS[grp][0],
-             color: BG.RANK_GROUPS[grp][1], tier: sameGroup.findIndex((y) => y[0] === x[0]) + 1, maxFee: grp * 10 };
+    const R = BG.RANKS;
+    const i = Math.max(1, Math.min(R.length, idx || 1));
+    const x = R[i - 1];
+    const next = R[i];
+    let grp = 0;
+    let tier = 0;
+    for (let k = 0; k < i; k++) {
+      if (k === 0 || R[k][2] !== R[k - 1][2]) {
+        grp++;
+        tier = 0;
+      }
+      tier++;
+    }
+    const color = x[2] || '#a970ff';
+    return { idx: i, name: x[0], min: x[1], next: next ? next[1] : null, nextName: next ? next[0] : null, grp, tier, color, color2: shade(color),
+             icon: x[3] || 'stripes', group: BG.RANK_COLOR_NAMES[color] || '', maxFee: BG.maxFeeFor(i), top: i === R.length };
+  };
+  /** Rütbe rengini taşıyan stil (kartlar, rozetler) */
+  BG.rankStyle = function (r) {
+    r = typeof r === 'number' ? BG.rankInfo(r) : r;
+    return `--rk-c:${r.color};--rk-c2:${r.color2}`;
   };
   BG.roman = (n) => ['I', 'II', 'III', 'IV', 'V', 'VI', 'VII', 'VIII', 'IX', 'X'][Math.max(1, Math.min(10, n || 1)) - 1];
-  /** Rütbe simgesi: renk grubunda altıgen, içinde grup içi kademe kadar şerit; Global yıldızlı */
+  const RANK_GLYPH = {
+    star: '<path d="M12 6.4l1.7 3.5 3.8.5-2.8 2.7.7 3.8L12 15.1l-3.4 1.8.7-3.8-2.8-2.7 3.8-.5z" fill="#fff"/>',
+    gem: '<path d="M8.3 8.1h7.4l2.3 3.1L12 17.6l-6-6.4z" fill="#fff"/><path d="M8.3 8.1 12 17.6l3.7-9.5M6 11.2h12" fill="none" stroke="var(--rk-c2)" stroke-width=".9"/>',
+    diamond: '<path d="M12 5.6 17.4 12 12 18.4 6.6 12z" fill="#fff"/><path d="M12 5.6v12.8M6.6 12h10.8M9.3 8.8 12 12l2.7-3.2" fill="none" stroke="var(--rk-c2)" stroke-width=".85"/>',
+    crown: '<path d="M6.4 15.2 5.7 9l3.3 2.6L12 6.8l3 4.8L18.3 9l-.7 6.2z" fill="#fff"/><rect x="6.4" y="15.9" width="11.2" height="1.8" rx=".6" fill="#fff"/><circle cx="12" cy="12.6" r="1" fill="var(--rk-c2)"/>',
+    planet: '<circle cx="12" cy="12" r="3.7" fill="#fff"/><ellipse cx="12" cy="12" rx="7" ry="2.3" transform="rotate(-24 12 12)" fill="none" stroke="#fff" stroke-width="1.25"/><circle cx="12" cy="12" r="3.7" fill="none" stroke="var(--rk-c2)" stroke-width=".6"/>',
+    galaxy: '<path d="M12 12c0-1.5 1.7-2.3 3-1.4 1.7 1.2 1.1 3.9-.7 4.6-2.6 1-5.2-.9-5.3-3.4-.2-3.2 2.9-5.5 5.9-4.8" fill="none" stroke="#fff" stroke-width="1.6" stroke-linecap="round"/><circle cx="12" cy="12" r="1.3" fill="#fff"/><circle cx="17.2" cy="7.4" r=".8" fill="#fff"/><circle cx="6.9" cy="16.4" r=".7" fill="#fff"/>',
+  };
+  /** Rütbe simgesi: rütbe renginde altıgen; içinde kademe şeridi ya da özel simge (Global yıldız, Platin mücevher …) */
   BG.rankIcon = function (idx, size) {
     const r = BG.rankInfo(idx);
     const s = size || 18;
-    const id = 'rkg' + r.grp;
-    let inner = '';
-    if (r.idx === BG.RANKS.length) inner = '<path d="M12 6.4l1.7 3.5 3.8.5-2.8 2.7.7 3.8L12 15.1l-3.4 1.8.7-3.8-2.8-2.7 3.8-.5z" fill="#fff"/>';
-    else {
-      const n = r.tier;
+    let inner = RANK_GLYPH[r.icon] || '';
+    if (!inner) {
+      const n = Math.max(1, Math.min(5, r.tier));
       const h = 2.1;
       const gap = 1.25;
       const total = n * h + (n - 1) * gap;
@@ -411,13 +476,14 @@
         y += h + gap;
       }
     }
-    return `<svg class="rank-ic g${r.grp}" width="${s}" height="${s}" viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="M12 1.8 20.8 6.9v10.2L12 22.2 3.2 17.1V6.9z" fill="var(--rk-c)" stroke="rgba(0,0,0,.28)" stroke-width="1"/><path d="M12 3.6 19.2 7.8v3.1L12 6.7 4.8 10.9V7.8z" fill="#fff" opacity=".22"/>${inner}</svg>`;
+    const fancy = r.icon !== 'stripes' && r.icon !== 'star';
+    return `<svg class="rank-ic g${r.grp}${fancy ? ' rk-fancy' : ''}" style="${BG.rankStyle(r)}" width="${s}" height="${s}" viewBox="0 0 24 24" aria-hidden="true" focusable="false">${fancy ? '<path d="M12 .4 22.2 6.3v11.4L12 23.6 1.8 17.7V6.3z" fill="none" stroke="var(--rk-c)" stroke-opacity=".55" stroke-width=".8"/>' : ''}<path d="M12 1.8 20.8 6.9v10.2L12 22.2 3.2 17.1V6.9z" fill="var(--rk-c)" stroke="rgba(0,0,0,.28)" stroke-width="1"/><path d="M12 3.6 19.2 7.8v3.1L12 6.7 4.8 10.9V7.8z" fill="#fff" opacity=".22"/>${inner}</svg>`;
   };
   /** Rütbe etiketi: simge + ad (opts.min: yalnızca simge) */
   BG.rankChip = function (idx, opts) {
     opts = opts || {};
     const r = BG.rankInfo(idx);
-    return `<span class="rank-chip g${r.grp}${opts.cls ? ' ' + opts.cls : ''}" title="Rütbe: ${BG.esc(r.name)} (${BG.esc(r.group)})">${BG.rankIcon(r.idx, opts.size || 16)}${opts.min ? '' : `<b>${BG.esc(r.name)}</b>`}</span>`;
+    return `<span class="rank-chip g${r.grp}${opts.cls ? ' ' + opts.cls : ''}" style="${BG.rankStyle(r)}" title="Rütbe: ${BG.esc(r.name)}${r.group ? ' (' + BG.esc(r.group) + ')' : ''}">${BG.rankIcon(r.idx, opts.size || 16)}${opts.min ? '' : `<b>${BG.esc(r.name)}</b>`}</span>`;
   };
   BG.prestigeChip = function (n, opts) {
     if (!n) return '';

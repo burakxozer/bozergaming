@@ -269,7 +269,13 @@
     }
     BG.api
       .rpc('bg_public_settings', {})
-      .then((r) => r && r.home_style && BG.setHomeStyle(r.home_style))
+      .then((r) => {
+        if (!r) return;
+        // v3.2: rütbe tablosu ve masa seviyeleri panelden değişebilir
+        if (BG.applyEconSettings) BG.applyEconSettings(r);
+        if (r.home_style) BG.setHomeStyle(r.home_style);
+        if (BG.bp && BG.bp.state) BG.bp.paint();
+      })
       .catch(() => {});
   }
   setTimeout(syncStyle, 0);

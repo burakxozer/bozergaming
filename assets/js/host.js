@@ -64,7 +64,7 @@
             <button class="icon-btn gb-help" type="button" aria-label="Kurallar ve kullanım">${icon('book')}</button>
           </div>
         </header>
-        <iframe class="game-frame" title="Oyun" allow="vibrate; clipboard-write; fullscreen"></iframe>
+        <iframe class="game-frame" title="Oyun" allow="autoplay; vibrate; clipboard-write; fullscreen"></iframe>
         <div class="gl-float" hidden>
           <button class="gl-fbtn gl-tchat" type="button" aria-label="Masa sohbeti" hidden>${icon('chats', 19)}<span class="gb-badge"></span></button>
           <button class="gl-fbtn gl-exitfs" type="button" aria-label="Tam ekrandan çık" title="Tam ekrandan çık">${icon('compress', 19)}</button>
