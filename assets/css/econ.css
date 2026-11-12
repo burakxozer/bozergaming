@@ -645,3 +645,101 @@
 .pp-gift-recent li img { width: 26px; height: 26px; }
 .pp-gift-recent li span { min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
 .pp-gift-recent time { color: var(--muted, #8a8f9c); font-size: 12px; white-space: nowrap; }
+
+/* ---------------- v3.2: haftalık BP desteği ---------------- */
+.bp-weekly { position: relative; display: grid; grid-template-columns: auto 1fr auto; align-items: center; gap: 14px; margin: 0 0 14px;
+  padding: 16px 18px; border-radius: 18px; overflow: hidden;
+  background: radial-gradient(120% 160% at 0% 0%, rgba(255, 207, 92, .26), transparent 55%), linear-gradient(135deg, #2a2148, #1c1836 70%);
+  border: 1px solid rgba(255, 207, 92, .55); box-shadow: 0 10px 30px rgba(0, 0, 0, .35), inset 0 1px 0 rgba(255, 255, 255, .06); }
+.bpw-ic { width: 52px; height: 52px; display: grid; place-items: center; border-radius: 50%; color: #3a2508;
+  background: radial-gradient(circle at 35% 30%, #fff1b8, #f5c24a 55%, #c88a12); box-shadow: 0 0 0 4px rgba(255, 207, 92, .18), 0 6px 18px rgba(245, 194, 74, .35); }
+.bpw-t { display: flex; flex-direction: column; gap: 3px; min-width: 0; }
+.bpw-t b { font-size: 16px; color: #ffe39a; letter-spacing: .01em; }
+.bpw-t span { font-size: 13.5px; color: var(--muted); line-height: 1.45; }
+.bpw-go { white-space: nowrap; }
+.bpw-load { position: absolute; left: 0; right: 0; bottom: 0; height: 4px; background: rgba(255, 255, 255, .06); opacity: 0; transition: opacity .2s; }
+.bpw-load i { display: block; height: 100%; width: 0; background: linear-gradient(90deg, #f5c24a, #ffe9a8, #f5c24a); box-shadow: 0 0 12px rgba(255, 220, 120, .8); }
+.bp-weekly.is-loading .bpw-load { opacity: 1; }
+.bp-weekly.is-loading .bpw-load i { animation: bpwFill 2s linear forwards; }
+.bp-weekly.is-loading .bpw-ic { animation: bpwSpin 1s linear infinite; }
+.bp-weekly.is-done { border-color: rgba(116, 227, 166, .6); background: radial-gradient(120% 160% at 0% 0%, rgba(116, 227, 166, .22), transparent 55%), linear-gradient(135deg, #1f2b3a, #1a2030 70%); }
+.bp-weekly.is-done .bpw-t b { color: #8ff0bd; }
+.bpw-spin { width: 15px; height: 15px; border-radius: 50%; border: 2px solid rgba(0, 0, 0, .25); border-top-color: currentColor; display: inline-block; animation: bpwSpin .8s linear infinite; margin-right: 6px; vertical-align: -2px; }
+@keyframes bpwFill { from { width: 0; } to { width: 100%; } }
+@keyframes bpwSpin { to { transform: rotate(360deg); } }
+@media (max-width: 560px) {
+  .bp-weekly { grid-template-columns: auto 1fr; padding: 14px; }
+  .bpw-go { grid-column: 1 / -1; width: 100%; justify-content: center; }
+  .bpw-ic { width: 44px; height: 44px; }
+}
+@media (prefers-reduced-motion: reduce) { .bp-weekly.is-loading .bpw-ic, .bpw-spin { animation: none; } }
+/* v3.2: üst rütbe simgelerinde (Platin … Galaktik) ince parıltı */
+.rank-ic.rk-fancy { filter: drop-shadow(0 0 3px color-mix(in srgb, var(--rk-c) 70%, transparent)); overflow: visible; }
+.bp-weekly.is-out { opacity: 0; transform: translateY(-6px); transition: opacity .35s ease, transform .35s ease; }
+
+/* =====================================================================
+   v3.3 Rütbeler sayfası — bütün rütbeler ve BP aralıkları; bakan üyenin
+   rütbesi halka içinde. Üstteki büyük halka sonraki rütbeye ilerlemeyi
+   gösterir; listede geçilen rütbeler renkli, sıradakiler soluk.
+   ===================================================================== */
+.ranks .page-head h1 { display: flex; align-items: center; gap: 10px; }
+.rk-hero {
+  display: grid; grid-template-columns: auto 1fr; gap: 22px; align-items: center; margin: 0 0 22px; padding: 22px 24px; border-radius: 22px;
+  border: 1px solid color-mix(in srgb, var(--rk-c, var(--accent)) 38%, var(--line));
+  background:
+    radial-gradient(120% 140% at 0% 0%, color-mix(in srgb, var(--rk-c, var(--accent)) 22%, transparent), transparent 60%),
+    var(--surface);
+}
+.rk-hero.is-guest { grid-template-columns: 1fr; }
+.rk-hero.is-guest .rk-hero-t { display: flex; flex-direction: column; align-items: flex-start; gap: 6px; }
+.rk-ring {
+  --p: 0; position: relative; width: 132px; height: 132px; border-radius: 50%; display: grid; place-items: center;
+  background: conic-gradient(var(--rk-c) calc(var(--p) * 1%), color-mix(in srgb, var(--rk-c) 14%, transparent) 0);
+  box-shadow: 0 0 34px color-mix(in srgb, var(--rk-c) 34%, transparent);
+}
+.rk-ring::after { content: ''; position: absolute; inset: -6px; border-radius: 50%; border: 1px solid color-mix(in srgb, var(--rk-c) 40%, transparent); }
+.rk-ring-in { width: 112px; height: 112px; border-radius: 50%; display: grid; place-items: center; background: radial-gradient(circle at 50% 35%, var(--surface-2), var(--bg) 78%); }
+.rk-hero-t h2 { margin: 2px 0 2px; font-size: clamp(28px, 4.6vw, 40px); line-height: 1.05; color: var(--rk-c, var(--text)); }
+.rk-k { font-size: 13px; font-weight: 700; color: var(--muted); }
+.rk-sub { margin: 0; color: var(--muted); font-weight: 600; }
+.rk-bal { margin: 10px 0 4px; font-size: 15px; color: var(--muted); }
+.rk-bal b { font-size: 26px; color: var(--text); font-variant-numeric: tabular-nums; }
+.rk-hero-t .muted.small { margin: 0; }
+.rk-groups { display: grid; grid-template-columns: repeat(auto-fill, minmax(min(100%, 320px), 1fr)); gap: 16px; align-items: start; }
+.rk-group { position: relative; overflow: hidden; border-radius: 18px; border: 1px solid var(--line); background: var(--surface); padding: 10px 8px 8px; }
+.rk-group::before { content: ''; position: absolute; left: 0; right: 0; top: 0; height: 4px; background: var(--rk-c, var(--accent)); }
+.rk-group.is-top::before { background: linear-gradient(90deg, #a970ff, #d5dde9, #7fe0ff, #9b5de5, #ff3fbf, #ffc83d); }
+.rk-gh { display: flex; align-items: baseline; justify-content: space-between; gap: 10px; padding: 10px 10px 8px; }
+.rk-gh h2 { margin: 0; font-size: 16px; }
+.rk-list { list-style: none; margin: 0; padding: 0; display: flex; flex-direction: column; gap: 2px; }
+.rk-row { position: relative; display: grid; grid-template-columns: 48px 1fr auto; align-items: center; gap: 10px; padding: 7px 10px; border-radius: 12px; }
+.rk-ic { position: relative; width: 44px; height: 44px; display: grid; place-items: center; }
+.rk-nm { min-width: 0; display: flex; flex-direction: column; }
+.rk-nm b { font-size: 15px; }
+.rk-nm small { color: var(--muted); font-size: 12px; line-height: 1.35; }
+.rk-bp { font-size: 13.5px; font-weight: 700; color: var(--muted); font-variant-numeric: tabular-nums; white-space: nowrap; text-align: right; }
+.rk-row.is-up .rk-ic { filter: grayscale(.55) brightness(.85); opacity: .75; }
+.rk-row.is-up .rk-nm b { color: var(--muted); }
+.rk-row.is-cur { background: color-mix(in srgb, var(--rk-c) 16%, transparent); box-shadow: inset 0 0 0 1px color-mix(in srgb, var(--rk-c) 55%, transparent); padding-right: 54px; }
+.rk-row.is-cur .rk-bp, .rk-row.is-cur .rk-nm b { color: var(--text); }
+/* bakan üyenin rütbesi: simgenin çevresinde halka */
+.rk-row.is-cur .rk-ic::before {
+  content: ''; position: absolute; inset: -5px; border-radius: 50%; border: 2.5px solid var(--rk-c);
+  box-shadow: 0 0 0 3px color-mix(in srgb, var(--rk-c) 22%, transparent), 0 0 16px color-mix(in srgb, var(--rk-c) 65%, transparent);
+  animation: rkHalo 2.4s ease-in-out infinite;
+}
+@keyframes rkHalo { 50% { box-shadow: 0 0 0 6px color-mix(in srgb, var(--rk-c) 12%, transparent), 0 0 24px color-mix(in srgb, var(--rk-c) 80%, transparent); } }
+.rk-you { position: absolute; right: 10px; top: 50%; transform: translateY(-50%); font-style: normal; font-size: 11px; font-weight: 850; padding: 2px 9px; border-radius: 99px; background: var(--rk-c); color: #111; }
+.bpx-ranks { margin-top: 10px; justify-self: start; }
+.pp-ranks { display: inline-flex; align-items: center; gap: 5px; margin-top: 4px; font-size: 12.5px; font-weight: 700; color: var(--link); text-decoration: none; }
+.pp-ranks:hover { text-decoration: underline; }
+.rankup-acts { display: flex; gap: 10px; justify-content: center; flex-wrap: wrap; }
+@media (max-width: 600px) {
+  .rk-hero { grid-template-columns: 1fr; justify-items: center; text-align: center; padding: 20px 16px; }
+  .rk-hero.is-guest { justify-items: start; text-align: left; }
+  .rk-ring { width: 118px; height: 118px; }
+  .rk-ring-in { width: 100px; height: 100px; }
+  .rk-row { grid-template-columns: 44px 1fr auto; gap: 8px; padding: 7px 8px; }
+  .rk-bp { font-size: 12.5px; }
+}
+@media (prefers-reduced-motion: reduce) { .rk-row.is-cur .rk-ic::before { animation: none; } }
