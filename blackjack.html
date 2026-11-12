@@ -8,8 +8,8 @@
 <link rel="preconnect" href="https://fonts.googleapis.com" />
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
 <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@600;700;800&family=Manrope:wght@400;500;600;700;800&display=swap" rel="stylesheet" />
-<link rel="stylesheet" href="assets/css/bg-table.css?v=3.2.0" />
-<link rel="stylesheet" href="assets/css/badges.css?v=3.2.0" />
+<link rel="stylesheet" href="assets/css/bg-table.css?v=3.3.0" />
+<link rel="stylesheet" href="assets/css/badges.css?v=3.3.0" />
 <style>
 /* =====================================================================
    Bözer Royale — görünüm: zümrüt keçe, siyah ve altın, sıcak ışık
@@ -658,6 +658,8 @@ html[data-q='low'] .hand-glow, html[data-q='low'] .spot-hl, html[data-q='low'] .
 @keyframes bjUp { from { transform: translateY(30px); opacity: 0; } to { transform: none; opacity: 1; } }
 @media (max-width: 480px) {
   .bj-hud { gap: 6px; padding-left: max(6px, env(safe-area-inset-left)); padding-right: max(6px, env(safe-area-inset-right)); }
+  .hud-t { min-width: 0; overflow: hidden; }
+  .hud-jp .jp-dots { display: none; }
   .hud-btn { width: 34px; height: 34px; font-size: 18px; }
   .hud-t { flex: 1; flex-direction: column; gap: 0; align-items: flex-start; }
   .hud-t b { max-width: 30vw; font-size: 13px; }
@@ -747,28 +749,6 @@ html[data-q='low'] .hand-glow, html[data-q='low'] .spot-hl, html[data-q='low'] .
 .bj-stage[data-layout='port'] .jp-card li { font-size: 21px; }
 .bj-stage[data-layout='port'] .jp-card h2 { font-size: 54px; }
 
-/* Yatay telefon: kontroller sağda dikey sütun, masa daha büyük */
-@media (max-height: 500px) and (orientation: landscape) {
-  .bj-view { display: grid; grid-template-columns: 1fr minmax(190px, 26vw); grid-template-rows: auto 1fr; }
-  .bj-hud { grid-column: 1 / -1; }
-  .bj-scene { grid-row: 2; grid-column: 1; }
-  .bj-controls { grid-row: 2; grid-column: 2; flex-direction: column; justify-content: center; align-items: stretch; gap: 8px; min-height: 0;
-    border-top: 0; border-left: 1px solid var(--line); padding: 8px max(8px, env(safe-area-inset-right)) max(8px, env(safe-area-inset-bottom)) 8px; overflow-y: auto; }
-  .ctl-main { flex: none; }
-  .ctl-bet { flex-direction: column; gap: 8px; }
-  .chip-row { gap: 6px; }
-  .ctl-btns { width: 100%; }
-  .ctl-btns .t-btn { flex: 1; padding-left: 6px; padding-right: 6px; }
-  .ctl-act { width: 100%; }
-  .act-row { grid-template-columns: 1fr 1fr; gap: 6px; }
-  .act.a-hit { grid-column: 1 / -1; }
-  .ins-row { flex-direction: column; align-items: stretch; text-align: center; }
-  .ar-group { flex-direction: row; flex-wrap: wrap; justify-content: center; }
-  .ctl-status { font-size: 13px; }
-  .hand-read { display: flex; }
-  .mc { min-width: 30px; height: 36px; font-size: 16px; }
-}
-
 /* ---------------- v3.2: elin altındaki karar düğmeleri ----------------
    H = Kart (mavi) · S = Dur (kırmızı) · D = İkiye katla (yeşil) · SP = Böl (sarı).
    Sırası gelen elde hemen uygulanır; sırası gelmemiş elde ön karar olur, kırmızı X ile iptal edilir. */
@@ -805,38 +785,200 @@ html[data-q='low'] .hand-glow, html[data-q='low'] .spot-hl, html[data-q='low'] .
 @media (prefers-reduced-motion: reduce) { .hacts, .hacts.turn { animation: none; } }
 html[data-q='low'] .hacts.turn { animation: none; }
 
-/* ---------------- v3.2: yatay telefonda bahis/aksiyon paneli dar, masa büyük ---------------- */
-@media (max-height: 500px) and (orientation: landscape) {
-  .bj-view { grid-template-columns: 1fr clamp(118px, 17vw, 156px); }
-  .bj-controls { gap: 6px; padding: 6px max(6px, env(safe-area-inset-right)) max(6px, env(safe-area-inset-bottom)) 6px; }
-  .ctl-bet { gap: 6px; }
-  .chip-row { gap: 4px; justify-content: center; }
-  .pchip { width: 36px; height: 36px; font-size: 11px; }
-  .cbtn { min-height: 34px; font-size: 10.5px; padding: 3px 4px; gap: 4px; }
-  .cbtn svg { width: 15px; height: 15px; }
-  .ctl-info { display: none; }
-  .act-row { gap: 4px; }
-  .act { min-height: 36px; padding: 3px 2px; border-radius: 10px; }
-  .act i { width: 15px; height: 15px; }
-  .act b { font-size: 9.5px; letter-spacing: .02em; }
-  .ctl-top { gap: 4px; }
-  .ctl-who { font-size: 11.5px; }
-  .ctl-who small { display: none; }
-  .hand-read { display: none; }
-  .ctl-res { gap: 2px; }
-  .ctl-res b { font-size: 22px; }
-  .ctl-res small, .ctl-res span { font-size: 10.5px; }
-  .ar-group { gap: 4px; }
-  .ins-row { gap: 4px; font-size: 11.5px; }
-  .ins-row .t-btn { padding: 6px 8px; font-size: 12px; }
-  .pre-tabs button { padding: 3px 7px; font-size: 11px; }
-}
-
 /* v3.2: telefonda ön hamle açıklaması taşmasın (karar düğmeleri masada da var) */
 @media (max-width: 760px) {
   .ctl-act.premode .ctl-who small { display: none; }
   .ctl-who { white-space: normal; overflow-wrap: anywhere; }
 }
+
+/* =====================================================================
+   v3.3 ALT KARAR ÇUBUĞU — kararlar alttan verilir (örnek oyundaki gibi)
+   Yuvarlak, renkli simgeler: Pes et (gri) · İki kat (yeşil) · Böl (sarı) ·
+   Dur (kırmızı) · Kart al (mavi). Ön seçimde düğmeler kontur olur, seçilen
+   dolar ve köşesinde onay işareti çıkar. Telefonda yatayda düğmeler masanın
+   iki alt köşesine yerleşir; masa tam genişlikte kalır.
+   ===================================================================== */
+.bj-controls { display: block; min-height: 0; padding: 12px max(10px, env(safe-area-inset-right)) max(8px, env(safe-area-inset-bottom)) max(10px, env(safe-area-inset-left)); }
+.bj-controls.busy .ctl-main { opacity: 1; }
+.bj-controls.busy .dock[data-mode='turn'] .dk-bar { opacity: .72; }
+.dock { position: relative; max-width: 760px; margin: 0 auto; display: flex; flex-direction: column; gap: 9px; }
+.dk-info { display: flex; align-items: center; justify-content: center; gap: 8px 12px; flex-wrap: wrap; min-height: 24px; }
+.dk-who { margin: 0; display: flex; align-items: center; justify-content: center; gap: 4px 9px; flex-wrap: wrap; font-size: 14px; line-height: 1.25; color: var(--muted); }
+.dk-who b { color: var(--gold-hi); font-weight: 800; }
+.dk-who span { color: #fff; font-weight: 700; }
+.dk-who small { flex-basis: 100%; text-align: center; font-size: 12px; color: var(--muted); }
+.dk-sum { font-style: normal; font-weight: 900; color: #fff; padding: 0 9px; line-height: 22px; border-radius: 99px; background: rgba(255, 255, 255, .08); border: 1px solid rgba(255, 255, 255, .16); font-variant-numeric: tabular-nums; }
+.dk-amt { font-variant-numeric: tabular-nums; }
+.dock[data-mode='turn'] .dk-who b { animation: dkTurn 1.6s ease-in-out infinite; }
+@keyframes dkTurn { 0%, 100% { text-shadow: 0 0 0 rgba(255, 215, 122, 0); } 50% { text-shadow: 0 0 14px rgba(255, 215, 122, .85); } }
+.dk-bar { display: flex; align-items: flex-start; justify-content: space-between; gap: 4px; }
+.dk-l, .dk-r { display: contents; }
+.dk-c { flex: 1.25 1 0; min-width: 0; display: flex; align-items: center; justify-content: center; }
+.dock[data-mode='res'] .dk-c, .dock[data-mode='wait'] .dk-c { flex: 1; min-height: 52px; }
+.dock .tbar { position: absolute; left: 6%; right: 6%; top: -8px; height: 3px; flex: none; }
+.ab {
+  position: relative; flex: 1 1 0; min-width: 0; display: flex; flex-direction: column; align-items: center; gap: 5px; padding: 2px 0;
+  border: 0; background: none; color: var(--ink); font: inherit; cursor: pointer; -webkit-tap-highlight-color: transparent; touch-action: manipulation;
+}
+.ab-d {
+  position: relative; width: 54px; height: 54px; border-radius: 50%; display: grid; place-items: center;
+  background: radial-gradient(circle at 50% 30%, var(--c1), var(--c2) 74%);
+  box-shadow: inset 0 2px 0 rgba(255, 255, 255, .3), inset 0 -4px 0 rgba(0, 0, 0, .3), 0 0 0 2px rgba(0, 0, 0, .6), 0 0 0 3.5px var(--ring), 0 9px 16px rgba(0, 0, 0, .5);
+  transition: transform .12s ease, box-shadow .2s ease, filter .2s ease;
+}
+.ab-d i { display: block; width: 26px; height: 26px; color: #fff; filter: drop-shadow(0 1px 1px rgba(0, 0, 0, .35)); }
+.ab-d svg { display: block; width: 100%; height: 100%; fill: none; stroke: currentColor; stroke-width: 2.3; stroke-linecap: round; stroke-linejoin: round; }
+.ab b { font-size: 12.5px; font-weight: 800; white-space: nowrap; letter-spacing: .01em; }
+.ab kbd { position: absolute; top: -2px; left: calc(50% + 22px); font: 700 10px var(--ui); color: rgba(255, 255, 255, .45); }
+.ab:hover:not(:disabled) .ab-d { filter: brightness(1.12); transform: translateY(-2px); }
+.ab:active:not(:disabled) .ab-d { transform: scale(.9); transition-duration: .05s; }
+.ab:focus-visible { outline: none; }
+.ab:focus-visible .ab-d { outline: 3px solid #fff; outline-offset: 3px; }
+.ab:disabled { cursor: default; }
+.ab:disabled .ab-d { filter: grayscale(.9) brightness(.5); box-shadow: inset 0 2px 0 rgba(255, 255, 255, .06), 0 0 0 2px rgba(0, 0, 0, .6), 0 0 0 3px rgba(255, 255, 255, .1); }
+.ab:disabled b { opacity: .38; }
+.ab.a-hit { --c1: #66b0ff; --c2: #1450b6; --ring: #96cbff; }
+.ab.a-stand { --c1: #ff8070; --c2: #b01b12; --ring: #ffb0a5; }
+.ab.a-double { --c1: #63e394; --c2: #0f8a3b; --ring: #a5f2c3; }
+.ab.a-split { --c1: #ffdc6b; --c2: #c78700; --ring: #ffe9a8; }
+.ab.a-split .ab-d i { color: #2b1c00; filter: none; }
+.ab.a-surrender { --c1: #c2c7d2; --c2: #545b6a; --ring: #dde1e9; }
+.ab.sb { --c1: #3b3c33; --c2: #15160f; --ring: rgba(233, 207, 140, .5); }
+.ab.sb .ab-d i { color: var(--gold-hi); }
+.ab.sb.go { --c1: #ffe6a3; --c2: #b8882d; --ring: #fff2cc; }
+.ab.sb.go .ab-d i { color: #2a1a04; filter: none; }
+.ab.fired .ab-d { animation: abFire .4s ease-out; }
+@keyframes abFire { 0% { box-shadow: 0 0 0 2px rgba(0, 0, 0, .6), 0 0 0 3.5px var(--ring), 0 0 0 0 var(--ring); } 100% { box-shadow: 0 0 0 2px rgba(0, 0, 0, .6), 0 0 0 3.5px var(--ring), 0 0 0 16px rgba(255, 255, 255, 0); } }
+/* ön seçim: kontur düğme, seçilen dolu + onay işareti (tekrar dokununca kalkar) */
+.dock[data-mode='pre'] .ab-d { background: radial-gradient(circle at 50% 30%, rgba(255, 255, 255, .1), rgba(0, 0, 0, .4) 74%); box-shadow: 0 0 0 2px rgba(0, 0, 0, .6), 0 0 0 2.5px var(--ring), 0 6px 12px rgba(0, 0, 0, .4); }
+.dock[data-mode='pre'] .ab-d i { color: var(--ring); }
+.dock[data-mode='pre'] .ab.on .ab-d { background: radial-gradient(circle at 50% 30%, var(--c1), var(--c2) 74%); box-shadow: 0 0 0 2px rgba(0, 0, 0, .6), 0 0 0 3.5px #fff, 0 0 20px var(--ring); }
+.dock[data-mode='pre'] .ab.on .ab-d i { color: #fff; }
+.dock[data-mode='pre'] .ab.a-split.on .ab-d i { color: #2b1c00; }
+.dock[data-mode='pre'] .ab:disabled .ab-chk { display: none; }
+.ab-chk { position: absolute; top: -5px; right: -5px; width: 21px; height: 21px; border-radius: 50%; display: grid; place-items: center; border: 2px solid rgba(255, 255, 255, .6); background: rgba(8, 10, 8, .9); transition: background .15s, border-color .15s, transform .15s; }
+.ab-chk svg { width: 12px; height: 12px; fill: none; stroke: #fff; stroke-width: 3.6; stroke-linecap: round; stroke-linejoin: round; opacity: 0; }
+.ab.on .ab-chk { background: #22c063; border-color: #fff; transform: scale(1.08); }
+.ab.on .ab-chk svg { opacity: 1; }
+/* bahis: ortadaki büyük fiş, her dokunuşta bir fiş ekler */
+.pchip.big { width: 68px; height: 68px; flex: none; margin-top: -4px; filter: drop-shadow(0 8px 8px rgba(0, 0, 0, .55)); }
+.pchip.big .pc-plus { position: absolute; left: 50%; bottom: -8px; transform: translateX(-50%); font: 800 11.5px var(--ui); color: #1d1404; background: #ffd77a; padding: 1px 8px; border-radius: 99px; box-shadow: 0 2px 6px rgba(0, 0, 0, .45); white-space: nowrap; }
+.pchip.big.tap { animation: chipTap .26s ease-out; }
+@keyframes chipTap { 0% { transform: none; } 40% { transform: translateY(-9px) scale(1.07); } 100% { transform: none; } }
+.dk-tabs { display: inline-flex; gap: 6px; flex-wrap: wrap; justify-content: center; }
+.dk-tabs button { display: inline-flex; align-items: center; gap: 6px; padding: 4px 11px; border-radius: 99px; border: 1px solid var(--line-2); background: rgba(255, 255, 255, .04); font: 800 12.5px var(--ui); color: var(--ink); font-variant-numeric: tabular-nums; }
+.dk-tabs button em { font-style: normal; font-size: 11px; color: var(--gold-hi); }
+.dk-tabs button[aria-pressed='true'] { background: var(--gold-hi); border-color: var(--gold-hi); color: #1d1404; }
+.dk-tabs button[aria-pressed='true'] em { color: #1d1404; }
+.dock .ar-group { flex-direction: row; gap: 6px; }
+.dock .ar { padding: 4px 10px; }
+.dock .ctl-status { font-size: 14.5px; }
+.dock .hand-read { gap: 4px; }
+.dock .mc { min-width: 30px; height: 36px; padding: 0 5px; font-size: 16px; border-radius: 6px; }
+.dock .mc-dl { font-size: 11.5px; margin: 0 2px; }
+.set-note { margin: -2px 0 6px; font-size: 12px; line-height: 1.4; color: var(--muted); }
+
+/* el toplamı değişince kısa büyüme */
+.tot.pop { animation: totPop .34s cubic-bezier(.3, 1.6, .5, 1); }
+@keyframes totPop { 0% { transform: scale(.7); } 60% { transform: scale(1.18); } 100% { transform: scale(1); } }
+
+/* kart gölgesi: uçuşta filtre değişmez (her karede yeniden çizim olmasın), gölge ayrı katmanda kayar */
+.cd-f, .cd-b { transition: none; }
+html[data-q='high'] .cd-f, html[data-q='high'] .cd-b { filter: none; }
+html[data-q='high'] .cd::before {
+  content: ''; position: absolute; inset: 2% 3%; border-radius: 9%; background: rgba(0, 0, 0, .5); filter: blur(4px);
+  transform: translate3d(0, 4px, 0); opacity: .9; transition: transform .32s cubic-bezier(.3, .7, .3, 1), opacity .32s;
+}
+html[data-q='high'] .cd.flying::before { transform: translate3d(8px, 22px, 0) scale(1.05); opacity: .42; }
+html[data-q='high'] .cd.dim .cd-f { filter: grayscale(1) brightness(.58) contrast(.92); }
+html[data-q='high'] .cd.reveal .cd-f { filter: none; }
+html[data-q='high'] .cd.reveal::before { background: rgba(255, 214, 130, .7); filter: blur(10px); }
+
+/* el altı ön seçim şeridi: kelimeler (Hit · Stand · 2x · Split) */
+.ha { width: auto; min-width: var(--hb2, var(--hb, 40px)); padding: 0 calc(var(--hb2, var(--hb, 40px)) * .26); font-size: calc(var(--hb2, var(--hb, 40px)) * .36); letter-spacing: 0; border-radius: calc(var(--hb2, var(--hb, 40px)) * .5); }
+.ha-wait { font-size: calc(var(--hb2, var(--hb, 40px)) * .28); }
+
+/* masaüstü: biraz daha büyük düğmeler */
+@media (min-width: 761px) and (min-height: 501px) {
+  .bj-controls { min-height: 142px; }
+  .ab-d { width: 58px; height: 58px; }
+  .ab-d i { width: 27px; height: 27px; }
+  .ab b { font-size: 13px; }
+  .dock { gap: 10px; }
+}
+/* dik telefon: kısa bilgi satırı, beş düğme tek sırada */
+@media (max-width: 760px) {
+  .bj-controls { padding-top: 10px; min-height: calc(126px + env(safe-area-inset-bottom)); }
+  .dk-who small { flex-basis: auto; }
+  .dock { gap: 7px; }
+  .dk-who { font-size: 13px; }
+  .dock[data-mode='turn'] .dk-who small, .dock[data-mode='pre'] .dk-who small { display: none; }
+  .dk-info { gap: 6px 10px; }
+  .ab-d { width: 50px; height: 50px; }
+  .ab-d i { width: 24px; height: 24px; }
+  .ab b { font-size: 11.5px; }
+  .ab kbd { display: none; }
+  .pchip.big { width: 62px; height: 62px; }
+  .dock .mc { min-width: 26px; height: 31px; font-size: 14px; }
+  .dock[data-mode='turn'] .dk-info, .dock[data-mode='pre'] .dk-info { flex-wrap: nowrap; }
+  .dock .hand-read { flex-wrap: nowrap; }
+}
+@media (max-width: 360px) {
+  .ab-d { width: 44px; height: 44px; }
+  .ab b { font-size: 10.5px; }
+  .dock[data-mode='turn'] .mc-dl { display: none; }
+}
+/* yatay telefon: masa tam genişlikte; düğmeler masanın iki alt köşesinde (ortadaki pozisyon görünür kalır) */
+@media (max-height: 500px) and (orientation: landscape) {
+  .bj-view { display: flex; flex-direction: column; }
+  .bj-controls {
+    position: absolute; left: 0; right: 0; bottom: 0; z-index: 7; min-height: 0; border: 0; background: none; pointer-events: none;
+    padding: 0 max(6px, env(safe-area-inset-right)) max(5px, env(safe-area-inset-bottom)) max(6px, env(safe-area-inset-left));
+  }
+  .dock { max-width: none; gap: 0; }
+  .dk-bar { align-items: flex-end; gap: 6px; }
+  .dk-l, .dk-r { display: flex; align-items: flex-start; gap: 2px; pointer-events: auto; padding: 6px 5px 4px; border-radius: 20px;
+    background: linear-gradient(180deg, rgba(6, 8, 6, .55), rgba(6, 8, 6, .86)); border: 1px solid rgba(233, 207, 140, .2); box-shadow: 0 6px 18px rgba(0, 0, 0, .45); }
+  .dk-l:empty, .dk-r:empty { display: none; }
+  .dk-l { margin-right: auto; }
+  .dk-c { flex: none; pointer-events: auto; margin-left: auto; align-self: flex-end; }
+  .dk-c:empty { display: none; }
+  .ab { flex: none; width: 46px; gap: 3px; }
+  .ab-d { width: 38px; height: 38px; box-shadow: inset 0 2px 0 rgba(255, 255, 255, .28), inset 0 -3px 0 rgba(0, 0, 0, .3), 0 0 0 1.5px rgba(0, 0, 0, .6), 0 0 0 3px var(--ring), 0 5px 10px rgba(0, 0, 0, .5); }
+  .ab-d i { width: 18px; height: 18px; }
+  .ab b { font-size: 9.5px; }
+  .ab kbd { display: none; }
+  .ab-chk { width: 17px; height: 17px; top: -4px; right: -4px; }
+  .ab-chk svg { width: 10px; height: 10px; }
+  .pchip.big { width: 50px; height: 50px; margin: 0 2px 6px 0; }
+  .pchip.big .pc-plus { font-size: 10px; bottom: -6px; }
+  .dk-info { position: absolute; left: 0; bottom: calc(100% + 6px); max-width: min(38vw, 300px); justify-content: flex-start; pointer-events: auto;
+    padding: 4px 10px; border-radius: 14px; background: rgba(6, 8, 6, .78); border: 1px solid rgba(233, 207, 140, .18); }
+  .dk-info:empty { display: none; }
+  .dk-who { justify-content: flex-start; font-size: 11.5px; gap: 2px 6px; }
+  .dk-who small, .dock .hand-read { display: none; }
+  .dk-sum { line-height: 18px; padding: 0 7px; }
+  .dk-tabs button { padding: 2px 8px; font-size: 11px; }
+  .dock .ar { padding: 2px 8px; font-size: 10px; }
+  .dock .ar span { display: none; }
+  .dock[data-mode='wait'] .dk-c { display: none; }
+  .dock[data-mode='res'] .dk-c { min-height: 0; margin-bottom: 4px; }
+  .dock[data-mode='res'] .ctl-res { padding: 4px 12px; border-radius: 14px; background: rgba(6, 8, 6, .8); border: 1px solid rgba(233, 207, 140, .2); gap: 6px; }
+  .dock[data-mode='res'] .ctl-res b { font-size: 18px; }
+  .dock[data-mode='res'] .ctl-res small { display: none; }
+  .dock[data-mode='res'] .dk-info, .dock[data-mode='wait'] .dk-info { position: static; padding: 0; background: none; border: 0; margin: 0 auto 4px 0; }
+  .dock .tbar { display: none; }
+  .bj-controls.busy .dock[data-mode='turn'] .dk-bar { opacity: 1; }
+  .bj-controls.busy .dock[data-mode='turn'] .dk-l, .bj-controls.busy .dock[data-mode='turn'] .dk-r { opacity: .72; }
+}
+@media (prefers-reduced-motion: reduce) {
+  .dock[data-mode='turn'] .dk-who b, .ab.fired .ab-d, .pchip.big.tap, .tot.pop { animation: none; }
+}
+
+/* v3.3: alttaki fişten bahis alanına atılan fiş */
+.chip-toss { position: absolute; left: 0; top: 0; width: 54px; height: 54px; margin: -27px 0 0 -27px; pointer-events: none; z-index: 3; filter: drop-shadow(0 10px 8px rgba(0, 0, 0, .45)); }
+.chip-toss svg { display: block; width: 100%; height: 100%; }
+.bj-stage[data-layout='port'] .chip-toss { width: 66px; height: 66px; margin: -33px 0 0 -33px; }
 
 </style>
 </head>
@@ -849,7 +991,7 @@ html[data-q='low'] .hacts.turn { animation: none; }
   <footer id="controls" class="bj-controls"></footer>
 </section>
 <aside id="chat" class="bj-chat" hidden aria-label="Masa sohbeti"></aside>
-<script src="assets/js/bg-table.js?v=3.2.0"></script>
+<script src="assets/js/bg-table.js?v=3.3.0"></script>
 <script>
 /* ---- cards.js ---- */
 /* =====================================================================
@@ -1572,20 +1714,36 @@ html[data-q='low'] .hacts.turn { animation: none; }
   let noiseBuf = null;
   let amb = null;
 
+  const AU = () => (window.BGT && window.BGT.audio) || null;
+  /** a → b → c bağlantısı (zincirleme connect eski Safari'de çalışmaz) */
+  function link() {
+    for (let i = 0; i < arguments.length - 1; i++) arguments[i].connect(arguments[i + 1]);
+  }
   function init() {
-    if (ctx) return ctx;
+    if (ctx && ctx.state !== 'closed') return ctx;
     const AC = window.AudioContext || window.webkitAudioContext;
     if (!AC) return null;
-    ctx = new AC();
+    try {
+      ctx = new AC();
+    } catch (e) {
+      ctx = null;
+      return null;
+    }
+    // v3.3: eski Safari'de connect() zincirlenemez (undefined döner); bağlantılar tek tek
     out = ctx.createGain();
     const comp = ctx.createDynamicsCompressor();
     comp.threshold.value = -14;
     comp.ratio.value = 4;
-    out.connect(comp).connect(ctx.destination);
+    out.connect(comp);
+    comp.connect(ctx.destination);
     ['fx', 'dealer', 'amb'].forEach((k) => {
       bus[k] = ctx.createGain();
       bus[k].connect(out);
     });
+    if (AU()) {
+      AU().add(ctx);
+      AU().want(cfg.on && cfg.master > 0);
+    }
     const len = ctx.sampleRate * 2;
     noiseBuf = ctx.createBuffer(1, len, ctx.sampleRate);
     const d = noiseBuf.getChannelData(0);
@@ -1601,15 +1759,35 @@ html[data-q='low'] .hacts.turn { animation: none; }
     bus.dealer.gain.setTargetAtTime(cfg.dealer, t, 0.05);
     bus.amb.gain.setTargetAtTime(cfg.amb * 0.5, t, 0.3);
   }
-  /** İlk dokunuşta ses açılır (tarayıcı kuralı) */
+  /** Dokunuşta ses açılır (tarayıcı kuralı). iPhone'da yalnız touchend / click gibi olaylar sayılır;
+      bu yüzden hepsi dinlenir, bağlam "suspended" ya da "interrupted" ise sürdürülür. */
   function unlock() {
     const c = init();
-    if (c && c.state === 'suspended') c.resume().catch(() => {});
-    if (c && cfg.amb > 0 && cfg.on) ambient(true);
+    if (!c) return;
+    if (c.state !== 'running') {
+      try {
+        const p = c.resume();
+        if (p && p.catch) p.catch(() => {});
+      } catch (e) {}
+    }
+    if (AU()) AU().kick();
+    if (cfg.amb > 0 && cfg.on) ambient(true);
   }
-  ['pointerdown', 'keydown', 'touchend'].forEach((ev) => window.addEventListener(ev, unlock, { capture: true, passive: true }));
+  ['touchstart', 'touchend', 'pointerdown', 'pointerup', 'mousedown', 'click', 'keydown'].forEach((ev) =>
+    window.addEventListener(ev, unlock, { capture: true, passive: true }),
+  );
 
-  const ready = () => ctx && ctx.state === 'running' && cfg.on && cfg.master > 0;
+  /** Çalmaya hazır mı: bağlam durduysa (arka plandan dönüş, iOS kesintisi) sürdürmeyi dener */
+  function ready() {
+    if (!ctx || !cfg.on || !(cfg.master > 0)) return false;
+    if (ctx.state !== 'running' && ctx.state !== 'closed' && document.visibilityState === 'visible') {
+      try {
+        const p = ctx.resume();
+        if (p && p.catch) p.catch(() => {});
+      } catch (e) {}
+    }
+    return ctx.state === 'running';
+  }
 
   function noise(chan, at, dur, o) {
     const src = ctx.createBufferSource();
@@ -1624,7 +1802,7 @@ html[data-q='low'] .hacts.turn { animation: none; }
     g.gain.setValueAtTime(0.0001, at);
     g.gain.exponentialRampToValueAtTime(o.gain || 0.3, at + (o.attack || 0.004));
     g.gain.exponentialRampToValueAtTime(0.0001, at + dur);
-    src.connect(f).connect(g).connect(bus[chan]);
+    link(src, f, g, bus[chan]);
     src.start(at, Math.random() * 1.5);
     src.stop(at + dur + 0.05);
   }
@@ -1638,7 +1816,7 @@ html[data-q='low'] .hacts.turn { animation: none; }
     g.gain.setValueAtTime(0.0001, at);
     g.gain.exponentialRampToValueAtTime(o.gain || 0.2, at + (o.attack || 0.006));
     g.gain.exponentialRampToValueAtTime(0.0001, at + dur);
-    osc.connect(g).connect(bus[chan]);
+    link(osc, g, bus[chan]);
     osc.start(at);
     osc.stop(at + dur + 0.05);
   }
@@ -1655,8 +1833,14 @@ html[data-q='low'] .hacts.turn { animation: none; }
     deal(delay) {
       if (!ready()) return;
       const t = ctx.currentTime + (delay || 0);
-      noise('dealer', t, 0.16, { type: 'bandpass', f0: 5200, f1: 1800, q: 0.8, gain: 0.22, attack: 0.01 });
-      noise('dealer', t + 0.15, 0.06, { type: 'lowpass', f0: 900, q: 0.7, gain: 0.25 });
+      noise('dealer', t, 0.13, { type: 'bandpass', f0: 5600, f1: 2000, q: 0.9, gain: 0.2, attack: 0.008 });
+    },
+    /** Kart keçeye iner: yumuşak, boğuk tık */
+    land(soft) {
+      if (!ready()) return;
+      const t = ctx.currentTime;
+      noise('dealer', t, 0.07, { type: 'lowpass', f0: soft ? 700 : 1000, q: 0.8, gain: soft ? 0.16 : 0.26 });
+      noise('dealer', t, 0.025, { f0: 3200, q: 2, gain: soft ? 0.03 : 0.06 });
     },
     slide() {
       if (!ready()) return;
@@ -1814,8 +1998,8 @@ html[data-q='low'] .hacts.turn { animation: none; }
       lfo.frequency.value = 0.13;
       const lg = ctx.createGain();
       lg.gain.value = 0.02;
-      lfo.connect(lg).connect(g.gain);
-      src.connect(lp).connect(bp).connect(g).connect(bus.amb);
+      link(lfo, lg, g.gain);
+      link(src, lp, bp, g, bus.amb);
       const pad = [];
       [110, 164.8, 220, 277.2].forEach((f) => {
         const o = ctx.createOscillator();
@@ -1823,7 +2007,7 @@ html[data-q='low'] .hacts.turn { animation: none; }
         o.frequency.value = f;
         const og = ctx.createGain();
         og.gain.value = 0.006;
-        o.connect(og).connect(bus.amb);
+        link(o, og, bus.amb);
         o.start();
         pad.push(o);
       });
@@ -1848,11 +2032,16 @@ html[data-q='low'] .hacts.turn { animation: none; }
       try {
         localStorage.setItem(KEY, JSON.stringify(cfg));
       } catch (e) {}
+      if (AU()) AU().want(cfg.on && cfg.master > 0);
       if (ctx) {
         applyVolumes();
         ambient(cfg.on && cfg.amb > 0);
       }
     },
+    /** iPhone / iPad: telefon sessiz moddayken de çal (varsayılan açık) */
+    iOS: () => !!(AU() && AU().iOS),
+    silentOk: () => (AU() ? AU().silentOk() : true),
+    setSilentOk: (on) => AU() && AU().setSilentOk(on),
     suspend(on) {
       if (!ctx) return;
       if (on) ctx.suspend().catch(() => {});
@@ -2169,28 +2358,40 @@ html[data-q='low'] .hacts.turn { animation: none; }
     c.rot = rot;
     c.sc = sc;
   };
-  /** Yay çizen uçuş: kalkış → tepe (biraz büyür, döner) → iniş (hafif oturma) */
+  /** Yay çizen uçuş (v3.3: akıcı eğri). Kart ikinci dereceden bir eğri üzerinde, hızlı çıkıp yavaşlayarak
+      iner: tepe noktasında hafifçe büyür ve döner, sonunda keçeye yumuşak oturur. Eğri 16 noktayla
+      örneklenir; aralarında doğrusal geçiş olduğundan yön değişimi kırılmadan akar. */
   Scene.prototype.flyCard = function (c, from, to, ms, o) {
     o = o || {};
     const lift = o.lift != null ? o.lift : 54;
-    const mx = from.x + (to.x - from.x) * 0.52;
-    const my = from.y + (to.y - from.y) * 0.4 - lift;
+    const qx = from.x + (to.x - from.x) * 0.5;
+    const qy = from.y + (to.y - from.y) * 0.42 - lift * 2;
     const spin = o.spin != null ? o.spin : (to.x < from.x ? -1 : 1) * 10;
-    const k = [
-      { transform: this.tf(from.x, from.y, from.rot, from.sc), offset: 0 },
-      { transform: this.tf(mx, my, (from.rot + to.rot) / 2 + spin, Math.max(from.sc, to.sc) * 1.08), offset: 0.48 },
-      { transform: this.tf(to.x, to.y - 4, to.rot - spin * 0.12, to.sc * 1.025), offset: 0.86 },
-      { transform: this.tf(to.x, to.y, to.rot, to.sc), offset: 1 },
-    ];
+    const pw = o.ease || 2.6;
+    const N = 16;
+    const big = Math.max(from.sc, to.sc);
+    const k = [];
+    for (let i = 0; i <= N; i++) {
+      const tt = i / N;
+      const u = 1 - Math.pow(1 - tt, pw);
+      const a = (1 - u) * (1 - u);
+      const b = 2 * (1 - u) * u;
+      const d = u * u;
+      const arc = Math.sin(Math.PI * u);
+      k.push({
+        transform: this.tf(a * from.x + b * qx + d * to.x, a * from.y + b * qy + d * to.y, from.rot + (to.rot - from.rot) * u + spin * arc * (1 - u * 0.4), from.sc + (to.sc - from.sc) * u + big * 0.075 * arc),
+        offset: tt,
+      });
+    }
     if (c.anim) c.anim.cancel();
     c.el.style.transition = 'none';
-    c.el.style.transform = k[3].transform;
+    c.el.style.transform = this.tf(to.x, to.y, to.rot, to.sc);
     c.x = to.x;
     c.y = to.y;
     c.rot = to.rot;
     c.sc = to.sc;
     c.el.classList.add('flying');
-    const a = c.el.animate(k, { duration: Math.max(1, ms), easing: o.easing || 'cubic-bezier(.33,.66,.3,1)' }) || NOANIM();
+    const a = c.el.animate(k, { duration: Math.max(1, ms), easing: 'linear' }) || NOANIM();
     c.anim = a;
     a.onfinish = a.oncancel = () => {
       c.el.classList.remove('flying');
@@ -2292,10 +2493,11 @@ html[data-q='low'] .hacts.turn { animation: none; }
             c.el.style.opacity = '1';
             SND.play('deal');
             const t = c.target || w;
-            const ms = this.dur(t.dealer ? 520 : 600);
+            const ms = this.dur(t.dealer ? 540 : 620);
             this.flyCard(c, sp, t, ms, { lift: t.dealer ? 26 : 60 });
-            // yüzü açık kart havada döner ve yüzü yukarı iner
-            if (!t.down) this.later(ms * 0.42, () => this.setFace(c, t.code, false));
+            // yüzü açık kart havada döner ve yüzü yukarı iner; keçeye değdiği an yumuşak bir tık
+            if (!t.down) this.later(ms * 0.36, () => this.setFace(c, t.code, false));
+            this.later(ms * 0.8, () => SND.play('land', !!t.dealer));
             this.later(ms + 20, () => {
               c.flying = false;
               const tt = c.target || t;
@@ -2559,6 +2761,36 @@ html[data-q='low'] .hacts.turn { animation: none; }
     });
   };
 
+  /** v3.3: alttaki çubuktaki fişten masadaki bahis alanına fiş atışı (ekran noktası → sahne) */
+  Scene.prototype.tossChip = function (seat, from, amount) {
+    if (this.calm() || !this.ready || !this.geo || !from) return;
+    const g = this.geo[seat - 1];
+    if (!g) return;
+    const r = this.stage.getBoundingClientRect();
+    const sc = this.scale || 1;
+    const fx = (from.x - r.left) / sc;
+    const fy = (from.y - r.top) / sc;
+    const tx = g.spot.x;
+    const ty = g.spot.y;
+    const qx = (fx + tx) / 2;
+    const qy = Math.min(fy, ty) - 140;
+    const el = document.createElement('div');
+    el.className = 'chip-toss';
+    el.innerHTML = `<svg viewBox="0 0 100 100" aria-hidden="true">${C.chipSVG(amount)}</svg>`;
+    this.lFx.appendChild(el);
+    const k = [];
+    for (let i = 0; i <= 12; i++) {
+      const tt = i / 12;
+      const u = 1 - Math.pow(1 - tt, 2.2);
+      const x = (1 - u) * (1 - u) * fx + 2 * (1 - u) * u * qx + u * u * tx;
+      const y = (1 - u) * (1 - u) * fy + 2 * (1 - u) * u * qy + u * u * ty;
+      k.push({ transform: `translate3d(${x.toFixed(1)}px, ${y.toFixed(1)}px, 0) rotate(${(u * 260).toFixed(0)}deg) scale(${(1.15 - 0.3 * u).toFixed(3)})`, opacity: tt > 0.92 ? 0 : 1, offset: tt });
+    }
+    const a = el.animate(k, { duration: this.dur(430), easing: 'linear' });
+    if (a) a.onfinish = () => el.remove();
+    else el.remove();
+  };
+
   /* ---------------- parçacık, yazı ve bant efektleri ---------------- */
   /** Kıvılcım ya da altın para patlaması (sahne koordinatı) */
   Scene.prototype.burst = function (x, y, o) {
@@ -2720,6 +2952,14 @@ html[data-q='low'] .hacts.turn { animation: none; }
   };
   Scene.prototype.syncBadges = function (st, ctx) {
     let h = '';
+    const rk = st.round ? st.round.id : '';
+    if (this._totRound !== rk) {
+      this._tot = {};
+      this._totRound = rk;
+    }
+    this._tot = this._tot || {};
+    // havadaki kartı olan elin rozeti bu çizimde yok: önceki toplamı korunur (inince değiştiyse "pop")
+    const tot = Object.assign({}, this._tot);
     const pre = {};
     ((ctx.me && ctx.me.pre) || []).forEach((p) => p.action && (pre[p.hand] = p.action));
     const settled = st.round && st.round.settled;
@@ -2747,6 +2987,8 @@ html[data-q='low'] .hacts.turn { animation: none; }
           txt = `${hd.total - 10}/${hd.total}`;
         }
         if (ctx.turnHand === hd.id) cls += ' turn';
+        if (this.fxLive && this._tot[hd.id] != null && this._tot[hd.id] !== txt) cls += ' pop';
+        tot[hd.id] = txt;
         h += `<span class="${cls}" style="left:${tx}px;top:${ty}px">${txt}</span>`;
         if (ctx.turnHand === hd.id && st.state === 'PLAYER_TURNS') h += `<span class="turn-arrow" style="left:${b.cx}px;top:${b.y0 - 18}px" aria-hidden="true"></span>`;
         if (pre[hd.id] && hd.st === 'waiting' && !ctx.handActs) h += `<span class="pretag" style="left:${b.cx}px;top:${b.y0 - 22}px">${PRE_LABEL[pre[hd.id]]} · BEKLEMEDE</span>`;
@@ -2783,14 +3025,18 @@ html[data-q='low'] .hacts.turn { animation: none; }
         cls += ' bj';
         txt = 'BJ';
       } else if (d.total > 21) cls += ' bust';
+      if (this.fxLive && this._tot.dealer != null && this._tot.dealer !== String(txt)) cls += ' pop';
+      tot.dealer = String(txt);
       h += `<span class="${cls}" style="left:${p0.x - this.dcw * 0.5 - 8}px;top:${p0.y - this.dcw * RATIO * 0.5 + 6}px">${txt}</span>`;
       if (!d.hidden && d.total > 21) fire.push({ key: 'dbust:' + rid, kind: 'dbust', total: d.total });
       else if (!d.hidden && d.bj) fire.push({ key: 'dbj:' + rid, kind: 'dbj' });
     }
+    // "pop" yalnız değiştiği çizimde: aynı rozet bir sonraki çizimde sınıfsız (yeniden oynamaz)
     if (this._badges !== h) {
       this.lBadges.innerHTML = h;
-      this._badges = h;
+      this._badges = h.replace(/ pop"/g, '"');
     }
+    this._tot = tot;
     fire.forEach((f) => {
       if (this.shown.has(f.key)) return;
       this.shown.add(f.key);
@@ -2798,12 +3044,13 @@ html[data-q='low'] .hacts.turn { animation: none; }
     });
   };
   /* ---------------- el altı karar düğmeleri (v3.2) ---------------- */
+  // v3.3: harf yerine kelime — Hit (kart al), Stand (dur), 2x (iki kat), Split (böl)
   const HA = {
-    hit: { k: 'H', t: 'Kart çek (Hit)' },
-    stand: { k: 'S', t: 'Dur (Stay)' },
-    double: { k: 'D', t: 'İkiye katla (Double)' },
-    split: { k: 'SP', t: 'Böl (Split)' },
-    surrender: { k: 'T', t: 'Teslim ol' },
+    hit: { k: 'Hit', t: 'Kart al (Hit)' },
+    stand: { k: 'Stand', t: 'Dur (Stand)' },
+    double: { k: '2x', t: 'İki kat (Double)' },
+    split: { k: 'Split', t: 'Böl (Split)' },
+    surrender: { k: 'Pes', t: 'Pes et' },
   };
   Scene.prototype.syncActs = function (st, ctx) {
     let h = '';
@@ -2890,7 +3137,7 @@ html[data-q='low'] .hacts.turn { animation: none; }
         break;
       case 'BETTING_OPEN':
         title = 'Bahislerinizi koyun';
-        sub = ctx.hasSeat ? 'Fişini seç, pozisyonuna dokun ve onayla.' : ctx.canBB ? 'Bir oyuncunun arkasına Bet Behind yapabilirsin.' : 'Oyuncular bahislerini koyuyor.';
+        sub = ctx.hasSeat ? 'Fişe dokun, bahsini kur ve onayla.' : ctx.canBB ? 'Bir oyuncunun bahis alanına dokunarak Bet Behind yapabilirsin.' : 'Oyuncular bahislerini koyuyor.';
         timer = dl;
         total = 15000;
         mode = 'hero';
@@ -3267,15 +3514,16 @@ html[data-q='low'] .hacts.turn { animation: none; }
     DEALER_PEEK: 'Oyun sürüyor', INSURANCE_WINDOW: 'Sigorta', PLAYER_TURNS: 'Oyun sürüyor', DEALER_TURN: 'Krupiye oynuyor',
     SETTLEMENT: 'Sonuçlar', RESULT_DISPLAY: 'Sonuçlar', SHOE_RESHUFFLE: 'Karıştırılıyor', NEXT_ROUND: 'Yeni tur', PAUSED: 'Duraklatıldı', CLOSED: 'Kapandı',
   };
-  // aksiyon çubuğu: soldan sağa TESLİM · İKİYE KATLA · BÖL · DUR · KART (en sık kullanılan sağ başparmağın altında)
+  // v3.3 alt karar çubuğu (örnek oyundaki gibi): soldan sağa PES ET · İKİ KAT · BÖL · DUR · KART AL
+  // (en sık kullanılan Kart al ve Dur sağ başparmağın altında)
   const ACT = [
-    ['surrender', 'TESLİM', 'R'], ['double', 'İKİYE KATLA', 'D'], ['split', 'BÖL', 'P'], ['stand', 'DUR', 'S'], ['hit', 'KART', 'H'],
+    ['surrender', 'Pes et', 'R'], ['double', 'İki kat', 'D'], ['split', 'Böl', 'P'], ['stand', 'Dur', 'S'], ['hit', 'Kart al', 'H'],
   ];
   const AICON = {
-    hit: '<svg viewBox="0 0 24 24" aria-hidden="true"><rect x="4" y="3" width="11" height="16" rx="2"/><path d="M19 9v8M15 13h8"/></svg>',
+    hit: '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 4.5v15M4.5 12h15"/></svg>',
     stand: '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M8 13V6.5a1.5 1.5 0 0 1 3 0V12M11 12V4.5a1.5 1.5 0 0 1 3 0V12M14 12V5.5a1.5 1.5 0 0 1 3 0V13M17 13V9a1.5 1.5 0 0 1 3 0v5.5c0 4.1-3 7.5-7.2 7.5-3 0-4.9-1.6-6-3.6L4.2 14.8a1.6 1.6 0 0 1 2.6-1.8L8 14.4"/></svg>',
-    double: '<svg viewBox="0 0 24 24" aria-hidden="true"><ellipse cx="9" cy="7" rx="6" ry="2.6"/><path d="M3 7v3.4c0 1.4 2.7 2.6 6 2.6s6-1.2 6-2.6V7"/><ellipse cx="15" cy="14" rx="6" ry="2.6"/><path d="M9 14v3.4c0 1.4 2.7 2.6 6 2.6s6-1.2 6-2.6V14"/></svg>',
-    split: '<svg viewBox="0 0 24 24" aria-hidden="true"><rect x="2.5" y="7" width="8" height="12" rx="1.6" transform="rotate(-8 6.5 13)"/><rect x="13.5" y="7" width="8" height="12" rx="1.6" transform="rotate(8 17.5 13)"/><path d="M12 2.5v4M9.8 4.3 12 2.4l2.2 1.9"/></svg>',
+    double: '<svg viewBox="0 0 24 24" aria-hidden="true"><text x="12" y="16.6" text-anchor="middle" font-size="12.5" font-weight="900" fill="currentColor" stroke="none" font-family="Manrope, system-ui, sans-serif">2×</text></svg>',
+    split: '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 20v-6.5L6.5 8M12 13.5 17.5 8M5 12.5V7h5.5M19 12.5V7h-5.5"/></svg>',
     surrender: '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 21V3.5M5 4h12.5l-2.6 4.3 2.6 4.2H5"/></svg>',
   };
   const ic = {
@@ -3286,6 +3534,8 @@ html[data-q='low'] .hacts.turn { animation: none; }
     redo: '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M20 12a8 8 0 1 1-2.3-5.6M20 4v5h-5"/></svg>',
     clear: '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M6 6l12 12M18 6 6 18"/></svg>',
     check: '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="m5 12.5 4.5 4.5L19 7.5"/></svg>',
+    max: '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="m6 14 6-6 6 6M6 19.5 12 13.5l6 6M5 4.5h14"/></svg>',
+    shield: '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 3.5 5 6v5.5c0 4.3 3 7.6 7 9 4-1.4 7-4.7 7-9V6Z"/><path d="m9 12 2.2 2.2L15.5 10"/></svg>',
   };
 
   /* ---------------- ayarlar ---------------- */
@@ -3335,8 +3585,10 @@ html[data-q='low'] .hacts.turn { animation: none; }
     me: null,
     v: -1,
     scene: null,
-    chip: Number(localStorage.getItem('bj.chip') || 10),
     busy: false,
+    opt: {}, // v3.3: sunucuya gönderilmeyi bekleyen bahisler (pozisyon → tutar)
+    optT: {},
+    betSeat: null,
     preRev: {},
     seenNotice: new Set(),
     chat: { open: false, list: [], unread: 0, last: 0 },
@@ -3455,7 +3707,7 @@ html[data-q='low'] .hacts.turn { animation: none; }
     const can = t.eligible;
     const full = t.free.length === 0;
     return `<article class="lb-card ${t.tier}">
-      <div class="lbc-top"><span class="lbc-tier">${TIER[t.tier]}</span><span class="lbc-max">en fazla ${t.max_bet} BP</span>${t.visibility === 'private' ? '<span class="lbc-priv">Özel</span>' : ''}</div>
+      <div class="lbc-top"><span class="lbc-tier">${TIER[t.tier]}</span><span class="lbc-max">${betsText(t.tier)}</span>${t.visibility === 'private' ? '<span class="lbc-priv">Özel</span>' : ''}</div>
       <h3>${esc(t.name)}</h3>
       <p class="lbc-owner">Masa sahibi: ${esc(t.owner || '—')}</p>
       <div class="lbc-pots" aria-label="${t.pots} / 7 pot dolu">${Array.from({ length: 7 }, (_, i) => `<i class="${i < t.pots ? 'on' : ''}"></i>`).join('')}</div>
@@ -3502,33 +3754,40 @@ html[data-q='low'] .hacts.turn { animation: none; }
       }
     });
   }
-  /* v3.2: masa seviyeleri panelden yönetilir (bakiye eşiği, bahis değerleri, jackpot) */
+  /* Masa seviyeleri panelden yönetilir. v3.3: fiş değeri + en düşük / en yüksek bahis (bahis fiş katlarıyla) */
   const TIER_DEF = {
-    bronze: { min_balance: 0, bets: [10], jp_seat: 200, jp_spec: 100 },
-    silver: { min_balance: 4000, bets: [10, 20], jp_seat: 300, jp_spec: 200 },
-    gold: { min_balance: 8000, bets: [10, 20, 100], jp_seat: 400, jp_spec: 300 },
+    bronze: { min_balance: 0, chip: 10, min_bet: 10, max_bet: 50, jp_seat: 200, jp_spec: 100 },
+    silver: { min_balance: 0, chip: 20, min_bet: 20, max_bet: 100, jp_seat: 300, jp_spec: 200 },
+    gold: { min_balance: 4000, chip: 50, min_bet: 50, max_bet: 300, jp_seat: 400, jp_spec: 300 },
   };
   const tiersCfg = () => Object.assign({}, TIER_DEF, (G.lobby && G.lobby.tiers) || {});
+  /** Seviyenin fişi ve sınırları (eski kayıt biçimi — bahis listesi — da okunur) */
+  function tierLim(k) {
+    const c = tiersCfg()[k] || {};
+    const b = (c.bets || []).slice().sort((x, y) => x - y);
+    const chip = c.chip || b[0] || 10;
+    const min = Math.max(chip, c.min_bet || b[0] || chip);
+    return { chip, min, max: Math.max(min, c.max_bet || b[b.length - 1] || min), need: c.min_balance || 0 };
+  }
   function betsText(k) {
-    const b = ((tiersCfg()[k] || {}).bets || []).slice().sort((x, y) => x - y);
-    return b.length > 1 ? `${fmt(b[0])}–${fmt(b[b.length - 1])} BP` : `${fmt(b[0] || 0)} BP`;
+    const L = tierLim(k);
+    return L.min === L.max ? `${fmt(L.min)} BP` : `${fmt(L.min)}–${fmt(L.max)} BP`;
   }
   function tiersStrip() {
-    const c = tiersCfg();
     return ['bronze', 'silver', 'gold']
-      .map((k) => `<div class="lb-tier ${k}"><b>${TIER[k]}</b><span>${betsText(k)} · ${c[k].min_balance > 0 ? `en az ${fmt(c[k].min_balance)} BP` : 'giriş eşiği yok'}</span></div>`)
+      .map((k) => {
+        const L = tierLim(k);
+        return `<div class="lb-tier ${k}"><b>${TIER[k]}</b><span>${betsText(k)} · fiş ${fmt(L.chip)} · ${L.need > 0 ? `oturmak için ${fmt(L.need)} BP` : 'giriş şartı yok'}</span></div>`;
+      })
       .join('');
   }
   function createSheet() {
     const bal = (G.lobby && G.lobby.me.balance) || 0;
-    // v3.2: seviye sınırları ve bahis değerleri panelden gelir
-    const TC = (G.lobby && G.lobby.tiers) || { bronze: { min_balance: 0, bets: [10] }, silver: { min_balance: 4000, bets: [10, 20] }, gold: { min_balance: 8000, bets: [10, 20, 100] } };
-    const tierOk = (k) => bal >= ((TC[k] || {}).min_balance || 0);
+    // seviye sınırları ve fiş değerleri panelden gelir (v3.3: fiş katlarıyla bahis)
+    const tierOk = (k) => bal >= tierLim(k).need;
     const tierTxt = (k) => {
-      const c = TC[k] || {};
-      const b = (c.bets || []).slice().sort((x, y) => x - y);
-      const range = b.length > 1 ? `${fmt(b[0])}–${fmt(b[b.length - 1])} BP` : `${fmt(b[0] || 0)} BP`;
-      return c.min_balance > 0 ? `${range} · ${fmt(c.min_balance)}+` : range;
+      const L = tierLim(k);
+      return `${betsText(k)} · fiş ${fmt(L.chip)}${L.need > 0 ? ` · ${fmt(L.need)}+ BP` : ''}`;
     };
     const def = tierOk('gold') ? 'gold' : tierOk('silver') ? 'silver' : 'bronze';
     const sh = T.sheet({
@@ -3645,7 +3904,7 @@ html[data-q='low'] .hacts.turn { animation: none; }
     } else if (r.me) {
       renderControls();
       renderHud();
-      if (G.st) G.scene.update(G.st, G.me);
+      if (G.st) G.scene.update(viewState(), G.me);
     }
     notices();
   }
@@ -3656,7 +3915,9 @@ html[data-q='low'] .hacts.turn { animation: none; }
       setTimeout(() => G.view === 'table' && G.tableId === st.id && openLobby(), 2200);
       return;
     }
-    G.scene.update(st, G.me);
+    // v3.3: bahis aşaması bitince ya da tur değişince gönderilmemiş (iyimser) bahisler bırakılır
+    if (st.state !== 'BETTING_OPEN' || (prev && prev.round && st.round && prev.round.id !== st.round.id)) dropOpt();
+    G.scene.update(viewState(), G.me);
     renderHud();
     renderControls();
     turnSounds(prev, st);
@@ -3828,17 +4089,16 @@ html[data-q='low'] .hacts.turn { animation: none; }
       handActs: (s, hd, n) => handActs(st, me, s, hd, n),
     };
   }
-  /* v3.2: elin altındaki karar düğmeleri. Sırası gelen elimde hemen uygulanır; sırası gelmemiş elimde
-     ön karar olarak saklanır (kırmızı X ile iptal). Döner: { mode, acts, pre } ya da null */
+  /* v3.2: elin altındaki karar düğmeleri (Hit / Stand / 2x / Split). Sırası gelmemiş elimde ön karar olarak
+     saklanır (kırmızı X ile iptal). Döner: { mode, acts, pre } ya da null */
   const PRE_STATES = ['INITIAL_DEAL', 'INSURANCE_WINDOW', 'DEALER_PEEK', 'PLAYER_TURNS'];
   const HAND_ACTS = ['hit', 'stand', 'double', 'split'];
   function handActs(st, me, s, hd, n) {
     const id = myId();
     if (!s.user || !id || s.user.id !== id || hd.cards.length < 2) return null;
     const x = { seat: s.no, h: hd, n };
-    if (st.state === 'PLAYER_TURNS' && st.turn && st.turn.hand === hd.id) {
-      return { mode: 'turn', acts: HAND_ACTS.filter((a) => legal(x, a)), pre: null };
-    }
+    // v3.3: sırası gelen elde kararlar alttaki çubuktan verilir; şerit yalnız sırası gelmemiş ellerde (ön seçim)
+    if (st.state === 'PLAYER_TURNS' && st.turn && st.turn.hand === hd.id) return null;
     if (!PRE_STATES.includes(st.state) || hd.st !== 'waiting') return null;
     const pre = (((me && me.pre) || []).find((p) => p.hand === hd.id) || {}).action || null;
     return { mode: 'pre', acts: HAND_ACTS.filter((a) => legal(x, a)), pre };
@@ -3881,8 +4141,8 @@ html[data-q='low'] .hacts.turn { animation: none; }
     if (act === 'sit') {
       SND.play('click');
       call('bg_bj_sit', { p_seat: seat, p_session: SESSION });
-    } else if (act === 'bet') placeBet(seat, G.chip);
-    else if (act === 'bb') placeBB(seat, G.chip);
+    } else if (act === 'bet') bumpBet(seat, 'chip');
+    else if (act === 'bb') bbBump(seat, 'chip');
     else if (act === 'stand') {
       const inPlay = mySeatInPlay(seat);
       T.confirm(`P${seat} pozisyonundan kalk`, inPlay ? 'Bu elin sonunda kalkılacak. Devam eden elin bahsi geri alınmaz, sonuç normal şekilde hesaplanır.' : 'Pozisyon boşalır ve başka bir oyuncu oturabilir. Bu pozisyonun Auto Rebet ayarı kapanır.', 'Kalk', 'danger').then(
@@ -3898,38 +4158,139 @@ html[data-q='low'] .hacts.turn { animation: none; }
     const s = G.st && G.st.seats.find((x) => x.no === seat);
     return !!(s && s.bet_status === 'placed' && G.st.round && !G.st.round.settled);
   }
-  function allowedBets() {
-    const st = G.st;
-    const me = G.me || {};
-    return (st.bets || []).filter((b) => b <= st.max_bet && b <= (me.max_bet || 10));
+  /* ---------------- v3.3 bahis: fiş katları (en düşük – en yüksek), iyimser gösterim ----------------
+     Fişe ya da pozisyona her dokunuş bir fiş ekler; değer ekranda hemen görünür, sunucuya kısa bir
+     beklemeden sonra tek istekle gider (art arda dokunuşlar kaybolmaz, ekran takılmaz). */
+  function betLim() {
+    const st = G.st || {};
+    const bets = (st.bets || []).slice().sort((a, b) => a - b);
+    const chip = st.chip || bets[0] || 10;
+    const min = st.min_bet || bets[0] || chip;
+    let max = st.max_bet || bets[bets.length - 1] || min;
+    if (G.me && G.me.max_bet) max = Math.min(max, G.me.max_bet);
+    return { chip, min, max: Math.max(min, max) };
   }
-  function placeBet(seat, amount) {
+  const mySeatNos = () => ((G.me && G.me.seats) || []).map((s) => s.no);
+  /** Masanın sınırları içinde ve fiş adımında mı (ör. son bahsi tekrarlarken) */
+  function betValid(v) {
+    const L = betLim();
+    return !!v && v >= L.min && v <= L.max && (v - L.min) % L.chip === 0;
+  }
+  /** Pozisyonun (iyimser) bahsi */
+  function seatBet(no) {
+    if (G.opt[no] != null) return G.opt[no];
+    const s = G.st && (G.st.seats || []).find((x) => x.no === no);
+    return (s && s.bet) || 0;
+  }
+  /** Fişin gideceği pozisyon: son dokunulan, yoksa bahsi olmayan, yoksa ilk pozisyonum */
+  function betTarget() {
+    const mine = mySeatNos();
+    if (!mine.length) return null;
+    if (G.betSeat && mine.includes(G.betSeat)) return G.betSeat;
+    return mine.find((n) => !seatBet(n)) || mine[0];
+  }
+  /** Bahsi değiştir: how = 'chip' (bir fiş ekle) | 'max' | 'clear' | sayı */
+  function bumpBet(no, how) {
+    const st = G.st;
+    if (!st || st.state !== 'BETTING_OPEN' || !mySeatNos().includes(no)) return;
+    const L = betLim();
+    const cur = seatBet(no);
+    let next = how === 'clear' ? 0 : how === 'max' ? L.max : typeof how === 'number' ? how : cur ? cur + L.chip : L.min;
+    if (next > L.max) {
+      if (cur >= L.max) {
+        toast(`Bu masada en yüksek bahis ${fmt(L.max)} BP.`, 'info');
+        return;
+      }
+      next = L.max;
+    }
+    if (next) {
+      const other = mySeatNos()
+        .filter((n) => n !== no)
+        .reduce((a, n) => a + seatBet(n), 0);
+      const room = ((G.me && G.me.balance) || 0) - other;
+      if (next > room) {
+        const fit = room >= L.min ? L.min + Math.floor((room - L.min) / L.chip) * L.chip : 0;
+        if (!fit || fit <= cur) {
+          toast('BP bakiyen bu bahis için yetmiyor.', 'err');
+          return;
+        }
+        next = fit;
+      }
+    }
+    G.betSeat = no;
+    if (next === cur) return false;
+    G.opt[no] = next;
     playing(true);
-    if (!allowedBets().includes(amount)) {
-      toast(`BP seviyen bu masada en fazla ${Math.max(...allowedBets(), 10)} BP bahse izin veriyor.`, 'err');
-      return;
-    }
-    SND.play('chip', 2);
-    call('bg_bj_bet', { p_seat: seat, p_amount: amount }, null, true);
+    SND.play(next > cur ? 'chip' : 'click', 1);
+    if (navigator.vibrate) navigator.vibrate(8);
+    paint();
+    clearTimeout(G.optT[no]);
+    G.optT[no] = setTimeout(() => flushBet(no), 240);
+    return next > cur;
   }
-  function placeBB(seat, amount) {
+  async function flushBet(no) {
+    clearTimeout(G.optT[no]);
+    const amount = G.opt[no];
+    if (amount == null) return true;
+    const r = await call('bg_bj_bet', { p_seat: no, p_amount: amount }, null, true);
+    if (G.opt[no] === amount || !r) delete G.opt[no];
+    paint();
+    return !!r;
+  }
+  async function flushBets() {
+    let ok = true;
+    for (const no of Object.keys(G.opt).map(Number)) ok = (await flushBet(no)) && ok;
+    return ok;
+  }
+  function dropOpt() {
+    Object.keys(G.optT).forEach((k) => clearTimeout(G.optT[k]));
+    G.opt = {};
+    G.optT = {};
+  }
+  /** Ekrana çizilen durum: bahis aşamasında gönderilmeyi bekleyen bahisler işlenmiş kopya */
+  function viewState() {
     const st = G.st;
+    if (!st || st.state !== 'BETTING_OPEN' || !Object.keys(G.opt).length) return st;
+    return Object.assign({}, st, {
+      seats: (st.seats || []).map((s) =>
+        G.opt[s.no] != null && G.opt[s.no] !== s.bet ? Object.assign({}, s, { bet: G.opt[s.no] || 0, confirmed: false, bet_status: G.opt[s.no] ? 'pending' : null }) : s,
+      ),
+    });
+  }
+  function paint() {
+    if (!G.st || !G.scene) return;
+    G.scene.update(viewState(), G.me);
+    renderControls();
+  }
+  /** Bet Behind: izleyici tek pozisyona oynar; fiş ekler (sıralı istek, en güncel tutardan) */
+  function bbBump(seat, how) {
+    const st = G.st;
+    if (!st || st.state !== 'BETTING_OPEN') return;
     if (!st.spectators) return toast('Bu masada izleyici bahsi kapalı.', 'err');
-    if (!allowedBets().includes(amount)) {
-      toast(`BP seviyen en fazla ${Math.max(...allowedBets(), 10)} BP Bet Behind'a izin veriyor.`, 'err');
-      return;
-    }
-    const cur = G.me && G.me.bb;
-    if (cur && cur.status === 'PENDING' && cur.seat !== seat) {
+    const cur = G.me && G.me.bb && G.me.bb.status === 'PENDING' ? G.me.bb : null;
+    if (cur && seat != null && cur.seat !== seat) {
       toast(`Bu turda P${cur.seat} pozisyonuna Bet Behind yaptın. Bir turda tek pozisyona oynanır.`, 'err');
       return;
     }
-    SND.play('chip', 2);
-    call('bg_bj_bet_behind', { p_seat: seat, p_amount: amount });
+    const to = seat != null ? seat : cur ? cur.seat : null;
+    if (to == null) return toast('Önce Bet Behind yapacağın oyuncunun bahis alanına dokun.', 'info');
+    const L = betLim();
+    const now0 = cur ? cur.amount : 0;
+    let next = how === 'clear' ? 0 : how === 'max' ? L.max : now0 ? now0 + L.chip : L.min;
+    if (next > L.max) {
+      if (now0 >= L.max) return toast(`Bu masada en yüksek bahis ${fmt(L.max)} BP.`, 'info');
+      next = L.max;
+    }
+    if (next > ((G.me && G.me.balance) || 0)) return toast('BP bakiyen bu bahis için yetmiyor.', 'err');
+    SND.play(next > now0 ? 'chip' : 'click', 2);
+    call('bg_bj_bet_behind', { p_seat: to, p_amount: next }, null, true);
   }
 
   /* =====================================================================
-     KONTROL PANELİ
+     ALT KARAR ÇUBUĞU (v3.3) — örnek oyundaki gibi kararlar alttan verilir:
+     PES ET · İKİ KAT · BÖL · DUR · KART AL. Sırası gelmemiş elde aynı düğmeler
+     ön seçimdir (onay işareti; tekrar dokununca kalkar). Yatay telefonda
+     düğmeler masanın iki alt köşesine yerleşir, masa tam genişlikte kalır.
      ===================================================================== */
   function myHands() {
     const id = myId();
@@ -3956,69 +4317,94 @@ html[data-q='low'] .hacts.turn { animation: none; }
     if (a === 'surrender') return two && !h.split;
     return false;
   }
+  const sumTxt = (h) => (h.soft && h.total < 21 ? `${h.total - 10}/${h.total}` : String(h.total));
+  /** Karar düğmesi: yuvarlak simge + yazı; ön seçimde onay halkası */
+  function abtn(a, label, k, o) {
+    return `<button type="button" class="ab a-${a}${o.on ? ' on' : ''}" ${o.pre ? `data-pre="${a}" aria-pressed="${!!o.on}"` : `data-act="${a}"`} ${o.ok ? '' : 'disabled'} aria-label="${label}${o.pre ? (o.on ? ', ön seçim, kaldırmak için dokun' : ', ön seçim') : ''}">`
+      + `<span class="ab-d"><i>${AICON[a]}</i>${o.pre ? `<em class="ab-chk">${ic.check}</em>` : ''}</span><b>${label}</b>${o.pre ? '' : `<kbd>${k}</kbd>`}</button>`;
+  }
+  function sbtn(attr, icon, label, o) {
+    o = o || {};
+    return `<button type="button" class="ab sb${o.cls ? ' ' + o.cls : ''}" ${attr} ${o.ok === false ? 'disabled' : ''} aria-label="${o.aria || label}"><span class="ab-d"><i>${icon}</i></span><b>${label}</b></button>`;
+  }
+  function dock(mode, info, left, right, center, extra) {
+    return `<div class="dock" data-mode="${mode}">${info ? `<div class="dk-info">${info}</div>` : ''}`
+      + `<div class="dk-bar"><div class="dk-l">${left || ''}</div>${center != null ? `<div class="dk-c">${center}</div>` : ''}<div class="dk-r">${right || ''}</div></div>${extra || ''}</div>`;
+  }
+  function arPills(mySeats) {
+    return mySeats.length
+      ? `<span class="ar-group">${mySeats
+          .map((s) => `<button type="button" class="ar${s.auto ? ' on' : ''}" data-ar="${s.no}" aria-pressed="${!!s.auto}" title="Auto Rebet: her tur aynı bahsi kendiliğinden koyar${s.last_bet ? ' (son bahis ' + s.last_bet + ' BP)' : ''}"><i>↻</i><span>Auto Rebet</span>${mySeats.length > 1 ? `<em>P${s.no}</em>` : ''}</button>`)
+          .join('')}</span>`
+      : '';
+  }
+  function chipBtn(L, label) {
+    return `<button type="button" class="pchip big" data-chip aria-label="${label}"><svg viewBox="0 0 100 100" aria-hidden="true">${window.BJCards.chipSVG(L.chip)}</svg><span class="pc-plus">+${fmt(L.chip)}</span></button>`;
+  }
   function renderControls() {
     const box = $('#controls');
     const st = G.st;
     const me = G.me || {};
     if (!st) {
       box.innerHTML = '';
+      box._html = '';
       return;
     }
     const mySeats = me.seats || [];
-    let main = '';
-    let side = '';
-    // Auto Rebet: pozisyon başına küçük kontrol
-    if (mySeats.length && st.status !== 'closed') {
-      side = `<div class="ar-group">${mySeats
-        .map((s) => `<button type="button" class="ar${s.auto ? ' on' : ''}" data-ar="${s.no}" aria-pressed="${!!s.auto}" title="Auto Rebet${s.last_bet ? ' · son bahis ' + s.last_bet + ' BP' : ''}"><i>↻</i><span>AUTO REBET</span>${mySeats.length > 1 ? `<em>P${s.no}</em>` : ''}</button>`)
-        .join('')}</div>`;
-    }
-    const chipRow = (label) => {
-      const ok = allowedBets();
-      if (!ok.includes(G.chip)) G.chip = ok[ok.length - 1] || 10;
-      return `<div class="chip-row" role="group" aria-label="${label}">${(st.bets || [])
-        .map((b) => `<button type="button" class="pchip c${b}${G.chip === b ? ' sel' : ''}" data-chip="${b}" ${ok.includes(b) ? '' : 'disabled'} aria-pressed="${G.chip === b}" aria-label="${b} BP fişi"><svg viewBox="0 0 100 100" aria-hidden="true">${window.BJCards.chipSVG(b)}</svg></button>`)
-        .join('')}</div>`;
-    };
+    const L = betLim();
     const turn = myTurnHand();
+    let html;
     if (st.state === 'BETTING_OPEN' && mySeats.length) {
-      const seatsInfo = mySeats
-        .map((s) => {
-          const seat = st.seats.find((x) => x.no === s.no) || {};
-          return `<span class="mybet${seat.confirmed ? ' ok' : ''}"><em>P${s.no}</em>${seat.bet ? fmt(seat.bet) + ' BP' + (seat.confirmed ? ' ✓' : '') : 'bahis yok'}</span>`;
-        })
-        .join('');
-      const anyBet = mySeats.some((s) => (st.seats.find((x) => x.no === s.no) || {}).bet);
+      const tgt = betTarget();
+      const amt = seatBet(tgt);
+      const anyBet = mySeats.some((s) => seatBet(s.no));
       const allOk = mySeats.every((s) => {
         const x = st.seats.find((y) => y.no === s.no) || {};
-        return !x.bet || x.confirmed;
+        return !seatBet(s.no) || (x.confirmed && G.opt[s.no] == null);
       });
-      const canRebet = mySeats.some((s) => {
-        const x = st.seats.find((y) => y.no === s.no) || {};
-        return !x.bet && s.last_bet && allowedBets().includes(s.last_bet);
-      });
-      main = `<div class="ctl-bet">
-          <button type="button" class="cbtn" data-clear ${anyBet ? '' : 'disabled'}>${ic.clear}<span>Temizle</span></button>
-          ${chipRow('Bahis miktarı')}
-          <button type="button" class="cbtn" data-rebet ${canRebet ? '' : 'disabled'} title="Son bahsini tekrarla">${ic.redo}<span>Tekrarla</span></button>
-          <button type="button" class="cbtn go" data-confirm ${anyBet && !allOk ? '' : 'disabled'}>${ic.check}<span>Onayla</span></button>
-          <div class="ctl-info">${seatsInfo}<small>${mySeats.length > 1 ? 'Fişi seç, sonra bahis koyacağın pozisyona dokun.' : 'Fişe dokununca bahis pozisyonuna konur.'}</small></div></div>`;
+      const canRebet = mySeats.some((s) => !seatBet(s.no) && betValid(s.last_bet));
+      const tabs = mySeats.length > 1
+        ? `<span class="dk-tabs">${mySeats.map((s) => {
+            const x = st.seats.find((y) => y.no === s.no) || {};
+            const b = seatBet(s.no);
+            return `<button type="button" data-bs="${s.no}" aria-pressed="${s.no === tgt}"><em>P${s.no}</em>${b ? fmt(b) + (x.confirmed && G.opt[s.no] == null ? ' ✓' : '') : '—'}</button>`;
+          }).join('')}</span>`
+        : '';
+      const info = `<p class="dk-who"><b>Bahis</b><span class="dk-amt">${fmt(amt)} BP</span><small>${fmt(L.min)}–${fmt(L.max)} BP · fiş ${fmt(L.chip)}</small></p>${tabs}${arPills(mySeats)}`;
+      html = dock(
+        'bet',
+        info,
+        sbtn('data-clear', ic.clear, 'Temizle', { ok: anyBet }) + sbtn('data-rebet', ic.redo, 'Tekrarla', { ok: canRebet, aria: 'Son bahsini tekrarla' }),
+        sbtn('data-max', ic.max, 'Max', { ok: amt < L.max, aria: `En yüksek bahis (${fmt(L.max)} BP)` }) + sbtn('data-confirm', ic.check, 'Onayla', { ok: anyBet && !allOk, cls: 'go' }),
+        chipBtn(L, `${fmt(L.chip)} BP fiş ekle`),
+      );
     } else if (st.state === 'BETTING_OPEN' && st.spectators && !mySeats.length) {
       const bb = me.bb && me.bb.status === 'PENDING' ? me.bb : null;
-      main = `<div class="ctl-bet">${chipRow('Bet Behind miktarı')}<div class="ctl-info"><b class="bbt">BET BEHIND</b><small>${bb ? `P${bb.seat} pozisyonunda ${fmt(bb.amount)} BP. Ana oyuncunun bütün kararlarını (Double, Split dahil) takip eder.` : 'Bir oyuncunun bahis alanına dokun. Bet Behind, oyuncunun Double ve Split kararlarını zorunlu takip eder; ek bahis karşılanamazsa o turdaki bahislerin iade edilir.'}</small></div>
-        ${bb ? '<button type="button" class="cbtn" data-bbclear>' + ic.clear + '<span>Kaldır</span></button>' : ''}</div>`;
+      const info = `<p class="dk-who"><b class="bbt">Bet Behind</b><span class="dk-amt">${bb ? `P${bb.seat} · ${fmt(bb.amount)} BP` : 'pozisyon seç'}</span><small>${bb ? 'Ana oyuncunun bütün kararlarını (Double, Split dahil) takip eder.' : 'Bir oyuncunun bahis alanına dokun; fiş her dokunuşta eklenir.'}</small></p>`;
+      html = dock(
+        'bb',
+        info,
+        sbtn('data-bbclear', ic.clear, 'Kaldır', { ok: !!bb }),
+        sbtn('data-bbmax', ic.max, 'Max', { ok: !!bb && bb.amount < L.max }),
+        chipBtn(L, `Bet Behind'a ${fmt(L.chip)} BP ekle`),
+      );
     } else if (st.state === 'INSURANCE_WINDOW' && mySeats.length) {
       const open = (st.seats || []).filter((s) => s.user && s.user.id === myId() && s.bet_status === 'placed' && !s.ins_decided);
-      main = open.length
-        ? `<div class="ctl-ins">${open.map((s) => `<div class="ins-row"><span>P${s.no} için sigorta <b>${fmt(s.bet / 2)} BP</b> · 2:1 öder</span><button type="button" class="t-btn is-primary" data-ins="${s.no}" data-take="1">Sigorta al</button><button type="button" class="t-btn" data-ins="${s.no}" data-take="0">Alma</button></div>`).join('')}</div>`
-        : '<p class="ctl-status">Diğer oyuncuların sigorta kararı bekleniyor…</p>';
+      if (open.length) {
+        const s0 = open[0];
+        html = dock(
+          'ins',
+          `<p class="dk-who"><b>Sigorta?</b><span>P${s0.no} · ${fmt(s0.bet / 2)} BP</span><small>Krupiyenin açık kartı As. Krupiye blackjack yaparsa sigorta 2:1 öder.</small></p>`,
+          sbtn(`data-ins="${s0.no}" data-take="0"`, ic.clear, 'Alma'),
+          sbtn(`data-ins="${s0.no}" data-take="1"`, ic.shield, 'Sigorta al', { cls: 'go' }),
+          null,
+        );
+      } else html = dock('wait', null, '', '', `<p class="ctl-status">Diğer oyuncuların sigorta kararı bekleniyor…</p>`);
     } else if (turn) {
-      // süre çubuğu tick() ile güncellenir; HTML zamana bağlı olmadığı için düğmeler basılırken yeniden çizilmez
-      main = `<div class="ctl-act">${handRead(turn)}
-        <div class="ctl-top"><p class="ctl-who"><b>Sıra sende</b> · P${turn.seat}${turn.n > 1 ? ' · el ' + (turn.h.i + 1) : ''} · <span class="ctl-sum">${turn.h.soft && turn.h.total < 21 ? turn.h.total - 10 + '/' + turn.h.total : turn.h.total}</span></p><div class="tbar"><i></i></div></div>
-        <div class="act-row">${ACT.map(([a, l, k]) => `<button type="button" class="act a-${a}" data-act="${a}" ${legal(turn, a) ? '' : 'disabled'}><i>${AICON[a]}</i><b>${l}</b><kbd>${k}</kbd></button>`).join('')}</div></div>`;
+      const info = `<p class="dk-who"><b>Sıra sende</b><span>P${turn.seat}${turn.n > 1 ? ' · el ' + (turn.h.i + 1) : ''}</span><em class="dk-sum">${sumTxt(turn.h)}</em></p>${handRead(turn)}`;
+      const b = (row) => row.map(([a, l, k]) => abtn(a, l, k, { ok: legal(turn, a) })).join('');
+      html = dock('turn', info, b(ACT.slice(0, 3)), b(ACT.slice(3)), null, '<div class="tbar" aria-hidden="true"><i></i></div>');
     } else {
-      // ön hamle: sırası gelmemiş ellerim
       const waiting = ['INITIAL_DEAL', 'INSURANCE_WINDOW', 'DEALER_PEEK', 'PLAYER_TURNS'].includes(st.state)
         ? myHands().filter((x) => x.h.st === 'waiting' && x.h.cards.length >= 2)
         : [];
@@ -4026,22 +4412,24 @@ html[data-q='low'] .hacts.turn { animation: none; }
         if (!waiting.some((x) => x.h.id === G.preHand)) G.preHand = waiting[0].h.id;
         const x = waiting.find((y) => y.h.id === G.preHand);
         const cur = ((me.pre || []).find((p) => p.hand === x.h.id) || {}).action || null;
-        main = `<div class="ctl-act premode">${handRead(x)}
-          <div class="ctl-top"><p class="ctl-who"><b>Ön hamle</b>${waiting.length > 1 ? '' : ` · P${x.seat}${x.n > 1 ? ' el ' + (x.h.i + 1) : ''}`}<small>Sıran gelince uygulanır; o ana kadar değiştirebilir ya da iptal edebilirsin.</small></p>
-          ${waiting.length > 1 ? `<div class="pre-tabs">${waiting.map((y) => `<button type="button" data-ph="${y.h.id}" aria-pressed="${y.h.id === x.h.id}">P${y.seat}${y.n > 1 ? '·' + (y.h.i + 1) : ''}</button>`).join('')}</div>` : ''}</div>
-          <div class="act-row">${ACT.map(([a, l]) => `<button type="button" class="act ghost a-${a}${cur === a ? ' on' : ''}" data-pre="${a}" ${legal(x, a) ? '' : 'disabled'}><i>${AICON[a]}</i><b>${l}</b>${cur === a ? `<em>${ic.check}BEKLEMEDE</em>` : ''}</button>`).join('')}</div></div>`;
+        const tabs = waiting.length > 1
+          ? `<span class="dk-tabs">${waiting.map((y) => `<button type="button" data-ph="${y.h.id}" aria-pressed="${y.h.id === x.h.id}">P${y.seat}${y.n > 1 ? '·' + (y.h.i + 1) : ''}<em>${sumTxt(y.h)}</em></button>`).join('')}</span>`
+          : '';
+        const info = `<p class="dk-who"><b>Ön seçim</b><span>P${x.seat}${x.n > 1 ? ' · el ' + (x.h.i + 1) : ''}</span><em class="dk-sum">${sumTxt(x.h)}</em><small>${cur ? 'Sıran gelince uygulanır. Kaldırmak için yeniden dokun.' : 'Sıran gelmeden seç; sıran gelince uygulanır.'}</small></p>${tabs}`;
+        const b = (row) => row.map(([a, l, k]) => abtn(a, l, k, { ok: legal(x, a), pre: true, on: cur === a })).join('');
+        html = dock('pre', info, b(ACT.slice(0, 3)), b(ACT.slice(3)), null);
       } else if (st.state === 'RESULT_DISPLAY' && st.round && st.round.settled && !st.round.cancelled && myRoundNet() != null) {
         const n = myRoundNet();
-        main = `<div class="ctl-res ${n > 0 ? 'win' : n < 0 ? 'lose' : 'push'}"><span>Bu tur</span><b>${sgn(n)} BP</b><small>Yeni tur birazdan başlıyor.</small></div>`;
-      } else main = `<p class="ctl-status">${esc(statusLine(st))}</p>`;
+        html = dock('res', arPills(mySeats), '', '', `<div class="ctl-res ${n > 0 ? 'win' : n < 0 ? 'lose' : 'push'}"><span>Bu tur</span><b>${sgn(n)} BP</b><small>Yeni tur birazdan başlıyor.</small></div>`);
+      } else html = dock('wait', mySeats.length ? arPills(mySeats) : null, '', '', `<p class="ctl-status">${esc(statusLine(st))}</p>`);
     }
-    const html = `<div class="ctl-main">${main}</div>${side}`;
     if (box._html !== html) {
       box.innerHTML = html;
       box._html = html;
       const bar = $('.tbar i', box);
       if (bar && st.deadline) bar.style.transform = `scaleX(${Math.min(1, Math.max(0, st.deadline - now()) / 15600)})`;
     }
+    box.dataset.mode = (box.firstElementChild && box.firstElementChild.dataset.mode) || '';
   }
   /** Bu turdaki net sonucum (pozisyonlarım + Bet Behind); turda yoksam null */
   function myRoundNet() {
@@ -4059,9 +4447,9 @@ html[data-q='low'] .hacts.turn { animation: none; }
     const red = (c) => c[1] === 'H' || c[1] === 'D';
     const lab = (c) => (c[0] === 'T' ? '10' : c[0]) + ({ S: '♠', H: '♥', D: '♦', C: '♣' })[c[1]];
     const d = G.st && G.st.dealer && G.st.dealer.cards[0];
-    return `<div class="hand-read">${d ? `<span class="mc-dl">Krupiye</span><span class="mc${red(d) ? ' r' : ''}">${lab(d)}</span><span class="mc-dl"> · Sen</span>` : ''}${x.h.cards
+    return `<div class="hand-read">${d ? `<span class="mc-dl">Krupiye</span><span class="mc${red(d) ? ' r' : ''}">${lab(d)}</span><span class="mc-dl">Sen</span>` : ''}${x.h.cards
       .map((c) => `<span class="mc${red(c) ? ' r' : ''}">${lab(c)}</span>`)
-      .join('')}<b class="mc-eq">= ${x.h.soft && x.h.total < 21 ? x.h.total - 10 + '/' + x.h.total : x.h.total}</b></div>`;
+      .join('')}</div>`;
   }
   function statusLine(st) {
     const me = G.me || {};
@@ -4084,48 +4472,41 @@ html[data-q='low'] .hacts.turn { animation: none; }
     if (!b || b.disabled) return;
     const st = G.st;
     const me = G.me || {};
-    if (b.dataset.chip) {
-      G.chip = +b.dataset.chip;
-      localStorage.setItem('bj.chip', G.chip);
-      SND.play('chip');
-      const mySeats = me.seats || [];
-      if (st.state === 'BETTING_OPEN' && mySeats.length === 1) placeBet(mySeats[0].no, G.chip);
-      else if (st.state === 'BETTING_OPEN' && !mySeats.length && me.bb && me.bb.status === 'PENDING') placeBB(me.bb.seat, G.chip);
-      else renderControls();
-      return;
-    }
-    if (b.hasAttribute('data-clear')) {
-      for (const s of me.seats || []) {
-        const x = st.seats.find((y) => y.no === s.no);
-        if (x && x.bet) await call('bg_bj_bet', { p_seat: s.no, p_amount: 0 }, null, true);
+    if (!st) return;
+    if (b.hasAttribute('data-chip')) {
+      b.classList.remove('tap');
+      void b.offsetWidth;
+      b.classList.add('tap');
+      if ((me.seats || []).length) {
+        const no = betTarget();
+        const r = b.getBoundingClientRect();
+        if (bumpBet(no, 'chip') && G.scene.tossChip) G.scene.tossChip(no, { x: r.left + r.width / 2, y: r.top + r.height / 2 }, betLim().chip);
+        return;
       }
+      return bbBump(null, 'chip');
+    }
+    if (b.dataset.bs) {
+      G.betSeat = +b.dataset.bs;
+      SND.play('click');
+      return renderControls();
+    }
+    if (b.hasAttribute('data-max')) return bumpBet(betTarget(), 'max');
+    if (b.hasAttribute('data-bbmax')) return bbBump(null, 'max');
+    if (b.hasAttribute('data-clear')) {
+      for (const s of me.seats || []) if (seatBet(s.no)) bumpBet(s.no, 'clear');
       return;
     }
     if (b.hasAttribute('data-confirm')) {
       SND.play('chipsStack');
+      if (navigator.vibrate) navigator.vibrate(14);
+      if (!(await flushBets())) return;
       return call('bg_bj_bet_confirm', {}, null, true);
     }
     if (b.hasAttribute('data-rebet')) {
-      // son bahsi bahsi olmayan pozisyonlara tekrar koy
-      const ok = allowedBets();
-      const list = (me.seats || []).filter((s) => {
-        const x = st.seats.find((y) => y.no === s.no) || {};
-        return !x.bet && s.last_bet && ok.includes(s.last_bet);
+      // son bahsi, bahsi olmayan pozisyonlara tekrar koy
+      (me.seats || []).forEach((s) => {
+        if (!seatBet(s.no) && betValid(s.last_bet)) bumpBet(s.no, s.last_bet);
       });
-      if (!list.length || G.busy) return;
-      G.busy = true;
-      SND.play('chip', 2);
-      playing(true);
-      try {
-        let r = null;
-        for (const s of list) r = await rpc('bg_bj_bet', { p_table: G.tableId, p_seat: s.no, p_amount: s.last_bet });
-        apply(r);
-      } catch (err) {
-        toast(errText(err), 'err');
-        syncNow(true);
-      } finally {
-        G.busy = false;
-      }
       return;
     }
     if (b.hasAttribute('data-bbclear')) return call('bg_bj_bet_behind', { p_seat: me.bb.seat, p_amount: 0 });
@@ -4141,16 +4522,19 @@ html[data-q='low'] .hacts.turn { animation: none; }
     if (b.dataset.act) return doAction(b.dataset.act);
     if (b.dataset.ph) {
       G.preHand = +b.dataset.ph;
+      SND.play('click');
       return renderControls();
     }
     if (b.dataset.pre) return setPre(b.dataset.pre);
   }
   function doAction(a) {
     const x = myTurnHand();
-    if (!x || !legal(x, a)) return;
+    if (!x || !legal(x, a) || G.busy) return;
     playing(true);
     SND.play(a === 'double' || a === 'split' ? 'chipsStack' : 'click');
     if (navigator.vibrate) navigator.vibrate(12);
+    const btn = $(`#controls [data-act="${a}"]`);
+    if (btn) btn.classList.add('fired');
     call('bg_bj_act', { p_hand: x.h.id, p_action: a, p_req: rid() });
   }
   function setPre(a) {
@@ -4168,7 +4552,7 @@ html[data-q='low'] .hacts.turn { animation: none; }
     // iyimser gösterim: sunucu onaylayana kadar seçim görünür
     me.pre = (me.pre || []).filter((p) => p.hand !== hand).concat(next ? [{ hand, action: next, rev }] : []);
     renderControls();
-    G.scene.update(G.st, G.me);
+    G.scene.update(viewState(), G.me);
     SND.play('click');
     try {
       const r = await rpc('bg_bj_preaction', { p_table: G.tableId, p_hand: hand, p_action: next, p_rev: rev });
@@ -4270,7 +4654,7 @@ html[data-q='low'] .hacts.turn { animation: none; }
     const dots = Array.from({ length: jp.need }, (_, i) => `<i class="${i < jp.streak ? 'on' : ''}"></i>`).join('');
     const html = `
       <button type="button" class="hud-btn" data-lobby aria-label="Lobiye dön">‹</button>
-      <div class="hud-t"><b>${esc(st.name)}</b><span class="tier ${st.tier}">${TIER[st.tier]} · ${st.max_bet} BP</span>${st.round ? `<small>Tur ${st.round.no}</small>` : ''}</div>
+      <div class="hud-t"><b>${esc(st.name)}</b><span class="tier ${st.tier}">${TIER[st.tier]} · ${st.min_bet && st.min_bet !== st.max_bet ? fmt(st.min_bet) + '–' : ''}${fmt(st.max_bet)} BP</span>${st.round ? `<small>Tur ${st.round.no}</small>` : ''}</div>
       <div class="hud-jp" title="Yedi pot aynı turda kazanırsa seri ilerler; 5 tur üst üste olunca jackpot: pot başına ${st.jackpot.seat_reward} BP, Bet Behind izleyicisine ${st.jackpot.spec_reward} BP">
         <small>JACKPOT STREAK</small><span class="jp-dots">${dots}</span><b>${jp.streak}/${jp.need}</b></div>
       <div class="hud-r">
@@ -4383,6 +4767,7 @@ html[data-q='low'] .hacts.turn { animation: none; }
       title: 'Ses ve görüntü',
       body: `<div class="t-form">
         <label class="set-row"><span>Ses</span><input type="checkbox" data-on ${a.on ? 'checked' : ''}></label>
+        ${SND.iOS && SND.iOS() ? `<label class="set-row"><span>Telefon sessizdeyken de çal</span><input type="checkbox" data-silent ${SND.silentOk() ? 'checked' : ''}></label><p class="set-note">iPhone ve iPad'de yan anahtar sessizdeyken de oyun sesleri duyulur. Kapatırsan telefonun sessiz modu oyunu da susturur.</p>` : ''}
         ${range('master', 'Genel ses')}${range('fx', 'Efektler')}${range('dealer', 'Krupiye (kart sesleri)')}${range('amb', 'Ortam sesi')}
         <div class="t-field"><span class="t-lab">Görüntü kalitesi</span>${seg('quality', [['high', 'Yüksek'], ['mid', 'Dengeli'], ['low', 'Düşük güç']])}</div>
         <div class="t-field"><span class="t-lab">Animasyon hızı</span>${seg('fast', [[false, 'Normal'], [true, 'Hızlı']])}</div>
@@ -4398,6 +4783,8 @@ html[data-q='low'] .hacts.turn { animation: none; }
       }
       const c = e.target.closest('[data-on]');
       if (c) SND.set({ on: c.checked });
+      const q = e.target.closest('[data-silent]');
+      if (q) SND.setSilentOk(q.checked);
     });
     sh.body.addEventListener('click', (e) => {
       const b = e.target.closest('[data-opt] button');
@@ -4472,11 +4859,10 @@ html[data-q='low'] .hacts.turn { animation: none; }
         <p><b>Sabot:</b> 8 deste (416 kart). Kesme kartı sondan 73–83 kart geride; çıkınca tur tamamlanır, sonra yeni sabot karıştırılır ve ilk 3 kart yakılır. Deste her elde karıştırılmaz.</p>
         <p><b>Krupiye:</b> 16 ve altında kart çeker, soft 17 dahil 17'de durur. Açık kartı As ya da 10 değerindeyse blackjack kontrolü yapar (American hole card).</p>
         <p><b>Ödemeler:</b> galibiyet 1:1, doğal blackjack 3:2, beraberlikte bahis iade, teslimde yarısı iade. Sigorta (krupiye As açınca) ana bahsin yarısıdır, 2:1 öder.</p>
-        <p><b>Hamleler:</b> Kart, Dur, İkiye katla (ilk iki kartta, tek kart verilir), Böl (eşit değerli iki kart, en fazla 4 el; bölünmüş aslara tek kart, tekrar bölünmez; bölmeden sonra ikiye katlama serbest, teslim yok), Teslim (geç teslim, ilk iki kartta). Hamle süresi 15 saniye; süre dolarsa DUR uygulanır.</p>
-        <p><b>El altı düğmeler:</b> Oynadığın her elin altında renkli karar düğmeleri çıkar: <b>H</b> kart (mavi), <b>S</b> dur (kırmızı), <b>D</b> ikiye katla (yeşil), <b>SP</b> böl (sarı). Sırası gelen elde hemen uygulanır; sırası gelmemiş elde ön karar olur.</p>
-        <p><b>Ön hamle:</b> Sıran gelmeden kararını seçebilirsin; seçtiğin karar elin altında “sırada” yazısıyla durur, kırmızı X ile iptal edilir. Sıra gelince seçim uygulanır; KART yalnızca bir kart demektir. Geçersizleşen ön hamle uygulanmaz, karar süresi verilir.</p>
-        <p><b>Masalar:</b> ${['bronze', 'silver', 'gold'].map((k) => `${TIER[k]} ${betsText(k)}${tiersCfg()[k].min_balance > 0 ? ` (güncel bakiye en az ${fmt(tiersCfg()[k].min_balance)} BP)` : ''}`).join(' · ')}. Bahsin, bakiyenin yettiği en yüksek seviyenin bahislerini geçemez. Bir masada en fazla 2 pozisyon. Oyun en az 2 aktif potla başlar.</p>
-        <p><b>Bet Behind:</b> İzleyici bahis aşamasında bir oyuncunun arkasına masanın bahis değerlerinden birini koyar (turda tek pozisyon). Ana oyuncunun bütün kararlarını takip eder; Double ve Split'te aynı tutarda ek bahis zorunlu alınır. Ek bahis karşılanamazsa o turdaki bütün Bet Behind bahislerin iade edilir.</p>
+        <p><b>Hamleler:</b> Kart al (Hit), Dur (Stand), İki kat (Double: ilk iki kartta, tek kart verilir), Böl (Split: eşit değerli iki kart, en fazla 4 el; bölünmüş aslara tek kart, tekrar bölünmez; bölmeden sonra iki kat serbest, pes yok), Pes et (geç teslim, ilk iki kartta). Kararlar ekranın altındaki çubuktan verilir. Hamle süresi 15 saniye; süre dolarsa Dur uygulanır.</p>
+        <p><b>Ön seçim:</b> Sıran gelmeden kararını seçebilirsin: alttaki çubukta ya da oynadığın elin altındaki <b>Hit</b> (mavi), <b>Stand</b> (kırmızı), <b>2x</b> (yeşil), <b>Split</b> (sarı) düğmeleriyle. Seçim onay işaretiyle durur; tekrar dokununca ya da kırmızı X ile kalkar. Sıra gelince uygulanır; Hit yalnızca bir kart demektir. Geçersizleşen ön seçim uygulanmaz, karar süresi verilir.</p>
+        <p><b>Masalar:</b> ${['bronze', 'silver', 'gold'].map((k) => `${TIER[k]} ${betsText(k)}, ${fmt(tierLim(k).chip)} BP'lik fişlerle${tierLim(k).need > 0 ? ` (oturmak için güncel bakiye en az ${fmt(tierLim(k).need)} BP)` : ''}`).join(' · ')}. Fişe ya da bahis alanına her dokunuş bir fiş ekler; Max en yüksek bahsi koyar. Bir masada en fazla 2 pozisyon. Oyun en az 2 aktif potla başlar.</p>
+        <p><b>Bet Behind:</b> İzleyici bahis aşamasında bir oyuncunun bahis alanına dokunarak arkasına fiş koyar (turda tek pozisyon). Ana oyuncunun bütün kararlarını takip eder; Double ve Split'te aynı tutarda ek bahis zorunlu alınır. Ek bahis karşılanamazsa o turdaki bütün Bet Behind bahislerin iade edilir.</p>
         <p><b>Auto Rebet:</b> Açık pozisyonda her yeni bahis turunda son bahsi bir kez koyar. Bakiye yetmezse bahis koymaz. Pozisyondan kalkınca, masadan ayrılınca ya da bağlantı kopunca kapanır.</p>
         <p><b>Jackpot:</b> Yedi potun yedisi de aynı turda kazanır ve bu 5 tur üst üste olursa jackpot: pot başına ${['bronze', 'silver', 'gold'].map((k) => `${TIER[k]} ${fmt(tiersCfg()[k].jp_seat)}`).join(', ')} BP; geçerli Bet Behind'ı olan izleyiciye ${['bronze', 'silver', 'gold'].map((k) => fmt(tiersCfg()[k].jp_spec)).join(' / ')} BP. Beraberlik, kayıp, teslim, boş pot ya da pot sahibinin değişmesi seriyi sıfırlar; kesme kartı sıfırlamaz.</p>
       </div>`,
