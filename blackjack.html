@@ -8,7 +8,8 @@
 <link rel="preconnect" href="https://fonts.googleapis.com" />
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
 <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@600;700;800&family=Manrope:wght@400;500;600;700;800&display=swap" rel="stylesheet" />
-<link rel="stylesheet" href="assets/css/bg-table.css?v=3.0.0" />
+<link rel="stylesheet" href="assets/css/bg-table.css?v=3.1.0" />
+<link rel="stylesheet" href="assets/css/badges.css?v=3.1.0" />
 <style>
 /* =====================================================================
    Bözer Royale — görünüm: zümrüt keçe, siyah ve altın, sıcak ışık
@@ -84,6 +85,9 @@ button:disabled { cursor: default; }
 .lb-brand p { margin: 2px 0 0; color: var(--muted); font-size: 14px; }
 .lb-actions { display: flex; align-items: center; gap: 8px; flex-wrap: wrap; }
 .lb-bal { font-weight: 800; color: var(--gold-hi); padding: 8px 14px; border-radius: 99px; border: 1px solid var(--line); background: rgba(0, 0, 0, .35); }
+.lb-econ { max-width: 1180px; margin: 0 auto 12px; }
+.lb-econ:empty { display: none; }
+.bj-lobby:has(.lb-econ .t-econ) .lb-bal { display: none; }
 .lb-tiers { max-width: 1180px; margin: 0 auto 8px; display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; }
 .lb-tier { padding: 10px 14px; border-radius: 12px; border: 1px solid var(--line); background: rgba(255, 255, 255, .025); display: flex; flex-direction: column; gap: 2px; }
 .lb-tier b { font-family: var(--display); letter-spacing: .08em; }
@@ -181,43 +185,51 @@ button:disabled { cursor: default; }
     radial-gradient(circle at 66% 8%, rgba(255, 196, 110, .1) 0 7px, transparent 22px),
     radial-gradient(circle at 35% 12%, rgba(255, 196, 110, .1) 0 7px, transparent 20px); }
 html[data-q='high'] .bj-room { filter: blur(2px); }
-.bj-table, .bj-props, .bj-spots, .bj-chiplayer, .bj-cardlayer, .bj-badges, .bj-center, .bj-fx { position: absolute; left: 0; top: 0; width: 100%; height: 100%; }
-.bj-props, .bj-spots, .bj-chiplayer, .bj-cardlayer, .bj-badges, .bj-center, .bj-fx { pointer-events: none; }
+.bj-table, .bj-props, .bj-glow, .bj-spots, .bj-chiplayer, .bj-cardlayer, .bj-badges, .bj-center, .bj-fx { position: absolute; left: 0; top: 0; width: 100%; height: 100%; }
+.bj-props, .bj-glow, .bj-spots, .bj-chiplayer, .bj-cardlayer, .bj-badges, .bj-center, .bj-fx { pointer-events: none; }
 .bj-spots > .seat > * { pointer-events: auto; }
 .bj-dealer { position: absolute; z-index: 1; pointer-events: none; }
 .bj-dealer .dl-svg { width: 100%; height: auto; display: block; overflow: visible; }
 .bj-table { z-index: 2; pointer-events: none; }
 .bj-props { z-index: 3; }
-.bj-spots { z-index: 4; }
-.bj-chiplayer { z-index: 5; }
-.bj-cardlayer { z-index: 6; }
-.bj-badges { z-index: 7; }
-.bj-center { z-index: 8; }
-.bj-fx { z-index: 9; }
+.bj-glow { z-index: 4; }
+.bj-spots { z-index: 5; }
+.bj-chiplayer { z-index: 6; }
+.bj-cardlayer { z-index: 7; }
+.bj-badges { z-index: 8; }
+.bj-center { z-index: 9; }
+.bj-fx { z-index: 10; }
+.bj-stage { --cw: 80px; }
 
 /* ---------------- kartlar ---------------- */
-.cd { --cw: 80px; position: absolute; left: 0; top: 0; width: var(--cw); height: calc(var(--cw) * 1.4); transform-origin: 50% 50%; will-change: transform; }
-.cd-in { position: absolute; inset: 0; transform-style: preserve-3d; transition: transform .38s cubic-bezier(.3, .7, .2, 1); }
-.cd-f, .cd-b { position: absolute; inset: 0; width: 100%; height: 100%; backface-visibility: hidden; -webkit-backface-visibility: hidden; border-radius: 7%; }
-html[data-q='high'] .cd-f, html[data-q='high'] .cd-b { filter: drop-shadow(0 3px 3px rgba(0, 0, 0, .5)); }
-html[data-q='mid'] .cd-f, html[data-q='mid'] .cd-b { box-shadow: 0 2px 4px rgba(0, 0, 0, .45); }
+.cd { position: absolute; left: 0; top: 0; width: var(--cw); height: calc(var(--cw) * 1.4); transform-origin: 50% 50%; will-change: transform; perspective: 900px; }
+.cd-in { position: absolute; inset: 0; transform-style: preserve-3d; transition: transform .42s cubic-bezier(.3, .7, .2, 1); }
+.cd-f, .cd-b { position: absolute; inset: 0; width: 100%; height: 100%; backface-visibility: hidden; -webkit-backface-visibility: hidden; border-radius: 7%; transition: filter .35s; }
+html[data-q='high'] .cd-f, html[data-q='high'] .cd-b { filter: drop-shadow(0 3px 4px rgba(0, 0, 0, .5)); }
+html[data-q='mid'] .cd-f, html[data-q='mid'] .cd-b { box-shadow: 0 2px 5px rgba(0, 0, 0, .45); }
+html[data-q='high'] .cd.flying .cd-f, html[data-q='high'] .cd.flying .cd-b { filter: drop-shadow(0 18px 14px rgba(0, 0, 0, .42)); }
 .cd-b { transform: rotateY(180deg); }
 .cd.down .cd-in { transform: rotateY(180deg); }
-.cd.dim .cd-f { opacity: .62; }
+/* kaybeden / batan el: kartlar griye döner (referanstaki gibi) */
+.cd.dim .cd-f { filter: grayscale(1) brightness(.58) contrast(.92); }
+html[data-q='high'] .cd.dim .cd-f { filter: grayscale(1) brightness(.58) contrast(.92) drop-shadow(0 3px 4px rgba(0, 0, 0, .5)); }
+.cd.reveal { animation: bjReveal .7s cubic-bezier(.3, .8, .3, 1); }
+html[data-q='high'] .cd.reveal .cd-f { filter: drop-shadow(0 0 16px rgba(255, 220, 140, .85)); }
 .cd.cutcard { z-index: 30; }
+@keyframes bjReveal { 0% { scale: 1; } 38% { scale: 1.16; } 100% { scale: 1; } }
 
 /* ---------------- fişler ---------------- */
 .bj-stack { position: absolute; left: 0; top: 0; width: 0; height: 0; will-change: transform; }
-.bj-stack .chips { position: absolute; left: -23px; top: -23px; width: 46px; height: 46px; }
-.chip { position: absolute; left: 0; top: 0; width: 46px; height: 46px; transform: translateY(calc(var(--i) * -4px)); }
+.bj-stack .chips { position: absolute; left: -24px; top: -24px; width: 48px; height: 48px; }
+.chip { position: absolute; left: 0; top: 0; width: 48px; height: 48px; transform: translateY(calc(var(--i) * -4px)); }
 html[data-q='high'] .chip { filter: drop-shadow(0 2px 1px rgba(0, 0, 0, .55)); }
-.bj-stack.sm .chips { left: -17px; top: -17px; }
-.bj-stack.sm .chips, .bj-stack.sm .chip { width: 34px; height: 34px; }
+.bj-stack.sm .chips { left: -18px; top: -18px; }
+.bj-stack.sm .chips, .bj-stack.sm .chip { width: 36px; height: 36px; }
 .bj-stack.sm .chip { transform: translateY(calc(var(--i) * -3px)); }
-.stv { position: absolute; left: 0; top: 24px; transform: translateX(-50%); font-size: 14px; font-weight: 800; color: var(--gold-hi); text-shadow: 0 1px 3px #000, 0 0 8px #000; white-space: nowrap; }
-.bj-stack.sm .stv { top: 19px; font-size: 12px; }
+.stv { position: absolute; left: 0; top: 26px; transform: translateX(-50%); font-size: 15px; font-weight: 800; color: var(--gold-hi); text-shadow: 0 1px 3px #000, 0 0 8px #000; white-space: nowrap; }
+.bj-stack.sm .stv { top: 20px; font-size: 12px; }
 .bj-stack.pending .chips { opacity: .62; }
-.bj-stack.pending::before { content: ''; position: absolute; left: -30px; top: -30px; width: 60px; height: 60px; border-radius: 50%; border: 1.5px dashed rgba(243, 216, 146, .7); animation: bjSpin 6s linear infinite; }
+.bj-stack.pending::before { content: ''; position: absolute; left: -32px; top: -32px; width: 64px; height: 64px; border-radius: 50%; border: 1.5px dashed rgba(243, 216, 146, .75); animation: bjSpin 6s linear infinite; }
 .bj-stack.bbst { cursor: pointer; }
 .bj-stack.bbst .chips { pointer-events: auto; }
 .bj-stack.bbst .chips::after { content: 'BB'; position: absolute; left: 50%; top: -14px; transform: translateX(-50%); font-size: 10px; font-weight: 900; letter-spacing: .08em; color: #06223c; background: var(--bb); padding: 0 5px; border-radius: 99px; }
@@ -249,29 +261,34 @@ html[data-q='high'] .chip { filter: drop-shadow(0 2px 1px rgba(0, 0, 0, .55)); }
 .seat { position: absolute; left: 0; top: 0; }
 .seat-no { position: absolute; transform: translate(-50%, -50%); font-family: var(--display); font-size: 18px; color: rgba(216, 178, 93, .45); }
 .seat-sit {
-  position: absolute; transform: translate(-50%, -50%); width: 88px; height: 88px; border-radius: 50%; border: 1.5px solid rgba(243, 216, 146, .7);
-  background: radial-gradient(circle, rgba(243, 216, 146, .16), rgba(6, 30, 20, .25) 70%); color: var(--gold-hi); font-weight: 800; letter-spacing: .16em; font-size: 15px;
-  display: grid; place-items: center; transition: transform .15s, box-shadow .2s, background .2s;
+  position: absolute; transform: translate(-50%, -50%); width: 92px; height: 92px; border-radius: 50%; border: 1.5px solid rgba(243, 216, 146, .75);
+  background: radial-gradient(circle, rgba(243, 216, 146, .18), rgba(6, 30, 20, .3) 70%); color: var(--gold-hi);
+  display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 1px; transition: transform .15s, box-shadow .2s, background .2s;
 }
-.seat-sit:hover { transform: translate(-50%, -50%) scale(1.06); box-shadow: 0 0 26px rgba(243, 216, 146, .35); background: radial-gradient(circle, rgba(243, 216, 146, .26), rgba(6, 30, 20, .25) 70%); }
+.seat-sit b { font-weight: 800; letter-spacing: .16em; font-size: 15px; }
+.seat-sit small { font-family: var(--display); font-size: 11px; letter-spacing: .12em; opacity: .7; }
+.seat-sit:hover { transform: translate(-50%, -50%) scale(1.06); box-shadow: 0 0 26px rgba(243, 216, 146, .35); background: radial-gradient(circle, rgba(243, 216, 146, .28), rgba(6, 30, 20, .3) 70%); }
 .seat-hit {
-  position: absolute; transform: translate(-50%, -50%); width: 104px; height: 104px; border-radius: 50%; border: 1.5px dashed transparent; background: transparent;
+  position: absolute; transform: translate(-50%, -50%); width: 108px; height: 108px; border-radius: 50%; border: 1.5px dashed transparent; background: transparent;
   display: grid; place-items: center; transition: border-color .2s, background .2s;
 }
 .seat-hit span { position: absolute; top: 100%; margin-top: -6px; font-size: 11px; font-weight: 800; letter-spacing: .12em; color: var(--gold-hi); text-shadow: 0 1px 3px #000; white-space: nowrap; }
-.seat-hit.mine { border-color: rgba(243, 216, 146, .75); background: radial-gradient(circle, rgba(243, 216, 146, .12), transparent 70%); animation: bjPulse 1.8s ease-in-out infinite; }
+.seat-hit.mine { border-color: rgba(243, 216, 146, .8); background: radial-gradient(circle, rgba(243, 216, 146, .14), transparent 70%); animation: bjPulse 1.8s ease-in-out infinite; }
 .seat-hit.bbt { border-color: rgba(140, 200, 255, .5); }
 .seat-hit.bbt span { color: var(--bb); }
-.seat-hit:hover { background: radial-gradient(circle, rgba(243, 216, 146, .2), transparent 70%); }
+.seat-hit:hover { background: radial-gradient(circle, rgba(243, 216, 146, .22), transparent 70%); }
 .seat-plate { position: absolute; display: flex; align-items: center; gap: 8px; transform: translate(-50%, -50%); white-space: nowrap; }
-.seat-av { position: relative; width: 52px; height: 52px; padding: 0; border-radius: 50%; border: 2px solid rgba(216, 178, 93, .6); background: #17130f; box-shadow: 0 6px 14px rgba(0, 0, 0, .6); display: grid; place-items: center; }
-.seat-av .t-av { --s: 48px !important; }
-.seat-av .ring { position: absolute; inset: -7px; width: 64px; height: 64px; transform: rotate(-90deg); pointer-events: none; }
-.seat-av .ring circle { fill: none; stroke: var(--gold-hi); stroke-width: 3; stroke-dasharray: 176; stroke-dashoffset: 0; filter: drop-shadow(0 0 4px rgba(243, 216, 146, .8)); }
-.seat-plate.mine .seat-av { border-color: var(--gold-hi); }
-.seat-plate.turn .seat-av { box-shadow: 0 0 0 3px rgba(243, 216, 146, .25), 0 0 26px rgba(243, 216, 146, .55); }
+.seat-plate.rev { flex-direction: row-reverse; transform: translate(calc(-100% + 29px), -50%); }
+.seat-plate.rev .seat-who { align-items: flex-end; text-align: right; }
+.seat-av { position: relative; width: 58px; height: 58px; padding: 0; border-radius: 50%; border: 0; background: none; box-shadow: 0 8px 16px rgba(0, 0, 0, .6); display: grid; place-items: center; }
+.seat-av .t-av { --s: 56px !important; }
+.seat-av .ring { position: absolute; inset: -8px; width: 74px; height: 74px; transform: rotate(-90deg); pointer-events: none; }
+.seat-av .ring circle { fill: none; stroke: var(--gold-hi); stroke-width: 3.2; stroke-linecap: round; stroke-dasharray: 176; stroke-dashoffset: 0; filter: drop-shadow(0 0 5px rgba(243, 216, 146, .9)); }
+.seat-pn { position: absolute; left: 50%; bottom: -9px; transform: translateX(-50%); font: 800 10px/1.35 var(--ui); letter-spacing: .08em; padding: 0 6px; border-radius: 99px; background: #0b0c09; color: var(--gold-hi); border: 1px solid rgba(216, 178, 93, .6); }
+.seat-plate.mine .seat-pn { background: var(--gold-hi); color: #1d1404; }
+.seat-plate.turn .seat-av { box-shadow: 0 0 0 3px rgba(243, 216, 146, .3), 0 0 30px rgba(243, 216, 146, .75); }
 .seat-plate.off { opacity: .55; }
-.seat-who { display: flex; flex-direction: column; line-height: 1.15; text-shadow: 0 1px 4px #000; }
+.seat-who { display: flex; flex-direction: column; line-height: 1.18; padding: 4px 10px 5px 9px; border-radius: 10px; background: rgba(3, 9, 6, .6); text-shadow: 0 1px 3px #000; }
 .seat-name { font-weight: 800; font-size: 16px; max-width: 140px; overflow: hidden; text-overflow: ellipsis; }
 .seat-name em { font-style: normal; font-size: 10px; letter-spacing: .1em; color: #1d1404; background: var(--gold-hi); padding: 0 5px; border-radius: 4px; margin-left: 4px; vertical-align: 2px; }
 .seat-sub { font-size: 12.5px; color: var(--muted); }
@@ -280,50 +297,88 @@ html[data-q='high'] .chip { filter: drop-shadow(0 2px 1px rgba(0, 0, 0, .55)); }
 .seat-kalk { font-size: 10.5px; font-weight: 800; letter-spacing: .1em; padding: 4px 8px; border-radius: 99px; border: 1px solid var(--line); background: rgba(0, 0, 0, .55); color: var(--muted); }
 .seat-kalk:hover { color: var(--ink); border-color: var(--line-2); }
 
-/* ---------------- rozetler ---------------- */
+/* ---------------- sıra vurgusu ve el parıltıları ---------------- */
+.hand-glow { position: absolute; transform: translate(-50%, -50%); border-radius: 46%; background: radial-gradient(closest-side, rgba(255, 220, 130, .78), rgba(255, 190, 70, .34) 55%, rgba(255, 170, 40, 0) 100%); animation: bjGlow 1.6s ease-in-out infinite; }
+.hand-glow.mine { background: radial-gradient(closest-side, rgba(255, 236, 160, .95), rgba(255, 200, 80, .45) 55%, rgba(255, 170, 40, 0) 100%); }
+.spot-hl { position: absolute; width: 112px; height: 112px; margin: -56px 0 0 -56px; border-radius: 50%; border: 3px solid #ffd77a; box-shadow: 0 0 18px 4px rgba(255, 205, 110, .6), inset 0 0 16px rgba(255, 205, 110, .45); animation: bjRingPulse 1.4s ease-in-out infinite; }
+.hand-flash { position: absolute; transform: translate(-50%, -50%); border-radius: 50%; }
+.hand-flash.bust { background: radial-gradient(closest-side, rgba(255, 70, 50, .65), rgba(255, 70, 50, .15) 60%, transparent); }
+.hand-flash.bj { background: radial-gradient(closest-side, rgba(255, 232, 150, .85), rgba(255, 200, 90, .25) 60%, transparent); }
+.turn-arrow { position: absolute; width: 0; height: 0; transform: translate(-50%, -100%); border-left: 14px solid transparent; border-right: 14px solid transparent; border-top: 18px solid #ffd77a; filter: drop-shadow(0 0 8px rgba(255, 210, 110, .9)); animation: bjBob .9s ease-in-out infinite; }
+@keyframes bjGlow { 0%, 100% { opacity: .7; scale: .96; } 50% { opacity: 1; scale: 1.04; } }
+@keyframes bjRingPulse { 0%, 100% { opacity: .75; scale: .97; } 50% { opacity: 1; scale: 1.04; } }
+@keyframes bjBob { 0%, 100% { translate: 0 -6px; } 50% { translate: 0 2px; } }
+
+/* ---------------- rozetler: el toplamı, sonuç etiketi, ön hamle ---------------- */
 .tot {
-  position: absolute; transform: translate(-50%, -50%); min-width: 34px; padding: 2px 8px; border-radius: 99px; text-align: center; font-weight: 800; font-size: 16px;
-  background: rgba(6, 8, 7, .9); border: 1px solid var(--line-2); color: var(--ink); box-shadow: 0 4px 10px rgba(0, 0, 0, .45); white-space: nowrap;
+  position: absolute; transform: translate(-50%, -50%); min-width: 40px; height: 40px; padding: 0 9px; border-radius: 99px; display: grid; place-items: center;
+  font: 800 20px/1 var(--ui); color: #fff; background: radial-gradient(circle at 35% 30%, #34342f, #060606 72%); border: 2px solid rgba(243, 216, 146, .85);
+  box-shadow: 0 6px 14px rgba(0, 0, 0, .55); white-space: nowrap; font-variant-numeric: tabular-nums; animation: bjPopIn .3s cubic-bezier(.2, 1.4, .4, 1) both;
 }
-.tot.bj { background: linear-gradient(180deg, #f6dd98, #c99a3d); color: #2a1a04; border-color: #fff2c4; }
-.tot.bust { background: #4a1212; color: #ffd0d0; border-color: #a33; }
-.tot.turn { border-color: var(--gold-hi); box-shadow: 0 0 0 2px rgba(243, 216, 146, .35), 0 0 18px rgba(243, 216, 146, .6); }
-.tot.dl { transform: translate(0, -50%); font-size: 18px; }
-.pretag { position: absolute; transform: translate(-50%, -50%); font-size: 11px; font-weight: 800; letter-spacing: .08em; padding: 3px 8px; border-radius: 99px; white-space: nowrap;
+.tot.soft { font-size: 17px; }
+.tot.bj { background: linear-gradient(180deg, #fff1c4, #dcaa42 60%, #a8781f); color: #2a1a04; border-color: #fff6d8; }
+.tot.bust { background: linear-gradient(180deg, #e2402f, #7d0f0a); border-color: #ffb3a6; }
+.tot.turn { box-shadow: 0 0 0 3px rgba(255, 215, 122, .4), 0 0 22px rgba(255, 215, 122, .85); }
+.tot.dl { font-size: 21px; }
+.pretag { position: absolute; transform: translate(-50%, -100%); font-size: 11px; font-weight: 800; letter-spacing: .08em; padding: 3px 9px; border-radius: 99px; white-space: nowrap;
   color: #1f1604; background: linear-gradient(180deg, #f3d892, #c99a3d); box-shadow: 0 4px 12px rgba(0, 0, 0, .5); }
-.res { position: absolute; transform: translate(-50%, -50%); display: flex; flex-direction: column; align-items: center; font-family: var(--display); font-weight: 800; font-size: 15px; letter-spacing: .06em;
-  padding: 3px 10px; border-radius: 10px; background: rgba(5, 6, 5, .82); border: 1px solid var(--line); white-space: nowrap; animation: bjPop .45s cubic-bezier(.2, 1.4, .4, 1) both; }
-.res em { font-style: normal; font-family: var(--ui); font-size: 13px; }
-.res.win { color: var(--win); border-color: rgba(116, 227, 166, .5); }
-.res.lose { color: var(--lose); }
-.res.push { color: var(--push); }
-.netall { position: absolute; transform: translate(-50%, -50%); font-weight: 800; font-size: 13px; padding: 2px 8px; border-radius: 99px; background: rgba(0, 0, 0, .7); white-space: nowrap; }
+.res {
+  position: absolute; transform: translate(-50%, -50%) rotate(-4deg); display: flex; flex-direction: column; align-items: center; padding: 4px 14px 5px; border-radius: 10px;
+  font-family: var(--display); font-weight: 800; letter-spacing: .06em; white-space: nowrap; box-shadow: 0 10px 22px rgba(0, 0, 0, .55); animation: bjStamp .5s cubic-bezier(.2, 1.5, .4, 1) both;
+}
+.res b { font-size: 17px; line-height: 1.1; }
+.res em { font: 800 14px/1.1 var(--ui); font-style: normal; }
+.res.win { background: linear-gradient(180deg, #3fd380, #12854a); color: #fff; border: 2px solid #c2ffdc; }
+.res.bj { background: linear-gradient(180deg, #fff2c0, #e1ae47 55%, #a87828); color: #2a1a04; border: 2px solid #fff6dc; }
+.res.push { background: linear-gradient(180deg, #dfe4ea, #8d97a5); color: #14181f; border: 2px solid #f4f7fb; }
+.res.lose { background: linear-gradient(180deg, #d63d2e, #7c120c); color: #fff; border: 2px solid #ffb8ad; }
+.netall { position: absolute; transform: translate(-50%, -50%); font-weight: 800; font-size: 13px; padding: 2px 9px; border-radius: 99px; background: rgba(0, 0, 0, .72); white-space: nowrap; }
 .netall.win { color: var(--win); }
 .netall.lose { color: var(--lose); }
+@keyframes bjStamp { from { opacity: 0; transform: translate(-50%, -50%) rotate(-4deg) scale(1.9); } to { opacity: 1; transform: translate(-50%, -50%) rotate(-4deg) scale(1); } }
+@keyframes bjPopIn { from { opacity: 0; scale: .5; } to { opacity: 1; scale: 1; } }
 
-/* ---------------- masa ortası mesajı ---------------- */
+/* ---------------- krupiye mesaj kartı ---------------- */
 .bj-center { width: 100%; }
-.cmsg {
-  position: absolute; left: 50%; transform: translateX(-50%); display: flex; align-items: center; gap: 14px; max-width: 620px;
-  padding: 10px 18px; border-radius: 16px; background: rgba(4, 12, 8, .9); border: 1px solid var(--line); box-shadow: 0 12px 30px rgba(0, 0, 0, .45); text-align: left;
-  -webkit-backdrop-filter: blur(4px); backdrop-filter: blur(4px);
-  animation: bjFade .3s ease both;
+.dmsg {
+  position: absolute; transform: translate(-50%, -50%); display: flex; align-items: center; gap: 14px; width: max-content; max-width: 600px; padding: 10px 16px 10px 10px; border-radius: 20px;
+  background: linear-gradient(180deg, rgba(16, 18, 14, .95), rgba(5, 6, 5, .95)); border: 1px solid rgba(216, 178, 93, .55);
+  box-shadow: 0 16px 40px rgba(0, 0, 0, .55), inset 0 1px 0 rgba(255, 255, 255, .06); text-align: left;
 }
-.cmsg strong { display: block; font-family: var(--display); font-size: 19px; letter-spacing: .06em; color: var(--gold-hi); }
-.cmsg span { display: block; margin-top: 3px; font-size: 14px; color: var(--muted); line-height: 1.4; }
-.bj-center.wait .cmsg strong { font-family: var(--ui); font-weight: 800; letter-spacing: 0; font-size: 18px; color: var(--ink); }
-.ctime { flex: none; width: 50px; height: 50px; border-radius: 50%; display: grid; place-items: center; font-size: 22px; font-weight: 800; color: #1d1404;
-  background: radial-gradient(circle at 35% 30%, #fff1c2, #d8b25d 55%, #9c7427); box-shadow: 0 0 0 3px rgba(0, 0, 0, .5), 0 0 18px rgba(243, 216, 146, .45); }
+.dmsg-av { flex: none; width: 62px; height: 62px; border-radius: 50%; overflow: hidden; border: 2px solid var(--gold); background: radial-gradient(circle at 50% 30%, #3a4a3e, #0b130e 75%); box-shadow: 0 0 0 3px rgba(0, 0, 0, .45); }
+.dmsg-av svg { display: block; width: 100%; height: 100%; }
+.dmsg-t { min-width: 0; }
+.dmsg-t small { display: block; font-size: 11.5px; font-weight: 800; color: var(--gold); letter-spacing: .04em; }
+.dmsg-t strong { display: block; font-family: var(--display); font-size: 20px; line-height: 1.2; color: var(--gold-hi); }
+.dmsg-t span { display: block; margin-top: 2px; font-size: 14px; line-height: 1.4; color: var(--muted); }
+.dmsg-time { position: relative; flex: none; width: 54px; height: 54px; }
+.dmsg-time svg { width: 100%; height: 100%; transform: rotate(-90deg); }
+.dmsg-time circle { fill: none; stroke-width: 4; }
+.dmsg-time .bg { stroke: rgba(255, 255, 255, .1); }
+.dmsg-time .fg { stroke: var(--gold-hi); stroke-dasharray: 119.4; stroke-linecap: round; transition: stroke-dashoffset .25s linear, stroke .3s; }
+.dmsg-time b { position: absolute; inset: 0; display: grid; place-items: center; font: 800 22px var(--ui); color: #fff; font-variant-numeric: tabular-nums; }
+.dmsg-time.urgent .fg { stroke: #ff6b55; }
+.dmsg-time.urgent b { color: #ffd2c8; }
+.dmsg.bubble { transform: translate(0, -50%); }
+.dmsg.bubble::before { content: ''; position: absolute; left: -9px; top: 50%; width: 16px; height: 16px; margin-top: -8px; transform: rotate(45deg); background: #0f110d; border-left: 1px solid rgba(216, 178, 93, .55); border-bottom: 1px solid rgba(216, 178, 93, .55); }
+.dmsg.hero { padding: 14px 22px 14px 14px; gap: 18px; }
+.dmsg.hero .dmsg-av { width: 82px; height: 82px; }
+.dmsg.hero .dmsg-t strong { font-size: 26px; }
+.dmsg.hero .dmsg-time { width: 74px; height: 74px; }
+.dmsg.hero .dmsg-time b { font-size: 32px; }
+.dmsg.t-wait .dmsg-t strong { font-family: var(--ui); font-weight: 800; font-size: 19px; color: var(--ink); }
+.dmsg.t-me { border-color: #ffd77a; box-shadow: 0 0 0 2px rgba(255, 215, 122, .25), 0 0 34px rgba(255, 215, 122, .35), 0 16px 40px rgba(0, 0, 0, .55); }
+.dmsg.t-good .dmsg-t strong { color: #8ff0b6; }
 
-/* ---------------- sonuç paneli ---------------- */
+/* ---------------- sonuç şeridi ---------------- */
 .res-panel {
-  position: absolute; left: 50%; top: 452px; transform: translate(-50%, -50%); min-width: 300px; padding: 14px 34px 16px; border-radius: 18px; text-align: center;
-  background: radial-gradient(ellipse at 50% 0%, rgba(243, 216, 146, .2), transparent 70%), rgba(6, 8, 7, .9); border: 1px solid var(--line-2);
+  position: absolute; left: 50%; top: 520px; transform: translate(-50%, -50%); min-width: 320px; padding: 12px 36px 14px; border-radius: 18px; text-align: center;
+  background: radial-gradient(ellipse at 50% 0%, rgba(243, 216, 146, .22), transparent 70%), linear-gradient(180deg, rgba(14, 16, 12, .94), rgba(4, 5, 4, .94)); border: 1px solid var(--line-2);
   box-shadow: 0 20px 50px rgba(0, 0, 0, .6); animation: bjPop .5s cubic-bezier(.2, 1.3, .4, 1) both;
 }
-.bj-stage[data-layout='port'] .res-panel { top: 470px; min-width: 420px; }
-.bj-stage[data-layout='port'] .res-panel strong { font-size: 54px; }
-.bj-stage[data-layout='port'] .res-panel b { font-size: 34px; }
+.bj-stage[data-layout='port'] .res-panel { top: 560px; min-width: 420px; }
+.bj-stage[data-layout='port'] .res-panel strong { font-size: 50px; }
+.bj-stage[data-layout='port'] .res-panel b { font-size: 32px; }
 .res-panel strong { display: block; font-family: var(--display); font-size: 40px; letter-spacing: .08em; line-height: 1.05; }
 .res-panel b { display: block; margin-top: 4px; font-size: 26px; }
 .res-panel small { display: block; margin-top: 2px; color: var(--muted); font-size: 13px; }
@@ -333,6 +388,29 @@ html[data-q='high'] .chip { filter: drop-shadow(0 2px 1px rgba(0, 0, 0, .55)); }
 .res-panel.lose b, .res-panel.surrender b { color: var(--lose); }
 .res-panel.push strong, .res-panel.refund strong { color: var(--push); font-size: 32px; }
 .res-panel.out { animation: bjFadeOut .4s ease forwards; }
+
+/* ---------------- bantlar, parçacıklar, uçan yazılar ---------------- */
+.banner { position: absolute; transform: translate(-50%, -50%) rotate(-2deg); text-align: center; z-index: 5; animation: bjBanner .6s cubic-bezier(.2, 1.4, .4, 1) both; }
+.banner strong {
+  position: relative; display: block; font-family: var(--display); font-weight: 800; font-size: 66px; letter-spacing: .04em; line-height: 1; white-space: nowrap;
+  background: linear-gradient(180deg, #fff7d1 0%, #ffd36a 36%, #ff8a1f 62%, #c2260f 100%); -webkit-background-clip: text; background-clip: text; color: transparent;
+  filter: drop-shadow(0 3px 0 #4a0d04) drop-shadow(0 0 20px rgba(255, 140, 40, .7));
+}
+.banner small { position: relative; display: inline-block; margin-top: 10px; padding: 4px 14px; border-radius: 99px; font: 800 15px var(--ui); color: #ffe9b8; background: rgba(40, 8, 4, .8); border: 1px solid rgba(255, 160, 80, .5); }
+.banner .bn-rays { position: absolute; left: 50%; top: 50%; width: 560px; height: 560px; margin: -280px 0 0 -280px; background: repeating-conic-gradient(from 0deg, rgba(255, 190, 80, .22) 0 8deg, transparent 8deg 20deg);
+  -webkit-mask: radial-gradient(circle, #000 0, transparent 62%); mask: radial-gradient(circle, #000 0, transparent 62%); animation: bjSpin 9s linear infinite; }
+.banner.bj strong { font-size: 56px; background: linear-gradient(180deg, #fffbe6, #f6d77d 45%, #c99236 75%, #8a5a14); -webkit-background-clip: text; background-clip: text; filter: drop-shadow(0 3px 0 #3a2404) drop-shadow(0 0 22px rgba(255, 214, 110, .8)); }
+.banner.bj small { color: #2a1a04; background: linear-gradient(180deg, #fff1c4, #dcaa42); border-color: #fff6d8; }
+.banner.dbj strong { font-size: 52px; background: linear-gradient(180deg, #ffffff, #c9d3e6 50%, #7d899f); -webkit-background-clip: text; background-clip: text; filter: drop-shadow(0 3px 0 #1a2030) drop-shadow(0 0 18px rgba(170, 190, 230, .6)); }
+.banner.dbj small { color: #e6ecf8; background: rgba(12, 16, 26, .85); border-color: rgba(170, 190, 230, .5); }
+.banner.dbj .bn-rays { background: repeating-conic-gradient(from 0deg, rgba(180, 200, 240, .16) 0 8deg, transparent 8deg 20deg); }
+.banner.out { animation: bjFadeOut .4s ease forwards; }
+@keyframes bjBanner { 0% { opacity: 0; transform: translate(-50%, -50%) scale(2.3) rotate(-8deg); } 60% { opacity: 1; transform: translate(-50%, -50%) scale(.94) rotate(0deg); } 100% { opacity: 1; transform: translate(-50%, -50%) scale(1) rotate(-2deg); } }
+.pt { position: absolute; width: 12px; height: 12px; border-radius: 50%; }
+.pt.spark { width: 15px; height: 15px; background: radial-gradient(circle, #fff 0 18%, #ffe08a 42%, rgba(255, 190, 60, 0) 70%); }
+.pt.coin { width: 17px; height: 17px; background: radial-gradient(circle at 35% 30%, #fff6c8, #e6b748 45%, #9c6c1c); box-shadow: inset 0 0 0 2px rgba(120, 80, 20, .5); }
+.pt.ember { width: 14px; height: 14px; background: radial-gradient(circle, #fff3c4 0 15%, #ff9b2e 45%, rgba(220, 40, 10, 0) 72%); }
+.fx-float { position: absolute; font: 900 30px var(--ui); color: #8ff0b6; text-shadow: 0 2px 0 #08311a, 0 0 14px rgba(80, 230, 150, .6); white-space: nowrap; }
 
 /* ---------------- jackpot ---------------- */
 .jp-wrap { position: absolute; inset: 0; display: grid; place-items: center; pointer-events: auto; }
@@ -359,61 +437,82 @@ html[data-q='high'] .chip { filter: drop-shadow(0 2px 1px rgba(0, 0, 0, .55)); }
 .fx-tag { position: absolute; transform: translateX(-50%); font-size: 12px; font-weight: 800; letter-spacing: .08em; padding: 4px 10px; border-radius: 99px; color: #fff3ea; background: #a91c10; box-shadow: 0 6px 16px rgba(0, 0, 0, .5); white-space: nowrap; animation: bjFade .3s ease both; }
 
 /* =====================================================================
-   KONTROL PANELİ
+   KONTROL PANELİ — ikonlu aksiyon çubuğu, gerçek fişlerle bahis çubuğu
    ===================================================================== */
 .bj-controls {
-  position: relative; z-index: 6; flex: none; display: flex; align-items: center; gap: 14px; min-height: 92px;
+  position: relative; z-index: 6; flex: none; display: flex; align-items: center; gap: 14px; min-height: 100px;
   padding: 10px max(14px, env(safe-area-inset-right)) max(10px, env(safe-area-inset-bottom)) max(14px, env(safe-area-inset-left));
-  background: linear-gradient(0deg, rgba(5, 6, 5, .98), rgba(8, 9, 7, .92)); border-top: 1px solid var(--line);
+  background: radial-gradient(ellipse 60% 120% at 50% 120%, rgba(216, 178, 93, .12), transparent 70%), linear-gradient(0deg, #040504, rgba(10, 11, 9, .95));
+  border-top: 1px solid var(--line);
 }
 .bj-controls.busy .ctl-main { opacity: .7; }
 .ctl-main { flex: 1; min-width: 0; display: flex; justify-content: center; }
 .ctl-status { margin: 0; color: var(--muted); font-size: 15px; text-align: center; }
-.ctl-bet { display: flex; align-items: center; gap: 16px; flex-wrap: wrap; justify-content: center; }
-.chip-row { display: flex; gap: 10px; }
-.pchip {
-  position: relative; width: 58px; height: 58px; padding: 0; border-radius: 50%; border: 0; display: grid; place-items: center; font-weight: 900; font-size: 16px; color: #fff;
-  background: radial-gradient(circle at 50% 50%, var(--ci) 0 52%, transparent 53%), repeating-conic-gradient(var(--cb) 0 22.5deg, var(--ce) 22.5deg 45deg);
-  box-shadow: inset 0 0 0 4px rgba(0, 0, 0, .18), 0 6px 0 rgba(0, 0, 0, .35), 0 10px 18px rgba(0, 0, 0, .5); transition: transform .15s, box-shadow .2s;
+.ctl-res { display: flex; align-items: baseline; gap: 12px; flex-wrap: wrap; justify-content: center; animation: bjPopIn .35s cubic-bezier(.2, 1.4, .4, 1) both; }
+.ctl-res span { font-family: var(--display); font-size: 15px; letter-spacing: .08em; color: var(--muted); }
+.ctl-res b { font-size: 30px; font-weight: 900; font-variant-numeric: tabular-nums; }
+.ctl-res.win b { color: var(--win); text-shadow: 0 0 18px rgba(116, 227, 166, .45); }
+.ctl-res.lose b { color: var(--lose); }
+.ctl-res.push b { color: var(--push); }
+.ctl-res small { color: var(--muted); font-size: 13px; }
+.ctl-bet { display: flex; align-items: center; gap: 12px; flex-wrap: wrap; justify-content: center; }
+.chip-row { display: flex; gap: 12px; padding: 0 4px; }
+.pchip { position: relative; width: 66px; height: 66px; padding: 0; border: 0; border-radius: 50%; background: none; transition: transform .16s cubic-bezier(.3, 1.4, .5, 1), filter .2s; filter: drop-shadow(0 6px 5px rgba(0, 0, 0, .6)); }
+.pchip svg { display: block; width: 100%; height: 100%; }
+.pchip:hover:not(:disabled) { transform: translateY(-4px); }
+.pchip.sel { transform: translateY(-9px) scale(1.06); filter: drop-shadow(0 0 12px rgba(255, 215, 122, .85)) drop-shadow(0 10px 8px rgba(0, 0, 0, .55)); }
+.pchip.sel::after { content: ''; position: absolute; inset: -6px; border-radius: 50%; border: 2px solid #ffd77a; box-shadow: 0 0 12px rgba(255, 215, 122, .7); }
+.pchip:disabled { opacity: .3; filter: grayscale(.8); }
+.cbtn {
+  display: inline-flex; flex-direction: column; align-items: center; justify-content: center; gap: 3px; min-width: 78px; min-height: 58px; padding: 7px 10px; border-radius: 14px;
+  border: 1px solid rgba(255, 255, 255, .1); background: linear-gradient(180deg, #24251f, #11120f); color: var(--ink); font-size: 12px; font-weight: 800; letter-spacing: .06em;
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, .08), inset 0 -3px 0 rgba(0, 0, 0, .35), 0 8px 18px rgba(0, 0, 0, .45); transition: transform .12s, box-shadow .2s;
 }
-.pchip span { position: relative; text-shadow: 0 1px 2px rgba(0, 0, 0, .6); }
-.pchip.c10 { --cb: #1f4fa8; --ce: #f4f1e8; --ci: #3366c4; }
-.pchip.c20 { --cb: #0f6f73; --ce: #e9fbf7; --ci: #16898d; }
-.pchip.c100 { --cb: #151517; --ce: #d9b45c; --ci: #2b2b2f; color: var(--gold-hi); }
-.pchip:hover:not(:disabled) { transform: translateY(-3px); }
-.pchip.sel { transform: translateY(-6px); box-shadow: inset 0 0 0 4px rgba(0, 0, 0, .18), 0 0 0 3px var(--gold-hi), 0 0 22px rgba(243, 216, 146, .55), 0 12px 20px rgba(0, 0, 0, .5); }
-.pchip:disabled { opacity: .28; filter: grayscale(.7); }
-.ctl-info { display: flex; flex-direction: column; gap: 3px; min-width: 180px; max-width: 420px; }
-.ctl-info small { color: var(--muted); font-size: 13px; line-height: 1.35; }
-.mybet { display: inline-block; margin-right: 10px; font-weight: 800; }
+.cbtn svg { width: 22px; height: 22px; fill: none; stroke: currentColor; stroke-width: 2; stroke-linecap: round; stroke-linejoin: round; }
+.cbtn:hover:not(:disabled) { transform: translateY(-2px); }
+.cbtn.go { background: linear-gradient(180deg, #f6dd98, #c99a3d 55%, #9c7427); color: #231505; border-color: #ffe9b0; }
+.cbtn:disabled { opacity: .32; }
+.ctl-info { display: flex; flex-direction: column; gap: 3px; min-width: 170px; max-width: 360px; }
+.ctl-info small { color: var(--muted); font-size: 12.5px; line-height: 1.35; }
+.mybet { display: inline-flex; align-items: center; gap: 6px; margin-right: 10px; font-weight: 800; }
+.mybet em { font-style: normal; font-size: 10.5px; letter-spacing: .08em; padding: 0 6px; border-radius: 99px; border: 1px solid var(--line-2); color: var(--gold-hi); }
 .mybet.ok { color: var(--win); }
 .bbt { color: var(--bb); letter-spacing: .12em; font-size: 13px; }
 .ctl-btns { display: flex; gap: 8px; }
 .ctl-ins { display: flex; flex-direction: column; gap: 8px; }
 .ins-row { display: flex; align-items: center; gap: 10px; flex-wrap: wrap; justify-content: center; }
-.ctl-act { width: min(760px, 100%); display: flex; flex-direction: column; gap: 6px; align-items: stretch; }
-.ctl-who { margin: 0; text-align: center; font-weight: 800; color: var(--gold-hi); font-size: 14px; letter-spacing: .03em; }
+.ins-row b { color: var(--gold-hi); }
+.ctl-act { width: min(840px, 100%); display: flex; flex-direction: column; gap: 8px; align-items: stretch; }
+.ctl-top { display: flex; align-items: center; gap: 14px; }
+.ctl-who { margin: 0; flex: none; font-weight: 700; color: var(--muted); font-size: 14px; letter-spacing: .02em; }
+.ctl-who b { color: var(--gold-hi); font-weight: 800; }
+.ctl-who .ctl-sum { color: #fff; font-weight: 800; }
 .ctl-who small { display: block; font-weight: 500; color: var(--muted); font-size: 12px; }
-.tbar { height: 4px; border-radius: 99px; background: rgba(255, 255, 255, .08); overflow: hidden; }
-.tbar i { display: block; height: 100%; transform-origin: 0 50%; background: linear-gradient(90deg, #ff7a5c, #f3d892 30%, #74e3a6); transition: transform .25s linear; }
-.act-row { display: grid; grid-template-columns: repeat(5, 1fr); gap: 8px; }
+.premode .ctl-top { flex-wrap: wrap; justify-content: center; text-align: center; }
+.tbar { flex: 1; height: 6px; border-radius: 99px; background: rgba(255, 255, 255, .08); overflow: hidden; }
+.tbar i { display: block; height: 100%; transform-origin: 0 50%; background: linear-gradient(90deg, #ff6a50, #f3d892 35%, #74e3a6); box-shadow: 0 0 10px rgba(243, 216, 146, .6); transition: transform .25s linear; }
+.act-row { display: grid; grid-template-columns: repeat(5, 1fr); gap: 10px; }
 .act {
-  position: relative; min-height: 50px; border-radius: 12px; border: 1px solid var(--ac, var(--line-2)); padding: 6px 4px;
-  background: linear-gradient(180deg, rgba(255, 255, 255, .06), rgba(0, 0, 0, .25)), #0e0f0c; color: var(--ink);
-  box-shadow: inset 0 1px 0 rgba(255, 255, 255, .08), 0 6px 14px rgba(0, 0, 0, .45); transition: transform .12s, box-shadow .2s, background .2s;
+  position: relative; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 3px; min-height: 66px; padding: 6px 4px; border-radius: 16px;
+  border: 1px solid rgba(255, 255, 255, .1); background: linear-gradient(180deg, #25261f, #121310); color: var(--ink);
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, .09), inset 0 -3px 0 rgba(0, 0, 0, .35), 0 8px 18px rgba(0, 0, 0, .45); transition: transform .12s, box-shadow .2s, filter .2s;
 }
-.act b { font-size: 14px; font-weight: 800; letter-spacing: .08em; }
-.act kbd { position: absolute; right: 7px; top: 5px; font: 600 10px var(--ui); color: var(--muted); opacity: .7; }
-.act.a-hit { --ac: rgba(116, 227, 166, .65); }
-.act.a-stand { --ac: rgba(255, 143, 128, .65); }
-.act.a-double { --ac: rgba(243, 216, 146, .8); }
-.act.a-split { --ac: rgba(140, 200, 255, .65); }
-.act.a-surrender { --ac: rgba(200, 190, 170, .5); }
-.act:hover:not(:disabled) { transform: translateY(-2px); background: linear-gradient(180deg, rgba(255, 255, 255, .1), rgba(0, 0, 0, .2)), #121410; box-shadow: 0 0 0 1px var(--ac), 0 0 18px var(--ac), 0 8px 16px rgba(0, 0, 0, .45); }
-.act:disabled { opacity: .3; }
-.act.ghost { border-style: dashed; background: rgba(0, 0, 0, .35); }
-.act.ghost.on { border-style: solid; background: linear-gradient(180deg, rgba(243, 216, 146, .25), rgba(243, 216, 146, .08)); box-shadow: 0 0 0 1px var(--gold-hi), 0 0 18px rgba(243, 216, 146, .35); }
-.act em { display: block; font-style: normal; font-size: 9.5px; letter-spacing: .12em; color: var(--gold-hi); margin-top: 2px; }
+.act i { display: block; width: 26px; height: 26px; color: var(--ac, var(--gold-hi)); }
+.act i svg { width: 100%; height: 100%; fill: none; stroke: currentColor; stroke-width: 1.8; stroke-linecap: round; stroke-linejoin: round; }
+.act b { font-size: 12.5px; font-weight: 800; letter-spacing: .08em; }
+.act kbd { position: absolute; right: 8px; top: 6px; font: 600 10px var(--ui); color: rgba(255, 255, 255, .45); }
+.act.a-hit { --ac: #e8f6ff; background: linear-gradient(180deg, #2a7fc6, #134a7e 70%, #0d355c); border-color: #8fd0ff; }
+.act.a-stand { --ac: #fff0ec; background: linear-gradient(180deg, #c23b2e, #7c1a12 70%, #5b120c); border-color: #ff9c8a; }
+.act.a-double { --ac: #ffe08a; }
+.act.a-split { --ac: #cdb8ff; }
+.act.a-surrender { --ac: #d8d2c4; }
+.act:hover:not(:disabled) { transform: translateY(-2px); filter: brightness(1.12); box-shadow: inset 0 1px 0 rgba(255, 255, 255, .12), 0 0 18px rgba(255, 215, 122, .25), 0 10px 20px rgba(0, 0, 0, .5); }
+.act:active:not(:disabled) { transform: translateY(1px); }
+.act:disabled { opacity: .28; filter: grayscale(.6); }
+.act.ghost { background: rgba(0, 0, 0, .35); border-style: dashed; border-color: rgba(255, 255, 255, .22); box-shadow: none; }
+.act.ghost.on { border-style: solid; border-color: #ffd77a; background: linear-gradient(180deg, rgba(243, 216, 146, .24), rgba(243, 216, 146, .06)); box-shadow: 0 0 0 1px #ffd77a, 0 0 18px rgba(243, 216, 146, .35); }
+.act em { position: absolute; left: 50%; top: -9px; transform: translateX(-50%); display: inline-flex; align-items: center; gap: 3px; font-style: normal; font-size: 9.5px; font-weight: 900; letter-spacing: .1em; padding: 1px 7px 1px 4px; border-radius: 99px; background: #ffd77a; color: #1d1404; white-space: nowrap; }
+.act em svg { width: 11px; height: 11px; fill: none; stroke: currentColor; stroke-width: 3; }
 .pre-tabs { display: flex; gap: 6px; justify-content: center; }
 .pre-tabs button { padding: 3px 12px; border-radius: 99px; border: 1px solid var(--line); background: transparent; font-size: 12px; font-weight: 800; }
 .pre-tabs button[aria-pressed='true'] { background: var(--gold-hi); color: #1d1404; }
@@ -435,8 +534,18 @@ html[data-q='high'] .chip { filter: drop-shadow(0 2px 1px rgba(0, 0, 0, .55)); }
   background: linear-gradient(180deg, #12110e, #090908); border-left: 1px solid var(--line); box-shadow: -18px 0 40px rgba(0, 0, 0, .55);
   padding-top: env(safe-area-inset-top); padding-bottom: env(safe-area-inset-bottom); animation: bjSlide .25s ease both;
 }
-.bj-chat header { display: flex; align-items: center; justify-content: space-between; padding: 10px 12px; border-bottom: 1px solid var(--line); }
-.bj-chat header b { font-family: var(--display); letter-spacing: .08em; color: var(--gold-hi); }
+.bj-chat header { display: flex; align-items: center; gap: 6px; padding: 10px 12px; border-bottom: 1px solid var(--line); }
+.bj-chat header b { flex: 1; font-family: var(--display); letter-spacing: .08em; color: var(--gold-hi); }
+.cm-hb { display: inline-flex; align-items: center; gap: 5px; padding: 6px 10px; border-radius: 99px; border: 1px solid var(--line); background: rgba(255, 255, 255, .03); font-size: 12.5px; font-weight: 700; }
+.cm-hb svg, .hud-ic svg, .cm-lock svg { width: 18px; height: 18px; fill: none; stroke: currentColor; stroke-width: 1.8; stroke-linecap: round; stroke-linejoin: round; }
+.cm-hb:hover { border-color: var(--line-2); background: rgba(216, 178, 93, .08); }
+.cm-lock { display: flex; align-items: center; gap: 10px; padding: 10px 12px; border-top: 1px solid var(--line); font-size: 13px; color: var(--muted); }
+.cm-lock svg { flex: none; color: var(--gold); }
+.cm-lock span { flex: 1; line-height: 1.35; }
+.cm-lock b { color: var(--gold-hi); }
+.cm.emo-line { grid-template-columns: auto 1fr auto; align-items: center; }
+.cm.emo-line img { width: 44px; height: 44px; grid-column: 2; justify-self: start; }
+.cm.emo-line time { grid-column: 3; }
 .cm-list { flex: 1; overflow-y: auto; list-style: none; margin: 0; padding: 10px 12px; display: flex; flex-direction: column; gap: 8px; }
 .cm { display: grid; grid-template-columns: 1fr auto; gap: 1px 8px; padding: 7px 10px; border-radius: 12px; background: rgba(255, 255, 255, .04); }
 .cm.me { background: rgba(216, 178, 93, .1); }
@@ -508,9 +617,11 @@ html[data-q='high'] .chip { filter: drop-shadow(0 2px 1px rgba(0, 0, 0, .55)); }
 @keyframes bjSlide { from { transform: translateX(30px); opacity: 0; } to { transform: none; opacity: 1; } }
 .jp-card { animation-name: bjPopC; }
 @keyframes bjPopC { from { opacity: 0; transform: scale(.7); } to { opacity: 1; transform: scale(1); } }
-html[data-q='low'] .seat-hit.mine, html[data-q='low'] .bj-stack.pending::before, html[data-q='low'] .jp-rays { animation: none; }
+html[data-q='low'] .seat-hit.mine, html[data-q='low'] .bj-stack.pending::before, html[data-q='low'] .jp-rays,
+html[data-q='low'] .hand-glow, html[data-q='low'] .spot-hl, html[data-q='low'] .turn-arrow, html[data-q='low'] .banner .bn-rays { animation: none; }
 @media (prefers-reduced-motion: reduce) {
-  .seat-hit.mine, .bj-stack.pending::before, .jp-rays { animation: none; }
+  .seat-hit.mine, .bj-stack.pending::before, .jp-rays, .hand-glow, .spot-hl, .turn-arrow, .banner .bn-rays, .res, .tot, .ctl-res { animation: none; }
+  .cd-in { transition: none; }
 }
 
 /* =====================================================================
@@ -524,47 +635,98 @@ html[data-q='low'] .seat-hit.mine, html[data-q='low'] .bj-stack.pending::before,
   .ar-group { flex-direction: row; justify-content: center; flex-wrap: wrap; }
   .ctl-bet { gap: 10px; }
   .ctl-info { min-width: 0; max-width: none; flex: 1 1 100%; text-align: center; order: 3; }
-  .pchip { width: 52px; height: 52px; }
-  .act { min-height: 48px; }
-  .act b { font-size: 12px; letter-spacing: .04em; }
+  .pchip { width: 54px; height: 54px; }
+  .ctl-bet .chip-row { order: -1; flex: 1 1 100%; justify-content: center; }
+  .cbtn { flex: 1; min-width: 0; min-height: 42px; padding: 5px 4px; font-size: 11.5px; flex-direction: row; gap: 6px; border-radius: 12px; }
+  .cbtn svg { width: 18px; height: 18px; }
+  .ctl-info { gap: 1px; }
+  .ctl-info small { font-size: 11.5px; }
+  .bj-controls { padding-bottom: max(8px, env(safe-area-inset-bottom)); }
+  .act-row { gap: 6px; }
+  .act { min-height: 58px; border-radius: 14px; padding: 6px 2px; }
+  .act i { width: 22px; height: 22px; }
+  .act b { font-size: 10.5px; letter-spacing: .03em; }
   .act kbd { display: none; }
+  .ctl-top { gap: 10px; }
+  .ctl-who { font-size: 13px; }
+  .hud-ic { width: 34px; height: 34px; }
   .bj-chat { top: auto; left: 0; right: 0; width: auto; height: 62vh; border-left: 0; border-top: 1px solid var(--line); border-radius: 18px 18px 0 0; animation-name: bjUp; }
   .lb-tiers { grid-template-columns: 1fr; }
   .lb-head { align-items: flex-start; }
   .jp-card { min-width: 0; width: 90%; }
 }
 @keyframes bjUp { from { transform: translateY(30px); opacity: 0; } to { transform: none; opacity: 1; } }
+@media (max-width: 480px) {
+  .bj-hud { gap: 6px; padding-left: max(6px, env(safe-area-inset-left)); padding-right: max(6px, env(safe-area-inset-right)); }
+  .hud-btn { width: 34px; height: 34px; font-size: 18px; }
+  .hud-t { flex: 1; flex-direction: column; gap: 0; align-items: flex-start; }
+  .hud-t b { max-width: 30vw; font-size: 13px; }
+  .hud-t .tier { font-size: 9.5px; padding: 1px 6px; }
+  .hud-jp { margin: 0; padding: 4px 8px; gap: 5px; }
+  .jp-dots i { width: 8px; height: 8px; }
+  .hud-jp b { font-size: 12px; }
+  .hud-bal { font-size: 13px; }
+  .hud-r { gap: 5px; }
+}
 @media (max-height: 500px) and (orientation: landscape) {
   .bj-hud { min-height: 40px; padding-top: max(3px, env(safe-area-inset-top)); padding-bottom: 3px; }
   .hud-btn { width: 32px; height: 32px; font-size: 17px; }
   .pchip { width: 44px; height: 44px; font-size: 13px; }
-  .act { min-height: 40px; }
+  .act { min-height: 44px; }
+  .act i { width: 18px; height: 18px; }
   .ctl-info small { display: none; }
+  .cbtn { min-height: 40px; }
 }
 
 
 /* Dik telefon: sahne yaklaşık yarı ölçekte çizildiği için yazılar büyük */
 .bj-stage[data-layout='port'] .seat-plate { flex-direction: column; gap: 4px; }
 .bj-stage[data-layout='port'] .seat-who { align-items: center; text-align: center; }
-.bj-stage[data-layout='port'] .seat-av { width: 60px; height: 60px; }
-.bj-stage[data-layout='port'] .seat-av .t-av { --s: 56px !important; }
-.bj-stage[data-layout='port'] .seat-av .ring { inset: -8px; width: 76px; height: 76px; }
+.bj-stage[data-layout='port'] .seat-av { width: 68px; height: 68px; }
+.bj-stage[data-layout='port'] .seat-av .t-av { --s: 66px !important; }
+.bj-stage[data-layout='port'] .seat-av .ring { inset: -9px; width: 86px; height: 86px; }
 .bj-stage[data-layout='port'] .seat-name { font-size: 22px; max-width: 150px; }
 .bj-stage[data-layout='port'] .seat-name em { font-size: 13px; }
 .bj-stage[data-layout='port'] .seat-sub { font-size: 17px; }
-.bj-stage[data-layout='port'] .seat-kalk { position: absolute; left: calc(50% + 38px); top: 10px; font-size: 19px; padding: 8px 14px; }
+.bj-stage[data-layout='port'] .seat-kalk { position: absolute; left: calc(50% + 40px); top: 6px; font-size: 19px; padding: 8px 14px; }
+.bj-stage[data-layout='port'] .seat-plate.sl .seat-kalk { left: auto; right: calc(50% + 40px); }
+.bj-stage[data-layout='port'] .seat-plate.sc .seat-kalk { left: calc(50% + 18px); top: -14px; font-size: 15px; padding: 4px 10px; }
 .bj-stage[data-layout='port'] .seat-name em { display: none; }
 .bj-stage[data-layout='port'] .seat-sit { width: 100px; height: 100px; font-size: 19px; }
 .bj-stage[data-layout='port'] .seat-hit span { font-size: 15px; }
-.bj-stage[data-layout='port'] .tot { font-size: 25px; min-width: 46px; padding: 3px 10px; }
-.bj-stage[data-layout='port'] .stv { font-size: 19px; top: 26px; }
-.bj-stage[data-layout='port'] .res { font-size: 20px; }
-.bj-stage[data-layout='port'] .res em { font-size: 18px; }
+.bj-stage[data-layout='port'] .stv { font-size: 20px; top: 31px; }
 .bj-stage[data-layout='port'] .pretag { font-size: 15px; }
-.bj-stage[data-layout='port'] .cmsg { max-width: 640px; padding: 12px 20px; }
-.bj-stage[data-layout='port'] .cmsg strong { font-size: 25px; }
-.bj-stage[data-layout='port'] .cmsg span { font-size: 19px; }
-.bj-stage[data-layout='port'] .ctime { width: 62px; height: 62px; font-size: 28px; }
+.bj-stage[data-layout='port'] .dmsg { max-width: 660px; }
+.bj-stage[data-layout='port'] .dmsg-av { width: 78px; height: 78px; }
+.bj-stage[data-layout='port'] .dmsg-t small { font-size: 16px; }
+.bj-stage[data-layout='port'] .dmsg-t strong { font-size: 27px; }
+.bj-stage[data-layout='port'] .dmsg-t span { font-size: 19px; }
+.bj-stage[data-layout='port'] .dmsg-time { width: 70px; height: 70px; }
+.bj-stage[data-layout='port'] .dmsg-time b { font-size: 29px; }
+.bj-stage[data-layout='port'] .dmsg.hero .dmsg-av { width: 96px; height: 96px; }
+.bj-stage[data-layout='port'] .dmsg.hero .dmsg-t strong { font-size: 32px; }
+.bj-stage[data-layout='port'] .dmsg.hero .dmsg-time { width: 88px; height: 88px; }
+.bj-stage[data-layout='port'] .dmsg.hero .dmsg-time b { font-size: 38px; }
+.bj-stage[data-layout='port'] .dmsg.bubble::before { display: none; }
+.bj-stage[data-layout='port'] .dmsg.bubble { max-width: 300px; padding: 10px 14px; }
+.bj-stage[data-layout='port'] .dmsg.bubble .dmsg-av { display: none; }
+.bj-stage[data-layout='port'] .dmsg.bubble .dmsg-t strong { font-size: 24px; }
+.bj-stage[data-layout='port'] .dmsg.bubble .dmsg-t span { font-size: 17px; }
+.bj-stage[data-layout='port'] .chip, .bj-stage[data-layout='port'] .bj-stack .chips { width: 58px; height: 58px; }
+.bj-stage[data-layout='port'] .bj-stack .chips { left: -29px; top: -29px; }
+.bj-stage[data-layout='port'] .bj-stack.sm .chips, .bj-stage[data-layout='port'] .bj-stack.sm .chip { width: 44px; height: 44px; }
+.bj-stage[data-layout='port'] .bj-stack.sm .chips { left: -22px; top: -22px; }
+.bj-stage[data-layout='port'] .tot { min-width: 52px; height: 52px; font-size: 27px; }
+.bj-stage[data-layout='port'] .tot.soft { font-size: 22px; }
+.bj-stage[data-layout='port'] .res { padding: 2px 10px 3px; }
+.bj-stage[data-layout='port'] .res b { font-size: 19px; }
+.bj-stage[data-layout='port'] .res em { font-size: 16px; }
+.bj-stage[data-layout='port'] .seat-pn { font-size: 14px; bottom: -12px; }
+.bj-stage[data-layout='port'] .banner strong { font-size: 76px; }
+.bj-stage[data-layout='port'] .banner.bj strong { font-size: 66px; }
+.bj-stage[data-layout='port'] .banner small { font-size: 21px; }
+.bj-stage[data-layout='port'] .fx-float { font-size: 40px; }
+.bj-stage[data-layout='port'] .seat-who { background: none; padding: 0; }
 .bj-stage[data-layout='port'] .shoe-count { font-size: 18px; }
 .bj-stage[data-layout='port'] .netall { font-size: 17px; }
 .bj-stack.ins .stv { display: none; }
@@ -618,7 +780,7 @@ html[data-q='low'] .seat-hit.mine, html[data-q='low'] .bj-stack.pending::before,
   <footer id="controls" class="bj-controls"></footer>
 </section>
 <aside id="chat" class="bj-chat" hidden aria-label="Masa sohbeti"></aside>
-<script src="assets/js/bg-table.js?v=3.0.0"></script>
+<script src="assets/js/bg-table.js?v=3.1.0"></script>
 <script>
 /* ---- cards.js ---- */
 /* =====================================================================
@@ -681,8 +843,8 @@ html[data-q='low'] .seat-hit.mine, html[data-q='low'] .bj-stack.pending::before,
     const label = LABEL[r] || r;
     const idx = (flip) =>
       `<g transform="${flip ? 'rotate(180 125 175) ' : ''}translate(0 0)" fill="${col}">
-        <text x="${label.length > 1 ? 31 : 32}" y="60" text-anchor="middle" font-family="Cinzel, Georgia, serif" font-weight="800" font-size="${label.length > 1 ? 44 : 56}" letter-spacing="${label.length > 1 ? -4 : 0}">${label}</text>
-        ${pipUse(s, 32, 92, 34, 0)}
+        <text x="${label.length > 1 ? 33 : 33}" y="63" text-anchor="middle" font-family="Cinzel, Georgia, serif" font-weight="800" font-size="${label.length > 1 ? 50 : 62}" letter-spacing="${label.length > 1 ? -5 : 0}">${label}</text>
+        ${pipUse(s, 33, 98, 36, 0)}
       </g>`;
     let mid = '';
     if (r === 'A') {
@@ -801,38 +963,48 @@ html[data-q='low'] .seat-hit.mine, html[data-q='low'] .bj-stack.pending::before,
   const LAYOUTS = {
     land: {
       W: 1600, H: 860, cx: 800, cy: 300,
-      felt: [722, 520], rail: [766, 552], seat: [604, 418],
-      angles: [157, 135, 112, 90, 68, 45, 23],
+      felt: [722, 520], rail: [766, 552], seat: [640, 420],
+      // P1 izleyicinin SAĞINDA (krupiyenin solu, "first base"), P7 solunda; dağıtım sağdan sola.
+      // Pozisyonlar yatayda eşit aralıklı, yay üstünde (büyük kartlar komşu ele binmesin)
+      xs: [1388, 1192, 996, 800, 604, 408, 212],
+      angles: [23, 52, 72, 90, 108, 128, 157],
       dealer: { x: 800, top: -12, w: 392 },
-      dcards: { x: 800, y: 374 },
-      shoe: { x: 1060, y: 322 }, discard: { x: 540, y: 322 }, tray: { x: 800, y: 312 },
-      title: { y: 494, size: 44 }, card: 80, dcard: 88, push: 92, msg: 338,
+      dcards: { x: 800, y: 380 },
+      shoe: { x: 1066, y: 322 }, discard: { x: 534, y: 322 }, tray: { x: 800, y: 312 },
+      title: { y: 500, size: 44 }, card: 100, dcard: 104, push: 106, msg: 418,
+      bubble: { x: 872, y: 92 },
     },
     /* Telefon dik: masa daha dar ve uzun, yazılar ölçeğe göre büyük */
     port: {
       W: 720, H: 1060, cx: 360, cy: 300,
       felt: [348, 760], rail: [372, 786], seat: [292, 600],
-      angles: [166, 141, 115, 90, 65, 39, 14],
+      angles: [14, 39, 65, 90, 115, 141, 166],
       dealer: { x: 360, top: -6, w: 292 },
-      dcards: { x: 360, y: 374 },
-      shoe: { x: 512, y: 324 }, discard: { x: 212, y: 330 }, tray: { x: 360, y: 312 },
-      title: { y: 528, size: 36 }, card: 80, dcard: 82, push: 76, msg: 340, msgHi: 150, plateBelow: true,
+      dcards: { x: 360, y: 380 },
+      shoe: { x: 516, y: 324 }, discard: { x: 206, y: 330 }, tray: { x: 360, y: 312 },
+      title: { y: 540, size: 36 }, card: 90, dcard: 92, push: 86, msg: 340, msgHi: 150, plateBelow: true,
+      bubble: { x: 414, y: 112 },
       // dar ekranda P2/P6 kartları içeri çekilir (P1/P7 isim plakasına binmesin);
-      // sağ yarıdaki potlarda kart yelpazesi sağdan sabitlenir, sola doğru büyür
-      pull: [0.1, 0.38, 0.1, 0.1, 0.1, 0.38, 0.1], endAnchor: [0, 0, 0, 0, 1, 1, 1],
+      // sağ yarıdaki potlarda (P1–P3) kart yelpazesi sağdan sabitlenir, sola doğru büyür
+      pull: [0.1, 0.38, 0.1, 0.1, 0.1, 0.38, 0.1], endAnchor: [1, 1, 1, 0, 0, 0, 0],
     },
   };
 
   function seatGeom(L, k) {
-    const a = (L.angles[k] * Math.PI) / 180;
+    let a = (L.angles[k] * Math.PI) / 180;
+    if (L.xs) a = Math.acos(Math.max(-1, Math.min(1, (L.xs[k] - L.cx) / L.seat[0])));
     const spot = { x: L.cx + L.seat[0] * Math.cos(a), y: L.cy + L.seat[1] * Math.sin(a) };
+    const deg = (a * 180) / Math.PI;
     // Kartlar: bahis yuvasının hemen üstünde, koltuk yönüne hafif eğik
     const pull = L.pull ? L.pull[k] : 0.1;
-    const cards = { x: spot.x + (L.cx - spot.x) * pull, y: spot.y - L.push + Math.abs(L.cx - spot.x) * 0.05, rot: (L.angles[k] - 90) * -0.18, end: !!(L.endAnchor && L.endAnchor[k]) };
+    // kartlar oyuncuya dönük: üst kenar krupiyeye doğru hafif eğik
+    const cards = { x: spot.x + (L.cx - spot.x) * pull, y: spot.y - L.push + Math.abs(L.cx - spot.x) * 0.05, rot: (deg - 90) * 0.12, end: !!(L.endAnchor && L.endAnchor[k]) };
     let plate;
     if (L.plateBelow) plate = { x: Math.max(74, Math.min(L.W - 74, spot.x)), y: spot.y + 96 };
-    else plate = { x: spot.x + Math.cos(a) * 70, y: spot.y + Math.sin(a) * 70 + 34 };
-    return { spot, cards, plate, angle: L.angles[k] };
+    else plate = { x: spot.x + Math.cos(a) * 70, y: spot.y + Math.sin(a) * 70 + 32 };
+    // sağ kenardaki pozisyonda isim avatarın soluna yazılır (sahneden taşmasın)
+    plate.rev = !L.plateBelow && plate.x + 230 > L.W;
+    return { spot, cards, plate, angle: deg };
   }
 
   function arcPath(cx, cy, rx, ry, a0, a1) {
@@ -854,8 +1026,8 @@ html[data-q='low'] .seat-hit.mine, html[data-q='low'] .bj-stack.pending::before,
     for (let k = 0; k < 7; k++) {
       const g = seatGeom(L, k);
       spots += `<g transform="translate(${g.spot.x.toFixed(1)} ${g.spot.y.toFixed(1)})">
-        <circle r="48" fill="#062a1a" fill-opacity=".35" stroke="#d8b25d" stroke-opacity=".55" stroke-width="2"/>
-        <circle r="40" fill="none" stroke="#d8b25d" stroke-opacity=".25" stroke-width="1" stroke-dasharray="3 5"/>
+        <circle r="50" fill="url(#bjSpot)" stroke="url(#bjTrim)" stroke-width="2.4"/>
+        <circle r="41" fill="none" stroke="#e9cf8c" stroke-opacity=".28" stroke-width="1" stroke-dasharray="2 6"/>
       </g>`;
     }
     const t = L.title;
@@ -876,6 +1048,8 @@ html[data-q='low'] .seat-hit.mine, html[data-q='low'] .bj-stack.pending::before,
         </filter>
         <radialGradient id="bjLight" cx="50%" cy="0%" r="75%"><stop offset="0" stop-color="#fff2c8" stop-opacity=".2"/><stop offset="1" stop-color="#fff2c8" stop-opacity="0"/></radialGradient>
         <linearGradient id="bjPrint" x1="0" x2="1"><stop offset="0" stop-color="#b8913f"/><stop offset=".5" stop-color="#ecd08a"/><stop offset="1" stop-color="#b8913f"/></linearGradient>
+        <radialGradient id="bjSpot" cx="50%" cy="40%" r="60%"><stop offset="0" stop-color="#0c3a26" stop-opacity=".25"/><stop offset="1" stop-color="#03170e" stop-opacity=".55"/></radialGradient>
+        <radialGradient id="bjVig" cx="50%" cy="10%" r="95%"><stop offset=".55" stop-color="#000" stop-opacity="0"/><stop offset="1" stop-color="#000" stop-opacity=".45"/></radialGradient>
         <path id="bjArc1" d="${arcPath(cx, cy, ins[0], ins[1], 118, 62)}"/>
         <path id="bjArc2" d="${arcPath(cx, cy, ins2[0], ins2[1], 155, 25)}"/>
       </defs>
@@ -886,6 +1060,7 @@ html[data-q='low'] .seat-hit.mine, html[data-q='low'] .bj-stack.pending::before,
       <path d="${half(fx, fy)}" fill="url(#bjFelt)"/>
       <path d="${half(fx, fy)}" fill="#0b3d29" filter="url(#bjNoise)" opacity=".5"/>
       <path d="${half(fx, fy)}" fill="url(#bjLight)"/>
+      <path d="${half(fx, fy)}" fill="url(#bjVig)"/>
       <rect x="${cx - fx - 50}" y="${cy - 22}" width="${(fx + 50) * 2}" height="24" fill="url(#bjEdge)"/>
       <rect x="${cx - fx - 50}" y="${cy}" width="${(fx + 50) * 2}" height="2" fill="url(#bjTrim)" opacity=".8"/>
       <text font-family="Cinzel, Georgia, serif" font-weight="700" font-size="${t.size}" letter-spacing="${t.size * 0.22}" fill="url(#bjPrint)" opacity=".86" text-anchor="middle" x="${cx}" y="${t.y}">BÖZER ROYALE</text>
@@ -1001,14 +1176,17 @@ html[data-q='low'] .seat-hit.mine, html[data-q='low'] .bj-stack.pending::before,
       <circle cx="236" cy="180" r="3.6" fill="url(#dlGold)"/><circle cx="364" cy="180" r="3.6" fill="url(#dlGold)"/>
       <path d="M300 90 C346 90 363 122 363 158 C363 196 341 228 300 238 C259 228 237 196 237 158 C237 122 254 90 300 90 Z" fill="url(#dlSkin)"/>
       <path d="M347 200 C338 222 322 233 300 238 C320 230 334 214 341 196 Z" fill="#c4866a" opacity=".35"/>
-      <ellipse cx="263" cy="186" rx="15" ry="8" fill="#e8897f" opacity=".3" filter="url(#dlSoft)"/>
-      <ellipse cx="337" cy="186" rx="15" ry="8" fill="#e8897f" opacity=".3" filter="url(#dlSoft)" class="dl-blush"/>
+      <path d="M241 168 C244 196 262 222 300 232 C272 222 252 200 246 170 Z" fill="#c4866a" opacity=".22" filter="url(#dlSoft)"/>
+      <path d="M359 168 C356 196 338 222 300 232 C328 222 348 200 354 170 Z" fill="#c4866a" opacity=".26" filter="url(#dlSoft)"/>
+      <path d="M298 150 Q297 168 296 178" stroke="#fff3ea" stroke-width="2.4" stroke-linecap="round" fill="none" opacity=".35"/>
+      <ellipse cx="263" cy="186" rx="15" ry="8" fill="#e8897f" opacity=".24" filter="url(#dlSoft)"/>
+      <ellipse cx="337" cy="186" rx="15" ry="8" fill="#e8897f" opacity=".24" filter="url(#dlSoft)" class="dl-blush"/>
       <!-- kaşlar -->
-      <g class="dl-brows" fill="none" stroke="#3a2318" stroke-width="4.4" stroke-linecap="round">
+      <g class="dl-brows" fill="none" stroke="#3a2318" stroke-width="3.2" stroke-linecap="round" opacity=".92">
         <path d="M255 137 Q270 128 287 134"/><path d="M313 134 Q330 128 345 137"/>
       </g>
       <!-- gözler -->
-      <g class="dl-eyes" transform="translate(300 156) scale(1.1) translate(-300 -156)">
+      <g class="dl-eyes" transform="translate(300 157) scale(.97 .94) translate(-300 -157)">
         <path d="M257 158 Q271 147 286 157 Q271 165 257 158 Z" fill="#fbf6f2"/>
         <path d="M314 157 Q329 147 343 158 Q329 165 314 157 Z" fill="#fbf6f2"/>
         <g class="dl-iris">
@@ -1022,8 +1200,8 @@ html[data-q='low'] .seat-hit.mine, html[data-q='low'] .bj-stack.pending::before,
           <path class="dl-lid" d="M312 156 Q329 145 345 157 Q329 167 312 156 Z"/>
         </g>
         <g fill="none" stroke="#1b0f0b" stroke-linecap="round">
-          <path d="M254 157 Q270 144 288 155" stroke-width="2.8"/><path d="M254 157 L249 153" stroke-width="2.2"/>
-          <path d="M312 155 Q330 144 346 157" stroke-width="2.8"/><path d="M346 157 L351 153" stroke-width="2.2"/>
+          <path d="M254 157 Q270 145 288 155" stroke-width="1.9"/><path d="M254 157 L250.5 154.5" stroke-width="1.3"/>
+          <path d="M312 155 Q330 145 346 157" stroke-width="1.9"/><path d="M346 157 L349.5 154.5" stroke-width="1.3"/>
         </g>
         <path d="M259 149 Q271 141 284 148" stroke="#b97d62" stroke-width="1.4" fill="none" opacity=".6"/>
         <path d="M316 148 Q329 141 341 149" stroke="#b97d62" stroke-width="1.4" fill="none" opacity=".6"/>
@@ -1047,6 +1225,8 @@ html[data-q='low'] .seat-hit.mine, html[data-q='low'] .bj-stack.pending::before,
       <!-- saç: yandan ayrılmış, geriye toplanmış -->
       <path d="M229 170 C222 104 256 56 302 56 C350 56 380 102 371 170 C367 150 362 132 352 118 C341 102 326 93 312 91 C290 95 262 104 248 126 C240 138 235 152 229 170 Z" fill="url(#dlHair)"/>
       <path d="M312 92 C296 98 268 108 252 128" stroke="#6b4233" stroke-width="2.4" fill="none" opacity=".7"/>
+      <path d="M286 70 C268 80 255 98 249 118" stroke="#8a5a44" stroke-width="5" fill="none" opacity=".28" stroke-linecap="round"/>
+      <path d="M322 70 C340 80 352 98 357 116" stroke="#8a5a44" stroke-width="4" fill="none" opacity=".22" stroke-linecap="round"/>
       <path d="M300 62 C278 66 254 86 244 118" stroke="#5c3829" stroke-width="2" fill="none" opacity=".6"/>
       <path d="M318 64 C346 70 362 96 366 130" stroke="#5c3829" stroke-width="2" fill="none" opacity=".55"/>
       <path d="M314 92 C330 100 346 112 356 128" stroke="#4d2e22" stroke-width="2" fill="none" opacity=".6"/>
@@ -1086,6 +1266,13 @@ html[data-q='low'] .seat-hit.mine, html[data-q='low'] .bj-stack.pending::before,
           <g class="dl-card" opacity="0"><rect x="-17" y="34" width="34" height="46" rx="4" fill="#0f3d2a" stroke="#c9a24d" stroke-width="2"/></g>
         </g>
       </g>
+    </g>
+    <!-- yelek omuzları kolların üstünde: gömlek kolu yeleğin altından çıkar -->
+    <g class="dl-caps" clip-path="url(#dlTable)">
+      <path d="M140 352 C142 322 156 304 182 296 C200 291 214 290 226 292 C210 304 200 318 196 334 C194 342 194 350 195 356 Z" fill="url(#dlVest)"/>
+      <path d="M460 352 C458 322 444 304 418 296 C400 291 386 290 374 292 C390 304 400 318 404 334 C406 342 406 350 405 356 Z" fill="url(#dlVest)"/>
+      <path d="M150 340 C156 318 172 304 194 298" stroke="#2c2c2e" stroke-width="2" fill="none"/>
+      <path d="M450 340 C444 318 428 304 406 298" stroke="#2c2c2e" stroke-width="2" fill="none"/>
     </g>
     <!-- karıştırma destesi -->
     <g class="dl-deck" opacity="0" transform="translate(300 500)">
@@ -1129,6 +1316,7 @@ html[data-q='low'] .seat-hit.mine, html[data-q='low'] .bj-stack.pending::before,
     this.armR = root.querySelector('.dl-arm-r');
     this.head = root.querySelector('.dl-head');
     this.body = root.querySelector('.dl-body');
+    this.caps = root.querySelector('.dl-caps');
     this.iris = root.querySelector('.dl-iris');
     this.lids = [...root.querySelectorAll('.dl-lid')];
     this.mouthN = root.querySelector('.dl-mouth-n');
@@ -1162,6 +1350,7 @@ html[data-q='low'] .seat-hit.mine, html[data-q='low'] .bj-stack.pending::before,
     this.head.setAttribute('transform', `translate(${p.head[1] + lk * 3} ${b * 0.8 + (p.body || 0)}) rotate(${p.head[0] + lk * 4} 300 240)`);
     this.iris.setAttribute('transform', `translate(${lk * 3.2} 0)`);
     this.body.setAttribute('transform', `translate(0 ${b * 0.5 + (p.body || 0) * 0.5})`);
+    if (this.caps) this.caps.setAttribute('transform', `translate(0 ${b * 0.5 + (p.body || 0) * 0.5})`);
     const bl = this.blinkT;
     this.lids.forEach((l, i) => {
       const y = 152;
@@ -1486,6 +1675,24 @@ html[data-q='low'] .seat-hit.mine, html[data-q='low'] .bj-stack.pending::before,
       for (let i = 0; i < 24; i++) tone('fx', t + 1 + i * 0.05, 2000 + Math.random() * 3000, 0.25, { gain: 0.015 });
       for (let i = 0; i < 14; i++) chipClack(t + 1.1 + i * 0.07, 0.6);
     },
+    /** Kendi elin battı: kısa, alçalan boğuk ses */
+    bust() {
+      if (!ready()) return;
+      const t = ctx.currentTime;
+      noise('fx', t, 0.18, { type: 'lowpass', f0: 600, f1: 180, q: 0.8, gain: 0.3 });
+      tone('fx', t, 220, 0.45, { gain: 0.06, f1: 110, wave: 'triangle' });
+    },
+    /** Krupiye battı: yükselen parlak akor ve hafif alkış hışırtısı */
+    dealerBust() {
+      if (!ready()) return;
+      const t = ctx.currentTime;
+      [392, 523, 659, 784].forEach((f, i) => tone('fx', t + i * 0.06, f, 0.55, { gain: 0.06, wave: 'triangle' }));
+      for (let i = 0; i < 18; i++) noise('fx', t + 0.2 + i * 0.03 + Math.random() * 0.02, 0.04, { f0: 2400 + Math.random() * 1800, q: 2, gain: 0.05 });
+    },
+    whoosh() {
+      if (!ready()) return;
+      noise('fx', ctx.currentTime, 0.35, { type: 'bandpass', f0: 900, f1: 3200, q: 0.7, gain: 0.12, attack: 0.08 });
+    },
     gift() {
       if (!ready()) return;
       const t = ctx.currentTime;
@@ -1570,8 +1777,10 @@ html[data-q='low'] .seat-hit.mine, html[data-q='low'] .bj-stack.pending::before,
    Bözer Royale — sahne: masa, krupiye, kart ve fiş animasyonları
    Sunucudan gelen anlık durum (state) her geldiğinde ekran onunla
    eşitlenir. Her fiziksel kartın kendi öğesi vardır (anahtar = kart kodu):
-   yeni kart sabottan uçar, split'te kart yeni ele kayar, kapalı kart
-   yerinde çevrilir, tur bitince kartlar atık tepsisine toplanır.
+   yeni kart sabottan yay çizerek uçar ve havada döner, split'te kart yeni
+   ele kayar, kapalı kart yerinde 3B çevrilir, tur bitince kartlar atık
+   tepsisine toplanır. Fişler atılır, toplanır ve ödenir; sıra kimdeyse eli
+   altın ışıkla vurgulanır; sonuçlar elin üstünde etiketle görünür.
    ===================================================================== */
 (function () {
   'use strict';
@@ -1581,9 +1790,9 @@ html[data-q='low'] .seat-hit.mine, html[data-q='low'] .bj-stack.pending::before,
   const esc = (t) => String(t == null ? '' : t).replace(/[&<>"']/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' })[c]);
   const fmt = (n) => Number(n || 0).toLocaleString('tr-TR');
   const sgn = (n) => (n > 0 ? '+' : n < 0 ? '−' : '±') + fmt(Math.abs(n));
-  const sleep = (ms) => new Promise((r) => setTimeout(r, ms));
   const CARD_MS = 420; // sunucudaki dağıtım temposu (kart başına)
   const RATIO = 1.4;
+  const TURN_MS = 15600;
 
   const PRE_LABEL = { hit: 'KART', stand: 'DUR', double: 'İKİYE KATLA', split: 'BÖL', surrender: 'TESLİM' };
   const OUT_LABEL = { win: 'KAZANDI', lose: 'KAYBETTİ', push: 'BERABERE', blackjack: 'BLACKJACK', surrender: 'TESLİM' };
@@ -1600,7 +1809,7 @@ html[data-q='low'] .seat-hit.mine, html[data-q='low'] .bj-stack.pending::before,
     this.ready = false;
     this.layout = null;
     this.timers = [];
-    this.dq = Promise.resolve();
+    this.shown = new Set();
     this.build();
   }
 
@@ -1610,6 +1819,9 @@ html[data-q='low'] .seat-hit.mine, html[data-q='low'] .bj-stack.pending::before,
   Scene.prototype.dur = function (ms) {
     if (this.opt('reduced')) return 0;
     return this.opt('fast') ? Math.round(ms * 0.55) : ms;
+  };
+  Scene.prototype.calm = function () {
+    return !!(this.opt('reduced') || this.opt('quality') === 'low');
   };
   Scene.prototype.now = function () {
     return this.hooks.now ? this.hooks.now() : Date.now();
@@ -1631,6 +1843,7 @@ html[data-q='low'] .seat-hit.mine, html[data-q='low'] .bj-stack.pending::before,
         <div class="bj-dealer"></div>
         <div class="bj-table"></div>
         <div class="bj-props"></div>
+        <div class="bj-glow"></div>
         <div class="bj-spots"></div>
         <div class="bj-chiplayer"></div>
         <div class="bj-cardlayer"></div>
@@ -1643,6 +1856,7 @@ html[data-q='low'] .seat-hit.mine, html[data-q='low'] .bj-stack.pending::before,
     this.lDealer = q('.bj-dealer');
     this.lTable = q('.bj-table');
     this.lProps = q('.bj-props');
+    this.lGlow = q('.bj-glow');
     this.lSpots = q('.bj-spots');
     this.lChips = q('.bj-chiplayer');
     this.lCards = q('.bj-cardlayer');
@@ -1650,6 +1864,21 @@ html[data-q='low'] .seat-hit.mine, html[data-q='low'] .bj-stack.pending::before,
     this.lCenter = q('.bj-center');
     this.lFx = q('.bj-fx');
     this.dealer = window.BJDealer.create(this.lDealer);
+    // krupiye mesaj kartı: portre bir kez kurulur, metin ve süre güncellenir
+    const port = this.lDealer.querySelector('svg').cloneNode(true);
+    port.setAttribute('viewBox', '214 26 172 172');
+    port.setAttribute('class', 'msg-face');
+    this.lCenter.innerHTML = `<div class="dmsg" hidden><span class="dmsg-av"></span><div class="dmsg-t"><small>Krupiye Selin</small><strong></strong><span></span></div>
+      <span class="dmsg-time" hidden><svg viewBox="0 0 44 44" aria-hidden="true"><circle class="bg" cx="22" cy="22" r="19"/><circle class="fg" cx="22" cy="22" r="19"/></svg><b></b></span></div>`;
+    this.msg = {
+      el: q('.dmsg'),
+      title: q('.dmsg-t strong'),
+      sub: q('.dmsg-t span'),
+      time: q('.dmsg-time'),
+      num: q('.dmsg-time b'),
+      ring: q('.dmsg-time .fg'),
+    };
+    q('.dmsg-av').appendChild(port);
     this.lSpots.addEventListener('click', (e) => {
       const b = e.target.closest('[data-act]');
       if (!b) return;
@@ -1671,6 +1900,7 @@ html[data-q='low'] .seat-hit.mine, html[data-q='low'] .bj-stack.pending::before,
     this.dcw = L.dcard || L.card;
     this.stage.style.width = L.W + 'px';
     this.stage.style.height = L.H + 'px';
+    this.stage.style.setProperty('--cw', this.cw + 'px');
     this.stage.dataset.layout = name;
     this.lTable.innerHTML = TB.feltSVG(L);
     this.lProps.innerHTML = TB.propsHTML(L);
@@ -1684,7 +1914,11 @@ html[data-q='low'] .seat-hit.mine, html[data-q='low'] .bj-stack.pending::before,
     this.stacks.forEach((s) => s.el.remove());
     this.stacks.clear();
     this.lSpots.innerHTML = '';
+    this.lGlow.innerHTML = '';
     this.seatSig = [];
+    this._badges = '';
+    this._glow = '';
+    this._msgKey = '';
     this.ready = false;
     if (this.st) this.update(this.st, this.me, true);
     return true;
@@ -1708,7 +1942,7 @@ html[data-q='low'] .seat-hit.mine, html[data-q='low'] .bj-stack.pending::before,
   };
   Scene.prototype.shoePoint = function () {
     const s = this.L.shoe;
-    return { x: s.x - 62, y: s.y + 4 };
+    return { x: s.x - 64, y: s.y + 6, rot: -24, sc: 0.8 };
   };
   Scene.prototype.discardPoint = function () {
     const d = this.L.discard;
@@ -1717,6 +1951,10 @@ html[data-q='low'] .seat-hit.mine, html[data-q='low'] .bj-stack.pending::before,
   Scene.prototype.trayPoint = function () {
     const t = this.L.tray;
     return { x: t.x, y: t.y + 6 };
+  };
+  /** Bir koltuğun avatarı (emoji, sohbet balonu ve hediye uçuşu için) */
+  Scene.prototype.avatarEl = function (seat) {
+    return this.lSpots.querySelector(`[data-sn="${seat}"] .seat-av`);
   };
 
   /* ---------------- kart yerleşimi ---------------- */
@@ -1732,17 +1970,34 @@ html[data-q='low'] .seat-hit.mine, html[data-q='low'] .bj-stack.pending::before,
   Scene.prototype.cardPos = function (k, n, i, j, m) {
     const h = this.handLayout(k, n, i);
     const w = this.cw * h.sc;
-    const dx = w * 0.3;
-    const dy = -w * RATIO * 0.13;
+    const step = m > 4 ? 0.24 : 0.3;
+    const dx = w * step;
+    const dy = -w * RATIO * 0.12;
     const shift = this.geo[k].cards.end && m > 1 ? -(m - 1) * dx : 0;
-    return { x: h.x + shift + j * dx, y: h.y + j * dy, rot: h.rot + (j % 2 ? 1.2 : -0.8), sc: h.sc };
+    return { x: h.x + shift + j * dx, y: h.y + j * dy, rot: h.rot + (j % 2 ? 1.1 : -0.7), sc: h.sc };
   };
   Scene.prototype.dealerPos = function (j, n) {
     const L = this.L;
     const w = this.dcw;
-    const step = w * 0.66;
+    const step = w * (n > 4 ? 0.52 : 0.64);
     const x0 = L.dcards.x - ((n - 1) * step) / 2;
     return { x: x0 + j * step, y: L.dcards.y, rot: 0, sc: this.dcw / this.cw };
+  };
+  /** Bir elin ekrandaki kutusu (sahne koordinatı) */
+  Scene.prototype.handBox = function (k, n, i, m) {
+    let x0 = Infinity;
+    let x1 = -Infinity;
+    let y0 = Infinity;
+    let y1 = -Infinity;
+    for (let j = 0; j < Math.max(1, m); j++) {
+      const p = this.cardPos(k, n, i, j, Math.max(1, m));
+      const w = this.cw * p.sc;
+      x0 = Math.min(x0, p.x - w / 2);
+      x1 = Math.max(x1, p.x + w / 2);
+      y0 = Math.min(y0, p.y - (w * RATIO) / 2);
+      y1 = Math.max(y1, p.y + (w * RATIO) / 2);
+    }
+    return { x0, x1, y0, y1, cx: (x0 + x1) / 2, cy: (y0 + y1) / 2, w: x1 - x0, h: y1 - y0 };
   };
 
   /* İstenen kart listesi (anahtar, kod, konum, sıra) */
@@ -1753,7 +2008,7 @@ html[data-q='low'] .seat-hit.mine, html[data-q='low'] .bj-stack.pending::before,
       seen[code] = (seen[code] || 0) + 1;
       return seen[code] > 1 ? code + '#' + seen[code] : code;
     };
-    if (!st.round || st.round.cancelled && !st.dealer) return out;
+    if (!st.round || (st.round.cancelled && !st.dealer)) return out;
     (st.seats || []).forEach((s) => {
       const hands = s.hands || [];
       const n = hands.length;
@@ -1762,7 +2017,7 @@ html[data-q='low'] .seat-hit.mine, html[data-q='low'] .bj-stack.pending::before,
           const p = this.cardPos(s.no - 1, n, i, j, h.cards.length);
           out.push({
             key: keyOf(code), code, seat: s.no, hand: h.id, i, j, x: p.x, y: p.y, rot: p.rot, sc: p.sc,
-            z: 10 + s.no * 60 + i * 12 + j, down: false, dim: h.st === 'bust' || h.out === 'lose' || h.out === 'surrender',
+            z: 10 + (8 - s.no) * 60 + i * 12 + j, down: false, dim: h.st === 'bust' || h.out === 'lose' || h.out === 'surrender' || h.st === 'surrendered',
           });
         });
       });
@@ -1777,7 +2032,7 @@ html[data-q='low'] .seat-hit.mine, html[data-q='low'] .bj-stack.pending::before,
     return out;
   };
 
-  /* İlk dağıtım sırası: P1..P7 birinci kart, krupiye açık, P1..P7 ikinci kart, krupiye kapalı */
+  /* İlk dağıtım sırası: P1..P7 (sağdan sola) birinci kart, krupiye açık, P1..P7 ikinci kart, krupiye kapalı */
   function dealOrder(st) {
     const seats = (st.seats || []).filter((s) => s.hands && s.hands.length);
     const ord = {};
@@ -1795,14 +2050,50 @@ html[data-q='low'] .seat-hit.mine, html[data-q='low'] .bj-stack.pending::before,
     el.innerHTML = `<div class="cd-in"><svg class="cd-f" viewBox="0 0 250 350"><use href="#bjc-${code && code !== '??' ? code.slice(0, 2) : 'back'}"/></svg><svg class="cd-b" viewBox="0 0 250 350"><use href="#bjc-back"/></svg></div>`;
     return el;
   }
-  Scene.prototype.place = function (c, x, y, rot, sc, ms) {
+  Scene.prototype.tf = function (x, y, rot, sc) {
     const w = this.cw;
+    return `translate3d(${(x - w / 2).toFixed(1)}px, ${(y - (w * RATIO) / 2).toFixed(1)}px, 0) rotate(${(rot || 0).toFixed(2)}deg) scale(${(sc || 1).toFixed(3)})`;
+  };
+  Scene.prototype.place = function (c, x, y, rot, sc, ms) {
+    if (c.anim && ms) {
+      c.anim.cancel();
+      c.anim = null;
+    }
     c.el.style.transition = ms ? `transform ${ms}ms cubic-bezier(.22,.75,.25,1)` : 'none';
-    c.el.style.transform = `translate3d(${(x - w / 2).toFixed(1)}px, ${(y - (w * RATIO) / 2).toFixed(1)}px, 0) rotate(${rot.toFixed(2)}deg) scale(${sc.toFixed(3)})`;
+    c.el.style.transform = this.tf(x, y, rot, sc);
     c.x = x;
     c.y = y;
     c.rot = rot;
     c.sc = sc;
+  };
+  /** Yay çizen uçuş: kalkış → tepe (biraz büyür, döner) → iniş (hafif oturma) */
+  Scene.prototype.flyCard = function (c, from, to, ms, o) {
+    o = o || {};
+    const lift = o.lift != null ? o.lift : 54;
+    const mx = from.x + (to.x - from.x) * 0.52;
+    const my = from.y + (to.y - from.y) * 0.4 - lift;
+    const spin = o.spin != null ? o.spin : (to.x < from.x ? -1 : 1) * 10;
+    const k = [
+      { transform: this.tf(from.x, from.y, from.rot, from.sc), offset: 0 },
+      { transform: this.tf(mx, my, (from.rot + to.rot) / 2 + spin, Math.max(from.sc, to.sc) * 1.08), offset: 0.48 },
+      { transform: this.tf(to.x, to.y - 4, to.rot - spin * 0.12, to.sc * 1.025), offset: 0.86 },
+      { transform: this.tf(to.x, to.y, to.rot, to.sc), offset: 1 },
+    ];
+    if (c.anim) c.anim.cancel();
+    c.el.style.transition = 'none';
+    c.el.style.transform = k[3].transform;
+    c.x = to.x;
+    c.y = to.y;
+    c.rot = to.rot;
+    c.sc = to.sc;
+    c.el.classList.add('flying');
+    const a = c.el.animate(k, { duration: Math.max(1, ms), easing: o.easing || 'cubic-bezier(.33,.66,.3,1)' });
+    c.anim = a;
+    a.onfinish = a.oncancel = () => {
+      c.el.classList.remove('flying');
+      if (c.anim === a) c.anim = null;
+    };
+    return a;
   };
   Scene.prototype.setFace = function (c, code, down) {
     if (code && code !== '??' && c.code !== code) {
@@ -1818,14 +2109,14 @@ html[data-q='low'] .seat-hit.mine, html[data-q='low'] .bj-stack.pending::before,
     if (this.opt('reduced')) return;
     const L = this.L;
     const dx = (tx - L.cx) / (L.W * 0.45);
-    this.later(delay, () => {
-      this.dealer.pose('shoe', 110).then(() => {
+    this.later(Math.max(0, delay - 120), () => {
+      this.dealer.pose('shoe', 120).then(() => {
         this.dealer.holding('r', true);
-        return this.dealer.pitch(dx, 190);
+        return this.dealer.pitch(dx, 200);
       }).then(() => this.dealer.holding('r', false));
     });
     clearTimeout(this._restT);
-    this._restT = setTimeout(() => this.dealer.pose('rest', 420), delay + 700);
+    this._restT = setTimeout(() => this.dealer.pose('rest', 460), delay + 760);
   };
 
   Scene.prototype.syncCards = function (st, instant) {
@@ -1838,6 +2129,7 @@ html[data-q='low'] .seat-hit.mine, html[data-q='low'] .bj-stack.pending::before,
       if (!c) {
         c = { el: cardEl(w.code), code: w.code, down: true };
         c.el.style.zIndex = w.z;
+        if (w.dealer) c.el.classList.add('dl');
         this.lCards.appendChild(c.el);
         this.cards.set(w.key, c);
         fresh.push({ c, w });
@@ -1850,10 +2142,12 @@ html[data-q='low'] .seat-hit.mine, html[data-q='low'] .bj-stack.pending::before,
       const moved = Math.abs(c.x - w.x) > 0.5 || Math.abs(c.y - w.y) > 0.5 || Math.abs(c.sc - w.sc) > 0.01;
       if (moved && !c.flying) this.place(c, w.x, w.y, w.rot, w.sc, instant ? 0 : this.dur(380));
       if (c.down && !w.down && !c.flying) {
-        // kapalı kart açılıyor
+        // kapalı kart açılıyor: krupiye çevirir, kart hafifçe kalkıp döner
         if (!instant && !this.opt('reduced')) {
-          this.dealer.pose('flipR', 260).then(() => this.dealer.pose('rest', 420));
+          this.dealer.pose('flipR', 260).then(() => this.dealer.pose('rest', 460));
           SND.play('flip');
+          c.el.classList.add('reveal');
+          this.later(this.dur(700), () => c.el.classList.remove('reveal'));
         }
         this.setFace(c, w.code, false);
       } else if (!c.flying && w.code !== '??') this.setFace(c, w.code, w.down);
@@ -1882,11 +2176,11 @@ html[data-q='low'] .seat-hit.mine, html[data-q='low'] .bj-stack.pending::before,
           let delay;
           if (ord && ord[w.key] != null) delay = since + ord[w.key] * CARD_MS - now;
           else delay = stagger;
-          if (delay < -1500) delay = n * 60;
+          if (delay < -1500) delay = n * 70;
           delay = Math.max(0, delay);
-          stagger = delay + 160;
+          stagger = delay + 190;
           const sp = this.shoePoint();
-          this.place(c, sp.x, sp.y, -28, 0.82, 0);
+          this.place(c, sp.x, sp.y, sp.rot, sp.sc, 0);
           c.el.style.opacity = '0';
           this.setFace(c, w.code, true);
           c.flying = true;
@@ -1895,13 +2189,17 @@ html[data-q='low'] .seat-hit.mine, html[data-q='low'] .bj-stack.pending::before,
             c.el.style.opacity = '1';
             SND.play('deal');
             const t = c.target || w;
-            this.place(c, t.x, t.y, t.rot, t.sc, this.dur(560));
-            this.later(this.dur(330), () => this.setFace(c, t.code, t.down));
-            this.later(this.dur(580), () => {
+            const ms = this.dur(t.dealer ? 520 : 600);
+            this.flyCard(c, sp, t, ms, { lift: t.dealer ? 26 : 60 });
+            // yüzü açık kart havada döner ve yüzü yukarı iner
+            if (!t.down) this.later(ms * 0.42, () => this.setFace(c, t.code, false));
+            this.later(ms + 20, () => {
               c.flying = false;
               const tt = c.target || t;
               if (Math.abs(c.x - tt.x) > 0.5 || Math.abs(c.y - tt.y) > 0.5) this.place(c, tt.x, tt.y, tt.rot, tt.sc, this.dur(260));
               this.setFace(c, tt.code, tt.down);
+              c.el.classList.toggle('dim', !!tt.dim);
+              this.badgesSoon();
             });
           });
         });
@@ -1918,25 +2216,29 @@ html[data-q='low'] .seat-hit.mine, html[data-q='low'] .bj-stack.pending::before,
     const dp = this.discardPoint();
     if (instant || this.opt('reduced') || !this.ready) {
       list.forEach(([k, c]) => {
+        if (c.anim) c.anim.cancel();
         c.el.remove();
         this.cards.delete(k);
       });
       return;
     }
     SND.play('collect', list.length);
-    this.dealer.pose('sweep1', 260).then(() => this.dealer.pose('sweep2', 320)).then(() => this.dealer.pose('toDiscard', 300)).then(() => this.dealer.pose('rest', 420));
+    this.dealer.pose('sweep1', 260).then(() => this.dealer.pose('sweep2', 320)).then(() => this.dealer.pose('toDiscard', 300)).then(() => this.dealer.pose('rest', 460));
+    // krupiye sağından (P7) soluna (P1) toplar, kendi kartları en son
     list
-      .sort((a, b) => (b[1].seat || 0) - (a[1].seat || 0))
+      .sort((a, b) => (b[1].seat || 0) - (a[1].seat || 0) || (a[1].seat === 0 ? 1 : 0))
       .forEach(([k, c], i) => {
         this.cards.delete(k);
         c.flying = true;
-        this.later(i * 28, () => {
+        this.later(i * 36, () => {
           this.setFace(c, c.code, true);
-          this.place(c, dp.x + (Math.random() * 8 - 4), dp.y + (Math.random() * 6 - 3), 84 + Math.random() * 8, 0.62, this.dur(520));
-          this.later(this.dur(540), () => {
-            c.el.animate([{ opacity: 1 }, { opacity: 0 }], { duration: 140, fill: 'forwards' });
-            this.later(150, () => c.el.remove());
-          });
+          const to = { x: dp.x + (Math.random() * 8 - 4), y: dp.y + (Math.random() * 6 - 3), rot: 88 + Math.random() * 6, sc: 0.6 };
+          const from = { x: c.x, y: c.y, rot: c.rot || 0, sc: c.sc || 1 };
+          const a = this.flyCard(c, from, to, this.dur(620), { lift: 30, spin: 0 });
+          a.onfinish = () => {
+            c.el.animate([{ opacity: 1 }, { opacity: 0 }], { duration: 160, fill: 'forwards' });
+            this.later(170, () => c.el.remove());
+          };
         });
       });
   };
@@ -1948,11 +2250,41 @@ html[data-q='low'] .seat-hit.mine, html[data-q='low'] .bj-stack.pending::before,
     el.innerHTML = C.stackHTML(amount);
     return el;
   }
+  const stf = (x, y, sc) => `translate3d(${x.toFixed(1)}px, ${y.toFixed(1)}px, 0) scale(${(sc || 1).toFixed(3)})`;
   Scene.prototype.putStack = function (s, x, y, ms) {
+    if (s.anim) {
+      s.anim.cancel();
+      s.anim = null;
+    }
     s.el.style.transition = ms ? `transform ${ms}ms cubic-bezier(.25,.8,.25,1), opacity ${ms}ms` : 'none';
-    s.el.style.transform = `translate3d(${x.toFixed(1)}px, ${y.toFixed(1)}px, 0)`;
+    s.el.style.transform = stf(x, y);
     s.x = x;
     s.y = y;
+  };
+  /** Fiş yığını yay çizerek atılır (oyuncudan bahis alanına, tepsiden ödemeye…) */
+  Scene.prototype.flyStack = function (s, from, to, ms, o) {
+    o = o || {};
+    const lift = o.lift != null ? o.lift : 70;
+    const mx = (from.x + to.x) / 2;
+    const my = Math.min(from.y, to.y) - lift;
+    if (s.anim) s.anim.cancel();
+    s.el.style.transition = 'none';
+    s.el.style.transform = stf(to.x, to.y);
+    s.x = to.x;
+    s.y = to.y;
+    const k = [
+      { transform: stf(from.x, from.y, o.from || 0.85), opacity: o.fadeIn ? 0 : 1, offset: 0 },
+      { transform: stf(mx, my, 1.12), opacity: 1, offset: 0.5 },
+      { transform: stf(to.x, to.y - 6, 1.03), opacity: o.fadeOut ? 0.9 : 1, offset: 0.84 },
+      { transform: stf(to.x, to.y, o.fadeOut ? 0.8 : 1), opacity: o.fadeOut ? 0 : 1, offset: 1 },
+    ];
+    const a = s.el.animate(k, { duration: Math.max(1, ms), easing: 'cubic-bezier(.35,.6,.3,1)', fill: o.fadeOut ? 'forwards' : 'none' });
+    s.anim = a;
+    a.onfinish = () => {
+      if (s.anim === a) s.anim = null;
+      if (o.done) o.done();
+    };
+    return a;
   };
   Scene.prototype.wantedStacks = function (st) {
     const out = [];
@@ -1970,13 +2302,13 @@ html[data-q='low'] .seat-hit.mine, html[data-q='low'] .bj-stack.pending::before,
         const y = p ? g.spot.y + 6 : g.spot.y;
         const base = h.dbl ? h.bet / 2 : h.bet;
         out.push({ key: i === 0 ? 'b:' + s.no : 'h:' + h.id, amount: base, x, y, seat: s.no, hand: h, cls: hands.length > 1 ? 'sm' : '' });
-        if (h.dbl) out.push({ key: 'd:' + h.id, amount: h.bet / 2, x: x + (hands.length > 1 ? 24 : 34), y: y + 4, seat: s.no, hand: h, cls: hands.length > 1 ? 'sm' : '' });
+        if (h.dbl) out.push({ key: 'd:' + h.id, amount: h.bet / 2, x: x + (hands.length > 1 ? 24 : 36), y: y + 4, seat: s.no, hand: h, cls: hands.length > 1 ? 'sm' : '' });
       });
       if (s.bb && s.bb.total > 0) {
         const side = g.spot.x < this.L.cx ? 1 : -1;
         const port = this.layout === 'port';
         // split varsa Bet Behind yığını el yığınlarının dışına alınır
-        let off = port ? 64 : 58;
+        let off = port ? 66 : 62;
         if (hands.length > 1) {
           const last = this.handLayout(s.no - 1, hands.length, side > 0 ? hands.length - 1 : 0);
           off = Math.max(off, Math.abs(last.x - g.spot.x) + 42);
@@ -1988,7 +2320,7 @@ html[data-q='low'] .seat-hit.mine, html[data-q='low'] .bj-stack.pending::before,
       // Krupiye blackjack yapmazsa kontrol sırasında kaybedilen sigorta hemen toplanır.
       if (s.ins > 0 && s.ins_result !== 'lose') {
         const out2 = g.spot.x < this.L.cx ? -1 : 1;
-        out.push({ key: 'in:' + s.no, amount: s.ins, x: g.spot.x + out2 * 34, y: g.spot.y - (this.layout === 'port' ? 26 : 22), seat: s.no, cls: 'sm ins' });
+        out.push({ key: 'in:' + s.no, amount: s.ins, x: g.spot.x + out2 * 36, y: g.spot.y - (this.layout === 'port' ? 26 : 22), seat: s.no, cls: 'sm ins' });
       }
     });
     return out;
@@ -2009,19 +2341,15 @@ html[data-q='low'] .seat-hit.mine, html[data-q='low'] .bj-stack.pending::before,
         this.stacks.set(w.key, s);
         const from = this.ready && !instant && !this.opt('reduced') ? this.platePoint(w.seat, w.key) : null;
         if (from) {
-          this.putStack(s, from.x, from.y, 0);
-          s.el.style.opacity = '0';
-          requestAnimationFrame(() => {
-            s.el.style.opacity = '1';
-            this.putStack(s, w.x, w.y, this.dur(420));
-          });
-          sound++;
+          this.flyStack(s, from, w, this.dur(520), { fadeIn: true, lift: w.key.startsWith('d:') || w.key.startsWith('h:') ? 40 : 80 });
+          this.later(this.dur(470), () => SND.play('chip', 2));
         } else this.putStack(s, w.x, w.y, 0);
         return;
       }
       s.seat = w.seat;
       if (s.amount !== w.amount) {
         s.el.innerHTML = C.stackHTML(w.amount) + `<b class="stv">${w.bb ? 'BB ' : ''}${fmt(w.amount)}</b>`;
+        if (!instant && this.ready && !this.calm()) s.el.querySelector('.chips').animate([{ transform: 'translateY(-10px) scale(1.12)' }, { transform: 'none' }], { duration: 260, easing: 'cubic-bezier(.3,1.5,.5,1)' });
         s.amount = w.amount;
         if (!instant) sound++;
       }
@@ -2033,11 +2361,8 @@ html[data-q='low'] .seat-hit.mine, html[data-q='low'] .bj-stack.pending::before,
       this.stacks.delete(k);
       // kaybedilen sigorta krupiyenin tepsisine, diğerleri sahibine döner
       const to = !instant && this.ready ? (k.startsWith('in:') ? this.trayPoint() : this.platePoint(s.seat)) : null;
-      if (to && !this.opt('reduced')) {
-        this.putStack(s, to.x, to.y, this.dur(380));
-        s.el.style.opacity = '0';
-        this.later(this.dur(400), () => s.el.remove());
-      } else s.el.remove();
+      if (to && !this.opt('reduced')) this.flyStack(s, { x: s.x, y: s.y }, to, this.dur(460), { fadeOut: true, lift: 40, done: () => s.el.remove() });
+      else s.el.remove();
     });
     if (sound) SND.play('chip', Math.min(3, sound));
   };
@@ -2048,8 +2373,8 @@ html[data-q='low'] .seat-hit.mine, html[data-q='low'] .bj-stack.pending::before,
     return { x: g.plate.x, y: g.plate.y };
   };
 
-  /* Sonuç: kaybeden fişler krupiyeye, kazananlara ödeme fişi gelir, sonra oyuncuya gider */
-  Scene.prototype.settleAnim = function (st) {
+  /* Sonuç: kaybeden fişler krupiyeye kayar; kazananlara tepsiden ödeme fişi atılır, sonra hepsi oyuncuya gider */
+  Scene.prototype.settleAnim = function (st, myId) {
     if (this.opt('reduced') || !this.ready) {
       this.stacks.forEach((s) => s.el.remove());
       this.stacks.clear();
@@ -2062,62 +2387,137 @@ html[data-q='low'] .seat-hit.mine, html[data-q='low'] .bj-stack.pending::before,
       (s.hands || []).forEach((h, i) => {
         const keys = [i === 0 ? 'b:' + s.no : 'h:' + h.id];
         if (h.dbl) keys.push('d:' + h.id);
-        keys.forEach((k) => fates.push([k, h.out, s.no, h.out === 'win' || h.out === 'blackjack' ? h.pay - h.bet : 0]));
+        keys.forEach((k, j) => fates.push([k, h.out, s.no, j === 0 && (h.out === 'win' || h.out === 'blackjack') ? h.pay - h.bet : 0, false, s.user && s.user.id === myId]));
       });
       if (s.bb && s.bb.total > 0) {
         const st2 = (s.bb.list || []).map((x) => x.status);
         const win = (s.bb.list || []).reduce((a, x) => a + Math.max(0, (x.payout || 0) - (x.amount || 0)), 0);
         const lost = st2.length && st2.every((x) => x === 'SETTLED_LOSE');
-        fates.push(['bb:' + s.no, lost ? 'lose' : win > 0 ? 'win' : 'push', s.no, win, true]);
+        fates.push(['bb:' + s.no, lost ? 'lose' : win > 0 ? 'win' : 'push', s.no, win, true, false]);
       }
-      if (s.ins > 0) fates.push(['in:' + s.no, s.ins_result === 'win' ? 'win' : 'lose', s.no, s.ins_result === 'win' ? s.ins * 2 : 0]);
+      if (s.ins > 0) fates.push(['in:' + s.no, s.ins_result === 'win' ? 'win' : 'lose', s.no, s.ins_result === 'win' ? s.ins * 2 : 0, false, false]);
     });
     let lostAny = false;
     let wonAny = false;
-    fates.forEach(([k, out, seat, profit, bb]) => {
+    let li = 0;
+    let wi = 0;
+    const gains = {};
+    fates.forEach(([k, out, seat, profit, bb, mine]) => {
       const s = this.stacks.get(k);
       if (!s) return;
       if (out === 'lose' || out === 'surrender') {
         lostAny = true;
-        this.later(300, () => {
-          this.putStack(s, tp.x + (Math.random() * 60 - 30), tp.y, this.dur(620));
-          s.el.style.opacity = '0';
-        });
+        const d = 380 + li++ * 70;
+        this.later(d, () => this.flyStack(s, { x: s.x, y: s.y }, { x: tp.x + (Math.random() * 80 - 40), y: tp.y }, this.dur(640), { lift: 50, fadeOut: true }));
       } else if (profit > 0) {
         wonAny = true;
-        const p = { el: stackEl(profit, s.el.className.replace('bj-stack', '').trim() + ' pay'), amount: profit };
+        const d = 900 + wi++ * 110;
+        const p = { el: stackEl(profit, s.el.className.replace('bj-stack', '').replace('pending', '').trim() + ' pay'), amount: profit };
         p.el.insertAdjacentHTML('beforeend', `<b class="stv">+${fmt(profit)}</b>`);
-        this.lChips.appendChild(p.el);
-        this.putStack(p, tp.x, tp.y, 0);
         p.el.style.opacity = '0';
-        this.later(650, () => {
+        this.lChips.appendChild(p.el);
+        this.later(d, () => {
           p.el.style.opacity = '1';
-          this.putStack(p, s.x + 30, s.y - 8, this.dur(560));
+          this.flyStack(p, tp, { x: s.x + 34, y: s.y - 10 }, this.dur(620), { lift: 90 });
+          this.later(this.dur(560), () => SND.play('chip', 3));
         });
-        this.later(2300, () => {
+        this.later(2500 + wi * 60, () => {
           const to = this.platePoint(seat, bb ? 'bb:' : '');
-          this.putStack(p, to.x, to.y, this.dur(520));
-          p.el.style.opacity = '0';
-          this.later(560, () => p.el.remove());
+          this.flyStack(p, { x: p.x, y: p.y }, to, this.dur(560), { lift: 30, fadeOut: true, done: () => p.el.remove() });
         });
+        if (!bb) gains[seat] = (gains[seat] || 0) + profit;
       }
       if (out !== 'lose' && out !== 'surrender') {
-        this.later(2300, () => {
+        this.later(2500, () => {
           const to = this.platePoint(seat, bb ? 'bb:' : '');
-          this.putStack(s, to.x, to.y, this.dur(520));
-          s.el.style.opacity = '0';
+          this.flyStack(s, { x: s.x, y: s.y }, to, this.dur(560), { lift: 30, fadeOut: true });
         });
       }
     });
-    if (lostAny) this.later(300, () => {
-      this.dealer.pose('chips', 300).then(() => this.dealer.pose('rest', 460));
-      SND.play('gather');
+    // ödeme oyuncuya ulaşınca: kazanç yazısı ve kıvılcım
+    Object.keys(gains).forEach((seat) => {
+      this.later(3050, () => {
+        const pp = this.platePoint(+seat);
+        this.floatText(pp.x, pp.y - 46, '+' + fmt(gains[seat]) + ' BP', 'win');
+        this.burst(pp.x, pp.y - 10, { n: 14, kind: 'coin', spread: 70 });
+      });
     });
-    if (wonAny) this.later(700, () => SND.play('payout'));
-    this.later(2900, () => {
+    if (lostAny)
+      this.later(360, () => {
+        this.dealer.pose('chips', 300).then(() => this.dealer.pose('rest', 460));
+        SND.play('gather');
+      });
+    if (wonAny) this.later(900, () => SND.play('payout'));
+    this.later(3400, () => {
       this.stacks.forEach((s) => s.el.remove());
       this.stacks.clear();
       this.settling = false;
+      if (this.st) this.syncStacks(this.st, true);
+    });
+  };
+
+  /* ---------------- parçacık, yazı ve bant efektleri ---------------- */
+  /** Kıvılcım ya da altın para patlaması (sahne koordinatı) */
+  Scene.prototype.burst = function (x, y, o) {
+    if (this.calm()) return;
+    o = o || {};
+    const n = this.opt('quality') === 'mid' ? Math.round((o.n || 18) * 0.6) : o.n || 18;
+    const spread = o.spread || 90;
+    for (let i = 0; i < n; i++) {
+      const p = document.createElement('i');
+      p.className = 'pt ' + (o.kind || 'spark');
+      const ang = (Math.PI * 2 * i) / n + Math.random() * 0.5;
+      const r = spread * (0.55 + Math.random() * 0.6);
+      const dx = Math.cos(ang) * r;
+      const dy = Math.sin(ang) * r - (o.up || 0);
+      p.style.left = x + 'px';
+      p.style.top = y + 'px';
+      this.lFx.appendChild(p);
+      const ms = 700 + Math.random() * 500;
+      p.animate(
+        [
+          { transform: 'translate(-50%,-50%) scale(.4) rotate(0deg)', opacity: 1 },
+          { transform: `translate(calc(-50% + ${dx * 0.7}px), calc(-50% + ${dy * 0.7}px)) scale(1) rotate(${Math.random() * 360}deg)`, opacity: 1, offset: 0.55 },
+          { transform: `translate(calc(-50% + ${dx}px), calc(-50% + ${dy + 34}px)) scale(.5) rotate(${Math.random() * 540}deg)`, opacity: 0 },
+        ],
+        { duration: ms, easing: 'cubic-bezier(.2,.7,.3,1)' }
+      ).onfinish = () => p.remove();
+    }
+  };
+  Scene.prototype.floatText = function (x, y, text, cls) {
+    const el = document.createElement('div');
+    el.className = 'fx-float ' + (cls || '');
+    el.textContent = text;
+    el.style.left = x + 'px';
+    el.style.top = y + 'px';
+    this.lFx.appendChild(el);
+    const a = el.animate(
+      [
+        { transform: 'translate(-50%,-30%) scale(.6)', opacity: 0 },
+        { transform: 'translate(-50%,-60%) scale(1.08)', opacity: 1, offset: 0.2 },
+        { transform: 'translate(-50%,-80%) scale(1)', opacity: 1, offset: 0.7 },
+        { transform: 'translate(-50%,-140%) scale(.96)', opacity: 0 },
+      ],
+      { duration: this.calm() ? 1600 : 2200, easing: 'ease-out' }
+    );
+    a.onfinish = () => el.remove();
+  };
+  /** Büyük bant: KRUPİYE BATTI, KRUPİYE BLACKJACK, BLACKJACK! */
+  Scene.prototype.banner = function (kind, text, sub, at) {
+    this.lFx.querySelectorAll('.banner').forEach((x) => x.remove());
+    const el = document.createElement('div');
+    el.className = 'banner ' + kind;
+    const L = this.L;
+    const y = at && at.y != null ? at.y : L.dcards.y + (this.layout === 'port' ? 6 : 0);
+    el.style.left = (at && at.x != null ? at.x : L.cx) + 'px';
+    el.style.top = y + 'px';
+    el.innerHTML = `<div class="bn-rays"></div><strong>${esc(text)}</strong>${sub ? `<small>${esc(sub)}</small>` : ''}`;
+    this.lFx.appendChild(el);
+    this._bannerAt = Date.now();
+    if (!this.calm()) this.later(160, () => this.burst(at && at.x != null ? at.x : L.cx, y, { n: kind === 'dbust' ? 26 : 22, kind: kind === 'dbust' ? 'ember' : 'spark', spread: 150 }));
+    this.later(2300, () => {
+      el.classList.add('out');
+      this.later(420, () => el.remove());
     });
   };
 
@@ -2131,13 +2531,13 @@ html[data-q='low'] .seat-hit.mine, html[data-q='low'] .bj-stack.pending::before,
     const plate = `left:${g.plate.x}px;top:${g.plate.y}px`;
     let h = '';
     if (!s.user) {
-      if (ctx.canSit) h += `<button type="button" class="seat-sit" data-act="sit" data-seat="${s.no}" style="${spot}" aria-label="P${s.no} pozisyonuna otur">OTUR</button>`;
+      if (ctx.canSit) h += `<button type="button" class="seat-sit" data-act="sit" data-seat="${s.no}" style="${spot}" aria-label="P${s.no} pozisyonuna otur"><b>OTUR</b><small>P${s.no}</small></button>`;
       else h += `<span class="seat-no" style="${spot}">P${s.no}</span>`;
       return h;
     }
     const target = ctx.betting && (mine || ctx.canBB);
     if (target) h += `<button type="button" class="seat-hit${mine ? ' mine' : ' bbt'}" data-act="${mine ? 'bet' : 'bb'}" data-seat="${s.no}" style="${spot}" aria-label="${mine ? 'P' + s.no + ' bahis' : 'P' + s.no + ' Bet Behind'}"><span>${mine ? (s.bet ? '' : 'BAHİS') : 'BET BEHIND'}</span></button>`;
-    const av = ctx.avatar ? ctx.avatar({ name: s.user.name, avatar_url: s.user.avatar }, 52) : `<span class="seat-av-f">${esc((s.user.name || '?').charAt(0))}</span>`;
+    const av = ctx.avatar ? ctx.avatar({ name: s.user.name, avatar_url: s.user.avatar, badge: s.user.badge, rankPip: true }, 52) : `<span class="seat-av-f">${esc((s.user.name || '?').charAt(0))}</span>`;
     let sub = '';
     if (s.conn === 'disconnected') sub = '<span class="warn">Bağlantı koptu</span>';
     else if (s.leaving) sub = '<span class="warn">Tur sonunda kalkacak</span>';
@@ -2145,8 +2545,9 @@ html[data-q='low'] .seat-hit.mine, html[data-q='low'] .bj-stack.pending::before,
     else if (ctx.betting) sub = 'Bahis bekleniyor';
     else sub = mine ? 'Sıradaki tur' : '';
     const auto = myState && myState.auto ? '<i class="auto-dot" title="Auto Rebet açık">↻</i>' : '';
-    h += `<div class="seat-plate${mine ? ' mine' : ''}${turn ? ' turn' : ''}${s.conn === 'disconnected' ? ' off' : ''}" style="${plate}">
-      <button type="button" class="seat-av" data-act="avatar" data-seat="${s.no}" aria-label="${esc(s.user.name)}">${av}${turn ? '<svg class="ring" viewBox="0 0 60 60"><circle cx="30" cy="30" r="28"/></svg>' : ''}</button>
+    const side = g.spot.x < this.L.cx - 2 ? ' sl' : g.spot.x > this.L.cx + 2 ? ' sr' : ' sc';
+    h += `<div class="seat-plate${side}${mine ? ' mine' : ''}${turn ? ' turn' : ''}${s.conn === 'disconnected' ? ' off' : ''}${g.plate.rev ? ' rev' : ''}" style="${plate}">
+      <button type="button" class="seat-av" data-act="avatar" data-seat="${s.no}" aria-label="${esc(s.user.name)} profili">${av}${turn ? '<svg class="ring" viewBox="0 0 60 60"><circle cx="30" cy="30" r="28"/></svg>' : ''}<span class="seat-pn">P${s.no}</span></button>
       <span class="seat-who"><b class="seat-name">${esc(s.user.name)}${mine ? ' <em>SEN</em>' : ''}${auto}</b><small class="seat-sub">${sub}</small></span>
       ${mine && !ctx.spectatorOnly ? `<button type="button" class="seat-kalk" data-act="${s.leaving ? 'unstand' : 'stand'}" data-seat="${s.no}" title="${s.leaving ? 'Kalkmaktan vazgeç' : 'Bu pozisyondan kalk'}">${s.leaving ? 'VAZGEÇ' : 'KALK'}</button>` : ''}
     </div>`;
@@ -2169,138 +2570,289 @@ html[data-q='low'] .seat-hit.mine, html[data-q='low'] .bj-stack.pending::before,
       const ring = el.querySelector('.ring circle');
       if (ring && ctx.turnDeadline) {
         const left = Math.max(0, ctx.turnDeadline - this.now());
-        const total = 15600;
         if (el._dl !== ctx.turnDeadline) {
           el._dl = ctx.turnDeadline;
           ring.style.animation = 'none';
           void ring.getBoundingClientRect();
-          ring.style.strokeDashoffset = String(176 * (1 - left / total));
+          ring.style.strokeDashoffset = String(176 * (1 - left / TURN_MS));
           ring.style.animation = `bjRing ${left}ms linear forwards`;
         }
       }
     });
   };
 
-  /* ---------------- rozetler (el toplamı, sonuç, ön hamle) ---------------- */
+  /* ---------------- sıra vurgusu: elin arkasında altın ışık, bahis halkası, ok ---------------- */
+  Scene.prototype.syncTurn = function (st, ctx) {
+    let h = '';
+    if (st.state === 'PLAYER_TURNS' && st.turn) {
+      const s = (st.seats || []).find((x) => x.no === st.turn.seat);
+      const hands = (s && s.hands) || [];
+      const i = hands.findIndex((x) => x.id === st.turn.hand);
+      if (s && i >= 0) {
+        const hd = hands[i];
+        const b = this.handBox(s.no - 1, hands.length, i, hd.cards.length);
+        const g = this.geo[s.no - 1];
+        const mine = ctx.myId && st.turn.user === ctx.myId;
+        h += `<div class="hand-glow${mine ? ' mine' : ''}" style="left:${b.cx}px;top:${b.cy}px;width:${b.w + 70}px;height:${b.h + 64}px"></div>`;
+        h += `<div class="spot-hl${mine ? ' mine' : ''}" style="left:${g.spot.x}px;top:${g.spot.y}px"></div>`;
+      }
+    }
+    if (this._glow !== h) {
+      this.lGlow.innerHTML = h;
+      this._glow = h;
+    }
+  };
+
+  /* ---------------- rozetler (el toplamı, sonuç etiketi, ön hamle, ok) ----------------
+     Kartları hâlâ havada olan elin rozeti, kartlar inince görünür; battı / blackjack /
+     krupiye battı efektleri de o anda (ilk görünüşte) oynar. */
+  Scene.prototype.badgesSoon = function () {
+    clearTimeout(this._bT);
+    this._bT = setTimeout(() => {
+      if (!this.st) return;
+      const ctx = this.hooks.ctx ? this.hooks.ctx(this.st, this.me) : {};
+      this.fxLive = this.ready;
+      this.syncBadges(this.st, ctx);
+    }, 40);
+  };
   Scene.prototype.syncBadges = function (st, ctx) {
     let h = '';
     const pre = {};
     ((ctx.me && ctx.me.pre) || []).forEach((p) => p.action && (pre[p.hand] = p.action));
+    const settled = st.round && st.round.settled;
+    const rid = st.round ? st.round.id : '';
+    const flying = new Set();
+    this.cards.forEach((c) => c.flying && flying.add(c.seat === 0 ? 'dealer' : c.hand));
+    const fire = [];
     (st.seats || []).forEach((s) => {
       const hands = s.hands || [];
       hands.forEach((hd, i) => {
-        const last = this.cardPos(s.no - 1, hands.length, i, Math.max(0, hd.cards.length - 1), hd.cards.length);
+        if (!hd.cards.length || flying.has(hd.id)) return;
+        const b = this.handBox(s.no - 1, hands.length, i, hd.cards.length);
         const first = this.cardPos(s.no - 1, hands.length, i, 0, hd.cards.length);
         const w = this.cw * first.sc;
-        const tx = first.x - w * 0.5 - 4;
-        const ty = last.y - w * RATIO * 0.5 - 6;
+        const tx = b.x0 - 6;
+        const ty = b.y0 + 4;
         let cls = 'tot';
-        let txt = hd.total;
+        let txt = String(hd.total);
         if (hd.st === 'blackjack') {
           cls += ' bj';
           txt = 'BJ';
         } else if (hd.total > 21) cls += ' bust';
-        else if (hd.soft && hd.total <= 21 && hd.st !== 'stood' && !hd.out) txt = `${hd.total - 10}/${hd.total}`;
-        if (ctx.turnHand === hd.id) cls += ' turn';
-        if (hd.cards.length) h += `<span class="${cls}" style="left:${tx}px;top:${ty}px">${txt}</span>`;
-        if (pre[hd.id] && hd.st === 'waiting') {
-          h += `<span class="pretag" style="left:${first.x}px;top:${ty - 30}px">${PRE_LABEL[pre[hd.id]]} · BEKLEMEDE</span>`;
+        else if (hd.soft && hd.total <= 21 && hd.st !== 'stood' && !hd.out) {
+          cls += ' soft';
+          txt = `${hd.total - 10}/${hd.total}`;
         }
-        if (hd.out && st.round && st.round.settled) {
+        if (ctx.turnHand === hd.id) cls += ' turn';
+        h += `<span class="${cls}" style="left:${tx}px;top:${ty}px">${txt}</span>`;
+        if (ctx.turnHand === hd.id && st.state === 'PLAYER_TURNS') h += `<span class="turn-arrow" style="left:${b.cx}px;top:${b.y0 - 18}px" aria-hidden="true"></span>`;
+        if (pre[hd.id] && hd.st === 'waiting') h += `<span class="pretag" style="left:${b.cx}px;top:${b.y0 - 22}px">${PRE_LABEL[pre[hd.id]]} · BEKLEMEDE</span>`;
+        // sonuç etiketi: tur bitince sonuç; bitmeden önce battı / blackjack / teslim hemen görünür
+        let res = null;
+        if (hd.out && settled) {
           const net = hd.pay - hd.bet;
           const o = hd.out;
-          h += `<span class="res ${o === 'win' || o === 'blackjack' ? 'win' : o === 'push' ? 'push' : 'lose'}" style="left:${first.x + (hd.cards.length - 1) * w * 0.15}px;top:${ty - 34}px">${OUT_LABEL[o]}<em>${sgn(net)}</em></span>`;
-        }
+          const bust = o === 'lose' && hd.total > 21;
+          res = {
+            cls: o === 'blackjack' ? 'bj' : o === 'win' ? 'win' : o === 'push' ? 'push' : 'lose',
+            label: bust ? 'BATTI' : OUT_LABEL[o],
+            amt: o === 'push' ? 'iade' : sgn(net),
+          };
+        } else if (hd.st === 'bust') res = { cls: 'lose', label: 'BATTI', amt: '' };
+        else if (hd.st === 'blackjack') res = { cls: 'bj', label: 'BLACKJACK', amt: '' };
+        else if (hd.st === 'surrendered') res = { cls: 'lose', label: 'TESLİM', amt: '' };
+        // etiket elin alt kısmında: kartların köşe yazıları (sayı/renk) açık kalır
+        if (res) h += `<span class="res ${res.cls}" style="left:${b.cx}px;top:${b.y1 - w * RATIO * 0.2}px"><b>${res.label}</b>${res.amt ? `<em>${res.amt}</em>` : ''}</span>`;
+        if (hd.st === 'bust' || hd.st === 'blackjack') fire.push({ key: hd.st + ':' + hd.id, kind: hd.st, hand: hd.id, box: b, mine: !!(s.user && ctx.myId && s.user.id === ctx.myId) });
       });
-      if (s.net != null && hands.length > 1 && st.round && st.round.settled) {
+      if (s.net != null && hands.length > 1 && settled) {
         const g = this.geo[s.no - 1];
-        h += `<span class="netall ${s.net > 0 ? 'win' : s.net < 0 ? 'lose' : 'push'}" style="left:${g.spot.x}px;top:${g.spot.y + 46}px">Toplam ${sgn(s.net)} BP</span>`;
-      }
-      if (s.leaving && !s.hands.length) {
-        // tur bitti: koltuk boşalacak
+        h += `<span class="netall ${s.net > 0 ? 'win' : s.net < 0 ? 'lose' : 'push'}" style="left:${g.spot.x}px;top:${g.spot.y + 48}px">Toplam ${sgn(s.net)} BP</span>`;
       }
     });
-    if (st.dealer && st.dealer.cards.length) {
-      const n = st.dealer.cards.length;
-      const p = this.dealerPos(n - 1, n);
+    if (st.dealer && st.dealer.cards.length && !flying.has('dealer')) {
+      const d = st.dealer;
+      const n = d.cards.length;
+      const p0 = this.dealerPos(0, n);
       let cls = 'tot dl';
-      let txt = st.dealer.total;
-      if (st.dealer.bj) {
+      let txt = d.total;
+      if (d.bj) {
         cls += ' bj';
         txt = 'BJ';
-      } else if (st.dealer.total > 21) cls += ' bust';
-      else if (st.dealer.soft && !st.dealer.hidden) txt = `${st.dealer.total}`;
-      h += `<span class="${cls}" style="left:${p.x + this.dcw * 0.62}px;top:${p.y - 16}px">${txt}</span>`;
+      } else if (d.total > 21) cls += ' bust';
+      h += `<span class="${cls}" style="left:${p0.x - this.dcw * 0.5 - 8}px;top:${p0.y - this.dcw * RATIO * 0.5 + 6}px">${txt}</span>`;
+      if (!d.hidden && d.total > 21) fire.push({ key: 'dbust:' + rid, kind: 'dbust', total: d.total });
+      else if (!d.hidden && d.bj) fire.push({ key: 'dbj:' + rid, kind: 'dbj' });
     }
     if (this._badges !== h) {
       this.lBadges.innerHTML = h;
       this._badges = h;
     }
+    fire.forEach((f) => {
+      if (this.shown.has(f.key)) return;
+      this.shown.add(f.key);
+      if (this.fxLive) this.fxEvent(f);
+    });
+  };
+  /** Rozet ilk kez görününce oynayan efektler */
+  Scene.prototype.fxEvent = function (f) {
+    if (f.kind === 'bust') {
+      if (f.mine) SND.play('bust');
+      if (!this.calm())
+        this.cards.forEach((c) => {
+          if (c.hand === f.hand) c.el.animate([{ translate: '0 0' }, { translate: '-8px 0' }, { translate: '7px 0' }, { translate: '-4px 0' }, { translate: '0 0' }], { duration: 400, easing: 'ease-out' });
+        });
+      this.flash(f.box, 'bust');
+    } else if (f.kind === 'blackjack') {
+      this.burst(f.box.cx, f.box.cy, { n: 20, kind: 'spark', spread: 110 });
+      this.flash(f.box, 'bj');
+      if (f.mine) {
+        SND.play('blackjack');
+        this.banner('bj', 'BLACKJACK!', '3:2 ödeme', { x: Math.max(260, Math.min(this.L.W - 260, f.box.cx)), y: Math.max(150, f.box.y0 - 46) });
+      }
+    } else if (f.kind === 'dbust') {
+      this.later(this.dur(380), () => {
+        SND.play('dealerBust');
+        this.banner('dbust', 'KRUPİYE BATTI', `${f.total} · ayakta kalan eller kazanır`);
+      });
+    } else if (f.kind === 'dbj') {
+      this.later(this.dur(420), () => {
+        SND.play('lose');
+        this.banner('dbj', 'KRUPİYE BLACKJACK', 'Sigorta 2:1 öder');
+      });
+    }
   };
 
-  /* ---------------- masa ortası: durum mesajı ve süre ---------------- */
+  /* ---------------- krupiye mesaj kartı (portre + metin + geri sayım) ---------------- */
   Scene.prototype.syncCenter = function (st, ctx) {
     let title = '';
     let sub = '';
     let timer = 0;
-    let cls = '';
+    let total = 0;
+    let mode = 'bubble';
+    let tone = '';
     const dl = st.deadline ? st.deadline - this.now() : 0;
+    const nameOf = (no) => {
+      const s = (st.seats || []).find((x) => x.no === no);
+      return s && s.user ? s.user.name : 'P' + no;
+    };
     switch (st.state) {
       case 'WAITING_FOR_PLAYERS':
         title = 'Oyunun başlaması için en az 2 aktif pot gereklidir.';
         sub = 'İkinci bir oyuncunun oturmasını bekleyin veya boş bir pozisyonda ikinci potunuzu açın.';
-        cls = 'wait';
+        mode = 'hero';
+        tone = 'wait';
         break;
       case 'BETTING_OPEN':
-        title = 'BAHİSLER AÇIK';
-        sub = ctx.hasSeat ? 'Pozisyonuna dokunarak bahsini koy, sonra onayla.' : ctx.canBB ? 'İzleyiciler bir oyuncunun arkasına Bet Behind yapabilir.' : '';
+        title = 'Bahislerinizi koyun';
+        sub = ctx.hasSeat ? 'Fişini seç, pozisyonuna dokun ve onayla.' : ctx.canBB ? 'Bir oyuncunun arkasına Bet Behind yapabilirsin.' : 'Oyuncular bahislerini koyuyor.';
         timer = dl;
-        cls = 'bet';
+        total = 15000;
+        mode = 'hero';
+        tone = 'bet';
         break;
       case 'BETTING_LOCKED':
-        title = 'Bahisler kapandı';
+        title = 'Bahisler kapandı.';
+        sub = 'İyi şanslar!';
+        break;
+      case 'INITIAL_DEAL':
+        title = 'Kartlar dağıtılıyor.';
         break;
       case 'INSURANCE_WINDOW':
-        title = 'SİGORTA';
-        sub = 'Krupiyenin açık kartı As. Sigorta ana bahsin yarısıdır, 2:1 öder.';
+        title = 'Sigorta ister misiniz?';
+        sub = 'Açık kartım As. Sigorta ana bahsin yarısıdır, 2:1 öder.';
         timer = dl;
-        cls = 'bet';
+        total = 10000;
+        tone = 'bet';
         break;
       case 'DEALER_PEEK':
-        title = 'Krupiye blackjack kontrol ediyor';
+        title = 'Blackjack kontrolü…';
+        sub = 'Kapalı karta bakıyorum.';
+        break;
+      case 'PLAYER_TURNS':
+        if (st.turn) {
+          const mine = ctx.myId && st.turn.user === ctx.myId;
+          title = mine ? 'Sıra sende!' : `Sıra: ${nameOf(st.turn.seat)}`;
+          sub = `P${st.turn.seat}${(() => {
+            const s = (st.seats || []).find((x) => x.no === st.turn.seat);
+            return s && (s.hands || []).length > 1 ? ' · el ' + ((s.hands.find((x) => x.id === st.turn.hand) || {}).i + 1) : '';
+          })()} · kararını bekliyorum`;
+          timer = st.turn.deadline ? st.turn.deadline - this.now() : 0;
+          total = TURN_MS;
+          tone = mine ? 'me' : '';
+        }
+        break;
+      case 'DEALER_TURN': {
+        const d = st.dealer || { cards: [] };
+        if (d.total > 21) {
+          title = 'Krupiye battı!';
+          sub = 'Ayakta kalan eller kazanır.';
+          tone = 'good';
+        } else if (d.total >= 17) {
+          title = `Krupiye ${d.total} ile duruyor.`;
+        } else {
+          title = `Krupiye ${d.total || ''} · kart çekiyor`;
+          sub = '16 ve altında kart çekerim, 17’de dururum.';
+        }
+        break;
+      }
+      case 'SETTLEMENT':
+      case 'RESULT_DISPLAY':
+        title = st.round && st.round.cancelled ? 'Tur iptal edildi.' : 'Sonuçlar';
+        sub = st.round && st.round.cancelled ? 'Bahisler iade edildi.' : 'Yeni tur birazdan başlıyor.';
         break;
       case 'SHOE_RESHUFFLE':
         title = 'Yeni sabot hazırlanıyor';
         sub = 'Sekiz deste karıştırılıyor, kesme kartı yerleştiriliyor ve ilk üç kart yakılıyor.';
-        cls = 'shuffle';
+        mode = 'hero';
+        tone = 'wait';
         break;
       case 'PAUSED':
         title = 'Masa duraklatıldı';
         sub = 'Yönetici masayı kısa süreliğine durdurdu.';
-        cls = 'wait';
+        mode = 'hero';
+        tone = 'wait';
         break;
       case 'CLOSED':
         title = 'Masa kapandı';
-        cls = 'wait';
+        mode = 'hero';
+        tone = 'wait';
         break;
       default:
         break;
     }
-    if (st.status === 'closing' && !title) {
-      title = '';
-      sub = 'Masa bu turdan sonra kapanacak.';
-    }
-    const key = `${this.layout}|${st.state}|${title}|${sub}|${Math.ceil(timer / 1000)}|${cls}`;
-    if (this._center === key) return;
-    this._center = key;
+    if (st.status === 'closing' && !title) sub = 'Masa bu turdan sonra kapanacak.';
+    const m = this.msg;
     const secs = Math.max(0, Math.ceil(timer / 1000));
-    // masada kart varken mesaj krupiye kartlarının altına; dik ekranda potlar yakın olduğundan krupiyenin önüne (msgHi)
-    const withCards = st.state === 'INSURANCE_WINDOW' || (st.dealer && st.dealer.cards && st.dealer.cards.length);
-    const top = withCards ? (this.L.msgHi != null ? this.L.msgHi : this.L.dcards.y + this.dcw * 0.74) : this.L.msg;
-    this.lCenter.className = 'bj-center ' + cls;
-    this.lCenter.innerHTML = title || sub
-      ? `<div class="cmsg" style="top:${top}px">${timer > 0 ? `<b class="ctime">${secs}</b>` : ''}<div><strong>${esc(title)}</strong>${sub ? `<span>${esc(sub)}</span>` : ''}</div></div>`
-      : '';
+    const key = `${this.layout}|${mode}|${tone}|${title}|${sub}`;
+    if (this._msgKey !== key) {
+      this._msgKey = key;
+      if (!title && !sub) m.el.hidden = true;
+      else {
+        m.el.hidden = false;
+        m.el.className = 'dmsg ' + mode + (tone ? ' t-' + tone : '');
+        const L = this.L;
+        if (mode === 'hero') {
+          m.el.style.left = L.cx + 'px';
+          m.el.style.top = (st.dealer && st.dealer.cards && st.dealer.cards.length ? L.dcards.y + this.dcw * 0.95 : L.msg) + 'px';
+        } else {
+          m.el.style.left = L.bubble.x + 'px';
+          m.el.style.top = L.bubble.y + 'px';
+        }
+        m.title.textContent = title;
+        m.sub.textContent = sub;
+        m.sub.hidden = !sub;
+        const tx = mode === 'hero' ? '-50%' : '0';
+        if (!this.calm()) m.el.animate([{ opacity: 0, transform: `translate(${tx},-50%) scale(.94)` }, { opacity: 1, transform: `translate(${tx},-50%) scale(1)` }], { duration: 240, easing: 'ease-out' });
+      }
+    }
+    const showT = timer > 0 && total > 0;
+    m.time.hidden = !showT;
+    if (showT) {
+      if (m.num.textContent !== String(secs)) m.num.textContent = String(secs);
+      m.ring.style.strokeDashoffset = String(119.4 * (1 - Math.min(1, timer / total)));
+      m.time.classList.toggle('urgent', secs <= 5);
+    }
   };
 
   /* ---------------- sabot ve atık tepsisi ---------------- */
@@ -2338,11 +2890,11 @@ html[data-q='low'] .seat-hit.mine, html[data-q='low'] .bj-stack.pending::before,
     this.lFx.appendChild(el);
     const c = { el };
     this.place(c, sp.x, sp.y, -20, 0.7, 0);
-    requestAnimationFrame(() => this.place(c, sp.x - 20, sp.y + 70, -8, 0.85, this.dur(600)));
+    this.flyCard(c, { x: sp.x, y: sp.y, rot: -20, sc: 0.7 }, { x: sp.x - 20, y: sp.y + 76, rot: -8, sc: 0.85 }, this.dur(640), { lift: 30 });
     const tag = document.createElement('div');
     tag.className = 'fx-tag';
     tag.style.left = sp.x - 20 + 'px';
-    tag.style.top = sp.y + 140 + 'px';
+    tag.style.top = sp.y + 150 + 'px';
     tag.textContent = 'KESME KARTI · bu turdan sonra yeni sabot';
     this.lFx.appendChild(tag);
     this.later(5200, () => {
@@ -2368,35 +2920,26 @@ html[data-q='low'] .seat-hit.mine, html[data-q='low'] .bj-stack.pending::before,
       el.innerHTML = '<div class="cd-in"><svg class="cd-f" viewBox="0 0 250 350"><use href="#bjc-cut"/></svg></div>';
       this.lFx.appendChild(el);
       const c = { el };
-      this.place(c, this.L.cx, this.L.dcards.y, 0, 0.9, 0);
-      requestAnimationFrame(() => this.place(c, sp.x + 40, sp.y, -8, 0.5, this.dur(700)));
-      this.later(this.dur(720), () => el.remove());
+      this.flyCard(c, { x: this.L.cx, y: this.L.dcards.y, rot: 0, sc: 0.9 }, { x: sp.x + 40, y: sp.y, rot: -8, sc: 0.5 }, this.dur(720), { lift: 40 });
+      this.later(this.dur(740), () => el.remove());
     });
     for (let i = 0; i < 3; i++) {
       this.later(4600 + i * 520, () => {
         const c = { el: cardEl('??') };
         this.lFx.appendChild(c.el);
-        this.place(c, sp.x, sp.y, -28, 0.82, 0);
         c.el.classList.add('down');
         SND.play('deal');
-        requestAnimationFrame(() => this.place(c, dp.x, dp.y - i * 2, 84, 0.62, this.dur(560)));
-        this.later(this.dur(600) + 200, () => c.el.remove());
+        this.flyCard(c, sp, { x: dp.x, y: dp.y - i * 2, rot: 86, sc: 0.6 }, this.dur(600), { lift: 50, spin: 0 });
+        this.later(this.dur(620) + 200, () => c.el.remove());
       });
     }
   };
 
-  /* ---------------- sonuç paneli ve jackpot ---------------- */
-  Scene.prototype.showResult = function (kind, net, lines) {
-    const label = { win: 'KAZANDIN', lose: 'KAYBETTİN', push: 'BERABERE', blackjack: 'BLACKJACK!', surrender: 'TESLİM OLDUN', refund: 'BAHİS İADE EDİLDİ' }[kind] || '';
-    const el = document.createElement('div');
-    el.className = 'res-panel ' + kind;
-    el.innerHTML = `<strong>${label}</strong><b>${sgn(net)} BP</b>${lines ? `<small>${esc(lines)}</small>` : ''}`;
-    this.lFx.querySelectorAll('.res-panel').forEach((x) => x.remove());
-    this.lFx.appendChild(el);
-    this.later(4200, () => {
-      el.classList.add('out');
-      this.later(400, () => el.remove());
-    });
+  /* ---------------- sonuç şeridi ve jackpot ---------------- */
+  /** Kendi sonucum: net tutar kontrol çubuğunda yazılır; masada kazanınca avatara ödeme ve kıvılcım gelir.
+   *  Masanın ortasına ayrıca panel çıkmaz (kartları ve etiketleri kapatmasın). */
+  Scene.prototype.showResult = function (kind) {
+    if (kind === 'blackjack' && !this.calm()) this.dealer.celebrate();
   };
   Scene.prototype.jackpot = function (jp, myId) {
     const el = document.createElement('div');
@@ -2460,30 +3003,17 @@ html[data-q='low'] .seat-hit.mine, html[data-q='low'] .bj-stack.pending::before,
     requestAnimationFrame(step);
   };
 
-  /* Hediye uçuşu: göndericiden alıcının koltuğuna (izleyici ise masanın önüne) */
-  Scene.prototype.flyGift = function (src, fromSeat, toSeat) {
-    const L = this.L;
-    const from = fromSeat ? this.geo[fromSeat - 1].plate : { x: L.cx, y: L.H + 30 };
-    const to = toSeat ? this.geo[toSeat - 1].plate : { x: L.cx, y: L.H - 90 };
-    const el = document.createElement('img');
-    el.className = 'gift-fly';
-    el.src = src;
-    el.alt = '';
-    this.lFx.appendChild(el);
-    const ms = this.opt('reduced') ? 10 : 1100;
-    el.animate(
-      [
-        { transform: `translate(${from.x - 40}px, ${from.y - 40}px) scale(.4)`, opacity: 0 },
-        { transform: `translate(${(from.x + to.x) / 2 - 40}px, ${Math.min(from.y, to.y) - 220}px) scale(1.25)`, opacity: 1, offset: 0.55 },
-        { transform: `translate(${to.x - 40}px, ${to.y - 70}px) scale(1)`, opacity: 1 },
-      ],
-      { duration: ms, easing: 'cubic-bezier(.3,.6,.3,1)', fill: 'forwards' },
-    );
-    SND.play('gift');
-    this.later(ms + 2600, () => {
-      el.animate([{ opacity: 1 }, { opacity: 0, transform: `translate(${to.x - 40}px, ${to.y - 110}px) scale(.8)` }], { duration: 500, fill: 'forwards' });
-      this.later(520, () => el.remove());
-    });
+  /** Elin arkasında kısa parıltı (battı: kırmızı, blackjack: altın) */
+  Scene.prototype.flash = function (b, kind) {
+    if (this.calm()) return;
+    const el = document.createElement('div');
+    el.className = 'hand-flash ' + kind;
+    el.style.left = b.cx + 'px';
+    el.style.top = b.cy + 'px';
+    el.style.width = b.w + 90 + 'px';
+    el.style.height = b.h + 80 + 'px';
+    this.lGlow.appendChild(el);
+    el.animate([{ opacity: 0 }, { opacity: 1, offset: 0.25 }, { opacity: 0 }], { duration: 1100, easing: 'ease-out' }).onfinish = () => el.remove();
   };
 
   /* ---------------- ana eşitleme ---------------- */
@@ -2497,11 +3027,15 @@ html[data-q='low'] .seat-hit.mine, html[data-q='low'] .bj-stack.pending::before,
       // yeni tur ya da tur yok: eski kartlar toplanır
       this.roundId = rid;
       this.settledFor = null;
+      this.shown.clear();
     }
-    if (st.state === 'SHOE_RESHUFFLE' && prev && prev.state !== 'SHOE_RESHUFFLE' && this.ready && !instant) this.shuffleAnim();
+    const live = this.ready && !instant;
+    this.fxLive = live;
+    if (st.state === 'SHOE_RESHUFFLE' && prev && prev.state !== 'SHOE_RESHUFFLE' && live) this.shuffleAnim();
     this.syncCards(st, instant || !this.ready);
     this.syncStacks(st, instant || !this.ready);
     this.syncSeats(st, ctx);
+    this.syncTurn(st, ctx);
     this.syncBadges(st, ctx);
     this.syncCenter(st, ctx);
     this.syncShoe(st);
@@ -2515,8 +3049,8 @@ html[data-q='low'] .seat-hit.mine, html[data-q='low'] .bj-stack.pending::before,
       this.settledFor = st.round.id;
       const anyWin = (st.seats || []).some((s) => (s.hands || []).some((h) => h.out === 'win' || h.out === 'blackjack'));
       const anyBJ = (st.seats || []).some((s) => (s.hands || []).some((h) => h.out === 'blackjack'));
-      if (this.ready && !instant) {
-        this.settleAnim(st);
+      if (live) {
+        this.settleAnim(st, ctx.myId);
         this.dealer.mood(anyWin ? 'smile' : 'neutral');
         if (anyBJ && !st.round.jackpot) this.dealer.celebrate();
         this.later(5200, () => this.dealer.mood('neutral'));
@@ -2529,7 +3063,7 @@ html[data-q='low'] .seat-hit.mine, html[data-q='low'] .bj-stack.pending::before,
     }
     this.ready = true;
   };
-  /* Saniyede bir: geri sayımlar */
+  /* Saniyede dört kez: geri sayımlar */
   Scene.prototype.tick = function () {
     if (!this.st) return;
     const ctx = this.hooks.ctx ? this.hooks.ctx(this.st, this.me) : {};
@@ -2544,15 +3078,19 @@ html[data-q='low'] .seat-hit.mine, html[data-q='low'] .bj-stack.pending::before,
     this.stacks.clear();
     this.lSpots.innerHTML = '';
     this.lBadges.innerHTML = '';
-    this.lCenter.innerHTML = '';
+    this.lGlow.innerHTML = '';
+    this.msg.el.hidden = true;
     this.lFx.innerHTML = '';
     this.seatSig = [];
     this._badges = '';
-    this._center = '';
+    this._glow = '';
+    this._msgKey = '';
     this.st = null;
     this.roundId = null;
     this.settledFor = null;
     this.settling = false;
+    this.shown.clear();
+    clearTimeout(this._bT);
     this.ready = false;
   };
 
@@ -2582,9 +3120,26 @@ html[data-q='low'] .seat-hit.mine, html[data-q='low'] .bj-stack.pending::before,
     DEALER_PEEK: 'Oyun sürüyor', INSURANCE_WINDOW: 'Sigorta', PLAYER_TURNS: 'Oyun sürüyor', DEALER_TURN: 'Krupiye oynuyor',
     SETTLEMENT: 'Sonuçlar', RESULT_DISPLAY: 'Sonuçlar', SHOE_RESHUFFLE: 'Karıştırılıyor', NEXT_ROUND: 'Yeni tur', PAUSED: 'Duraklatıldı', CLOSED: 'Kapandı',
   };
+  // aksiyon çubuğu: soldan sağa TESLİM · İKİYE KATLA · BÖL · DUR · KART (en sık kullanılan sağ başparmağın altında)
   const ACT = [
-    ['hit', 'KART', 'H'], ['stand', 'DUR', 'S'], ['double', 'İKİYE KATLA', 'D'], ['split', 'BÖL', 'P'], ['surrender', 'TESLİM', 'R'],
+    ['surrender', 'TESLİM', 'R'], ['double', 'İKİYE KATLA', 'D'], ['split', 'BÖL', 'P'], ['stand', 'DUR', 'S'], ['hit', 'KART', 'H'],
   ];
+  const AICON = {
+    hit: '<svg viewBox="0 0 24 24" aria-hidden="true"><rect x="4" y="3" width="11" height="16" rx="2"/><path d="M19 9v8M15 13h8"/></svg>',
+    stand: '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M8 13V6.5a1.5 1.5 0 0 1 3 0V12M11 12V4.5a1.5 1.5 0 0 1 3 0V12M14 12V5.5a1.5 1.5 0 0 1 3 0V13M17 13V9a1.5 1.5 0 0 1 3 0v5.5c0 4.1-3 7.5-7.2 7.5-3 0-4.9-1.6-6-3.6L4.2 14.8a1.6 1.6 0 0 1 2.6-1.8L8 14.4"/></svg>',
+    double: '<svg viewBox="0 0 24 24" aria-hidden="true"><ellipse cx="9" cy="7" rx="6" ry="2.6"/><path d="M3 7v3.4c0 1.4 2.7 2.6 6 2.6s6-1.2 6-2.6V7"/><ellipse cx="15" cy="14" rx="6" ry="2.6"/><path d="M9 14v3.4c0 1.4 2.7 2.6 6 2.6s6-1.2 6-2.6V14"/></svg>',
+    split: '<svg viewBox="0 0 24 24" aria-hidden="true"><rect x="2.5" y="7" width="8" height="12" rx="1.6" transform="rotate(-8 6.5 13)"/><rect x="13.5" y="7" width="8" height="12" rx="1.6" transform="rotate(8 17.5 13)"/><path d="M12 2.5v4M9.8 4.3 12 2.4l2.2 1.9"/></svg>',
+    surrender: '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 21V3.5M5 4h12.5l-2.6 4.3 2.6 4.2H5"/></svg>',
+  };
+  const ic = {
+    smile: '<svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="9"/><path d="M8.5 14.5c.9 1.3 2.1 2 3.5 2s2.6-.7 3.5-2"/><circle cx="9" cy="10" r=".9" fill="currentColor"/><circle cx="15" cy="10" r=".9" fill="currentColor"/></svg>',
+    gift: '<svg viewBox="0 0 24 24" aria-hidden="true"><rect x="3.5" y="9" width="17" height="11.5" rx="1.6"/><path d="M2.5 9h19M12 9v11.5M12 9c-1.6-3.6-5.6-4.6-6.2-2.4C5.3 8.7 8.9 9 12 9Zm0 0c1.6-3.6 5.6-4.6 6.2-2.4C18.7 8.7 15.1 9 12 9Z"/></svg>',
+    chat: '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 5.5h16v10H9.5L5 19.5v-4H4Z"/></svg>',
+    lock: '<svg viewBox="0 0 24 24" aria-hidden="true"><rect x="5" y="10.5" width="14" height="10" rx="2"/><path d="M8 10.5V7.5a4 4 0 0 1 8 0v3"/></svg>',
+    redo: '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M20 12a8 8 0 1 1-2.3-5.6M20 4v5h-5"/></svg>',
+    clear: '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M6 6l12 12M18 6 6 18"/></svg>',
+    check: '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="m5 12.5 4.5 4.5L19 7.5"/></svg>',
+  };
 
   /* ---------------- ayarlar ---------------- */
   const OPT_KEY = 'bj.opts';
@@ -2653,6 +3208,12 @@ html[data-q='low'] .seat-hit.mine, html[data-q='low'] .bj-stack.pending::before,
      ===================================================================== */
   function boot() {
     document.documentElement.dataset.q = opts.quality;
+    // ortak masa katmanı (bg-table.js): oyun kimliği, avatar konumu (emoji / balon / hediye uçuşu), hediye
+    T.cfg = Object.assign({}, T.cfg || {}, {
+      game: 'blackjack',
+      avatarEl: (uid, seat) => seatAvatar(uid, seat),
+      gift: (uid) => openGift(uid),
+    });
     if (!T.inSite()) {
       $('#lobby').hidden = false;
       $('#lobby').innerHTML = `<div class="lb-empty"><h1>Blackjack Royale</h1><p>Bu oyun Bözer Gaming sitesinin içinden açılır ve çevrim içi oynanır.</p><a class="t-btn is-primary" href="index.html#/oyun/blackjack">Bözer Gaming’e git</a></div>`;
@@ -2699,6 +3260,7 @@ html[data-q='low'] .seat-hit.mine, html[data-q='low'] .bj-stack.pending::before,
           <button type="button" class="t-btn is-primary" data-create>Masa oluştur</button>
         </div>
       </header>
+      <div class="t-econ-slot lb-econ">${T.econBarHTML ? T.econBarHTML() : ''}</div>
       <div class="lb-tiers">
         <div class="lb-tier bronze"><b>Bronze</b><span>10 BP masası · giriş eşiği yok</span></div>
         <div class="lb-tier silver"><b>Silver</b><span>10–20 BP · en az 4.000 BP</span></div>
@@ -2709,6 +3271,10 @@ html[data-q='low'] .seat-hit.mine, html[data-q='low'] .bj-stack.pending::before,
     $('[data-hist]', box).addEventListener('click', historySheet);
     $('[data-stats]', box).addEventListener('click', () => statsSheet());
     box.addEventListener('click', onLobbyClick);
+    box.addEventListener('click', (e) => {
+      const b = e.target.closest('[data-econ]');
+      if (b && T.econOpen) T.econOpen(b.dataset.econ);
+    });
     T.setRoute('');
     sitePresence(null);
     loadLobby();
@@ -2924,12 +3490,38 @@ html[data-q='low'] .seat-hit.mine, html[data-q='low'] .bj-stack.pending::before,
     renderControls();
     turnSounds(prev, st);
     sitePresence(st.id);
+    playing();
     // masaya katıl dendiyse ilk boş pozisyonu öner
     if (G.wantSit && G.me && !(G.me.seats || []).length) {
       G.wantSit = false;
       if (st.status === 'open' && G.me.eligible) toast('Oturmak için boş bir pozisyondaki OTUR alanına dokun.', 'info');
     }
     schedule();
+  }
+  /** Oynuyorken (bu turda bahsim var) site aktif süreyi sayar; izleyerek boşta beklemek sayılmaz */
+  let lastAct = 0;
+  function playing(force) {
+    const id = myId();
+    const st = G.st;
+    const inRound = st && st.round && !st.round.settled && (st.seats || []).some((s) => s.user && s.user.id === id && s.bet);
+    if (!force && !inRound) return;
+    if (Date.now() - lastAct < 20000) return;
+    lastAct = Date.now();
+    if (T.activity) T.activity();
+  }
+  /** Bir kullanıcının (ya da koltuğun) avatar öğesi: hediye ve emoji efektleri buradan başlar */
+  function seatAvatar(uid, seat) {
+    if (!G.scene || !G.st || G.view !== 'table') return null;
+    let no = seat != null && seat !== '' && !isNaN(+seat) ? +seat : null;
+    if (no != null) {
+      const s = G.st.seats.find((x) => x.no === no);
+      if (!s || !s.user || (uid && s.user.id !== uid)) no = null;
+    }
+    if (no == null) {
+      const s = (G.st.seats || []).find((x) => x.user && x.user.id === uid);
+      no = s ? s.no : null;
+    }
+    return no ? G.scene.avatarEl(no) : null;
   }
   function sitePresence(id) {
     try {
@@ -3090,7 +3682,7 @@ html[data-q='low'] .seat-hit.mine, html[data-q='low'] .bj-stack.pending::before,
     } else if (act === 'unstand') call('bg_bj_stand_up', { p_seat: seat, p_undo: true });
     else if (act === 'avatar') {
       const s = st.seats.find((x) => x.no === seat);
-      if (s && s.user) playerSheet(s.user, seat);
+      if (s && s.user) showPlayer(s.user, seat);
     } else if (act === 'bblist') bbList(seat);
   }
   function mySeatInPlay(seat) {
@@ -3103,6 +3695,7 @@ html[data-q='low'] .seat-hit.mine, html[data-q='low'] .bj-stack.pending::before,
     return (st.bets || []).filter((b) => b <= st.max_bet && b <= (me.max_bet || 10));
   }
   function placeBet(seat, amount) {
+    playing(true);
     if (!allowedBets().includes(amount)) {
       toast(`BP seviyen bu masada en fazla ${Math.max(...allowedBets(), 10)} BP bahse izin veriyor.`, 'err');
       return;
@@ -3175,7 +3768,7 @@ html[data-q='low'] .seat-hit.mine, html[data-q='low'] .bj-stack.pending::before,
       const ok = allowedBets();
       if (!ok.includes(G.chip)) G.chip = ok[ok.length - 1] || 10;
       return `<div class="chip-row" role="group" aria-label="${label}">${(st.bets || [])
-        .map((b) => `<button type="button" class="pchip c${b}${G.chip === b ? ' sel' : ''}" data-chip="${b}" ${ok.includes(b) ? '' : 'disabled'} aria-pressed="${G.chip === b}"><span>${b}</span></button>`)
+        .map((b) => `<button type="button" class="pchip c${b}${G.chip === b ? ' sel' : ''}" data-chip="${b}" ${ok.includes(b) ? '' : 'disabled'} aria-pressed="${G.chip === b}" aria-label="${b} BP fişi"><svg viewBox="0 0 100 100" aria-hidden="true"><use href="#bjchip-${b}"/></svg></button>`)
         .join('')}</div>`;
     };
     const turn = myTurnHand();
@@ -3183,7 +3776,7 @@ html[data-q='low'] .seat-hit.mine, html[data-q='low'] .bj-stack.pending::before,
       const seatsInfo = mySeats
         .map((s) => {
           const seat = st.seats.find((x) => x.no === s.no) || {};
-          return `<span class="mybet${seat.confirmed ? ' ok' : ''}">P${s.no}: ${seat.bet ? fmt(seat.bet) + ' BP' + (seat.confirmed ? ' ✓' : '') : 'bahis yok'}</span>`;
+          return `<span class="mybet${seat.confirmed ? ' ok' : ''}"><em>P${s.no}</em>${seat.bet ? fmt(seat.bet) + ' BP' + (seat.confirmed ? ' ✓' : '') : 'bahis yok'}</span>`;
         })
         .join('');
       const anyBet = mySeats.some((s) => (st.seats.find((x) => x.no === s.no) || {}).bet);
@@ -3191,22 +3784,30 @@ html[data-q='low'] .seat-hit.mine, html[data-q='low'] .bj-stack.pending::before,
         const x = st.seats.find((y) => y.no === s.no) || {};
         return !x.bet || x.confirmed;
       });
-      main = `<div class="ctl-bet">${chipRow('Bahis miktarı')}<div class="ctl-info">${seatsInfo}<small>${mySeats.length > 1 ? 'Fişi seç, sonra bahis koyacağın pozisyona dokun.' : 'Fişe dokununca bahis pozisyonuna konur.'}</small></div>
-        <div class="ctl-btns"><button type="button" class="t-btn" data-clear ${anyBet ? '' : 'disabled'}>Temizle</button><button type="button" class="t-btn is-primary" data-confirm ${anyBet && !allOk ? '' : 'disabled'}>Onayla</button></div></div>`;
+      const canRebet = mySeats.some((s) => {
+        const x = st.seats.find((y) => y.no === s.no) || {};
+        return !x.bet && s.last_bet && allowedBets().includes(s.last_bet);
+      });
+      main = `<div class="ctl-bet">
+          <button type="button" class="cbtn" data-clear ${anyBet ? '' : 'disabled'}>${ic.clear}<span>Temizle</span></button>
+          ${chipRow('Bahis miktarı')}
+          <button type="button" class="cbtn" data-rebet ${canRebet ? '' : 'disabled'} title="Son bahsini tekrarla">${ic.redo}<span>Tekrarla</span></button>
+          <button type="button" class="cbtn go" data-confirm ${anyBet && !allOk ? '' : 'disabled'}>${ic.check}<span>Onayla</span></button>
+          <div class="ctl-info">${seatsInfo}<small>${mySeats.length > 1 ? 'Fişi seç, sonra bahis koyacağın pozisyona dokun.' : 'Fişe dokununca bahis pozisyonuna konur.'}</small></div></div>`;
     } else if (st.state === 'BETTING_OPEN' && st.spectators && !mySeats.length) {
       const bb = me.bb && me.bb.status === 'PENDING' ? me.bb : null;
       main = `<div class="ctl-bet">${chipRow('Bet Behind miktarı')}<div class="ctl-info"><b class="bbt">BET BEHIND</b><small>${bb ? `P${bb.seat} pozisyonunda ${fmt(bb.amount)} BP. Ana oyuncunun bütün kararlarını (Double, Split dahil) takip eder.` : 'Bir oyuncunun bahis alanına dokun. Bet Behind, oyuncunun Double ve Split kararlarını zorunlu takip eder; ek bahis karşılanamazsa o turdaki bahislerin iade edilir.'}</small></div>
-        <div class="ctl-btns">${bb ? '<button type="button" class="t-btn" data-bbclear>Kaldır</button>' : ''}</div></div>`;
+        ${bb ? '<button type="button" class="cbtn" data-bbclear>' + ic.clear + '<span>Kaldır</span></button>' : ''}</div>`;
     } else if (st.state === 'INSURANCE_WINDOW' && mySeats.length) {
       const open = (st.seats || []).filter((s) => s.user && s.user.id === myId() && s.bet_status === 'placed' && !s.ins_decided);
       main = open.length
-        ? `<div class="ctl-ins">${open.map((s) => `<div class="ins-row"><span>P${s.no} için sigorta (${fmt(s.bet / 2)} BP)?</span><button type="button" class="t-btn is-primary" data-ins="${s.no}" data-take="1">Sigorta al</button><button type="button" class="t-btn" data-ins="${s.no}" data-take="0">Alma</button></div>`).join('')}</div>`
+        ? `<div class="ctl-ins">${open.map((s) => `<div class="ins-row"><span>P${s.no} için sigorta <b>${fmt(s.bet / 2)} BP</b> · 2:1 öder</span><button type="button" class="t-btn is-primary" data-ins="${s.no}" data-take="1">Sigorta al</button><button type="button" class="t-btn" data-ins="${s.no}" data-take="0">Alma</button></div>`).join('')}</div>`
         : '<p class="ctl-status">Diğer oyuncuların sigorta kararı bekleniyor…</p>';
     } else if (turn) {
-      const left = Math.max(0, st.deadline - now());
-      main = `<div class="ctl-act">${handRead(turn)}<div class="tbar"><i style="transform:scaleX(${Math.min(1, left / 15600)})"></i></div>
-        <p class="ctl-who">Sıra sende · P${turn.seat}${turn.n > 1 ? ' · el ' + (turn.h.i + 1) : ''} · ${turn.h.soft && turn.h.total < 21 ? turn.h.total - 10 + '/' + turn.h.total : turn.h.total}</p>
-        <div class="act-row">${ACT.map(([a, l, k]) => `<button type="button" class="act a-${a}" data-act="${a}" ${legal(turn, a) ? '' : 'disabled'}><b>${l}</b><kbd>${k}</kbd></button>`).join('')}</div></div>`;
+      // süre çubuğu tick() ile güncellenir; HTML zamana bağlı olmadığı için düğmeler basılırken yeniden çizilmez
+      main = `<div class="ctl-act">${handRead(turn)}
+        <div class="ctl-top"><p class="ctl-who"><b>Sıra sende</b> · P${turn.seat}${turn.n > 1 ? ' · el ' + (turn.h.i + 1) : ''} · <span class="ctl-sum">${turn.h.soft && turn.h.total < 21 ? turn.h.total - 10 + '/' + turn.h.total : turn.h.total}</span></p><div class="tbar"><i></i></div></div>
+        <div class="act-row">${ACT.map(([a, l, k]) => `<button type="button" class="act a-${a}" data-act="${a}" ${legal(turn, a) ? '' : 'disabled'}><i>${AICON[a]}</i><b>${l}</b><kbd>${k}</kbd></button>`).join('')}</div></div>`;
     } else {
       // ön hamle: sırası gelmemiş ellerim
       const waiting = ['INITIAL_DEAL', 'INSURANCE_WINDOW', 'DEALER_PEEK', 'PLAYER_TURNS'].includes(st.state)
@@ -3217,16 +3818,32 @@ html[data-q='low'] .seat-hit.mine, html[data-q='low'] .bj-stack.pending::before,
         const x = waiting.find((y) => y.h.id === G.preHand);
         const cur = ((me.pre || []).find((p) => p.hand === x.h.id) || {}).action || null;
         main = `<div class="ctl-act premode">${handRead(x)}
-          <p class="ctl-who">Ön hamle${waiting.length > 1 ? '' : ` · P${x.seat}${x.n > 1 ? ' el ' + (x.h.i + 1) : ''}`}<small>Sıran gelince uygulanır; o ana kadar değiştirebilir ya da iptal edebilirsin.</small></p>
-          ${waiting.length > 1 ? `<div class="pre-tabs">${waiting.map((y) => `<button type="button" data-ph="${y.h.id}" aria-pressed="${y.h.id === x.h.id}">P${y.seat}${y.n > 1 ? '·' + (y.h.i + 1) : ''}</button>`).join('')}</div>` : ''}
-          <div class="act-row">${ACT.map(([a, l]) => `<button type="button" class="act ghost a-${a}${cur === a ? ' on' : ''}" data-pre="${a}" ${legal(x, a) ? '' : 'disabled'}><b>${l}</b>${cur === a ? '<em>BEKLEMEDE</em>' : ''}</button>`).join('')}</div></div>`;
+          <div class="ctl-top"><p class="ctl-who"><b>Ön hamle</b>${waiting.length > 1 ? '' : ` · P${x.seat}${x.n > 1 ? ' el ' + (x.h.i + 1) : ''}`}<small>Sıran gelince uygulanır; o ana kadar değiştirebilir ya da iptal edebilirsin.</small></p>
+          ${waiting.length > 1 ? `<div class="pre-tabs">${waiting.map((y) => `<button type="button" data-ph="${y.h.id}" aria-pressed="${y.h.id === x.h.id}">P${y.seat}${y.n > 1 ? '·' + (y.h.i + 1) : ''}</button>`).join('')}</div>` : ''}</div>
+          <div class="act-row">${ACT.map(([a, l]) => `<button type="button" class="act ghost a-${a}${cur === a ? ' on' : ''}" data-pre="${a}" ${legal(x, a) ? '' : 'disabled'}><i>${AICON[a]}</i><b>${l}</b>${cur === a ? `<em>${ic.check}BEKLEMEDE</em>` : ''}</button>`).join('')}</div></div>`;
+      } else if (st.state === 'RESULT_DISPLAY' && st.round && st.round.settled && !st.round.cancelled && myRoundNet() != null) {
+        const n = myRoundNet();
+        main = `<div class="ctl-res ${n > 0 ? 'win' : n < 0 ? 'lose' : 'push'}"><span>Bu tur</span><b>${sgn(n)} BP</b><small>Yeni tur birazdan başlıyor.</small></div>`;
       } else main = `<p class="ctl-status">${esc(statusLine(st))}</p>`;
     }
     const html = `<div class="ctl-main">${main}</div>${side}`;
     if (box._html !== html) {
       box.innerHTML = html;
       box._html = html;
+      const bar = $('.tbar i', box);
+      if (bar && st.deadline) bar.style.transform = `scaleX(${Math.min(1, Math.max(0, st.deadline - now()) / 15600)})`;
     }
+  }
+  /** Bu turdaki net sonucum (pozisyonlarım + Bet Behind); turda yoksam null */
+  function myRoundNet() {
+    const id = myId();
+    let net = null;
+    (G.st.seats || []).forEach((s) => {
+      if (s.user && s.user.id === id && s.net != null) net = (net || 0) + s.net;
+    });
+    const bb = G.me && G.me.bb;
+    if (bb && bb.status && bb.status.startsWith('SETTLED_')) net = (net || 0) + (bb.payout - bb.total);
+    return net;
   }
   /** Elimin büyük yazılı özeti: kartlar, toplam ve krupiyenin açık kartı */
   function handRead(x) {
@@ -3279,6 +3896,29 @@ html[data-q='low'] .seat-hit.mine, html[data-q='low'] .bj-stack.pending::before,
       SND.play('chipsStack');
       return call('bg_bj_bet_confirm', {});
     }
+    if (b.hasAttribute('data-rebet')) {
+      // son bahsi bahsi olmayan pozisyonlara tekrar koy
+      const ok = allowedBets();
+      const list = (me.seats || []).filter((s) => {
+        const x = st.seats.find((y) => y.no === s.no) || {};
+        return !x.bet && s.last_bet && ok.includes(s.last_bet);
+      });
+      if (!list.length || G.busy) return;
+      G.busy = true;
+      SND.play('chip', 2);
+      playing(true);
+      try {
+        let r = null;
+        for (const s of list) r = await rpc('bg_bj_bet', { p_table: G.tableId, p_seat: s.no, p_amount: s.last_bet });
+        apply(r);
+      } catch (err) {
+        toast(errText(err), 'err');
+        syncNow(true);
+      } finally {
+        G.busy = false;
+      }
+      return;
+    }
     if (b.hasAttribute('data-bbclear')) return call('bg_bj_bet_behind', { p_seat: me.bb.seat, p_amount: 0 });
     if (b.dataset.ar) {
       const s = (me.seats || []).find((x) => x.no === +b.dataset.ar);
@@ -3299,6 +3939,7 @@ html[data-q='low'] .seat-hit.mine, html[data-q='low'] .bj-stack.pending::before,
   function doAction(a) {
     const x = myTurnHand();
     if (!x || !legal(x, a)) return;
+    playing(true);
     SND.play(a === 'double' || a === 'split' ? 'chipsStack' : 'click');
     if (navigator.vibrate) navigator.vibrate(12);
     call('bg_bj_act', { p_hand: x.h.id, p_action: a, p_req: rid() });
@@ -3421,7 +4062,9 @@ html[data-q='low'] .seat-hit.mine, html[data-q='low'] .bj-stack.pending::before,
       <div class="hud-r">
         <span class="hud-bal" title="BP bakiyen">${fmt(me.balance)} <small>BP</small></span>
         <span class="hud-view" title="İzleyiciler">👁 ${st.viewers || 0}</span>
-        ${T.site() && T.site().host ? '' : '<button type="button" class="hud-btn" data-chat aria-label="Masa sohbeti">💬</button>'}
+        <button type="button" class="hud-btn hud-ic" data-emoji aria-label="Emoji tepkisi" title="Emoji tepkisi">${ic.smile}</button>
+        <button type="button" class="hud-btn hud-ic" data-gift aria-label="Hediye gönder" title="Hediye gönder">${ic.gift}</button>
+        ${T.site() && T.site().host ? '' : `<button type="button" class="hud-btn hud-ic" data-chat aria-label="Masa sohbeti">${ic.chat}</button>`}
         <button type="button" class="hud-btn" data-menu aria-label="Menü">⋯</button>
       </div>`;
     const hud = $('#hud');
@@ -3436,6 +4079,8 @@ html[data-q='low'] .seat-hit.mine, html[data-q='low'] .bj-stack.pending::before,
     if (b.hasAttribute('data-lobby')) return backToLobby();
     if (b.hasAttribute('data-chat')) return toggleChat();
     if (b.hasAttribute('data-menu')) return menuSheet();
+    if (b.hasAttribute('data-emoji')) return openEmoji();
+    if (b.hasAttribute('data-gift')) return openGift();
   }
   async function backToLobby() {
     const seats = (G.me && G.me.seats) || [];
@@ -3485,6 +4130,8 @@ html[data-q='low'] .seat-hit.mine, html[data-q='low'] .bj-stack.pending::before,
       body: `<div class="menu-list">
         <button type="button" data-m="invite">Arkadaşını davet et</button>
         <button type="button" data-m="chat">Masa sohbeti</button>
+        <button type="button" data-m="missions">Görevler</button>
+        <button type="button" data-m="leader">Liderlik tablosu</button>
         <button type="button" data-m="hist">Oyun geçmişim</button>
         <button type="button" data-m="stats">İstatistiklerim</button>
         <button type="button" data-m="rules">Kurallar</button>
@@ -3501,6 +4148,7 @@ html[data-q='low'] .seat-hit.mine, html[data-q='low'] .bj-stack.pending::before,
       const m = b.dataset.m;
       if (m === 'invite') inviteSheet();
       else if (m === 'chat') toggleChat(true);
+      else if (m === 'missions' || m === 'leader') T.econOpen && T.econOpen(m);
       else if (m === 'hist') historySheet();
       else if (m === 'stats') statsSheet();
       else if (m === 'rules') rulesSheet();
@@ -3671,18 +4319,24 @@ html[data-q='low'] .seat-hit.mine, html[data-q='low'] .bj-stack.pending::before,
   }
 
   /* ---------------- oyuncu kartı, Bet Behind listesi ---------------- */
+  /** Avatar → sitenin profil önizlemesi (rütbe, BP, Arkadaş ekle, Hediye); site yoksa basit kart */
+  function showPlayer(u, seat) {
+    const B = T.site();
+    if (B && B.player && u.id) return T.playerCard(u.id);
+    playerSheet(u, seat);
+  }
   function playerSheet(u, seat) {
     const mine = u.id === myId();
     const friend = T.isFriend(u.id);
     const sh = T.sheet({
       title: u.name,
-      body: `<div class="pl-card">${T.avatar({ name: u.name, avatar_url: u.avatar }, 64)}<div><b>${esc(u.name)}</b><small>@${esc(u.username || '')}${seat ? ' · P' + seat : ''}</small></div></div>
+      body: `<div class="pl-card">${T.avatar({ name: u.name, avatar_url: u.avatar, badge: u.badge, rankPip: true }, 64)}<div><b>${esc(u.name)}</b><small>@${esc(u.username || '')}${seat ? ' · P' + seat : ''}</small></div></div>
         <div class="menu-list">${mine ? '' : '<button type="button" data-g>Hediye gönder</button>'}${mine || friend ? '<button type="button" data-s>İstatistikler</button>' : ''}</div>`,
     });
     sh.body.addEventListener('click', (e) => {
       if (e.target.closest('[data-g]')) {
         sh.close();
-        giftSheet(u);
+        openGift(u.id);
       } else if (e.target.closest('[data-s]')) {
         sh.close();
         statsSheet(mine ? null : u.id, u.name);
@@ -3701,47 +4355,28 @@ html[data-q='low'] .seat-hit.mine, html[data-q='low'] .bj-stack.pending::before,
   }
 
   /* =====================================================================
-     HEDİYELER
+     HEDİYELER VE EMOJİ (Gifter Pack ve emoji paketi; ortak seçiciler bg-table.js)
      ===================================================================== */
-  const giftSrc = (code, x) => `assets/gifts/${code}${x === 2 ? '@2x' : ''}.webp`;
-  const giftImg = (code) => `<img src="${giftSrc(code)}" srcset="${giftSrc(code, 2)} 2x" alt="" loading="lazy">`;
-  async function giftSheet(u) {
-    if (!G.gifts) {
-      try {
-        G.gifts = await rpc('bg_gift_catalog');
-      } catch (e) {
-        return toast(errText(e), 'err');
-      }
-    }
-    const TIERS = { standart: 'Standart', ozel: 'Özel', premium: 'Premium', saka: 'Şaka' };
-    const groups = {};
-    G.gifts.forEach((g) => (groups[g.tier] = groups[g.tier] || []).push(g));
-    const sh = T.sheet({
-      title: `${u.name} için hediye`,
-      wide: true,
-      body: `<p class="t-note">Hediye sembolik bir jesttir: BP'si senden düşer, alıcıya BP geçmez. Masadaki herkes görür. Bakiyen: ${fmt(G.me && G.me.balance)} BP</p>
-        ${Object.keys(TIERS).filter((k) => groups[k]).map((k) => `<h4 class="gift-h">${TIERS[k]}</h4><div class="gift-grid">${groups[k].map((g) => `<button type="button" class="gift" data-gift="${g.code}" ${G.me && G.me.balance < g.price ? 'disabled' : ''}>${giftImg(g.code)}<span>${esc(g.name)}</span><b>${fmt(g.price)} BP</b></button>`).join('')}</div>`).join('')}`,
-    });
-    sh.body.addEventListener('click', async (e) => {
-      const b = e.target.closest('[data-gift]');
-      if (!b || b.disabled) return;
-      $$('[data-gift]', sh.body).forEach((x) => (x.disabled = true));
-      try {
-        const r = await rpc('bg_gift_send', { p_to: u.id, p_code: b.dataset.gift, p_game: 'blackjack', p_table: G.tableId, p_req: rid() });
-        if (G.me) G.me.balance = r.balance;
-        renderHud();
-        sh.close();
-        toast('Hediye gönderildi.', 'good');
-      } catch (err) {
-        toast(errText(err), 'err');
-        $$('[data-gift]', sh.body).forEach((x) => (x.disabled = false));
-      }
-    });
+  /** Masadaki oyunculardan birine hediye: oyuncu ya da izleyici gönderebilir; alıcı koltuğuyla seçilir */
+  function openGift(toId) {
+    if (G.view !== 'table' || !G.st) return;
+    const people = (G.st.seats || [])
+      .filter((s) => s.user && s.user.id !== myId())
+      .map((s) => ({ id: s.user.id, name: s.user.name, avatar_url: s.user.avatar, badge: s.user.badge, role: 'P' + s.no, seat: s.no }));
+    if (toId && !people.some((p) => p.id === toId)) return toast('Hediye yalnızca masadaki pot sahiplerine gönderilebilir.', 'info');
+    T.giftPicker(toId || null, { game: 'blackjack', table: G.tableId, people, after: () => refreshChat() });
+  }
+  function openEmoji() {
+    if (G.view !== 'table' || !G.st) return;
+    T.emojiPicker({ game: 'blackjack', table: G.tableId, seat: () => ((G.me && G.me.seats) || [])[0] ? G.me.seats[0].no : null });
   }
 
   /* =====================================================================
-     SOHBET
+     SOHBET — okumak serbest; yazmak Geveze Paketi ister. Hediye ve emoji satırları
+     sohbette görselleriyle görünür ve avatarların yanında efekt olarak oynar.
      ===================================================================== */
+  const giftSrc = (code, x) => `assets/gifts/${code}${x === 2 ? '@2x' : ''}.webp`;
+  const emoSrc = (pack, code) => `assets/emoji/${pack}/${code}.webp`;
   async function loadChat() {
     const id = G.tableId;
     try {
@@ -3753,26 +4388,43 @@ html[data-q='low'] .seat-hit.mine, html[data-q='low'] .bj-stack.pending::before,
     } catch (e) {}
     paintHostChat();
   }
-  function onChatRow(row) {
-    if (row.id <= G.chat.last) return;
-    G.chat.last = row.id;
+  /** Gerçek zamanlı bağlantı yoksa (ya da hediye/emoji gönderince) yeni satırları çek */
+  async function refreshChat() {
+    const id = G.tableId;
+    if (!id) return;
+    try {
+      const list = await rpc('bg_bj_chat_list', { p_table: id, p_after: G.chat.last || 0 });
+      if (G.tableId === id) (list || []).forEach((r) => onChatRow(r));
+    } catch (e) {}
+  }
+  function nameOf(uid) {
     const st = G.st;
-    const seatOf = (uid) => {
-      const s = st && st.seats.find((x) => x.user && x.user.id === uid);
-      return s ? s.no : null;
-    };
-    const name = (() => {
-      const s = st && st.seats.find((x) => x.user && x.user.id === row.user_id);
-      return s ? s.user.name : row.user_id === myId() ? T.myName() : 'İzleyici';
-    })();
-    const item = Object.assign({ name }, row);
+    const s = st && st.seats.find((x) => x.user && x.user.id === uid);
+    if (s) return s.user.name;
+    const known = G.chat.list.find((x) => x.user_id === uid && x.name && x.name !== 'İzleyici');
+    if (known) return known.name;
+    return uid === myId() ? T.myName() : 'İzleyici';
+  }
+  function onChatRow(row) {
+    if (!row || row.id <= G.chat.last) return;
+    G.chat.last = row.id;
+    const name = row.name || nameOf(row.user_id);
+    const item = Object.assign({}, row, { name });
     G.chat.list.push(item);
     if (G.chat.list.length > 120) G.chat.list.shift();
-    const m = /^\[\[gift:([a-z_]+):([0-9a-f-]{36})\]\]/.exec(row.body || '');
-    if (m && G.scene) G.scene.flyGift(giftSrc(m[1], 2), seatOf(row.user_id), seatOf(m[2]));
-    if (!G.chat.open && row.user_id !== myId()) {
-      G.chat.unread++;
-      if (!m) SND.play('message');
+    const g = T.giftOf(row.body);
+    const m = !g && T.emojiOf(row.body);
+    if (g) {
+      SND.play('gift');
+      if (T.fx) T.fx.gift(row.user_id, g.to, g.code, g.seat, item);
+    } else if (m) {
+      if (T.fx) T.fx.emoji(row.user_id, m.pack, m.code, m.seat);
+    } else {
+      if (T.fx) T.fx.say(row.user_id, row.body);
+      if (!G.chat.open && row.user_id !== myId()) {
+        G.chat.unread++;
+        SND.play('message');
+      }
     }
     renderChat();
     paintHostChat();
@@ -3791,41 +4443,74 @@ html[data-q='low'] .seat-hit.mine, html[data-q='low'] .bj-stack.pending::before,
     }, 600);
   }
   function chatLine(m) {
-    const g = /^\[\[gift:([a-z_]+):([0-9a-f-]{36})\]\]\s*(.*)$/.exec(m.body || '');
     const when = new Date(m.created_at || Date.now()).toLocaleTimeString('tr-TR', { hour: '2-digit', minute: '2-digit' });
-    if (g) return `<li class="cm gift-line">${giftImg(g[1])}<span><b>${esc(m.name)}</b> → ${esc(g[3])}</span><time>${when}</time></li>`;
-    return `<li class="cm${m.user_id === myId() ? ' me' : ''}"><button type="button" class="cm-who" data-u="${m.user_id}" data-n="${esc(m.name)}">${esc(m.name)}</button><p>${esc(m.body)}</p><time>${when}</time></li>`;
+    const who = `<button type="button" class="cm-who" data-u="${esc(m.user_id)}" data-n="${esc(m.name)}">${esc(m.user_id === myId() ? 'Sen' : m.name)}</button>`;
+    const g = T.giftOf(m.body);
+    if (g) return `<li class="cm gift-line"><img src="${giftSrc(g.code)}" srcset="${giftSrc(g.code, 2)} 2x" alt="" loading="lazy"><span>${who} → ${esc(g.text)}</span><time>${when}</time></li>`;
+    const e = T.emojiOf(m.body);
+    if (e) return `<li class="cm emo-line${m.user_id === myId() ? ' me' : ''}">${who}<img src="${emoSrc(e.pack, e.code)}" alt="" loading="lazy"><time>${when}</time></li>`;
+    return `<li class="cm${m.user_id === myId() ? ' me' : ''}">${who}<p>${esc(m.body)}</p><time>${when}</time></li>`;
+  }
+  function chatForm() {
+    return T.owns && T.owns('geveze')
+      ? '<form class="cm-form"><input class="t-input" maxlength="300" placeholder="Masaya yaz…" aria-label="Mesaj"><button class="t-btn is-primary" type="submit">Gönder</button></form>'
+      : `<div class="cm-lock">${ic.lock}<span>Sohbeti okuyabilirsin. Yazmak için <b>Geveze Paketi</b> gerekir.</span><button type="button" class="t-btn is-primary" data-buy="geveze">50 BP · Al</button></div>`;
   }
   function renderChat() {
     const box = $('#chat');
     if (!G.chat.open) return;
     if (!box.innerHTML) {
-      box.innerHTML = `<header><b>Masa sohbeti</b><button type="button" class="hud-btn" data-cx aria-label="Kapat">×</button></header>
+      box.innerHTML = `<header><b>Masa sohbeti</b>
+          <button type="button" class="cm-hb" data-cemo title="Emoji tepkisi">${ic.smile}<span>Emoji</span></button>
+          <button type="button" class="cm-hb" data-cgift title="Hediye gönder">${ic.gift}<span>Hediye</span></button>
+          <button type="button" class="hud-btn" data-cx aria-label="Kapat">×</button></header>
         <ul class="cm-list"></ul>
-        <form class="cm-form"><input class="t-input" maxlength="300" placeholder="Masaya yaz…" aria-label="Mesaj"><button class="t-btn is-primary" type="submit">Gönder</button></form>`;
+        <div class="cm-in"></div>`;
       $('[data-cx]', box).addEventListener('click', () => toggleChat(false));
-      $('form', box).addEventListener('submit', sendChat);
+      $('[data-cemo]', box).addEventListener('click', () => openEmoji());
+      $('[data-cgift]', box).addEventListener('click', () => openGift());
+      $('.cm-in', box).addEventListener('submit', sendChat);
+      $('.cm-in', box).addEventListener('click', (e) => {
+        if (e.target.closest('[data-buy]')) T.buySheet('geveze', () => paintChatForm(true));
+      });
       $('.cm-list', box).addEventListener('click', (e) => {
         const b = e.target.closest('[data-u]');
-        if (b && b.dataset.u !== myId()) playerSheet({ id: b.dataset.u, name: b.dataset.n }, null);
+        if (b && b.dataset.u) showPlayer({ id: b.dataset.u, name: b.dataset.n }, null);
       });
     }
+    paintChatForm();
     const ul = $('.cm-list', box);
     const atEnd = ul.scrollHeight - ul.scrollTop - ul.clientHeight < 60;
     ul.innerHTML = G.chat.list.length ? G.chat.list.map(chatLine).join('') : '<li class="cm-empty">Masaya ilk mesajı sen yaz.</li>';
     if (atEnd) ul.scrollTop = ul.scrollHeight;
   }
+  function paintChatForm(focus) {
+    const box = $('#chat .cm-in');
+    if (!box) return;
+    const html = chatForm();
+    if (box._html !== html) {
+      box.innerHTML = html;
+      box._html = html;
+    }
+    if (focus) {
+      const i = $('input', box);
+      if (i) i.focus();
+    }
+  }
   async function sendChat(e) {
     e.preventDefault();
     const inp = $('#chat input');
+    if (!inp) return;
     const body = inp.value.trim();
     if (!body) return;
     inp.value = '';
     try {
       await rpc('bg_bj_chat_send', { p_table: G.tableId, p_body: body });
+      if (!G.rtOk) refreshChat();
     } catch (err) {
-      toast(errText(err), 'err');
       inp.value = body;
+      if (/Geveze/.test(errText(err))) return T.buySheet('geveze', () => paintChatForm(true));
+      toast(errText(err), 'err');
     }
   }
   function toggleChat(force) {
