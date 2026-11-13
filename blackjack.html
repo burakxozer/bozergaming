@@ -8,8 +8,8 @@
 <link rel="preconnect" href="https://fonts.googleapis.com" />
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
 <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@600;700;800&family=Manrope:wght@400;500;600;700;800&display=swap" rel="stylesheet" />
-<link rel="stylesheet" href="assets/css/bg-table.css?v=3.3.0" />
-<link rel="stylesheet" href="assets/css/badges.css?v=3.3.0" />
+<link rel="stylesheet" href="assets/css/bg-table.css?v=3.4.0" />
+<link rel="stylesheet" href="assets/css/badges.css?v=3.4.0" />
 <style>
 /* =====================================================================
    Bözer Royale — görünüm: zümrüt keçe, siyah ve altın, sıcak ışık
@@ -980,6 +980,87 @@ html[data-q='high'] .cd.reveal::before { background: rgba(255, 214, 130, .7); fi
 .chip-toss svg { display: block; width: 100%; height: 100%; }
 .bj-stage[data-layout='port'] .chip-toss { width: 66px; height: 66px; margin: -33px 0 0 -33px; }
 
+/* =====================================================================
+   v3.4 YAN BAHİSLER — Perfect Pairs (ana yuvanın solunda) ve 21+3 (sağında)
+   Bekleyen yan bahis kesik çizgili, alınan bahis dolu; kazanınca yeşil parlar,
+   kaybedince söner. Bahis türü alttaki çubuktan seçilir.
+   ===================================================================== */
+.bj-side { position: absolute; left: 0; top: 0; width: 100%; height: 100%; pointer-events: none; z-index: 6; }
+/* yan bahis yuvası: ana yuvanın kenarına oturan küçük fiş; üstünde tür etiketi (PP altın, 21+3 mavi) */
+.sp { --c: #f3d892; --c2: #8a6420; --ink: #1d1404; position: absolute; left: 0; top: 0; transform: translate(-50%, -50%);
+  display: grid; place-items: center; width: 36px; height: 36px; border-radius: 50%; white-space: nowrap; font-variant-numeric: tabular-nums;
+  background: radial-gradient(circle at 50% 35%, #3a2a14, #120c06 70%); border: 2px solid var(--c);
+  box-shadow: 0 0 0 2px rgba(0, 0, 0, .55), 0 5px 10px rgba(0, 0, 0, .55), inset 0 0 0 3px rgba(0, 0, 0, .35), inset 0 0 0 4px var(--c2);
+  transition: opacity .3s, filter .3s; }
+.sp em { position: absolute; left: 50%; top: -10px; transform: translateX(-50%); padding: 1px 5px; border-radius: 99px; font: 900 8.5px/1.15 var(--ui); font-style: normal;
+  letter-spacing: .04em; color: var(--ink); background: var(--c); box-shadow: 0 1px 3px rgba(0, 0, 0, .6); }
+.sp b { font: 900 12.5px/1 var(--ui); color: #fff; text-shadow: 0 1px 2px #000; }
+.sp.sp-t3 { --c: #8cc8ff; --c2: #1f4f86; --ink: #06223c; background: radial-gradient(circle at 50% 35%, #15304d, #060d18 70%); }
+.sp.wait { border-style: dashed; }
+.sp.wait b { opacity: .85; }
+.sp.ghost { background: rgba(0, 0, 0, .35); box-shadow: none; border-style: dashed; animation: spGhost 1.4s ease-in-out infinite; }
+.sp.ghost b { color: var(--c); font-size: 18px; }
+.sp.sel { box-shadow: 0 0 0 2px rgba(0, 0, 0, .55), 0 0 0 5px var(--c), 0 0 16px var(--c); }
+.sp.ghost.sel { box-shadow: 0 0 12px var(--c); }
+.sp.won { --c: #74e3a6; --c2: #1d6b45; --ink: #052414; width: auto; min-width: 36px; padding: 0 9px; border-radius: 18px; background: radial-gradient(circle at 50% 30%, #1d6b45, #052414 75%);
+  box-shadow: 0 0 0 2px rgba(0, 0, 0, .5), 0 0 22px rgba(116, 227, 166, .75); animation: spWin .7s cubic-bezier(.2, 1.5, .4, 1) both; }
+.sp.won b { color: #b6ffd6; font-size: 14px; }
+.sp.lost { opacity: .35; filter: grayscale(.9); }
+@keyframes spGhost { 0%, 100% { opacity: .5; } 50% { opacity: 1; } }
+@keyframes spWin { 0% { transform: translate(-50%, -50%) scale(.6); } 60% { transform: translate(-50%, -50%) scale(1.25); } 100% { transform: translate(-50%, -50%) scale(1.08); } }
+.bj-stage[data-layout='port'] .sp { width: 44px; height: 44px; }
+.bj-stage[data-layout='port'] .sp em { font-size: 11px; top: -12px; }
+.bj-stage[data-layout='port'] .sp b { font-size: 16px; }
+.bj-stage[data-layout='port'] .sp.won { width: auto; height: 44px; border-radius: 22px; }
+.bj-stage[data-layout='port'] .sp.won b { font-size: 18px; }
+.fx-float.side { color: #ffe08a; text-shadow: 0 2px 0 #3a2400, 0 0 16px rgba(255, 210, 90, .7); }
+
+/* bahis türü seçimi (Ana bahis / Perfect Pairs / 21+3) */
+.dk-kind { display: inline-flex; padding: 3px; gap: 3px; border-radius: 99px; background: rgba(0, 0, 0, .35); border: 1px solid var(--line-2); }
+.dk-kind button { display: inline-flex; align-items: baseline; gap: 6px; padding: 5px 11px; border: 0; border-radius: 99px; background: none; font: 800 12.5px var(--ui); color: var(--muted); white-space: nowrap; }
+.dk-kind button em { font-style: normal; font-size: 11.5px; color: var(--gold-hi); font-variant-numeric: tabular-nums; }
+.dk-kind button[aria-pressed='true'] { background: var(--gold-hi); color: #1d1404; box-shadow: 0 2px 8px rgba(0, 0, 0, .35); }
+.dk-kind button[aria-pressed='true'] em { color: #1d1404; }
+.dk-kind .bk-t3 em { color: #a9d6ff; }
+.dk-kind .bk-t3[aria-pressed='true'] { background: #8cc8ff; color: #06223c; }
+.dk-kind .bk-t3[aria-pressed='true'] em { color: #06223c; }
+.dk-who b.bk-t { color: #f3d892; }
+.dk-kind .ks { display: none; }
+@media (max-width: 420px) {
+  .dk-kind button { padding: 5px 8px; font-size: 11.5px; gap: 4px; }
+}
+@media (max-width: 360px) {
+  .dk-kind .kl { display: none; }
+  .dk-kind .ks { display: inline; }
+}
+/* yatay telefon: bilgi kutusu küçük kalsın (masayı örtmesin): tür seçimi kısa adlarla, açıklama satırı gizli */
+@media (max-height: 500px) and (orientation: landscape) {
+  .dk-who.has-kind { display: none; }
+  .dk-kind { padding: 2px; }
+  .dk-kind button { padding: 3px 8px; font-size: 11px; gap: 4px; }
+  .dk-kind button em { font-size: 10.5px; }
+  .dk-kind .kl { display: none; }
+  .dk-kind .ks { display: inline; }
+}
+@media (prefers-reduced-motion: reduce) {
+  .sp.ghost, .sp.won { animation: none; }
+}
+.lbc-side { padding: 1px 8px; border-radius: 99px; font-size: 11px; font-weight: 800; letter-spacing: .02em; color: #1d1404; background: linear-gradient(90deg, #f3d892, #a9d6ff); }
+.lbc-side + .lbc-priv { margin-left: 6px; }
+.lbc-top .lbc-side { margin-left: auto; }
+/* masa oluştur: yan bahis onay kutusu (varsayılan işaretli) */
+.side-check { position: relative; display: flex; align-items: flex-start; gap: 12px; padding: 12px 14px; border-radius: 14px; cursor: pointer;
+  border: 1px solid rgba(243, 216, 146, .35); background: linear-gradient(135deg, rgba(243, 216, 146, .1), rgba(140, 200, 255, .08)); }
+.side-check input { position: absolute; opacity: 0; width: 1px; height: 1px; }
+.sc-box { flex: none; width: 24px; height: 24px; margin-top: 1px; border-radius: 7px; border: 2px solid rgba(243, 216, 146, .7); background: rgba(0, 0, 0, .3); display: grid; place-items: center; transition: background .15s, border-color .15s; }
+.sc-box::after { content: ''; width: 11px; height: 6px; margin-top: -3px; border-left: 3px solid #1d1404; border-bottom: 3px solid #1d1404; transform: rotate(-45deg) scale(0); transition: transform .15s; }
+.side-check input:checked + .sc-box { background: #f3d892; border-color: #f3d892; }
+.side-check input:checked + .sc-box::after { transform: rotate(-45deg) scale(1); }
+.side-check input:focus-visible + .sc-box { outline: 2px solid #fff; outline-offset: 2px; }
+.sc-t { display: grid; gap: 3px; }
+.sc-t b { font-size: 14px; color: #fff; }
+.sc-t small { font-size: 12px; line-height: 1.4; color: var(--muted, #b7b0a0); }
+
 </style>
 </head>
 <body>
@@ -991,7 +1072,7 @@ html[data-q='high'] .cd.reveal::before { background: rgba(255, 214, 130, .7); fi
   <footer id="controls" class="bj-controls"></footer>
 </section>
 <aside id="chat" class="bj-chat" hidden aria-label="Masa sohbeti"></aside>
-<script src="assets/js/bg-table.js?v=3.3.0"></script>
+<script src="assets/js/bg-table.js?v=3.4.0"></script>
 <script>
 /* ---- cards.js ---- */
 /* =====================================================================
@@ -1245,8 +1326,28 @@ html[data-q='high'] .cd.reveal::before { background: rgba(255, 214, 130, .7); fi
     return `M${x0.toFixed(1)} ${y0.toFixed(1)} A${rx} ${ry} 0 0 0 ${x1.toFixed(1)} ${y1.toFixed(1)}`;
   }
 
-  /** Keçe ve masa nesneleri (SVG). Koltuk yuvaları ayrıca DOM ile çizilir. */
-  function feltSVG(L) {
+  /* v3.4: mağaza keçeleri (masa kurucusunun kuşandığı keçe masadaki herkese görünür) */
+  const GOLD = ['#7a5a22', '#f1d58a', '#7a5a22'];
+  const FELTS = {
+    def: { f: ['#18784f', '#0f5c3c', '#0a4430', '#062c1f'], noise: '#0b3d29', trim: GOLD, print: ['#b8913f', '#ecd08a', '#b8913f'], ink: '#e9cf8c', spot: ['#0c3a26', '#03170e'] },
+    kraliyet: { f: ['#2c66dc', '#1a46a6', '#0e2c70', '#061843'], noise: '#0a2050', trim: ['#7c8698', '#f6f9fd', '#7c8698'], print: ['#a9b5c7', '#ffffff', '#a9b5c7'], ink: '#e3eaf6', spot: ['#0b2765', '#030c22'], pat: 'damask', patC: '#cfdcf5' },
+    bordo: { f: ['#a8223f', '#7d1331', '#570a21', '#2c0410'], noise: '#3d0716', trim: GOLD, print: ['#c49a45', '#f5dc98', '#c49a45'], ink: '#f2d69a', spot: ['#4a0a1c', '#1c0308'], pat: 'damask', patC: '#f1c96b' },
+    oniks: { f: ['#36363d', '#1e1e23', '#111114', '#060607'], noise: '#000000', trim: ['#8a6416', '#ffe08a', '#8a6416'], print: ['#c99a3a', '#ffe7a0', '#c99a3a'], ink: '#ecd08a', spot: ['#19191c', '#050506'], pat: 'filigree', patC: '#d9b45a' },
+    ametist: { f: ['#8243d6', '#5e28a6', '#3d1573', '#1f0840'], noise: '#2a0c52', trim: ['#a0626b', '#ffd8d4', '#a0626b'], print: ['#dba2aa', '#ffe5e1', '#dba2aa'], ink: '#ffdcd8', spot: ['#3a1268', '#12042a'], pat: 'damask', patC: '#ffc9d6' },
+    neon: { f: ['#1a3478', '#10224f', '#0a1434', '#040a1c'], noise: '#050c24', trim: ['#00e5ff', '#ff2bd6', '#00e5ff'], print: ['#5ff3ff', '#ff6ae3', '#5ff3ff'], ink: '#a6f7ff', spot: ['#0b1a44', '#020617'], glow: true, pat: 'grid', patC: '#48d9ff' },
+  };
+  function patternDef(kind, c) {
+    if (kind === 'filigree')
+      return `<pattern id="bjPat" width="56" height="56" patternUnits="userSpaceOnUse"><path d="M28 2 C36 14 42 20 54 28 C42 36 36 42 28 54 C20 42 14 36 2 28 C14 20 20 14 28 2 Z" fill="none" stroke="${c}" stroke-opacity=".16" stroke-width="1.2"/><circle cx="28" cy="28" r="3" fill="${c}" fill-opacity=".14"/><circle cx="0" cy="0" r="2" fill="${c}" fill-opacity=".12"/><circle cx="56" cy="56" r="2" fill="${c}" fill-opacity=".12"/></pattern>`;
+    if (kind === 'grid')
+      return `<pattern id="bjPat" width="44" height="44" patternUnits="userSpaceOnUse"><path d="M44 0 H0 V44" fill="none" stroke="${c}" stroke-opacity=".1" stroke-width="1"/></pattern>`;
+    return `<pattern id="bjPat" width="64" height="64" patternUnits="userSpaceOnUse"><path d="M32 6 C40 16 48 18 58 18 C50 26 48 34 58 46 C46 44 40 48 32 58 C24 48 18 44 6 46 C16 34 14 26 6 18 C16 18 24 16 32 6 Z" fill="none" stroke="${c}" stroke-opacity=".13" stroke-width="1.3"/><circle cx="32" cy="32" r="4" fill="none" stroke="${c}" stroke-opacity=".14"/></pattern>`;
+  }
+
+  /** Keçe ve masa nesneleri (SVG). Koltuk yuvaları ayrıca DOM ile çizilir. v3.4: keçe görünümü (skin) */
+  function feltSVG(L, skin, o) {
+    const P = FELTS[skin] || FELTS.def;
+    o = o || {};
     const { W, H, cx, cy } = L;
     const [fx, fy] = L.felt;
     const [rx, ry] = L.rail;
@@ -1258,19 +1359,21 @@ html[data-q='high'] .cd.reveal::before { background: rgba(255, 214, 130, .7); fi
       const g = seatGeom(L, k);
       spots += `<g transform="translate(${g.spot.x.toFixed(1)} ${g.spot.y.toFixed(1)})">
         <circle r="50" fill="url(#bjSpot)" stroke="url(#bjTrim)" stroke-width="2.4"/>
-        <circle r="41" fill="none" stroke="#e9cf8c" stroke-opacity=".28" stroke-width="1" stroke-dasharray="2 6"/>
+        <circle r="41" fill="none" stroke="${P.ink}" stroke-opacity=".28" stroke-width="1" stroke-dasharray="2 6"/>
       </g>`;
     }
     const t = L.title;
     return `<svg class="bj-felt" viewBox="0 0 ${W} ${H}" width="${W}" height="${H}" aria-hidden="true">
       <defs>
         <radialGradient id="bjFelt" cx="50%" cy="20%" r="85%">
-          <stop offset="0" stop-color="#18784f"/><stop offset=".45" stop-color="#0f5c3c"/><stop offset=".8" stop-color="#0a4430"/><stop offset="1" stop-color="#062c1f"/>
+          <stop offset="0" stop-color="${P.f[0]}"/><stop offset=".45" stop-color="${P.f[1]}"/><stop offset=".8" stop-color="${P.f[2]}"/><stop offset="1" stop-color="${P.f[3]}"/>
         </radialGradient>
+        ${P.pat ? patternDef(P.pat, P.patC) : ''}
+        ${P.glow ? '<filter id="bjGlow" x="-10%" y="-10%" width="120%" height="120%"><feGaussianBlur stdDeviation="7"/></filter>' : ''}
         <linearGradient id="bjRail" x1="0" y1="0" x2="0" y2="1">
           <stop offset="0" stop-color="#2a1d14"/><stop offset=".35" stop-color="#140d09"/><stop offset=".7" stop-color="#090605"/><stop offset="1" stop-color="#1b120c"/>
         </linearGradient>
-        <linearGradient id="bjTrim" x1="0" x2="1"><stop offset="0" stop-color="#7a5a22"/><stop offset=".5" stop-color="#f1d58a"/><stop offset="1" stop-color="#7a5a22"/></linearGradient>
+        <linearGradient id="bjTrim" x1="0" x2="1"><stop offset="0" stop-color="${P.trim[0]}"/><stop offset=".5" stop-color="${P.trim[1]}"/><stop offset="1" stop-color="${P.trim[2]}"/></linearGradient>
         <linearGradient id="bjEdge" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#0d0907"/><stop offset="1" stop-color="#2b1e15"/></linearGradient>
         <filter id="bjNoise" x="0" y="0" width="100%" height="100%">
           <feTurbulence type="fractalNoise" baseFrequency=".85" numOctaves="2" stitchTiles="stitch" result="n"/>
@@ -1278,8 +1381,8 @@ html[data-q='high'] .cd.reveal::before { background: rgba(255, 214, 130, .7); fi
           <feComposite in2="SourceGraphic" operator="in"/>
         </filter>
         <radialGradient id="bjLight" cx="50%" cy="0%" r="75%"><stop offset="0" stop-color="#fff2c8" stop-opacity=".2"/><stop offset="1" stop-color="#fff2c8" stop-opacity="0"/></radialGradient>
-        <linearGradient id="bjPrint" x1="0" x2="1"><stop offset="0" stop-color="#b8913f"/><stop offset=".5" stop-color="#ecd08a"/><stop offset="1" stop-color="#b8913f"/></linearGradient>
-        <radialGradient id="bjSpot" cx="50%" cy="40%" r="60%"><stop offset="0" stop-color="#0c3a26" stop-opacity=".25"/><stop offset="1" stop-color="#03170e" stop-opacity=".55"/></radialGradient>
+        <linearGradient id="bjPrint" x1="0" x2="1"><stop offset="0" stop-color="${P.print[0]}"/><stop offset=".5" stop-color="${P.print[1]}"/><stop offset="1" stop-color="${P.print[2]}"/></linearGradient>
+        <radialGradient id="bjSpot" cx="50%" cy="40%" r="60%"><stop offset="0" stop-color="${P.spot[0]}" stop-opacity=".25"/><stop offset="1" stop-color="${P.spot[1]}" stop-opacity=".55"/></radialGradient>
         <radialGradient id="bjVig" cx="50%" cy="10%" r="95%"><stop offset=".55" stop-color="#000" stop-opacity="0"/><stop offset="1" stop-color="#000" stop-opacity=".45"/></radialGradient>
         <path id="bjArc1" d="${arcPath(cx, cy, ins[0], ins[1], 118, 62)}"/>
         <path id="bjArc2" d="${arcPath(cx, cy, ins2[0], ins2[1], 155, 25)}"/>
@@ -1287,16 +1390,19 @@ html[data-q='high'] .cd.reveal::before { background: rgba(255, 214, 130, .7); fi
       <path d="${half(rx + 8, ry + 8)}" fill="#000" opacity=".55" transform="translate(0 10)" style="filter:blur(10px)"/>
       <path d="${half(rx, ry)}" fill="url(#bjRail)"/>
       <path d="${half(rx - 6, ry - 6)}" fill="none" stroke="#3a2a1d" stroke-width="2" opacity=".8"/>
+      ${P.glow ? `<path d="${half(fx + 6, fy + 6)}" fill="none" stroke="url(#bjTrim)" stroke-width="10" opacity=".8" filter="url(#bjGlow)"/>` : ''}
       <path d="${half(fx + 6, fy + 6)}" fill="none" stroke="url(#bjTrim)" stroke-width="3"/>
       <path d="${half(fx, fy)}" fill="url(#bjFelt)"/>
-      <path d="${half(fx, fy)}" fill="#0b3d29" filter="url(#bjNoise)" opacity=".5"/>
+      <path d="${half(fx, fy)}" fill="${P.noise}" filter="url(#bjNoise)" opacity=".5"/>
+      ${P.pat ? `<path d="${half(fx, fy)}" fill="url(#bjPat)"/>` : ''}
       <path d="${half(fx, fy)}" fill="url(#bjLight)"/>
       <path d="${half(fx, fy)}" fill="url(#bjVig)"/>
       <rect x="${cx - fx - 50}" y="${cy - 22}" width="${(fx + 50) * 2}" height="24" fill="url(#bjEdge)"/>
       <rect x="${cx - fx - 50}" y="${cy}" width="${(fx + 50) * 2}" height="2" fill="url(#bjTrim)" opacity=".8"/>
       <text font-family="Cinzel, Georgia, serif" font-weight="700" font-size="${t.size}" letter-spacing="${t.size * 0.22}" fill="url(#bjPrint)" opacity=".86" text-anchor="middle" x="${cx}" y="${t.y}">BÖZER ROYALE</text>
-      <text font-family="Manrope, 'Segoe UI', sans-serif" font-weight="600" font-size="${t.size * 0.3}" letter-spacing="${t.size * 0.11}" fill="#e9cf8c" opacity=".55" text-anchor="middle" x="${cx}" y="${t.y + t.size * 0.62}">BLACKJACK • 3:2 • DEALER STANDS ON SOFT 17</text>
-      <text font-family="Manrope, 'Segoe UI', sans-serif" font-weight="600" font-size="${t.size * 0.27}" letter-spacing="${t.size * 0.12}" fill="#e9cf8c" opacity=".4" text-anchor="middle" x="${cx}" y="${t.y + t.size * 1.18}">INSURANCE PAYS 2 TO 1</text>
+      <text font-family="Manrope, 'Segoe UI', sans-serif" font-weight="600" font-size="${t.size * 0.3}" letter-spacing="${t.size * 0.11}" fill="${P.ink}" opacity=".55" text-anchor="middle" x="${cx}" y="${t.y + t.size * 0.62}">BLACKJACK • 3:2 • DEALER STANDS ON SOFT 17</text>
+      <text font-family="Manrope, 'Segoe UI', sans-serif" font-weight="600" font-size="${t.size * 0.27}" letter-spacing="${t.size * 0.12}" fill="${P.ink}" opacity=".4" text-anchor="middle" x="${cx}" y="${t.y + t.size * 1.18}">INSURANCE PAYS 2 TO 1</text>
+      ${o.side ? `<text font-family="Manrope, 'Segoe UI', sans-serif" font-weight="700" font-size="${t.size * 0.25}" letter-spacing="${t.size * 0.1}" fill="url(#bjPrint)" opacity=".62" text-anchor="middle" x="${cx}" y="${t.y + t.size * 1.66}">PERFECT PAIRS 25:1 • 21+3 100:1</text>` : ''}
       ${spots}
     </svg>`;
   }
@@ -1318,7 +1424,7 @@ html[data-q='high'] .cd.reveal::before { background: rgba(255, 214, 130, .7); fi
       <div class="bj-tray" style="left:${t.x}px;top:${t.y}px">${tray}</div>`;
   }
 
-  window.BJTable = { LAYOUTS, seatGeom, feltSVG, propsHTML };
+  window.BJTable = { LAYOUTS, seatGeom, feltSVG, propsHTML, FELTS };
 })();
 
 /* ---- dealer.js ---- */
@@ -1513,6 +1619,198 @@ html[data-q='high'] .cd.reveal::before { background: rgba(255, 214, 130, .7); fi
     </g>
   </g>
 </svg>`;
+  /* v3.4: Alev Pack — sarışın krupiye Alev. Aynı iskelet (omuz → dirsek → bilek, göz kapakları,
+     ağız katmanları) ve aynı sınıf adları: bütün animasyonlar aynen çalışır. */
+  const SVG_ALEV = `
+<svg class="dl-svg dl-alev" viewBox="0 0 600 560" aria-hidden="true">
+  <defs>
+    <radialGradient id="alSkin" cx="42%" cy="36%" r="70%">
+      <stop offset="0" stop-color="#fde7d8"/><stop offset=".55" stop-color="#f4cdb5"/><stop offset="1" stop-color="#e2ab8f"/>
+    </radialGradient>
+    <linearGradient id="alSkinArm" x1="0" x2="1">
+      <stop offset="0" stop-color="#ecbfa3"/><stop offset=".5" stop-color="#f9dccb"/><stop offset="1" stop-color="#e5b195"/>
+    </linearGradient>
+    <linearGradient id="alNeck" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#d79f84"/><stop offset=".45" stop-color="#efc6ae"/><stop offset="1" stop-color="#f8d8c5"/>
+    </linearGradient>
+    <linearGradient id="alHair" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#fff2c4"/><stop offset=".3" stop-color="#f1cf7a"/><stop offset=".65" stop-color="#d9a64a"/><stop offset="1" stop-color="#a8732a"/>
+    </linearGradient>
+    <linearGradient id="alHairBack" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#d6a24b"/><stop offset=".55" stop-color="#b9842f"/><stop offset="1" stop-color="#8d5c1d"/>
+    </linearGradient>
+    <linearGradient id="alVest" x1="0" y1="0" x2="1" y2="0">
+      <stop offset="0" stop-color="#050505"/><stop offset=".28" stop-color="#1f1a1c"/><stop offset=".5" stop-color="#0d0b0c"/><stop offset=".78" stop-color="#1c1719"/><stop offset="1" stop-color="#040404"/>
+    </linearGradient>
+    <linearGradient id="alShirt" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#e2384c"/><stop offset=".55" stop-color="#b3142c"/><stop offset="1" stop-color="#7c0c1e"/>
+    </linearGradient>
+    <linearGradient id="alSleeve" x1="0" x2="1">
+      <stop offset="0" stop-color="#7d0b1f"/><stop offset=".35" stop-color="#d42a41"/><stop offset=".62" stop-color="#b8182f"/><stop offset="1" stop-color="#6e0a1b"/>
+    </linearGradient>
+    <linearGradient id="alGold" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#fff0b8"/><stop offset=".5" stop-color="#d6a645"/><stop offset="1" stop-color="#8f6620"/>
+    </linearGradient>
+    <linearGradient id="alLip" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#e0293f"/><stop offset="1" stop-color="#a50f26"/>
+    </linearGradient>
+    <radialGradient id="alIris" cx="50%" cy="45%" r="55%">
+      <stop offset="0" stop-color="#7fd6a2"/><stop offset=".6" stop-color="#2f8c5c"/><stop offset="1" stop-color="#14402a"/>
+    </radialGradient>
+    <linearGradient id="alShadow" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#b8826f" stop-opacity=".55"/><stop offset="1" stop-color="#b8826f" stop-opacity="0"/>
+    </linearGradient>
+    <filter id="alSoft" x="-20%" y="-20%" width="140%" height="140%"><feGaussianBlur stdDeviation="3"/></filter>
+    <filter id="alShadowF" x="-20%" y="-20%" width="140%" height="160%"><feGaussianBlur stdDeviation="6"/></filter>
+    <clipPath id="alTable"><rect x="0" y="0" width="600" height="498"/></clipPath>
+  </defs>
+
+  <ellipse cx="300" cy="512" rx="190" ry="20" fill="#000" opacity=".35" filter="url(#alShadowF)"/>
+  <g class="dl-rig">
+    <!-- gövde: kırmızı saten gömlek, siyah yelek -->
+    <g class="dl-body" clip-path="url(#alTable)">
+      <path d="M150 336 C158 300 206 286 258 272 L342 272 C394 286 442 300 450 336 L466 560 L134 560 Z" fill="url(#alVest)"/>
+      <path d="M262 272 L338 272 L300 386 Z" fill="url(#alShirt)"/>
+      <path d="M264 271 L300 326 L284 334 L258 286 Z" fill="#c21f36" stroke="#7a0b1c" stroke-width="1.2"/>
+      <path d="M336 271 L300 326 L316 334 L342 286 Z" fill="#a8152b" stroke="#7a0b1c" stroke-width="1.2"/>
+      <path d="M262 273 L300 388 L338 273" fill="none" stroke="url(#alGold)" stroke-width="2.6"/>
+      <path d="M212 300 C230 360 254 420 270 498" fill="none" stroke="#2c2628" stroke-width="2"/>
+      <path d="M388 300 C370 360 346 420 330 498" fill="none" stroke="#2c2628" stroke-width="2"/>
+      <path d="M150 336 C170 330 196 330 214 338" fill="none" stroke="#2a2426" stroke-width="2"/>
+      <path d="M450 336 C430 330 404 330 386 338" fill="none" stroke="#2a2426" stroke-width="2"/>
+      <circle cx="300" cy="420" r="4.2" fill="url(#alGold)"/><circle cx="300" cy="456" r="4.2" fill="url(#alGold)"/>
+      <circle cx="300" cy="492" r="4.2" fill="url(#alGold)"/>
+      <g transform="translate(350 344) rotate(-4)">
+        <rect x="0" y="0" width="56" height="15" rx="2.5" fill="url(#alGold)"/>
+        <text x="28" y="10.8" text-anchor="middle" font-family="Georgia, serif" font-size="8.5" font-weight="700" letter-spacing="2.2" fill="#3a2608">ALEV</text>
+      </g>
+      <!-- kolye: ince altın zincir ve kırmızı taş -->
+      <path d="M274 262 Q300 300 326 262" fill="none" stroke="url(#alGold)" stroke-width="1.8"/>
+      <path d="M300 288 l6 8 -6 10 -6 -10 z" fill="#d6203a" stroke="#ffe7a8" stroke-width="1.2"/>
+    </g>
+
+    <!-- baş: arkadaki uzun dalgalı saç omuzlara dökülür -->
+    <g class="dl-head">
+      <path d="M300 50 C236 50 200 98 202 168 C204 228 214 268 190 326 C206 344 236 346 256 330 C268 316 270 300 272 286
+               L328 286 C330 300 332 316 344 330 C364 346 394 344 410 326 C386 268 396 228 398 168 C400 98 364 50 300 50 Z" fill="url(#alHairBack)"/>
+      <path d="M214 196 C210 240 214 278 198 318 M386 196 C390 240 386 278 402 318" stroke="#f7d98c" stroke-width="3" fill="none" opacity=".55" stroke-linecap="round"/>
+      <path d="M226 210 C226 250 232 286 222 322 M374 210 C374 250 368 286 378 322" stroke="#8a5a1c" stroke-width="2.4" fill="none" opacity=".5" stroke-linecap="round"/>
+      <path d="M278 212 L280 268 Q300 280 320 268 L322 212 Z" fill="url(#alNeck)"/>
+      <path d="M281 236 Q300 252 319 236 L320 248 Q300 262 280 248 Z" fill="#c98c72" opacity=".4"/>
+      <ellipse cx="238" cy="164" rx="8" ry="15" fill="#efbda2"/><ellipse cx="362" cy="164" rx="8" ry="15" fill="#e8b398"/>
+      <circle cx="236" cy="190" r="9" fill="none" stroke="url(#alGold)" stroke-width="2.6"/>
+      <circle cx="364" cy="190" r="9" fill="none" stroke="url(#alGold)" stroke-width="2.6"/>
+      <path d="M300 92 C344 92 360 122 360 158 C360 194 340 224 300 236 C260 224 240 194 240 158 C240 122 256 92 300 92 Z" fill="url(#alSkin)"/>
+      <path d="M344 198 C335 220 320 231 300 236 C318 228 332 212 338 194 Z" fill="#d49a80" opacity=".3"/>
+      <path d="M244 168 C247 196 264 220 300 230 C273 220 254 198 248 170 Z" fill="#d49a80" opacity=".2" filter="url(#alSoft)"/>
+      <path d="M356 168 C353 196 336 220 300 230 C327 220 346 198 352 170 Z" fill="#d49a80" opacity=".24" filter="url(#alSoft)"/>
+      <path d="M298 150 Q297 168 296 178" stroke="#fff6ef" stroke-width="2.4" stroke-linecap="round" fill="none" opacity=".45"/>
+      <ellipse cx="264" cy="186" rx="15" ry="8" fill="#f08f8a" opacity=".3" filter="url(#alSoft)"/>
+      <ellipse cx="336" cy="186" rx="15" ry="8" fill="#f08f8a" opacity=".3" filter="url(#alSoft)" class="dl-blush"/>
+      <!-- kaşlar: açık kumral -->
+      <g class="dl-brows" fill="none" stroke="#9a6a35" stroke-width="2.8" stroke-linecap="round" opacity=".95">
+        <path d="M255 136 Q271 127 288 134"/><path d="M312 134 Q329 127 345 136"/>
+      </g>
+      <!-- gözler: yeşil, sürmeli -->
+      <g class="dl-eyes" transform="translate(300 157) scale(.97 .94) translate(-300 -157)">
+        <path d="M256 158 Q271 146 287 157 Q271 166 256 158 Z" fill="#fdf9f6"/>
+        <path d="M313 157 Q329 146 344 158 Q329 166 313 157 Z" fill="#fdf9f6"/>
+        <g class="dl-iris">
+          <circle cx="271.5" cy="156.5" r="6.6" fill="url(#alIris)"/><circle cx="271.5" cy="156.5" r="2.6" fill="#0b1a12"/>
+          <circle cx="273.8" cy="154" r="1.8" fill="#fff"/>
+          <circle cx="328.5" cy="156.5" r="6.6" fill="url(#alIris)"/><circle cx="328.5" cy="156.5" r="2.6" fill="#0b1a12"/>
+          <circle cx="330.8" cy="154" r="1.8" fill="#fff"/>
+        </g>
+        <path d="M254 151 Q271 140 289 151" fill="none" stroke="#b07c6c" stroke-width="5" opacity=".28" stroke-linecap="round"/>
+        <path d="M311 151 Q329 140 346 151" fill="none" stroke="#b07c6c" stroke-width="5" opacity=".28" stroke-linecap="round"/>
+        <g class="dl-lids" fill="#f0c2a7">
+          <path class="dl-lid" d="M254 157 Q271 144 289 156 Q271 168 254 157 Z"/>
+          <path class="dl-lid" d="M311 156 Q329 144 346 157 Q329 168 311 156 Z"/>
+        </g>
+        <g fill="none" stroke="#1a0d09" stroke-linecap="round">
+          <path d="M253 158 Q270 144 289 155" stroke-width="2.4"/><path d="M253 158 L247.5 153.5" stroke-width="1.8"/>
+          <path d="M311 155 Q330 144 347 158" stroke-width="2.4"/><path d="M347 158 L352.5 153.5" stroke-width="1.8"/>
+          <path d="M258 151 l-2 -4 M264 148 l-1 -4.5 M270 147 l0 -4.5 M276 147.5 l1 -4.5" stroke-width="1.3"/>
+          <path d="M324 147.5 l-1 -4.5 M330 147 l0 -4.5 M336 148 l1 -4.5 M342 151 l2 -4" stroke-width="1.3"/>
+        </g>
+      </g>
+      <!-- burun -->
+      <path d="M297 166 Q296 178 294 185" fill="none" stroke="#d29a80" stroke-width="1.4" stroke-linecap="round" opacity=".8"/>
+      <path d="M293 189 Q297 192 300 190.5 Q303 192 307 189" fill="none" stroke="#b97d62" stroke-width="1.4" stroke-linecap="round"/>
+      <!-- ağız: kırmızı ruj -->
+      <g class="dl-mouth-n">
+        <path d="M283 206 Q292 200 300 203.5 Q308 200 317 206 Q300 210 283 206 Z" fill="url(#alLip)"/>
+        <path d="M284 206 Q300 219 316 206 Q300 210 284 206 Z" fill="#c4182f"/>
+        <path d="M293 211.5 Q300 213.5 307 211.5" stroke="#ff8d9a" stroke-width="1.4" fill="none" opacity=".8"/>
+      </g>
+      <g class="dl-mouth-s">
+        <path d="M279 203 Q300 207 321 203 Q300 222 279 203 Z" fill="#7d1020"/>
+        <path d="M284 205 Q300 209 316 205 Q300 212.5 284 205 Z" fill="#fff"/>
+        <path d="M279 203 Q290 197.5 300 201.5 Q310 197.5 321 203 Q300 206 279 203 Z" fill="url(#alLip)"/>
+        <path d="M280 204 Q300 226 320 204 Q300 219 280 204 Z" fill="#c4182f"/>
+      </g>
+      <!-- ön saç: yandan ayrılmış dalgalı perçem, yüzün iki yanından dökülen buklelar -->
+      <path d="M232 172 C224 108 258 62 304 60 C350 58 382 102 372 174 C366 146 356 126 342 112 C326 98 310 92 296 92
+               C278 98 260 108 250 128 C242 142 236 156 232 172 Z" fill="url(#alHair)"/>
+      <path d="M296 92 C312 112 336 120 356 150 C350 120 334 96 314 88 Z" fill="#f6dc94" opacity=".85"/>
+      <path d="M232 170 C222 196 226 226 218 252 C230 236 240 214 242 190 C244 178 240 172 232 170 Z" fill="url(#alHair)"/>
+      <path d="M370 172 C380 198 376 228 384 256 C372 240 360 216 358 192 C356 180 362 172 370 172 Z" fill="url(#alHair)"/>
+      <path d="M262 74 C250 92 244 110 242 132 M282 66 C268 86 262 104 262 120 M318 64 C338 76 352 96 360 124" stroke="#fff4cf" stroke-width="3" fill="none" opacity=".55" stroke-linecap="round"/>
+      <path d="M300 62 C280 66 254 86 244 118 M330 70 C350 82 364 106 366 136" stroke="#b9852f" stroke-width="2" fill="none" opacity=".55"/>
+      <path d="M246 92 Q236 104 238 122" stroke="#fff4cf" stroke-width="2" fill="none" opacity=".4"/>
+    </g>
+
+    <!-- kollar: omuz → dirsek → bilek -->
+    <g class="dl-arm dl-arm-l" data-x="166" data-y="318">
+      <path d="M-24 -6 C-26 40 -22 90 -19 128 L19 128 C22 90 24 40 22 -6 C10 -18 -12 -18 -24 -6 Z" fill="url(#alSleeve)"/>
+      <path d="M-15 108 Q0 116 15 108 M-10 60 Q-4 66 2 62" stroke="#ff6b7d" stroke-width="1.4" fill="none" opacity=".45"/>
+      <path d="M-24 -6 C-12 -14 10 -14 22 -6" stroke="#5c0716" stroke-width="2.2" fill="none" opacity=".6"/>
+      <g class="dl-fore">
+        <path d="M-19 0 C-18 40 -15 80 -13 104 L13 104 C15 80 18 40 19 0 Z" fill="url(#alSleeve)"/>
+        <path d="M-8 40 Q-2 46 6 42" stroke="#ff6b7d" stroke-width="1.3" fill="none" opacity=".4"/>
+        <rect x="-15" y="96" width="30" height="13" rx="4" fill="#111" stroke="#d6a645" stroke-width="1.2"/>
+        <circle cx="0" cy="103" r="2.6" fill="url(#alGold)"/>
+        <g class="dl-hand">
+          <path d="M-13 -2 C-16 12 -16 26 -12 36 C-8 46 8 46 12 36 C16 26 16 12 13 -2 Z" fill="url(#alSkinArm)"/>
+          <path d="M-11 28 C-12 40 -10 52 -7 58 M-3 32 C-4 44 -3 56 -1 62 M5 32 C5 44 5 55 6 60 M12 26 C14 38 13 48 12 54" stroke="url(#alSkinArm)" stroke-width="7" stroke-linecap="round" fill="none"/>
+          <path d="M-7 57 l0 2 M-1 61 l0 2 M6 59 l0 2 M12 53 l0 2" stroke="#d01f37" stroke-width="5.4" stroke-linecap="round"/>
+          <g class="dl-card" opacity="0"><rect x="-17" y="34" width="34" height="46" rx="4" fill="#0f3d2a" stroke="#c9a24d" stroke-width="2"/></g>
+        </g>
+      </g>
+    </g>
+    <g class="dl-arm dl-arm-r" data-x="434" data-y="318">
+      <path d="M-22 -6 C-24 40 -22 90 -19 128 L19 128 C22 90 26 40 24 -6 C12 -18 -10 -18 -22 -6 Z" fill="url(#alSleeve)"/>
+      <path d="M-15 108 Q0 116 15 108 M-10 60 Q-4 66 2 62" stroke="#ff6b7d" stroke-width="1.4" fill="none" opacity=".45"/>
+      <path d="M-24 -6 C-12 -14 10 -14 22 -6" stroke="#5c0716" stroke-width="2.2" fill="none" opacity=".6"/>
+      <g class="dl-fore">
+        <path d="M-19 0 C-18 40 -15 80 -13 104 L13 104 C15 80 18 40 19 0 Z" fill="url(#alSleeve)"/>
+        <path d="M-8 40 Q-2 46 6 42" stroke="#ff6b7d" stroke-width="1.3" fill="none" opacity=".4"/>
+        <rect x="-15" y="96" width="30" height="13" rx="4" fill="#111" stroke="#d6a645" stroke-width="1.2"/>
+        <circle cx="0" cy="103" r="2.6" fill="url(#alGold)"/>
+        <g class="dl-hand">
+          <path d="M-13 -2 C-16 12 -16 26 -12 36 C-8 46 8 46 12 36 C16 26 16 12 13 -2 Z" fill="url(#alSkinArm)"/>
+          <path d="M-12 26 C-14 38 -13 48 -12 54 M-5 32 C-5 44 -5 55 -6 60 M3 32 C4 44 3 56 1 62 M11 28 C12 40 10 52 7 58" stroke="url(#alSkinArm)" stroke-width="7" stroke-linecap="round" fill="none"/>
+          <path d="M-12 53 l0 2 M-6 59 l0 2 M1 61 l0 2 M7 57 l0 2" stroke="#d01f37" stroke-width="5.4" stroke-linecap="round"/>
+          <g class="dl-card" opacity="0"><rect x="-17" y="34" width="34" height="46" rx="4" fill="#0f3d2a" stroke="#c9a24d" stroke-width="2"/></g>
+        </g>
+      </g>
+    </g>
+    <!-- yelek omuzları kolların üstünde -->
+    <g class="dl-caps" clip-path="url(#alTable)">
+      <path d="M140 352 C142 322 156 304 182 296 C200 291 214 290 226 292 C210 304 200 318 196 334 C194 342 194 350 195 356 Z" fill="url(#alVest)"/>
+      <path d="M460 352 C458 322 444 304 418 296 C400 291 386 290 374 292 C390 304 400 318 404 334 C406 342 406 350 405 356 Z" fill="url(#alVest)"/>
+      <path d="M150 340 C156 318 172 304 194 298" stroke="#d6a645" stroke-width="1.6" fill="none" opacity=".7"/>
+      <path d="M450 340 C444 318 428 304 406 298" stroke="#d6a645" stroke-width="1.6" fill="none" opacity=".7"/>
+    </g>
+    <!-- karıştırma destesi -->
+    <g class="dl-deck" opacity="0" transform="translate(300 500)">
+      <rect x="-58" y="-16" width="52" height="34" rx="4" fill="#0f3d2a" stroke="#c9a24d" stroke-width="2"/>
+      <rect x="6" y="-16" width="52" height="34" rx="4" fill="#0f3d2a" stroke="#c9a24d" stroke-width="2"/>
+      <path class="dl-riffle" d="M-14 -20 Q0 -36 14 -20" fill="none" stroke="#f3ead2" stroke-width="10" opacity=".9"/>
+    </g>
+  </g>
+</svg>`;
+  const SKINS = { neriman: { svg: SVG, name: 'Neriman' }, alev: { svg: SVG_ALEV, name: 'Alev' } };
 
   /* Pozlar: her kol için [omuz, dirsek, bilek] açıları (derece, 0 = aşağı) */
   const POSE = {
@@ -1539,9 +1837,11 @@ html[data-q='high'] .cd.reveal::before { background: rgba(255, 214, 130, .7); fi
   const ease = (t) => (t < 0.5 ? 4 * t * t * t : 1 - Math.pow(-2 * t + 2, 3) / 2);
   const lerp = (a, b, t) => a + (b - a) * t;
 
-  function Dealer(root) {
+  function Dealer(root, skin) {
     this.root = root;
-    root.innerHTML = SVG;
+    this.skin = SKINS[skin] ? skin : 'neriman';
+    this.name = SKINS[this.skin].name;
+    root.innerHTML = SKINS[this.skin].svg;
     this.svg = root.querySelector('svg');
     this.armL = root.querySelector('.dl-arm-l');
     this.armR = root.querySelector('.dl-arm-r');
@@ -1589,6 +1889,7 @@ html[data-q='high'] .cd.reveal::before { background: rgba(255, 214, 130, .7); fi
     });
   };
   Dealer.prototype._loop = function (now) {
+    if (this.dead) return;
     const dt = Math.min(64, now - this._last);
     this._last = now;
     if (!this.reduced) this.breath += dt * 0.0015;
@@ -1690,7 +1991,16 @@ html[data-q='high'] .cd.reveal::before { background: rgba(255, 214, 130, .7); fi
     this.reduced = !!on;
   };
 
-  window.BJDealer = { create: (el) => new Dealer(el), POSE };
+  /** Krupiyeyi bırak (görünüm değişince yenisi kurulur) */
+  Dealer.prototype.destroy = function () {
+    this.dead = true;
+    if (this.tw) {
+      const d = this.tw.done;
+      this.tw = null;
+      d();
+    }
+  };
+  window.BJDealer = { create: (el, skin) => new Dealer(el, skin), POSE, SKINS: Object.keys(SKINS), nameOf: (k) => (SKINS[k] || SKINS.neriman).name };
 })();
 
 /* ---- sound.js ---- */
@@ -2145,12 +2455,15 @@ html[data-q='high'] .cd.reveal::before { background: rgba(255, 214, 130, .7); fi
     this.lActs = q('.bj-acts');
     this.lCenter = q('.bj-center');
     this.lFx = q('.bj-fx');
-    this.dealer = window.BJDealer.create(this.lDealer);
+    this.skinDealer = 'neriman';
+    this.skinFelt = null;
+    this.sideOn = false;
+    this.dealer = window.BJDealer.create(this.lDealer, this.skinDealer);
     // krupiye mesaj kartı: portre bir kez kurulur, metin ve süre güncellenir
     const port = this.lDealer.querySelector('svg').cloneNode(true);
     port.setAttribute('viewBox', '214 26 172 172');
     port.setAttribute('class', 'msg-face');
-    this.lCenter.innerHTML = `<div class="dmsg" hidden><span class="dmsg-av"></span><div class="dmsg-t"><small>Krupiye Neriman</small><strong></strong><span></span></div>
+    this.lCenter.innerHTML = `<div class="dmsg" hidden><span class="dmsg-av"></span><div class="dmsg-t"><small>Krupiye ${this.dealer.name}</small><strong></strong><span></span></div>
       <span class="dmsg-time" hidden><svg viewBox="0 0 44 44" aria-hidden="true"><circle class="bg" cx="22" cy="22" r="19"/><circle class="fg" cx="22" cy="22" r="19"/></svg><b></b></span></div>`;
     this.msg = {
       el: q('.dmsg'),
@@ -2191,7 +2504,7 @@ html[data-q='high'] .cd.reveal::before { background: rgba(255, 214, 130, .7); fi
     this.stage.style.height = L.H + 'px';
     this.stage.style.setProperty('--cw', this.cw + 'px');
     this.stage.dataset.layout = name;
-    this.lTable.innerHTML = TB.feltSVG(L);
+    this.lTable.innerHTML = TB.feltSVG(L, this.skinFelt, { side: this.sideOn });
     this.lProps.innerHTML = TB.propsHTML(L);
     const d = L.dealer;
     Object.assign(this.lDealer.style, { left: d.x - d.w / 2 + 'px', top: d.top + 'px', width: d.w + 'px' });
@@ -2209,6 +2522,8 @@ html[data-q='high'] .cd.reveal::before { background: rgba(255, 214, 130, .7); fi
     this._acts = '';
     this._glow = '';
     this._msgKey = '';
+    if (this.lSide) this.lSide.innerHTML = '';
+    if (this.sideEls) this.sideEls.clear();
     this.ready = false;
     if (this.st) this.update(this.st, this.me, true);
     return true;
@@ -2224,6 +2539,183 @@ html[data-q='high'] .cd.reveal::before { background: rgba(255, 214, 130, .7); fi
     const x = (w - L.W * s) / 2;
     const y = Math.max(0, (h - L.H * s) / 2);
     this.stage.style.transform = `translate(${x}px, ${y}px) scale(${s})`;
+  };
+
+  /** v3.4: masanın görünümü — kurucunun kuşandığı krupiye (Alev Pack) ve keçe; yan bahis yazısı */
+  Scene.prototype.setSkin = function (skin, side) {
+    skin = skin || {};
+    const felt = skin.felt || null;
+    const dl = skin.dealer && window.BJDealer.SKINS.indexOf(skin.dealer) >= 0 ? skin.dealer : 'neriman';
+    side = !!side;
+    if ((felt !== this.skinFelt || side !== this.sideOn) && this.L) {
+      this.skinFelt = felt;
+      this.sideOn = side;
+      this.lTable.innerHTML = TB.feltSVG(this.L, felt, { side });
+    }
+    this.skinFelt = felt;
+    this.sideOn = side;
+    if (dl !== this.skinDealer) {
+      this.skinDealer = dl;
+      const reduced = this.dealer && this.dealer.reduced;
+      if (this.dealer) this.dealer.destroy();
+      this.dealer = window.BJDealer.create(this.lDealer, dl);
+      this.dealer.setReduced(!!reduced);
+      const port = this.lDealer.querySelector('svg').cloneNode(true);
+      port.setAttribute('viewBox', '214 26 172 172');
+      port.setAttribute('class', 'msg-face');
+      const av = this.root.querySelector('.dmsg-av');
+      if (av) {
+        av.innerHTML = '';
+        av.appendChild(port);
+      }
+      const nm = this.root.querySelector('.dmsg-t small');
+      if (nm) nm.textContent = 'Krupiye ' + this.dealer.name;
+    }
+  };
+  /* ---------------- v3.4 yan bahisler (Perfect Pairs, 21+3) ----------------
+     Ana bahis yuvasının iki alt yanında küçük yuvalar: PP solda, 21+3 sağda. Bahis aşamasında konur
+     (bekleyen kesik çizgili), dağıtım bitince sonuç açılır (kazanan parlar, kaybeden söner) ve birkaç
+     saniye sonra gerçek masadaki gibi kaybeden fiş krupiyeye, kazanç oyuncuya gider; yuva boşalır.
+     Böylece sonradan gelen Double / Split / sigorta yığınlarıyla çakışmaz. */
+  const SIDE_TXT = { perfect: 'Mükemmel çift', colored: 'Renkli çift', mixed: 'Karışık çift', suited_trips: 'Aynı tür üçlü',
+                     straight_flush: 'Sıralı floş', trips: 'Üçlü', straight: 'Kent', flush: 'Floş' };
+  const SIDE_SHOW = 3600; // sonucun masada kalma süresi (ms)
+  /** Yan bahis yuvasının sahne konumu */
+  Scene.prototype.sidePoint = function (seat, kind) {
+    const g = this.geo[(seat || 1) - 1];
+    const dir = kind === 'pp' ? -1 : 1;
+    // ana yuvanın kenarında saat 8 (PP) ve saat 4 (21+3) konumu: pozisyonun kendi alanında kalır
+    return { x: g.spot.x + dir * 44, y: g.spot.y + 26 };
+  };
+  Scene.prototype.sideHTML = function (w) {
+    const label = w.kind === 'pp' ? 'PP' : '21+3';
+    if (w.ghost) return `<em>${label}</em><b>+</b>`;
+    if (w.phase === 'show' && w.pay > 0) return `<em>${esc(SIDE_TXT[w.res] || label)}</em><b>+${fmt(w.pay - w.amt)}</b>`;
+    return `<em>${label}</em><b>${fmt(w.amt)}</b>`;
+  };
+  Scene.prototype.syncSide = function (st, ctx) {
+    if (!this.lSide) {
+      this.lSide = document.createElement('div');
+      this.lSide.className = 'bj-side';
+      this.lChips.parentNode.insertBefore(this.lSide, this.lChips.nextSibling);
+    }
+    if (!this.sideEls) this.sideEls = new Map();
+    if (!this.sideRev) this.sideRev = {};
+    ctx = ctx || {};
+    const rid = st.round ? st.round.id : '';
+    const live = !!this.fxLive && !this.opt('reduced');
+    const want = new Map();
+    (st.seats || []).forEach((s) => {
+      const sd = s.side;
+      const mine = s.user && ctx.myId && s.user.id === ctx.myId;
+      // seçili yan bahsin boş yuvası (kendi bahsi olan pozisyonlarımda, bahis aşamasında)
+      const sel = mine && ctx.sideSel && s.bet && s.bet_status !== 'dropped' ? ctx.sideSel : null;
+      if (sel && !(sd && sd[sel])) want.set('g:' + s.no + ':' + sel, { ghost: true, seat: s.no, kind: sel, cls: 'ghost sel' });
+      if (!sd || s.bet_status === 'dropped' || s.bet_status === 'refunded' || sd.st === 'dropped' || sd.st === 'refunded') return;
+      const rk = rid + ':' + s.no;
+      let phase = sd.st === 'placed' ? 'in' : 'wait';
+      if (sd.st === 'settled') {
+        let rv = this.sideRev[rk];
+        if (!rv) {
+          // sonradan açılan masa ya da hareket azaltılmış: sonuç zaten kapanmış sayılır
+          rv = this.sideRev[rk] = { phase: this.fxLive ? 'in' : 'gone', s, sd };
+          if (this.fxLive) this.sideReveal(rk, s, sd);
+        }
+        phase = rv.phase;
+        if (phase === 'gone') return;
+      }
+      ['pp', 't3'].forEach((k) => {
+        const amt = sd[k] || 0;
+        if (!amt) return;
+        const pay = sd[k + '_pay'] || 0;
+        const cls = (phase === 'wait' ? 'wait' : 'in') + (phase === 'show' ? (pay > 0 ? ' won' : ' lost') : '') + (sel === k ? ' sel' : '');
+        want.set(rk + ':' + k, { seat: s.no, kind: k, amt, pay, res: sd[k + '_r'], phase, cls });
+      });
+    });
+    // kalkan yuvalar: sonuçlanmışsa kaybeden krupiyeye, kazanç oyuncuya uçar; değilse söner
+    this.sideEls.forEach((el, key) => {
+      if (want.has(key)) return;
+      this.sideEls.delete(key);
+      const w = el._w;
+      if (!live || !w || w.ghost || w.phase !== 'show') {
+        if (live && !w.ghost) {
+          const a = el.animate([{ opacity: 1 }, { opacity: 0, transform: 'translate(-50%, -50%) scale(.6)' }], { duration: 220, easing: 'ease-in' });
+          if (a) a.onfinish = () => el.remove();
+          else el.remove();
+        } else el.remove();
+        return;
+      }
+      const from = { x: el._x, y: el._y };
+      const to = w.pay > 0 ? this.platePoint(w.seat) : this.trayPoint();
+      const k = [];
+      for (let i = 0; i <= 10; i++) {
+        const t = i / 10;
+        const u = t * t * (3 - 2 * t);
+        const x = from.x + (to.x - from.x) * u;
+        const y = from.y + (to.y - from.y) * u - Math.sin(Math.PI * u) * 46;
+        k.push({ left: x.toFixed(1) + 'px', top: y.toFixed(1) + 'px', opacity: t > 0.8 ? (1 - t) * 5 : 1, transform: `translate(-50%, -50%) scale(${(1 - 0.45 * u).toFixed(3)})`, offset: t });
+      }
+      const a = el.animate(k, { duration: this.dur(560), easing: 'linear', fill: 'forwards' });
+      if (w.pay > 0) this.later(this.dur(470), () => SND.play('chip', 1));
+      if (a) a.onfinish = () => el.remove();
+      else el.remove();
+    });
+    want.forEach((w, key) => {
+      let el = this.sideEls.get(key);
+      const p = this.sidePoint(w.seat, w.kind);
+      if (!el) {
+        el = document.createElement('span');
+        el.style.left = p.x + 'px';
+        el.style.top = p.y + 'px';
+        el._x = p.x;
+        el._y = p.y;
+        this.lSide.appendChild(el);
+        this.sideEls.set(key, el);
+        if (live && !w.ghost && this.ready) el.animate([{ transform: 'translate(-50%, -50%) scale(.4)', opacity: 0 }, { transform: 'translate(-50%, -50%) scale(1.12)', opacity: 1, offset: 0.7 }, { transform: 'translate(-50%, -50%) scale(1)', opacity: 1 }], { duration: 300, easing: 'ease-out' });
+      } else if (el._x !== p.x || el._y !== p.y) {
+        el.style.left = p.x + 'px';
+        el.style.top = p.y + 'px';
+        el._x = p.x;
+        el._y = p.y;
+      }
+      const cls = 'sp sp-' + w.kind + ' ' + w.cls;
+      const html = this.sideHTML(w);
+      if (el.className !== cls) el.className = cls;
+      if (el._h !== html) {
+        el.innerHTML = html;
+        el._h = html;
+      }
+      el._w = w;
+    });
+  };
+  /** Sonuç: kartlar yerine oturunca açılır, birkaç saniye görünür, sonra fişler toplanır */
+  Scene.prototype.sideReveal = function (rk, s, sd) {
+    const wait = Math.max(this.dur(420), (this.dealEnd || 0) - performance.now() + this.dur(260));
+    const again = () => {
+      if (this.st) this.syncSide(this.st, this.hooks.ctx ? this.hooks.ctx(this.st, this.me) : {});
+    };
+    this.later(wait, () => {
+      const rv = this.sideRev[rk];
+      if (!rv) return;
+      rv.phase = 'show';
+      again();
+      const won = (sd.pp_pay > 0 ? sd.pp_pay - sd.pp : 0) + (sd.t3_pay > 0 ? sd.t3_pay - sd.t3 : 0);
+      if (won > 0 && !this.opt('reduced')) {
+        ['pp', 't3'].forEach((k) => {
+          if (!(sd[k + '_pay'] > 0)) return;
+          const p = this.sidePoint(s.no, k);
+          this.burst(p.x, p.y, { n: 16, kind: 'coin', spread: 70 });
+        });
+        const g = this.geo[s.no - 1];
+        this.floatText(g.spot.x, g.spot.y - 20, '+' + fmt(won) + ' BP', 'side');
+        SND.play('win');
+      }
+      if (this.hooks.onSide) this.hooks.onSide(s, sd, true);
+      this.later(this.dur(SIDE_SHOW), () => {
+        if (this.sideRev[rk]) this.sideRev[rk].phase = 'gone';
+        again();
+      });
+    });
   };
 
   /** Sahne koordinatından ekran koordinatına */
@@ -2484,6 +2976,7 @@ html[data-q='high'] .cd.reveal::before { background: rgba(255, 214, 130, .7); fi
           delay = Math.max(0, delay);
           stagger = delay + 190;
           const sp = this.shoePoint();
+          this.dealEnd = Math.max(this.dealEnd || 0, performance.now() + delay + this.dur(640));
           this.place(c, sp.x, sp.y, sp.rot, sp.sc, 0);
           c.el.style.opacity = '0';
           this.setFace(c, w.code, true);
@@ -2618,8 +3111,15 @@ html[data-q='high'] .cd.reveal::before { background: rgba(255, 214, 130, .7); fi
           const last = this.handLayout(s.no - 1, hands.length, side > 0 ? hands.length - 1 : 0);
           off = Math.max(off, Math.abs(last.x - g.spot.x) + 42);
         }
+        let by = g.spot.y + (port ? -6 : 30);
+        // v3.4: yan bahis yuvaları varken Bet Behind yığını biraz dışarı alınır (üst üste binmesin)
+        const sd = s.side;
+        if (sd && (sd.pp || sd.t3) && sd.st !== 'dropped' && sd.st !== 'refunded') {
+          off = Math.max(off, port ? 74 : 82);
+          by = g.spot.y + (port ? -14 : 18);
+        }
         const bx = g.spot.x + side * off;
-        out.push({ key: 'bb:' + s.no, amount: s.bb.total, x: bx, y: g.spot.y + (port ? -6 : 30), seat: s.no, bb: true, cls: 'sm bbst' });
+        out.push({ key: 'bb:' + s.no, amount: s.bb.total, x: bx, y: by, seat: s.no, bb: true, cls: 'sm bbst' });
       }
       // Sigorta: bahis yuvasının içinde, ana yığının dış yanında (kartların altında kalmasın; tutar her zaman bahsin yarısı).
       // Krupiye blackjack yapmazsa kontrol sırasında kaybedilen sigorta hemen toplanır.
@@ -2762,7 +3262,7 @@ html[data-q='high'] .cd.reveal::before { background: rgba(255, 214, 130, .7); fi
   };
 
   /** v3.3: alttaki çubuktaki fişten masadaki bahis alanına fiş atışı (ekran noktası → sahne) */
-  Scene.prototype.tossChip = function (seat, from, amount) {
+  Scene.prototype.tossChip = function (seat, from, amount, kind) {
     if (this.calm() || !this.ready || !this.geo || !from) return;
     const g = this.geo[seat - 1];
     if (!g) return;
@@ -2770,8 +3270,9 @@ html[data-q='high'] .cd.reveal::before { background: rgba(255, 214, 130, .7); fi
     const sc = this.scale || 1;
     const fx = (from.x - r.left) / sc;
     const fy = (from.y - r.top) / sc;
-    const tx = g.spot.x;
-    const ty = g.spot.y;
+    const to = kind === 'pp' || kind === 't3' ? this.sidePoint(seat, kind) : g.spot;
+    const tx = to.x;
+    const ty = to.y;
     const qx = (fx + tx) / 2;
     const qy = Math.min(fy, ty) - 140;
     const el = document.createElement('div');
@@ -3420,12 +3921,15 @@ html[data-q='high'] .cd.reveal::before { background: rgba(255, 214, 130, .7); fi
       this.roundId = rid;
       this.settledFor = null;
       this.shown.clear();
+      this.sideRev = {};
     }
     const live = this.ready && !instant;
     this.fxLive = live;
+    this.setSkin(st.skin, st.side_bets);
     if (st.state === 'SHOE_RESHUFFLE' && prev && prev.state !== 'SHOE_RESHUFFLE' && live) this.shuffleAnim();
     this.syncCards(st, instant || !this.ready);
     this.syncStacks(st, instant || !this.ready);
+    this.syncSide(st, ctx);
     this.syncSeats(st, ctx);
     this.syncTurn(st, ctx);
     this.syncBadges(st, ctx);
@@ -3474,6 +3978,10 @@ html[data-q='high'] .cd.reveal::before { background: rgba(255, 214, 130, .7); fi
     this.lGlow.innerHTML = '';
     this.msg.el.hidden = true;
     this.lFx.innerHTML = '';
+    if (this.lSide) this.lSide.innerHTML = '';
+    if (this.sideEls) this.sideEls.clear();
+    this.sideRev = {};
+    this.dealEnd = 0;
     this.seatSig = [];
     this._badges = '';
     this._acts = '';
@@ -3588,6 +4096,11 @@ html[data-q='high'] .cd.reveal::before { background: rgba(255, 214, 130, .7); fi
     busy: false,
     opt: {}, // v3.3: sunucuya gönderilmeyi bekleyen bahisler (pozisyon → tutar)
     optT: {},
+    optP: {}, // yoldaki ana bahis istekleri (pozisyon → söz)
+    optSide: {}, // v3.4: gönderilmeyi bekleyen yan bahisler (pozisyon → {pp, t3})
+    optSideT: {},
+    betKind: 'main', // v3.4: fişin gideceği bahis: ana bahis | pp | t3
+    fcSeen: null,
     betSeat: null,
     preRev: {},
     seenNotice: new Set(),
@@ -3707,7 +4220,7 @@ html[data-q='high'] .cd.reveal::before { background: rgba(255, 214, 130, .7); fi
     const can = t.eligible;
     const full = t.free.length === 0;
     return `<article class="lb-card ${t.tier}">
-      <div class="lbc-top"><span class="lbc-tier">${TIER[t.tier]}</span><span class="lbc-max">${betsText(t.tier)}</span>${t.visibility === 'private' ? '<span class="lbc-priv">Özel</span>' : ''}</div>
+      <div class="lbc-top"><span class="lbc-tier">${TIER[t.tier]}</span><span class="lbc-max">${betsText(t.tier)}</span>${t.side_bets ? '<span class="lbc-side" title="Yan bahisler: Perfect Pairs ve 21+3">PP · 21+3</span>' : ''}${t.visibility === 'private' ? '<span class="lbc-priv">Özel</span>' : ''}</div>
       <h3>${esc(t.name)}</h3>
       <p class="lbc-owner">Masa sahibi: ${esc(t.owner || '—')}</p>
       <div class="lbc-pots" aria-label="${t.pots} / 7 pot dolu">${Array.from({ length: 7 }, (_, i) => `<i class="${i < t.pots ? 'on' : ''}"></i>`).join('')}</div>
@@ -3756,9 +4269,9 @@ html[data-q='high'] .cd.reveal::before { background: rgba(255, 214, 130, .7); fi
   }
   /* Masa seviyeleri panelden yönetilir. v3.3: fiş değeri + en düşük / en yüksek bahis (bahis fiş katlarıyla) */
   const TIER_DEF = {
-    bronze: { min_balance: 0, chip: 10, min_bet: 10, max_bet: 50, jp_seat: 200, jp_spec: 100 },
-    silver: { min_balance: 0, chip: 20, min_bet: 20, max_bet: 100, jp_seat: 300, jp_spec: 200 },
-    gold: { min_balance: 4000, chip: 50, min_bet: 50, max_bet: 300, jp_seat: 400, jp_spec: 300 },
+    bronze: { min_balance: 0, chip: 10, min_bet: 10, max_bet: 50, jp_seat: 200, jp_spec: 100, side_max: 20 },
+    silver: { min_balance: 0, chip: 20, min_bet: 20, max_bet: 100, jp_seat: 300, jp_spec: 200, side_max: 40 },
+    gold: { min_balance: 4000, chip: 50, min_bet: 50, max_bet: 300, jp_seat: 400, jp_spec: 300, side_max: 100 },
   };
   const tiersCfg = () => Object.assign({}, TIER_DEF, (G.lobby && G.lobby.tiers) || {});
   /** Seviyenin fişi ve sınırları (eski kayıt biçimi — bahis listesi — da okunur) */
@@ -3767,7 +4280,7 @@ html[data-q='high'] .cd.reveal::before { background: rgba(255, 214, 130, .7); fi
     const b = (c.bets || []).slice().sort((x, y) => x - y);
     const chip = c.chip || b[0] || 10;
     const min = Math.max(chip, c.min_bet || b[0] || chip);
-    return { chip, min, max: Math.max(min, c.max_bet || b[b.length - 1] || min), need: c.min_balance || 0 };
+    return { chip, min, max: Math.max(min, c.max_bet || b[b.length - 1] || min), need: c.min_balance || 0, side: Math.max(chip, c.side_max || chip * 2) };
   }
   function betsText(k) {
     const L = tierLim(k);
@@ -3799,6 +4312,7 @@ html[data-q='high'] .cd.reveal::before { background: rgba(255, 214, 130, .7); fi
         </div></div>
         <div class="t-field"><span class="t-lab">Kimler görsün?</span><div class="t-seg" data-seg="vis"><button type="button" data-v="public" aria-pressed="true">Herkes</button><button type="button" data-v="private" aria-pressed="false">Özel (arkadaşlarım)</button></div></div>
         <div class="t-field"><span class="t-lab">İzleyiciler</span><div class="t-seg" data-seg="spec"><button type="button" data-v="1" aria-pressed="true">İzleyebilir, Bet Behind yapabilir</button><button type="button" data-v="0" aria-pressed="false">Kapalı</button></div></div>
+        <label class="side-check"><input type="checkbox" name="side" checked><span class="sc-box" aria-hidden="true"></span><span class="sc-t"><b>Yan bahisler: Perfect Pairs ve 21+3</b><small>Oyuncular ana bahsin yanına isteğe bağlı yan bahis koyabilir. Perfect Pairs 25:1'e, 21+3 100:1'e kadar öder.</small></span></label>
         <p class="t-note">Masa açılınca sekiz deste karıştırılır, kesme kartı yerleştirilir ve ilk üç kart yakılır. Oyun en az iki aktif pot olunca başlar.</p>
       </form>`,
       actions: [
@@ -3811,7 +4325,7 @@ html[data-q='high'] .cd.reveal::before { background: rgba(255, 214, 130, .7); fi
             const seg = (k) => $(`[data-seg="${k}"] [aria-pressed="true"]`, f).dataset.v;
             btn.disabled = true;
             try {
-              const r = await rpc('bg_bj_create', { p_name: f.name.value, p_tier: seg('tier'), p_visibility: seg('vis'), p_spectators: seg('spec') === '1' });
+              const r = await rpc('bg_bj_create', { p_name: f.name.value, p_tier: seg('tier'), p_visibility: seg('vis'), p_spectators: seg('spec') === '1', p_side: !!f.side.checked });
               openTable(r.id, false, true);
             } catch (err) {
               toast(errText(err), 'err');
@@ -3842,6 +4356,7 @@ html[data-q='high'] .cd.reveal::before { background: rgba(255, 214, 130, .7); fi
     G.wantSit = !!wantSit;
     G.chat = { open: false, list: [], unread: 0, last: 0 };
     G.seenNotice = new Set();
+    G.fcSeen = null;
     $('#lobby').hidden = true;
     $('#table').hidden = false;
     $('#chat').hidden = true;
@@ -3853,6 +4368,7 @@ html[data-q='high'] .cd.reveal::before { background: rgba(255, 214, 130, .7); fi
         onSeat: onSeatAct,
         onSettled,
         onHandAct,
+        onSide,
       });
       G.scene.dealer.setReduced(opts.reduced || opts.quality === 'low');
       $('#hud').addEventListener('click', onHud);
@@ -3917,6 +4433,8 @@ html[data-q='high'] .cd.reveal::before { background: rgba(255, 214, 130, .7); fi
     }
     // v3.3: bahis aşaması bitince ya da tur değişince gönderilmemiş (iyimser) bahisler bırakılır
     if (st.state !== 'BETTING_OPEN' || (prev && prev.round && st.round && prev.round.id !== st.round.id)) dropOpt();
+    // yeni bahis turu ana bahisle başlar (yan bahis ana bahisten sonra konur)
+    if (st.state === 'BETTING_OPEN' && (!prev || prev.state !== 'BETTING_OPEN')) G.betKind = 'main';
     G.scene.update(viewState(), G.me);
     renderHud();
     renderControls();
@@ -4082,6 +4600,7 @@ html[data-q='high'] .cd.reveal::before { background: rgba(255, 214, 130, .7); fi
       canSit: st.status === 'open' && mine.length < 2 && me && me.eligible !== false,
       canBB: st.state === 'BETTING_OPEN' && st.spectators && !mine.length,
       betting: st.state === 'BETTING_OPEN',
+      sideSel: st.state === 'BETTING_OPEN' && st.side_bets && G.betKind !== 'main' ? G.betKind : null,
       turnSeat: st.turn ? st.turn.seat : null,
       turnHand: st.turn ? st.turn.hand : null,
       turnDeadline: st.turn ? st.turn.deadline : null,
@@ -4141,7 +4660,10 @@ html[data-q='high'] .cd.reveal::before { background: rgba(255, 214, 130, .7); fi
     if (act === 'sit') {
       SND.play('click');
       call('bg_bj_sit', { p_seat: seat, p_session: SESSION });
-    } else if (act === 'bet') bumpBet(seat, 'chip');
+    } else if (act === 'bet') {
+      if (G.betKind !== 'main' && sideOn() && seatBet(seat)) bumpSide(seat, G.betKind, 'chip');
+      else bumpBet(seat, 'chip');
+    }
     else if (act === 'bb') bbBump(seat, 'chip');
     else if (act === 'stand') {
       const inPlay = mySeatInPlay(seat);
@@ -4204,9 +4726,10 @@ html[data-q='high'] .cd.reveal::before { background: rgba(255, 214, 130, .7); fi
       next = L.max;
     }
     if (next) {
-      const other = mySeatNos()
-        .filter((n) => n !== no)
-        .reduce((a, n) => a + seatBet(n), 0);
+      const other = mySeatNos().reduce((a, n) => {
+        const x = seatSide(n);
+        return a + (n !== no ? seatBet(n) : 0) + (seatBet(n) ? x.pp + x.t3 : 0);
+      }, 0);
       const room = ((G.me && G.me.balance) || 0) - other;
       if (next > room) {
         const fit = room >= L.min ? L.min + Math.floor((room - L.min) / L.chip) * L.chip : 0;
@@ -4220,6 +4743,11 @@ html[data-q='high'] .cd.reveal::before { background: rgba(255, 214, 130, .7); fi
     G.betSeat = no;
     if (next === cur) return false;
     G.opt[no] = next;
+    // ana bahis kalkınca yan bahisler de kalkar (sunucu satırı siler)
+    if (!next) {
+      clearTimeout(G.optSideT[no]);
+      delete G.optSide[no];
+    }
     playing(true);
     SND.play(next > cur ? 'chip' : 'click', 1);
     if (navigator.vibrate) navigator.vibrate(8);
@@ -4232,29 +4760,128 @@ html[data-q='high'] .cd.reveal::before { background: rgba(255, 214, 130, .7); fi
     clearTimeout(G.optT[no]);
     const amount = G.opt[no];
     if (amount == null) return true;
-    const r = await call('bg_bj_bet', { p_seat: no, p_amount: amount }, null, true);
-    if (G.opt[no] === amount || !r) delete G.opt[no];
-    paint();
-    return !!r;
+    const p = (async () => {
+      const r = await call('bg_bj_bet', { p_seat: no, p_amount: amount }, null, true);
+      if (G.opt[no] === amount || !r) delete G.opt[no];
+      paint();
+      return !!r;
+    })();
+    G.optP[no] = p;
+    try {
+      return await p;
+    } finally {
+      if (G.optP[no] === p) delete G.optP[no];
+    }
   }
   async function flushBets() {
     let ok = true;
     for (const no of Object.keys(G.opt).map(Number)) ok = (await flushBet(no)) && ok;
+    for (const no of Object.keys(G.optSide).map(Number)) ok = (await flushSide(no)) && ok;
     return ok;
   }
   function dropOpt() {
     Object.keys(G.optT).forEach((k) => clearTimeout(G.optT[k]));
+    Object.keys(G.optSideT).forEach((k) => clearTimeout(G.optSideT[k]));
     G.opt = {};
     G.optT = {};
+    G.optSide = {};
+    G.optSideT = {};
+  }
+
+  /* ---------------- v3.4 yan bahisler: Perfect Pairs ve 21+3 ----------------
+     Ana bahsi olan pozisyona, masanın fişiyle (fiş – yan bahis sınırı). Alttaki "Ana bahis / Perfect Pairs /
+     21+3" seçimi fişin, Max'ın ve bahis alanına dokunuşun hangi bahse gideceğini belirler. */
+  const SIDE_LBL = { pp: 'Perfect Pairs', t3: '21+3' };
+  const sideOn = () => !!(G.st && G.st.side_bets);
+  function sideLim() {
+    const L = betLim();
+    return { chip: L.chip, max: Math.max(L.chip, (G.st && G.st.side_max) || L.chip * 2) };
+  }
+  /** Pozisyonun (iyimser) yan bahisleri */
+  function seatSide(no) {
+    const o = G.optSide[no];
+    const s = G.st && (G.st.seats || []).find((x) => x.no === no);
+    const sd = (s && s.side) || {};
+    const live = !sd.st || sd.st === 'none';
+    return { pp: o ? o.pp : live ? sd.pp || 0 : 0, t3: o ? o.t3 : live ? sd.t3 || 0 : 0 };
+  }
+  function sideValid(v) {
+    const S = sideLim();
+    return !!v && v >= S.chip && v <= S.max && v % S.chip === 0;
+  }
+  /** Yan bahsi değiştir: how = 'chip' | 'max' | 'clear' | sayı */
+  function bumpSide(no, kind, how, quiet) {
+    const st = G.st;
+    if (!st || st.state !== 'BETTING_OPEN' || !mySeatNos().includes(no) || !sideOn()) return false;
+    if (!seatBet(no)) {
+      toast('Yan bahis için önce bu pozisyona ana bahsini koy.', 'info');
+      return false;
+    }
+    const S = sideLim();
+    const cur = seatSide(no);
+    const was = cur[kind];
+    let next = how === 'clear' ? 0 : how === 'max' ? S.max : typeof how === 'number' ? how : was + S.chip;
+    if (next > S.max) {
+      if (was >= S.max) {
+        toast(`${SIDE_LBL[kind]} bu masada en fazla ${fmt(S.max)} BP.`, 'info');
+        return false;
+      }
+      next = S.max;
+    }
+    if (next > was) {
+      const used = mySeatNos().reduce((a, n) => {
+        const x = seatSide(n);
+        return a + seatBet(n) + x.pp + x.t3;
+      }, 0) - was;
+      const room = ((G.me && G.me.balance) || 0) - used;
+      if (next > room) {
+        const fit = Math.floor(room / S.chip) * S.chip;
+        if (fit <= was) {
+          toast('BP bakiyen bu yan bahis için yetmiyor.', 'err');
+          return false;
+        }
+        next = fit;
+      }
+    }
+    G.betSeat = no;
+    if (next === was) return false;
+    G.optSide[no] = Object.assign({}, cur, { [kind]: next });
+    playing(true);
+    if (!quiet) {
+      SND.play(next > was ? 'chip' : 'click', 1);
+      if (navigator.vibrate) navigator.vibrate(8);
+    }
+    paint();
+    clearTimeout(G.optSideT[no]);
+    G.optSideT[no] = setTimeout(() => flushSide(no), 260);
+    return next > was;
+  }
+  async function flushSide(no) {
+    clearTimeout(G.optSideT[no]);
+    if (!G.optSide[no]) return true;
+    // yan bahis ana bahsin satırına yazılır: yoldaki ana bahis beklenir, bekleyen ana bahis önce gider
+    if (G.optP[no]) await G.optP[no];
+    if (G.opt[no] != null && !(await flushBet(no))) return false;
+    const cur = G.optSide[no];
+    if (!cur) return true;
+    const r = await call('bg_bj_side', { p_seat: no, p_pp: cur.pp, p_t3: cur.t3 }, null, true);
+    if (G.optSide[no] === cur || !r) delete G.optSide[no];
+    paint();
+    return !!r;
   }
   /** Ekrana çizilen durum: bahis aşamasında gönderilmeyi bekleyen bahisler işlenmiş kopya */
   function viewState() {
     const st = G.st;
-    if (!st || st.state !== 'BETTING_OPEN' || !Object.keys(G.opt).length) return st;
+    if (!st || st.state !== 'BETTING_OPEN' || (!Object.keys(G.opt).length && !Object.keys(G.optSide).length)) return st;
     return Object.assign({}, st, {
-      seats: (st.seats || []).map((s) =>
-        G.opt[s.no] != null && G.opt[s.no] !== s.bet ? Object.assign({}, s, { bet: G.opt[s.no] || 0, confirmed: false, bet_status: G.opt[s.no] ? 'pending' : null }) : s,
-      ),
+      seats: (st.seats || []).map((s) => {
+        let x = s;
+        if (G.opt[s.no] != null && G.opt[s.no] !== s.bet) x = Object.assign({}, x, { bet: G.opt[s.no] || 0, confirmed: false, bet_status: G.opt[s.no] ? 'pending' : null });
+        const o = G.optSide[s.no];
+        if (!x.bet && x.side) x = Object.assign({}, x, { side: null });
+        else if (x.bet && o) x = Object.assign({}, x, { confirmed: false, side: o.pp || o.t3 ? { pp: o.pp, t3: o.t3, st: 'none' } : null });
+        return x;
+      }),
     });
   }
   function paint() {
@@ -4360,9 +4987,14 @@ html[data-q='high'] .cd.reveal::before { background: rgba(255, 214, 130, .7); fi
       const anyBet = mySeats.some((s) => seatBet(s.no));
       const allOk = mySeats.every((s) => {
         const x = st.seats.find((y) => y.no === s.no) || {};
-        return !seatBet(s.no) || (x.confirmed && G.opt[s.no] == null);
+        return !seatBet(s.no) || (x.confirmed && G.opt[s.no] == null && !G.optSide[s.no]);
       });
       const canRebet = mySeats.some((s) => !seatBet(s.no) && betValid(s.last_bet));
+      const side = sideOn();
+      if (!side) G.betKind = 'main';
+      const kind = G.betKind;
+      const sd = seatSide(tgt);
+      const S = sideLim();
       const tabs = mySeats.length > 1
         ? `<span class="dk-tabs">${mySeats.map((s) => {
             const x = st.seats.find((y) => y.no === s.no) || {};
@@ -4370,13 +5002,23 @@ html[data-q='high'] .cd.reveal::before { background: rgba(255, 214, 130, .7); fi
             return `<button type="button" data-bs="${s.no}" aria-pressed="${s.no === tgt}"><em>P${s.no}</em>${b ? fmt(b) + (x.confirmed && G.opt[s.no] == null ? ' ✓' : '') : '—'}</button>`;
           }).join('')}</span>`
         : '';
-      const info = `<p class="dk-who"><b>Bahis</b><span class="dk-amt">${fmt(amt)} BP</span><small>${fmt(L.min)}–${fmt(L.max)} BP · fiş ${fmt(L.chip)}</small></p>${tabs}${arPills(mySeats)}`;
+      // v3.4: bahis türü seçimi (yan bahis açık masalarda)
+      const kinds = side
+        ? `<span class="dk-kind" role="group" aria-label="Bahis türü">${[['main', 'Ana bahis', 'Ana', amt], ['pp', 'Perfect Pairs', 'PP', sd.pp], ['t3', '21+3', '21+3', sd.t3]]
+            .map(([k, l, sh, v]) => `<button type="button" class="bk-${k}" data-bk="${k}" aria-pressed="${k === kind}" aria-label="${l}"><span class="kl">${l}</span><span class="ks">${sh}</span><em>${v ? fmt(v) : '—'}</em></button>`)
+            .join('')}</span>`
+        : '';
+      const who = kind === 'main'
+        ? `<p class="dk-who${side ? ' has-kind' : ''}"><b>Bahis</b><span class="dk-amt">${fmt(amt)} BP</span><small>${fmt(L.min)}–${fmt(L.max)} BP · fiş ${fmt(L.chip)}</small></p>`
+        : `<p class="dk-who has-kind"><b class="bk-t">${SIDE_LBL[kind]}</b><span class="dk-amt">${fmt(sd[kind])} BP</span><small>${kind === 'pp' ? 'İlk iki kartın çift: 6:1 · 12:1 · 25:1' : 'İki kartın + krupiyenin açık kartı: 5:1 – 100:1'} · en fazla ${fmt(S.max)} BP</small></p>`;
+      const info = `${who}${kinds}${tabs}${arPills(mySeats)}`;
+      const maxOk = kind === 'main' ? amt < L.max : !!amt && sd[kind] < S.max;
       html = dock(
         'bet',
         info,
         sbtn('data-clear', ic.clear, 'Temizle', { ok: anyBet }) + sbtn('data-rebet', ic.redo, 'Tekrarla', { ok: canRebet, aria: 'Son bahsini tekrarla' }),
-        sbtn('data-max', ic.max, 'Max', { ok: amt < L.max, aria: `En yüksek bahis (${fmt(L.max)} BP)` }) + sbtn('data-confirm', ic.check, 'Onayla', { ok: anyBet && !allOk, cls: 'go' }),
-        chipBtn(L, `${fmt(L.chip)} BP fiş ekle`),
+        sbtn('data-max', ic.max, 'Max', { ok: maxOk, aria: kind === 'main' ? `En yüksek bahis (${fmt(L.max)} BP)` : `${SIDE_LBL[kind]} en fazla (${fmt(S.max)} BP)` }) + sbtn('data-confirm', ic.check, 'Onayla', { ok: anyBet && !allOk, cls: 'go' }),
+        chipBtn(L, kind === 'main' ? `${fmt(L.chip)} BP fiş ekle` : `${SIDE_LBL[kind]} için ${fmt(L.chip)} BP fiş ekle`),
       );
     } else if (st.state === 'BETTING_OPEN' && st.spectators && !mySeats.length) {
       const bb = me.bb && me.bb.status === 'PENDING' ? me.bb : null;
@@ -4480,7 +5122,9 @@ html[data-q='high'] .cd.reveal::before { background: rgba(255, 214, 130, .7); fi
       if ((me.seats || []).length) {
         const no = betTarget();
         const r = b.getBoundingClientRect();
-        if (bumpBet(no, 'chip') && G.scene.tossChip) G.scene.tossChip(no, { x: r.left + r.width / 2, y: r.top + r.height / 2 }, betLim().chip);
+        const k = sideOn() ? G.betKind : 'main';
+        const up = k === 'main' ? bumpBet(no, 'chip') : bumpSide(no, k, 'chip');
+        if (up && G.scene.tossChip) G.scene.tossChip(no, { x: r.left + r.width / 2, y: r.top + r.height / 2 }, betLim().chip, k);
         return;
       }
       return bbBump(null, 'chip');
@@ -4490,7 +5134,13 @@ html[data-q='high'] .cd.reveal::before { background: rgba(255, 214, 130, .7); fi
       SND.play('click');
       return renderControls();
     }
-    if (b.hasAttribute('data-max')) return bumpBet(betTarget(), 'max');
+    if (b.dataset.bk) {
+      G.betKind = b.dataset.bk;
+      SND.play('click');
+      paint();
+      return;
+    }
+    if (b.hasAttribute('data-max')) return sideOn() && G.betKind !== 'main' ? bumpSide(betTarget(), G.betKind, 'max') : bumpBet(betTarget(), 'max');
     if (b.hasAttribute('data-bbmax')) return bbBump(null, 'max');
     if (b.hasAttribute('data-clear')) {
       for (const s of me.seats || []) if (seatBet(s.no)) bumpBet(s.no, 'clear');
@@ -4503,9 +5153,13 @@ html[data-q='high'] .cd.reveal::before { background: rgba(255, 214, 130, .7); fi
       return call('bg_bj_bet_confirm', {}, null, true);
     }
     if (b.hasAttribute('data-rebet')) {
-      // son bahsi, bahsi olmayan pozisyonlara tekrar koy
+      // son bahsi (yan bahisleriyle birlikte), bahsi olmayan pozisyonlara tekrar koy
       (me.seats || []).forEach((s) => {
-        if (!seatBet(s.no) && betValid(s.last_bet)) bumpBet(s.no, s.last_bet);
+        if (seatBet(s.no) || !betValid(s.last_bet)) return;
+        bumpBet(s.no, s.last_bet);
+        if (!sideOn() || !seatBet(s.no)) return;
+        if (sideValid(s.last_pp)) bumpSide(s.no, 'pp', s.last_pp, true);
+        if (sideValid(s.last_t3)) bumpSide(s.no, 't3', s.last_t3, true);
       });
       return;
     }
@@ -4582,6 +5236,16 @@ html[data-q='high'] .cd.reveal::before { background: rgba(255, 214, 130, .7); fi
     if (prev && prev.state !== 'BETTING_OPEN' && st.state === 'BETTING_OPEN' && (G.me && G.me.seats || []).length) SND.play('turn');
   }
 
+  /* v3.4: kendi yan bahis sonucum (dağıtımdan hemen sonra) */
+  const SIDE_RES = { perfect: 'Mükemmel çift', colored: 'Renkli çift', mixed: 'Karışık çift', suited_trips: 'Aynı türden üçlü',
+                     straight_flush: 'Sıralı floş', trips: 'Üçlü', straight: 'Kent', flush: 'Floş' };
+  function onSide(s, sd, live) {
+    if (!live || !s.user || s.user.id !== myId()) return;
+    const won = [];
+    if (sd.pp_pay > 0) won.push(`Perfect Pairs: ${SIDE_RES[sd.pp_r] || ''} ${sd.pp_pay / sd.pp - 1}:1 (+${fmt(sd.pp_pay - sd.pp)} BP)`);
+    if (sd.t3_pay > 0) won.push(`21+3: ${SIDE_RES[sd.t3_r] || ''} ${sd.t3_pay / sd.t3 - 1}:1 (+${fmt(sd.t3_pay - sd.t3)} BP)`);
+    if (won.length) toast(`P${s.no} yan bahis kazandı! ${won.join(' · ')}`, 'good');
+  }
   /* ---------------- sonuç paneli (kendi sonucum) ---------------- */
   function onSettled(st) {
     const id = myId();
@@ -4599,8 +5263,10 @@ html[data-q='high'] .cd.reveal::before { background: rgba(255, 214, 130, .7); fi
       });
     });
     let kind = null;
+    // v3.4: yan bahis oynandıysa sonuç net kazanca göre (ana el kaybedip yan bahis kazandırmış olabilir)
+    const side = st.seats.some((s) => s.user && s.user.id === id && s.side && s.side.st === 'settled');
     if (n) {
-      if (outs.length === 1) kind = outs[0] === 'blackjack' ? 'blackjack' : outs[0];
+      if (outs.length === 1 && !side) kind = outs[0] === 'blackjack' ? 'blackjack' : outs[0];
       else kind = bj && net > 0 ? 'blackjack' : net > 0 ? 'win' : net < 0 ? 'lose' : 'push';
     }
     const bb = G.me && G.me.bb;
@@ -4615,7 +5281,7 @@ html[data-q='high'] .cd.reveal::before { background: rgba(255, 214, 130, .7); fi
     }
     if (!kind) return;
     setTimeout(() => {
-      G.scene.showResult(kind, net, n > 1 ? `${n} pot toplamı` : bb && !n ? `Bet Behind · P${bb.seat}` : '');
+      G.scene.showResult(kind, net, n > 1 ? `${n} pot toplamı${side ? ', yan bahisler dahil' : ''}` : side ? 'Yan bahisler dahil' : bb && !n ? `Bet Behind · P${bb.seat}` : '');
       SND.play(kind === 'blackjack' ? 'blackjack' : kind === 'win' ? 'win' : kind === 'push' || kind === 'refund' ? 'push' : 'lose');
     }, 900);
   }
@@ -4636,11 +5302,20 @@ html[data-q='high'] .cd.reveal::before { background: rgba(255, 214, 130, .7); fi
         bb_dropped: d.why === 'seat_left' ? `P${d.seat} oyuncusu kalktığı için Bet Behind bahsin kaldırıldı.` : `P${d.seat} bu turda oynamadığı için Bet Behind bahsin alınmadı.`,
         pre_invalid: `Ön hamlen uygulanamadı: ${d.why || ''} Şimdi karar ver.`,
         leave: d.why === 'balance' ? `P${d.seat}: BP bakiyen bu masanın eşiğinin altına düştü, pozisyondan kalktın. İzlemeye devam edebilirsin.` : d.why === 'disconnected' ? `P${d.seat}: Uzun süre bağlantı olmadığı için pozisyon boşaltıldı.` : null,
+        side_dropped: `P${d.seat}: BP bakiyen yetmediği için yan bahsin alınmadı; ana bahsin oynuyor.`,
       };
       const txt = map[n.type];
       if (txt) toast(txt, n.type === 'leave' || n.type === 'bb_refund' ? 'err' : 'info');
     });
     G.noticeReady = true;
+    // v3.4: arkadaşlarla her 10 elde Friend Coins (masaya girerken görülen eski kayıt bildirilmez)
+    const fc = G.me && G.me.fc;
+    const fid = fc ? fc.id : 0;
+    if (G.fcSeen === null) G.fcSeen = fid;
+    else if (fid && fid !== G.fcSeen) {
+      G.fcSeen = fid;
+      if (fc.amount > 0) toast(`🤝 Arkadaşlarınla oynadığın eller için +${fmt(fc.amount)} Friend Coins`, 'good');
+    }
   }
 
   /* =====================================================================
@@ -4863,7 +5538,8 @@ html[data-q='high'] .cd.reveal::before { background: rgba(255, 214, 130, .7); fi
         <p><b>Ön seçim:</b> Sıran gelmeden kararını seçebilirsin: alttaki çubukta ya da oynadığın elin altındaki <b>Hit</b> (mavi), <b>Stand</b> (kırmızı), <b>2x</b> (yeşil), <b>Split</b> (sarı) düğmeleriyle. Seçim onay işaretiyle durur; tekrar dokununca ya da kırmızı X ile kalkar. Sıra gelince uygulanır; Hit yalnızca bir kart demektir. Geçersizleşen ön seçim uygulanmaz, karar süresi verilir.</p>
         <p><b>Masalar:</b> ${['bronze', 'silver', 'gold'].map((k) => `${TIER[k]} ${betsText(k)}, ${fmt(tierLim(k).chip)} BP'lik fişlerle${tierLim(k).need > 0 ? ` (oturmak için güncel bakiye en az ${fmt(tierLim(k).need)} BP)` : ''}`).join(' · ')}. Fişe ya da bahis alanına her dokunuş bir fiş ekler; Max en yüksek bahsi koyar. Bir masada en fazla 2 pozisyon. Oyun en az 2 aktif potla başlar.</p>
         <p><b>Bet Behind:</b> İzleyici bahis aşamasında bir oyuncunun bahis alanına dokunarak arkasına fiş koyar (turda tek pozisyon). Ana oyuncunun bütün kararlarını takip eder; Double ve Split'te aynı tutarda ek bahis zorunlu alınır. Ek bahis karşılanamazsa o turdaki bütün Bet Behind bahislerin iade edilir.</p>
-        <p><b>Auto Rebet:</b> Açık pozisyonda her yeni bahis turunda son bahsi bir kez koyar. Bakiye yetmezse bahis koymaz. Pozisyondan kalkınca, masadan ayrılınca ya da bağlantı kopunca kapanır.</p>
+        <p><b>Yan bahisler</b> (masayı açan kişi kapatmadıysa): Ana bahsi olan pozisyona, alttaki çubuktan <b>Perfect Pairs</b> ya da <b>21+3</b> seçilerek masanın fişiyle konur; en fazla ${['bronze', 'silver', 'gold'].map((k) => `${TIER[k]} ${fmt(tierLim(k).side)}`).join(' / ')} BP. Ana elin sonucundan bağımsızdır ve ilk dağıtımdan hemen sonra sonuçlanır. <b>Perfect Pairs</b> ilk iki kartına bakar: mükemmel çift (aynı kart, aynı tür) 25:1, renkli çift (aynı renk, farklı tür) 12:1, karışık çift (farklı renk) 6:1. <b>21+3</b> ilk iki kartın ve krupiyenin açık kartıyla üç kartlık poker elidir: aynı türden üçlü 100:1, sıralı floş 40:1, üçlü 30:1, kent (sıralı) 10:1, floş (aynı tür) 5:1. Kazanınca bahis de geri verilir. Bakiye yetmezse yalnız yan bahis alınmaz, ana bahis oynar.</p>
+        <p><b>Auto Rebet:</b> Açık pozisyonda her yeni bahis turunda son ana bahsi bir kez koyar (yan bahisleri koymaz; Tekrarla düğmesi yan bahisleri de tekrarlar). Bakiye yetmezse bahis koymaz. Pozisyondan kalkınca, masadan ayrılınca ya da bağlantı kopunca kapanır.</p>
         <p><b>Jackpot:</b> Yedi potun yedisi de aynı turda kazanır ve bu 5 tur üst üste olursa jackpot: pot başına ${['bronze', 'silver', 'gold'].map((k) => `${TIER[k]} ${fmt(tiersCfg()[k].jp_seat)}`).join(', ')} BP; geçerli Bet Behind'ı olan izleyiciye ${['bronze', 'silver', 'gold'].map((k) => fmt(tiersCfg()[k].jp_spec)).join(' / ')} BP. Beraberlik, kayıp, teslim, boş pot ya da pot sahibinin değişmesi seriyi sıfırlar; kesme kartı sıfırlamaz.</p>
       </div>`,
       actions: [{ label: 'Kapat', kind: 'primary' }],
@@ -4977,7 +5653,7 @@ html[data-q='high'] .cd.reveal::before { background: rgba(255, 214, 130, .7); fi
      sohbette görselleriyle görünür ve avatarların yanında efekt olarak oynar.
      ===================================================================== */
   const giftSrc = (code, x) => `assets/gifts/${code}${x === 2 ? '@2x' : ''}.webp`;
-  const emoSrc = (pack, code) => `assets/emoji/${pack}/${code}.webp`;
+  const emoSrc = (pack, code) => (T.emojiSrc ? T.emojiSrc(pack, code) : `assets/emoji/${pack}/${code}.webp`);
   async function loadChat() {
     const id = G.tableId;
     try {
