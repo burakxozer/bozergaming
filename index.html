@@ -3,26 +3,41 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-<title>Bözer Gaming</title>
-<meta name="description" content="Americano, Somali, dart, kura ve lig için skor tabloları. Oyunların hesabına kaydedilir, arkadaşların canlı izler.">
+<title>Bözer Gaming · Arkadaşlarınla online oyun masaları</title>
+<meta name="description" content="Blackjack, Americano, Dost Kazığı, Pişti ve Tavla: arkadaşlarınla aynı masada oyna, BP kazan, rozet bas, emoji ve hediye gönder. Dart, Somali ve lig için skor tabloları da burada.">
 <meta name="theme-color" content="#15122c">
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-title" content="Bözer Gaming">
-<meta property="og:title" content="Bözer Gaming">
-<meta property="og:description" content="Masadaki oyunun skor tablosu. Skorunu tut, oyunun hesabına kaydedilsin, arkadaşların canlı izlesin.">
-<meta property="og:image" content="assets/icons/og.png">
+<!-- Bağlantı önizlemesi (WhatsApp, Telegram, X): görsel adresi tam adres olmalı. Site başka bir adrese taşınırsa
+     aşağıdaki iki adresteki "https://burakxozer.github.io/bozergaming/" kısmını yeni adresle değiştir. -->
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="Bözer Gaming">
+<meta property="og:locale" content="tr_TR">
+<meta property="og:url" content="https://burakxozer.github.io/bozergaming/">
+<meta property="og:title" content="Bözer Gaming · Arkadaşlarınla online oyun masaları">
+<meta property="og:description" content="Blackjack, Americano, Dost Kazığı, Pişti ve Tavla. Arkadaşlarınla aynı masada oyna, BP kazan, rozet bas, emoji ve hediye gönder.">
+<meta property="og:image" content="https://burakxozer.github.io/bozergaming/assets/icons/og.jpg?v=3.4.1">
+<meta property="og:image:secure_url" content="https://burakxozer.github.io/bozergaming/assets/icons/og.jpg?v=3.4.1">
+<meta property="og:image:type" content="image/jpeg">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta property="og:image:alt" content="Bözer Gaming: Blackjack, Americano, Dost Kazığı, Pişti ve Tavla online masaları">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="Bözer Gaming · Arkadaşlarınla online oyun masaları">
+<meta name="twitter:description" content="Blackjack, Americano, Dost Kazığı, Pişti ve Tavla. Arkadaşlarınla aynı masada oyna, BP kazan, rozet bas.">
+<meta name="twitter:image" content="https://burakxozer.github.io/bozergaming/assets/icons/og.jpg?v=3.4.1">
 <link rel="manifest" href="manifest.webmanifest">
-<link rel="icon" href="assets/icons/favicon.svg?v=3.4.0" type="image/svg+xml">
-<link rel="icon" href="assets/icons/icon-192.png?v=3.4.0" type="image/png" sizes="192x192">
-<link rel="apple-touch-icon" href="assets/icons/apple-touch-icon.png?v=3.4.0">
+<link rel="icon" href="assets/icons/favicon.svg?v=3.4.1" type="image/svg+xml">
+<link rel="icon" href="assets/icons/icon-192.png?v=3.4.1" type="image/png" sizes="192x192">
+<link rel="apple-touch-icon" href="assets/icons/apple-touch-icon.png?v=3.4.1">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="preconnect" href="https://cdn.jsdelivr.net" crossorigin>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Archivo:wdth,wght@62..125,300..900&display=swap">
-<link rel="stylesheet" href="assets/css/app.css?v=3.4.0">
-<link rel="stylesheet" href="assets/css/badges.css?v=3.4.0">
-<link rel="stylesheet" href="assets/css/econ.css?v=3.4.0">
+<link rel="stylesheet" href="assets/css/app.css?v=3.4.1">
+<link rel="stylesheet" href="assets/css/badges.css?v=3.4.1">
+<link rel="stylesheet" href="assets/css/econ.css?v=3.4.1">
 <script>
   try { var t = JSON.parse(localStorage.getItem('bg.theme')); if (t) document.documentElement.setAttribute('data-theme', t); } catch (e) {}
 </script>
@@ -91,11 +106,38 @@
   </ul>
 </template>
 
+<template id="tpl-rules-pisti">
+  <ul>
+    <li><strong>Deste ve dağıtım:</strong> 52 kartlık deste. Her oyuncuya 4 kart dağıtılır, yere 4 kart konur: üçü kapalı, en üstteki açık. Eller bitince desteden yeniden 4’er kart dağıtılır.</li>
+    <li><strong>Kart alma:</strong> Attığın kart yerdeki en üst kartla aynı değerdeyse yerdeki bütün kartları alırsın. Vale her zaman yerdekileri alır (yer boş değilse).</li>
+    <li><strong>Pişti:</strong> Yerde tek kart varken aynı değerdeki kartla alırsan pişti olur: 10 puan. Tek valeyi valeyle alırsan vale piştisi: 20 puan.</li>
+    <li><strong>Puanlar:</strong> Her as 1, her vale 1, sinek 2 → 2, karo 10 → 3 puan. En çok kartı alan 3 puan alır (eşitlikte kimse almaz).</li>
+    <li><strong>El sonu:</strong> Deste bitince yerde kalan kartlar son alan oyuncuya gider ve el puanlanır.</li>
+    <li><strong>Oyun sonu:</strong> Hedef puana (51, 101 ya da 151) ilk ulaşan kazanır; eşitlikte bir el daha oynanır.</li>
+    <li><strong>Eşli oyun:</strong> 4 kişide karşılıklı oturanlar takımdır; aldıkları kartlar ve puanlar birlikte sayılır. Kazanan takımın iki oyuncusu 1. ve 2. sıranın ödülünü paylaşır.</li>
+    <li><strong>Online masa:</strong> Hamle süresi dolarsa kartın otomatik atılır. Bağlantın koparsa yerine bot oynar; oyundan çıkarsan koltuğunda bot oynamaya devam eder.</li>
+  </ul>
+</template>
+
+<template id="tpl-rules-tavla">
+  <ul>
+    <li><strong>Amaç:</strong> 15 taşını tahtanın etrafında dolaştırıp evine getirmek ve ilk sen toplamak.</li>
+    <li><strong>Başlangıç:</strong> İki oyuncu birer zar atar; büyük atan başlar ve iki zarı da oynar. Zarlar sunucuda atılır.</li>
+    <li><strong>Hamle:</strong> Her zar için bir taşı o kadar ilerletirsin; çift atınca dört hamle yaparsın. Rakibin iki ya da daha çok taşı olan haneye (kapıya) giremezsin.</li>
+    <li><strong>Kırma:</strong> Rakibin tek taşı olan haneye gelirsen taşı kırılır ve bara gider. Kırık taşı olan önce o taşı rakibin evinden oyuna sokar.</li>
+    <li><strong>Zorunluluk:</strong> Oynayabildiğin kadar zarı oynamalısın; yalnız biri oynanabiliyorsa büyük zar oynanır. Hamlen yoksa sıra geçer.</li>
+    <li><strong>Toplama:</strong> Bütün taşların evindeyken taş toplarsın. Zardan uzakta taşın yoksa büyük zarla en uzaktaki taşı toplarsın.</li>
+    <li><strong>Puan:</strong> Oyunu kazanan 1 sayı alır; rakip hiç taş toplamadan bitirirsen mars: 2 sayı. Maç seçilen sayıya (1, 3 ya da 5) ilk ulaşanındır.</li>
+    <li><strong>Online masa:</strong> Hamle süresi dolarsa hamlen otomatik oynanır. Son hamlenden sonra kısa bir süre “Geri al” ile değiştirebilirsin.</li>
+  </ul>
+</template>
+
 <template id="tpl-rules-blackjack">
   <ul>
     <li><strong>Amaç:</strong> Elinin toplamını 21’i geçmeden krupiyenin elinden yükseğe çıkarmak. 2–10 kendi değeri, J/Q/K 10, As 1 ya da 11 sayılır.</li>
     <li><strong>Masa:</strong> 7 pot vardır. Bir oyuncu aynı masada en fazla 2 pota oturabilir. Tur başlaması için en az 2 bağlı pot, kart dağıtılması için en az 2 bahis gerekir.</li>
-    <li><strong>Bahis ve kademeler:</strong> Bronze masada en fazla 10 BP, Silver’da 20 BP, Gold’da 100 BP bahis yapılır. Silver’a girmek için 4.000, Gold’a girmek için 8.000 BP bakiye gerekir. Bahis süresi 15 saniyedir; herkes onaylarsa tur erken başlar.</li>
+    <li><strong>Bahis ve kademeler:</strong> Bronze masada 10–50 BP (10’luk fiş), Silver’da 20–100 BP (20’lik fiş), Gold’da 50–300 BP (50’lik fiş) bahis yapılır; Gold’a oturmak için 4.000 BP bakiye gerekir (değerler panelden değişebilir). Bahis süresi 20 saniyedir; masadaki herkes “Hazır” derse süre 3 saniyeye iner.</li>
+    <li><strong>Yan bahisler:</strong> Masayı kuran açarsa Perfect Pairs (karışık çift 6:1, renkli çift 12:1, aynı çift 25:1) ve 21+3 (renk 5:1, kent 10:1, üçlü 30:1, kent floş 40:1, aynı üçlü 100:1) oynanır.</li>
     <li><strong>Sabot:</strong> 8 deste karıştırılır, kesme kartı sona yakın bir yere konur ve ilk 3 kart yakılır. Kesme kartı çıkınca o tur tamamlanır, sonraki tur yeni sabotla başlar.</li>
     <li><strong>Dağıtım:</strong> Her oyuncuya 2 açık kart, krupiyeye 1 açık 1 kapalı kart verilir. Krupiyenin açık kartı As ya da 10 değerindeyse krupiye kapalı karta bakar; blackjack varsa el hemen sonuçlanır.</li>
     <li><strong>Sigorta:</strong> Krupiyenin açık kartı As ise bahsinin yarısı kadar sigorta alabilirsin. Krupiye blackjack yaparsa sigorta 2’ye 1 öder.</li>
@@ -167,20 +209,20 @@
 </template>
 
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-<script src="assets/js/config.js?v=3.4.0"></script>
-<script src="assets/js/core.js?v=3.4.0"></script>
-<script src="assets/js/api.js?v=3.4.0"></script>
-<script src="assets/js/bp.js?v=3.4.0"></script>
-<script src="assets/js/shop.js?v=3.4.0"></script>
-<script src="assets/js/player.js?v=3.4.0"></script>
-<script src="assets/js/home.js?v=3.4.0"></script>
-<script src="assets/js/home3.js?v=3.4.0"></script>
-<script src="assets/js/auth.js?v=3.4.0"></script>
-<script src="assets/js/profile.js?v=3.4.0"></script>
-<script src="assets/js/social.js?v=3.4.0"></script>
-<script src="assets/js/admin.js?v=3.4.0"></script>
-<script src="assets/js/host.js?v=3.4.0"></script>
-<script src="assets/js/watch.js?v=3.4.0"></script>
-<script src="assets/js/app.js?v=3.4.0"></script>
+<script src="assets/js/config.js?v=3.4.1"></script>
+<script src="assets/js/core.js?v=3.4.1"></script>
+<script src="assets/js/api.js?v=3.4.1"></script>
+<script src="assets/js/bp.js?v=3.4.1"></script>
+<script src="assets/js/shop.js?v=3.4.1"></script>
+<script src="assets/js/player.js?v=3.4.1"></script>
+<script src="assets/js/home.js?v=3.4.1"></script>
+<script src="assets/js/home3.js?v=3.4.1"></script>
+<script src="assets/js/auth.js?v=3.4.1"></script>
+<script src="assets/js/profile.js?v=3.4.1"></script>
+<script src="assets/js/social.js?v=3.4.1"></script>
+<script src="assets/js/admin.js?v=3.4.1"></script>
+<script src="assets/js/host.js?v=3.4.1"></script>
+<script src="assets/js/watch.js?v=3.4.1"></script>
+<script src="assets/js/app.js?v=3.4.1"></script>
 </body>
 </html>

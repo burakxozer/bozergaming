@@ -8,8 +8,8 @@
 <link rel="preconnect" href="https://fonts.googleapis.com" />
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
 <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@600;700;800&family=Manrope:wght@400;500;600;700;800&display=swap" rel="stylesheet" />
-<link rel="stylesheet" href="assets/css/bg-table.css?v=3.4.0" />
-<link rel="stylesheet" href="assets/css/badges.css?v=3.4.0" />
+<link rel="stylesheet" href="assets/css/bg-table.css?v=3.4.1" />
+<link rel="stylesheet" href="assets/css/badges.css?v=3.4.1" />
 <style>
 /* =====================================================================
    Bözer Royale — görünüm: zümrüt keçe, siyah ve altın, sıcak ışık
@@ -1061,6 +1061,43 @@ html[data-q='high'] .cd.reveal::before { background: rgba(255, 214, 130, .7); fi
 .sc-t b { font-size: 14px; color: #fff; }
 .sc-t small { font-size: 12px; line-height: 1.4; color: var(--muted, #b7b0a0); }
 
+/* ---------------- v3.4.1: yan bahis sayaçları, Hazır, masadaki yuvalar ---------------- */
+.sbk-row { display: inline-flex; align-items: center; gap: 6px; flex-wrap: wrap; }
+.sbk { --c: #f3d892; --ink: #1d1404; display: inline-flex; align-items: stretch; border-radius: 99px; background: rgba(0, 0, 0, .4); border: 1px solid color-mix(in srgb, var(--c) 55%, transparent); overflow: hidden; }
+.sbk.sbk-t3 { --c: #8cc8ff; --ink: #06223c; }
+.sbk-add { display: inline-flex; align-items: center; gap: 6px; min-height: 34px; padding: 0 12px 0 5px; border: 0; background: none; color: var(--c); font: 800 13px var(--ui); cursor: pointer; white-space: nowrap; }
+.sbk-add i { display: grid; place-items: center; min-width: 26px; height: 24px; padding: 0 6px; border-radius: 99px; font-style: normal; font-size: 11px; font-weight: 900; color: var(--ink); background: var(--c); }
+.sbk-add b { font-variant-numeric: tabular-nums; color: #fff; }
+.sbk.on { background: color-mix(in srgb, var(--c) 18%, rgba(0, 0, 0, .55)); box-shadow: 0 0 12px color-mix(in srgb, var(--c) 35%, transparent); }
+.sbk.on .sbk-add b { color: var(--c); }
+.sbk.off { opacity: .5; }
+.sbk-add:active { transform: scale(.96); }
+.sbk-x { min-width: 30px; border: 0; border-left: 1px solid color-mix(in srgb, var(--c) 35%, transparent); background: rgba(0, 0, 0, .3); color: #fff; font: 800 16px/1 var(--ui); cursor: pointer; }
+.sbk-cap { font-size: 11px; color: var(--muted); white-space: nowrap; }
+@media (max-width: 420px) {
+  .sbk-cap { display: none; }
+  .sbk-add { padding: 0 10px 0 4px; font-size: 12.5px; min-height: 32px; }
+}
+.ab.go.done { filter: saturate(.75); }
+.ab.go.done .ab-d { box-shadow: 0 0 0 2px #63e6a8, 0 0 16px rgba(99, 230, 168, .5); }
+/* masadaki yan bahis yuvaları kendi pozisyonumda dokunulabilir */
+.sp.tap { pointer-events: auto; cursor: pointer; }
+.sp.tap:hover { filter: brightness(1.15); }
+.sp.ghost.tap { animation: spGhost 1.4s ease-in-out infinite; }
+.sp.ghost.tap b { font-size: 20px; }
+/* v3.4.1: krupiyesiz görünüm: sahnenin üstü kırpılır, mesaj kartı ortada */
+.bj-stage.no-dealer .bj-dealer { visibility: hidden; }
+.bj-stage.no-dealer .dmsg.bubble { transform: translate(-50%, -50%); }
+.bj-stage.no-dealer .dmsg.bubble::before { display: none; }
+/* v3.4.1: yatay telefonda yan bahis sayaçları kısa (masayı örtmesin) */
+@media (max-height: 500px) and (orientation: landscape) {
+  .sbk-cap { display: none; }
+  .sbk-row { flex-wrap: nowrap; gap: 4px; }
+  .sbk-add { min-height: 28px; padding: 0 8px 0 3px; font-size: 11.5px; gap: 4px; }
+  .sbk-add i { min-width: 22px; height: 20px; padding: 0 4px; font-size: 9.5px; }
+  .sbk-x { min-width: 24px; font-size: 14px; }
+}
+
 </style>
 </head>
 <body>
@@ -1072,7 +1109,7 @@ html[data-q='high'] .cd.reveal::before { background: rgba(255, 214, 130, .7); fi
   <footer id="controls" class="bj-controls"></footer>
 </section>
 <aside id="chat" class="bj-chat" hidden aria-label="Masa sohbeti"></aside>
-<script src="assets/js/bg-table.js?v=3.4.0"></script>
+<script src="assets/js/bg-table.js?v=3.4.1"></script>
 <script>
 /* ---- cards.js ---- */
 /* =====================================================================
@@ -1218,9 +1255,32 @@ html[data-q='high'] .cd.reveal::before { background: rgba(255, 214, 130, .7); fi
     const c = CHIPS.find((x) => x.v <= v) || CHIPS[CHIPS.length - 1];
     return `<use href="#bjchipb-${c.v}"/>${chipText(v, c.text)}`;
   }
+  /** v3.4.1: masanın fiş birimi (Bronze 10, Silver 20, Gold 50…). Bahis bu fişlerle konduğu için yığın da
+      aynı fişlerle gösterilir: 2 × 20 BP → iki tane 20'lik fiş (25 + 10 + 5 değil). */
+  let unit = 0;
+  function setUnit(u) {
+    unit = Math.max(0, Math.round(+u || 0));
+  }
   /** Tutarı fiş yığınına böler (büyükten küçüğe) */
   function chipsFor(amount) {
     let a = Math.max(0, Math.round(amount));
+    const u = unit;
+    if (u > 0 && a > 0 && a % u === 0) {
+      const n = a / u;
+      if (n <= 10) return Array(n).fill(u);
+      // büyük tutar: birimin katı olan fişlerle (en fazla 12 fiş)
+      const den = CHIPS.map((c) => c.v).filter((v) => v > u && v % u === 0);
+      den.push(u);
+      den.sort((x, y) => y - x);
+      const out = [];
+      for (const v of den) {
+        while (a >= v && out.length < 12) {
+          out.push(v);
+          a -= v;
+        }
+      }
+      return out.reverse();
+    }
     const out = [];
     for (const c of CHIPS) {
       while (a >= c.v && out.length < 12) {
@@ -1234,7 +1294,7 @@ html[data-q='high'] .cd.reveal::before { background: rgba(255, 214, 130, .7); fi
   function stackHTML(amount, cls) {
     const list = chipsFor(amount);
     return `<div class="chips ${cls || ''}" style="--n:${list.length}">${list
-      .map((v, i) => `<svg class="chip" style="--i:${i}" viewBox="0 0 100 100"><use href="#bjchip-${v}"/></svg>`)
+      .map((v, i) => `<svg class="chip" style="--i:${i}" viewBox="0 0 100 100">${chipSVG(v)}</svg>`)
       .join('')}</div>`;
   }
   const cardHTML = (code, extra, style, title) =>
@@ -1262,7 +1322,7 @@ html[data-q='high'] .cd.reveal::before { background: rgba(255, 214, 130, .7); fi
     return { total: soft ? t + 10 : t, soft };
   }
 
-  window.BJCards = { defs, cardHTML, stackHTML, chipsFor, chipSVG, chipLabel, cardName, handValue, value, RANKS, SUITS, CHIPS };
+  window.BJCards = { defs, cardHTML, stackHTML, chipsFor, chipSVG, chipLabel, cardName, handValue, value, RANKS, SUITS, CHIPS, setUnit };
 })();
 
 /* ---- table.js ---- */
@@ -1285,6 +1345,7 @@ html[data-q='high'] .cd.reveal::before { background: rgba(255, 214, 130, .7); fi
       shoe: { x: 1066, y: 322 }, discard: { x: 534, y: 322 }, tray: { x: 800, y: 312 },
       title: { y: 500, size: 44 }, card: 100, dcard: 104, push: 106, msg: 418,
       bubble: { x: 872, y: 92 },
+      crop: 226, // v3.4.1: krupiye gizliyken kırpılan üst kısım (sabot ve krupiye kartları görünür kalır)
     },
     /* Telefon dik: masa daha dar ve uzun, yazılar ölçeğe göre büyük */
     port: {
@@ -1299,6 +1360,7 @@ html[data-q='high'] .cd.reveal::before { background: rgba(255, 214, 130, .7); fi
       // dar ekranda P2/P6 kartları içeri çekilir (P1/P7 isim plakasına binmesin);
       // sağ yarıdaki potlarda (P1–P3) kart yelpazesi sağdan sabitlenir, sola doğru büyür
       pull: [0.1, 0.38, 0.1, 0.1, 0.1, 0.38, 0.1], endAnchor: [1, 1, 1, 0, 0, 0, 0],
+      crop: 238, zoomX: 1.07,
     },
   };
 
@@ -1810,7 +1872,164 @@ html[data-q='high'] .cd.reveal::before { background: rgba(255, 214, 130, .7); fi
     </g>
   </g>
 </svg>`;
-  const SKINS = { neriman: { svg: SVG, name: 'Neriman' }, alev: { svg: SVG_ALEV, name: 'Alev' } };
+  /* v3.4.1: çizgi film futbolcu krupiyeler — Golcü Doruk (sarı-kırmızı forma) ve Kanatçı Kayra (sarı-lacivert
+     çizgili forma). Kulüp logosu ya da gerçek kişi benzerliği yok; aynı iskelet ve sınıf adları (bütün animasyonlar çalışır). */
+  function footballer(o) {
+    const p = o.id;
+    const T = `M150 336 C158 300 206 286 258 272 L342 272 C394 286 442 300 450 336 L466 560 L134 560 Z`;
+    const kit =
+      o.kit === 'split'
+        ? `<rect x="120" y="260" width="180" height="300" fill="url(#${p}A)"/><rect x="300" y="260" width="180" height="300" fill="url(#${p}B)"/>
+           <path d="M300 300 V560" stroke="${o.trim}" stroke-width="3" opacity=".7"/>`
+        : `<rect x="120" y="260" width="360" height="300" fill="url(#${p}B)"/>` +
+          [168, 228, 288, 348, 408].map((x) => `<rect x="${x}" y="260" width="28" height="300" fill="url(#${p}A)"/>`).join('');
+    const sleeve = (side) => (o.kit === 'split' ? (side === 'l' ? `url(#${p}A)` : `url(#${p}B)`) : `url(#${p}B)`);
+    const band = (side) => (o.kit === 'split' ? (side === 'l' ? o.a2 : o.b2) : o.b2);
+    const arm = (side, x) => `
+    <g class="dl-arm dl-arm-${side}" data-x="${x}" data-y="318">
+      <path d="M-22 -6 C-24 40 -21 90 -18 128 L18 128 C21 90 24 40 22 -6 C10 -16 -10 -16 -22 -6 Z" fill="url(#${p}SkinArm)"/>
+      <path d="M-9 84 Q-3 98 -7 114" stroke="${o.skinD}" stroke-width="2" fill="none" opacity=".35" stroke-linecap="round"/>
+      <path d="M-27 -10 C-29 16 -28 38 -26 60 Q0 68 26 60 C28 38 29 16 27 -10 C14 -22 -14 -22 -27 -10 Z" fill="${sleeve(side)}"/>
+      <path d="M-26 57 Q0 65 26 57" stroke="${o.trim}" stroke-width="4.5" fill="none"/>
+      <path d="M-20 10 Q-14 30 -18 48" stroke="#000" stroke-width="2" fill="none" opacity=".12" stroke-linecap="round"/>
+      <g class="dl-fore">
+        <path d="M-18 0 C-17 40 -14 80 -12 104 L12 104 C14 80 17 40 18 0 Z" fill="url(#${p}SkinArm)"/>
+        <path d="M-6 30 Q0 40 -3 56" stroke="${o.skinD}" stroke-width="1.6" fill="none" opacity=".3" stroke-linecap="round"/>
+        <rect x="-15" y="86" width="30" height="17" rx="6" fill="${band(side)}" stroke="rgba(0,0,0,.35)" stroke-width="1.2"/>
+        <path d="M-15 94.5 H15" stroke="${o.trim}" stroke-width="2.4"/>
+        <g class="dl-hand">
+          <path d="M-14 -2 C-17 12 -17 27 -13 37 C-9 47 9 47 13 37 C17 27 17 12 14 -2 Z" fill="url(#${p}SkinArm)"/>
+          <path d="${side === 'l' ? 'M-12 28 C-13 40 -11 52 -8 58 M-4 32 C-5 44 -4 56 -2 62 M5 32 C5 44 5 55 6 60 M13 26 C15 38 14 48 13 54' : 'M-13 26 C-15 38 -14 48 -13 54 M-5 32 C-5 44 -5 55 -6 60 M4 32 C5 44 4 56 2 62 M12 28 C13 40 11 52 8 58'}" stroke="url(#${p}SkinArm)" stroke-width="7.6" stroke-linecap="round" fill="none"/>
+          <path d="M-9 30 Q0 34 9 30" stroke="${o.skinD}" stroke-width="1.2" fill="none" opacity=".35"/>
+          <g class="dl-card" opacity="0"><rect x="-17" y="34" width="34" height="46" rx="4" fill="#0f3d2a" stroke="#c9a24d" stroke-width="2"/></g>
+        </g>
+      </g>
+    </g>`;
+    return `
+<svg class="dl-svg dl-${o.id}" viewBox="0 0 600 560" aria-hidden="true">
+  <defs>
+    <radialGradient id="${p}Skin" cx="42%" cy="36%" r="70%"><stop offset="0" stop-color="${o.skin0}"/><stop offset=".55" stop-color="${o.skin1}"/><stop offset="1" stop-color="${o.skin2}"/></radialGradient>
+    <linearGradient id="${p}SkinArm" x1="0" x2="1"><stop offset="0" stop-color="${o.skin2}"/><stop offset=".5" stop-color="${o.skin0}"/><stop offset="1" stop-color="${o.skin2}"/></linearGradient>
+    <linearGradient id="${p}Neck" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="${o.skinD}"/><stop offset=".5" stop-color="${o.skin1}"/><stop offset="1" stop-color="${o.skin1}"/></linearGradient>
+    <linearGradient id="${p}Hair" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="${o.hair0}"/><stop offset=".55" stop-color="${o.hair1}"/><stop offset="1" stop-color="${o.hair2}"/></linearGradient>
+    <linearGradient id="${p}A" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="${o.a0}"/><stop offset="1" stop-color="${o.a1}"/></linearGradient>
+    <linearGradient id="${p}B" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="${o.b0}"/><stop offset="1" stop-color="${o.b1}"/></linearGradient>
+    <linearGradient id="${p}Shade" x1="0" x2="1"><stop offset="0" stop-color="#000" stop-opacity=".42"/><stop offset=".22" stop-color="#000" stop-opacity="0"/><stop offset=".78" stop-color="#000" stop-opacity="0"/><stop offset="1" stop-color="#000" stop-opacity=".42"/></linearGradient>
+    <radialGradient id="${p}Iris" cx="50%" cy="45%" r="55%"><stop offset="0" stop-color="${o.iris0}"/><stop offset=".6" stop-color="${o.iris1}"/><stop offset="1" stop-color="#140c06"/></radialGradient>
+    <filter id="${p}Soft" x="-20%" y="-20%" width="140%" height="140%"><feGaussianBlur stdDeviation="3"/></filter>
+    <filter id="${p}ShadowF" x="-20%" y="-20%" width="140%" height="160%"><feGaussianBlur stdDeviation="6"/></filter>
+    <clipPath id="${p}Table"><rect x="0" y="0" width="600" height="498"/></clipPath>
+    <clipPath id="${p}Torso"><path d="${T}"/></clipPath>
+  </defs>
+  <ellipse cx="300" cy="512" rx="196" ry="20" fill="#000" opacity=".35" filter="url(#${p}ShadowF)"/>
+  <g class="dl-rig">
+    <!-- gövde: forma (logosuz), V yaka, göğüste numara -->
+    <g class="dl-body" clip-path="url(#${p}Table)">
+      <g clip-path="url(#${p}Torso)">${kit}<path d="${T}" fill="url(#${p}Shade)"/>
+        <path d="M206 330 C226 380 246 430 256 498 M394 330 C374 380 354 430 344 498" stroke="#000" stroke-width="3" fill="none" opacity=".12"/>
+        <path d="M232 300 C262 318 338 318 368 300" stroke="#fff" stroke-width="2" fill="none" opacity=".18"/></g>
+      <path d="M266 270 L300 318 L334 270 Z" fill="url(#${p}Neck)"/>
+      <path d="M260 268 L300 324 L340 268" fill="none" stroke="${o.collar}" stroke-width="9" stroke-linejoin="round"/>
+      <path d="M262 272 L300 326 L338 272" fill="none" stroke="${o.trim}" stroke-width="2.4" stroke-linejoin="round"/>
+      <text x="${o.kit === 'split' ? 352 : 354}" y="372" text-anchor="middle" font-family="'Arial Black', Impact, sans-serif" font-weight="900" font-size="34" fill="${o.numFill}" stroke="${o.numStroke}" stroke-width="2.4" paint-order="stroke">${o.num}</text>
+    </g>
+
+    <!-- baş -->
+    <g class="dl-head">
+      ${o.back || ''}
+      <path d="M272 206 L274 270 Q300 286 326 270 L328 206 Z" fill="url(#${p}Neck)"/>
+      <path d="M276 236 Q300 254 324 236 L325 250 Q300 266 275 250 Z" fill="${o.skinD}" opacity=".35"/>
+      <ellipse cx="233" cy="162" rx="9.5" ry="16" fill="${o.skin1}"/><ellipse cx="367" cy="162" rx="9.5" ry="16" fill="${o.skin2}"/>
+      <path d="M231 154 Q236 162 232 170 M369 154 Q364 162 368 170" stroke="${o.skinD}" stroke-width="2" fill="none" opacity=".5"/>
+      <path d="M300 90 C348 90 366 122 366 158 C366 186 360 206 346 222 C334 236 318 242 300 244 C282 242 266 236 254 222 C240 206 234 186 234 158 C234 122 252 90 300 90 Z" fill="url(#${p}Skin)"/>
+      <path d="M350 196 C340 220 322 234 300 240 C320 230 334 214 342 194 Z" fill="${o.skinD}" opacity=".28"/>
+      <path d="M244 170 C248 200 266 224 300 236 C272 224 254 200 250 172 Z" fill="${o.skinD}" opacity=".2" filter="url(#${p}Soft)"/>
+      <ellipse cx="262" cy="188" rx="15" ry="8" fill="#ef8a7a" opacity=".2" filter="url(#${p}Soft)"/>
+      <ellipse cx="338" cy="188" rx="15" ry="8" fill="#ef8a7a" opacity=".2" filter="url(#${p}Soft)" class="dl-blush"/>
+      ${o.freckles ? '<g fill="#b9784f" opacity=".45"><circle cx="258" cy="180" r="1.5"/><circle cx="265" cy="184" r="1.3"/><circle cx="252" cy="186" r="1.2"/><circle cx="342" cy="180" r="1.5"/><circle cx="335" cy="184" r="1.3"/><circle cx="348" cy="186" r="1.2"/><circle cx="294" cy="172" r="1.1"/><circle cx="306" cy="172" r="1.1"/></g>' : ''}
+      <ellipse cx="300" cy="226" rx="22" ry="10" fill="${o.skinD}" opacity="${o.stubble || 0}" filter="url(#${p}Soft)"/>
+      <path d="M298 146 Q297 166 296 176" stroke="#fff" stroke-width="2.4" stroke-linecap="round" fill="none" opacity=".25"/>
+      <!-- kaşlar -->
+      <g class="dl-brows" fill="none" stroke="${o.brow}" stroke-width="5.4" stroke-linecap="round">
+        <path d="M252 137 Q270 127 288 133"/><path d="M312 133 Q330 127 348 137"/>
+      </g>
+      <!-- gözler -->
+      <g class="dl-eyes">
+        <path d="M256 158 Q271 147 287 157 Q271 166 256 158 Z" fill="#fdfaf6"/>
+        <path d="M313 157 Q329 147 344 158 Q329 166 313 157 Z" fill="#fdfaf6"/>
+        <g class="dl-iris">
+          <circle cx="271.5" cy="156.8" r="6.4" fill="url(#${p}Iris)"/><circle cx="271.5" cy="156.8" r="2.7" fill="#0b0805"/><circle cx="273.8" cy="154.4" r="1.8" fill="#fff"/>
+          <circle cx="328.5" cy="156.8" r="6.4" fill="url(#${p}Iris)"/><circle cx="328.5" cy="156.8" r="2.7" fill="#0b0805"/><circle cx="330.8" cy="154.4" r="1.8" fill="#fff"/>
+        </g>
+        <g class="dl-lids" fill="${o.skin1}">
+          <path class="dl-lid" d="M254 157 Q271 144 289 156 Q271 168 254 157 Z"/>
+          <path class="dl-lid" d="M311 156 Q329 144 346 157 Q329 168 311 156 Z"/>
+        </g>
+        <g fill="none" stroke="#1a0d07" stroke-linecap="round" stroke-width="2.6">
+          <path d="M254 158 Q270 145 289 155"/><path d="M311 155 Q330 145 346 158"/>
+        </g>
+        <path d="M258 166 Q271 170 284 165 M316 165 Q329 170 342 166" stroke="${o.skinD}" stroke-width="1.4" fill="none" opacity=".45"/>
+      </g>
+      <!-- burun -->
+      <path d="M297 160 Q295 177 290 186" fill="none" stroke="${o.skinD}" stroke-width="2" stroke-linecap="round" opacity=".75"/>
+      <path d="M288 189 Q294 195 300 192.5 Q306 195 312 189" fill="none" stroke="${o.skinD}" stroke-width="2" stroke-linecap="round"/>
+      <!-- ağız -->
+      <g class="dl-mouth-n">
+        <path d="M282 207 Q300 214 318 205" fill="none" stroke="${o.lip}" stroke-width="3.4" stroke-linecap="round"/>
+        <path d="M290 214 Q300 217 310 214" fill="none" stroke="#fff" stroke-width="1.6" stroke-linecap="round" opacity=".3"/>
+      </g>
+      <g class="dl-mouth-s">
+        <path d="M277 202 Q300 232 323 202 Q300 208 277 202 Z" fill="#5a1a12"/>
+        <path d="M281 203.4 Q300 209 319 203.4 Q300 215 281 203.4 Z" fill="#fff"/>
+        <path d="M290 219 Q300 225 310 219 Q300 216 290 219 Z" fill="#d65a5a"/>
+        <path d="M277 202 Q300 208 323 202" fill="none" stroke="${o.lip}" stroke-width="2.2" stroke-linecap="round"/>
+      </g>
+      ${o.hair}
+    </g>
+    ${arm('l', 166)}
+    ${arm('r', 434)}
+    <!-- forma omuzları kolların üstünde -->
+    <g class="dl-caps" clip-path="url(#${p}Table)">
+      <path d="M138 352 C140 322 154 304 180 296 C198 291 212 290 224 292 C208 304 198 318 194 334 C192 342 192 350 193 356 Z" fill="${sleeve('l')}"/>
+      <path d="M462 352 C460 322 446 304 420 296 C402 291 388 290 376 292 C392 304 402 318 406 334 C408 342 408 350 407 356 Z" fill="${sleeve('r')}"/>
+      <path d="M148 340 C154 318 170 304 192 298 M452 340 C446 318 430 304 408 298" stroke="${o.trim}" stroke-width="2" fill="none" opacity=".75"/>
+    </g>
+    <!-- karıştırma destesi -->
+    <g class="dl-deck" opacity="0" transform="translate(300 500)">
+      <rect x="-58" y="-16" width="52" height="34" rx="4" fill="#0f3d2a" stroke="#c9a24d" stroke-width="2"/>
+      <rect x="6" y="-16" width="52" height="34" rx="4" fill="#0f3d2a" stroke="#c9a24d" stroke-width="2"/>
+      <path class="dl-riffle" d="M-14 -20 Q0 -36 14 -20" fill="none" stroke="#f3ead2" stroke-width="10" opacity=".9"/>
+    </g>
+  </g>
+</svg>`;
+  }
+  // Golcü Doruk: buğday ten, jöleli kısa siyah saç (yanları degrade), sarı-kırmızı ikiye bölünmüş forma, 9 numara
+  const SVG_DORUK = footballer({
+    id: 'doruk', kit: 'split', num: '9', numFill: '#c8102e', numStroke: '#fff3c4',
+    a0: '#ffd23a', a1: '#e6a800', a2: '#ffc400', b0: '#e3263f', b1: '#9e0b20', b2: '#c8102e', trim: '#fff2b8', collar: '#c8102e',
+    skin0: '#f0c8a2', skin1: '#d9a27a', skin2: '#b87a52', skinD: '#8f5634', lip: '#8a4130', brow: '#1a120c', iris0: '#a07040', iris1: '#4a2a12', stubble: '.22',
+    hair0: '#3a3a40', hair1: '#16161a', hair2: '#050506',
+    hair: `<path d="M236 156 C230 120 244 88 270 74 C286 66 312 64 330 70 C352 78 368 104 366 156 C362 136 356 122 346 114 C334 106 318 102 300 102 C282 102 266 106 254 114 C244 122 238 136 236 156 Z" fill="url(#dorukHair)"/>
+      <path d="M250 96 L256 70 L268 86 L276 58 L290 80 L300 54 L312 78 L326 58 L332 84 L346 70 L350 98 C334 86 316 82 300 82 C282 82 264 86 250 96 Z" fill="url(#dorukHair)"/>
+      <path d="M236 156 C234 140 236 126 242 116 L246 150 Z M364 156 C366 140 364 126 358 116 L354 150 Z" fill="#2a2a30" opacity=".55"/>
+      <path d="M246 126 C250 112 258 104 268 100 L262 118 L272 108 L276 124 L286 106 L292 120 L300 102 L306 118 L316 104 L322 120 L330 106 L336 122 L344 108 C350 114 354 120 356 128 C350 112 336 102 300 100 C266 102 252 112 246 126 Z" fill="url(#dorukHair)"/>
+      <path d="M268 84 C276 74 290 70 300 72 M304 70 C318 70 332 76 340 86 M270 102 C280 94 292 92 302 94 M310 92 C322 92 332 98 338 104" stroke="#7a7a88" stroke-width="2.4" fill="none" opacity=".55" stroke-linecap="round"/>`,
+  });
+  // Kanatçı Kayra: açık ten, çilli, geriye toplanmış topuz koyu kumral saç ve ince saç bandı, sarı-lacivert çizgili forma, 11 numara
+  const SVG_KAYRA = footballer({
+    id: 'kayra', kit: 'stripes', num: '11', numFill: '#ffffff', numStroke: '#0b1f5e', freckles: true,
+    a0: '#ffe14d', a1: '#e6bc00', a2: '#ffd500', b0: '#1d3a8c', b1: '#081646', b2: '#0b1f5e', trim: '#ffd500', collar: '#0b1f5e',
+    skin0: '#fde3cf', skin1: '#f2c6a8', skin2: '#d9a283', skinD: '#b57a5c', lip: '#b2574c', brow: '#4a2c18', iris0: '#9cc98a', iris1: '#3d6b3a', stubble: '.08',
+    hair0: '#8a5a34', hair1: '#5a3418', hair2: '#2e180a',
+    back: '<circle cx="300" cy="64" r="22" fill="url(#kayraHair)"/><path d="M286 62 C292 54 308 54 314 62" stroke="#b07a4a" stroke-width="2.4" fill="none" opacity=".7"/><rect x="290" y="80" width="20" height="8" rx="3" fill="#0b1f5e"/>',
+    hair: `<path d="M236 158 C230 118 252 82 300 80 C348 82 370 118 364 158 C360 132 350 116 336 108 C320 100 306 100 300 100 C294 100 280 100 264 108 C250 116 240 132 236 158 Z" fill="url(#kayraHair)"/>
+      <path d="M252 104 C268 96 286 92 300 92 C314 92 332 96 348 104" stroke="#111" stroke-width="5" fill="none" stroke-linecap="round"/>
+      <path d="M262 92 C272 86 286 84 296 86 M304 86 C316 84 330 88 340 94 M248 120 C252 110 260 102 270 98 M352 120 C348 110 340 102 330 98" stroke="#b07a4a" stroke-width="2.4" fill="none" opacity=".65" stroke-linecap="round"/>
+      <path d="M242 132 C238 146 240 160 246 172 C246 158 248 146 252 136 Z M358 132 C362 146 360 160 354 172 C354 158 352 146 348 136 Z" fill="url(#kayraHair)"/>
+      <path d="M262 112 C280 100 304 100 326 112 C336 118 342 126 344 134 C334 122 318 114 300 114 C290 114 282 118 276 124 C272 118 266 116 262 112 Z" fill="url(#kayraHair)"/>
+      <path d="M276 108 C290 104 310 104 326 112" stroke="#c08a58" stroke-width="2" fill="none" opacity=".6" stroke-linecap="round"/>`,
+  });
+  const SKINS = { neriman: { svg: SVG, name: 'Neriman' }, alev: { svg: SVG_ALEV, name: 'Alev' }, doruk: { svg: SVG_DORUK, name: 'Doruk' }, kayra: { svg: SVG_KAYRA, name: 'Kayra' } };
 
   /* Pozlar: her kol için [omuz, dirsek, bilek] açıları (derece, 0 = aşağı) */
   const POSE = {
@@ -2532,13 +2751,26 @@ html[data-q='high'] .cd.reveal::before { background: rgba(255, 214, 130, .7); fi
   Scene.prototype.fit = function (w, h) {
     const L = this.L;
     if (!L) return;
-    const s = Math.min(w / L.W, h / L.H);
+    this._fitW = w;
+    this._fitH = h;
+    // v3.4.1: krupiye gizliyse sahnenin üst kısmı (krupiyenin durduğu yer) kırpılır, masa büyür
+    const y0 = this.noDealer ? L.crop || 0 : 0;
+    const Hv = L.H - y0;
+    let s = Math.min(w / L.W, h / Hv);
+    // dikey telefonda genişlik sınırlıyor: kenarlardan az kırparak biraz daha büyüt
+    if (this.noDealer && L.zoomX && h / Hv > s) s = Math.min(s * L.zoomX, h / Hv);
     this.scale = s;
     // el altı karar düğmeleri ekranda en az ~32 px görünsün (sahne birimine çevrilir)
     this.stage.style.setProperty('--hb', Math.round(Math.max(36, Math.min(74, 33 / Math.max(0.2, s)))) + 'px');
     const x = (w - L.W * s) / 2;
-    const y = Math.max(0, (h - L.H * s) / 2);
+    const y = Math.max(0, (h - Hv * s) / 2) - y0 * s;
     this.stage.style.transform = `translate(${x}px, ${y}px) scale(${s})`;
+    this.stage.classList.toggle('no-dealer', !!this.noDealer);
+  };
+  /** v3.4.1: krupiyeyi gizle / göster (ayar bu cihazda saklanır) */
+  Scene.prototype.setNoDealer = function (on) {
+    this.noDealer = !!on;
+    if (this._fitW) this.fit(this._fitW, this._fitH);
   };
 
   /** v3.4: masanın görünümü — kurucunun kuşandığı krupiye (Alev Pack) ve keçe; yan bahis yazısı */
@@ -2608,9 +2840,13 @@ html[data-q='high'] .cd.reveal::before { background: rgba(255, 214, 130, .7); fi
     (st.seats || []).forEach((s) => {
       const sd = s.side;
       const mine = s.user && ctx.myId && s.user.id === ctx.myId;
-      // seçili yan bahsin boş yuvası (kendi bahsi olan pozisyonlarımda, bahis aşamasında)
-      const sel = mine && ctx.sideSel && s.bet && s.bet_status !== 'dropped' ? ctx.sideSel : null;
-      if (sel && !(sd && sd[sel])) want.set('g:' + s.no + ':' + sel, { ghost: true, seat: s.no, kind: sel, cls: 'ghost sel' });
+      // v3.4.1: ana bahsi olan kendi pozisyonlarımda bahis aşamasında iki yan bahis yuvası da dokunulabilir
+      // (boşsa "+" yuvası; dokununca masanın fişi eklenir)
+      const tap = !!(mine && ctx.sideTap && s.bet && s.bet_status !== 'dropped');
+      const sel = null;
+      if (tap) ['pp', 't3'].forEach((k) => {
+        if (!(sd && sd[k] && sd.st !== 'dropped' && sd.st !== 'refunded')) want.set('g:' + s.no + ':' + k, { ghost: true, seat: s.no, kind: k, cls: 'ghost tap' });
+      });
       if (!sd || s.bet_status === 'dropped' || s.bet_status === 'refunded' || sd.st === 'dropped' || sd.st === 'refunded') return;
       const rk = rid + ':' + s.no;
       let phase = sd.st === 'placed' ? 'in' : 'wait';
@@ -2628,7 +2864,7 @@ html[data-q='high'] .cd.reveal::before { background: rgba(255, 214, 130, .7); fi
         const amt = sd[k] || 0;
         if (!amt) return;
         const pay = sd[k + '_pay'] || 0;
-        const cls = (phase === 'wait' ? 'wait' : 'in') + (phase === 'show' ? (pay > 0 ? ' won' : ' lost') : '') + (sel === k ? ' sel' : '');
+        const cls = (phase === 'wait' ? 'wait' : 'in') + (phase === 'show' ? (pay > 0 ? ' won' : ' lost') : '') + (sel === k ? ' sel' : '') + (tap && phase !== 'show' ? ' tap' : '');
         want.set(rk + ':' + k, { seat: s.no, kind: k, amt, pay, res: sd[k + '_r'], phase, cls });
       });
     });
@@ -2680,6 +2916,8 @@ html[data-q='high'] .cd.reveal::before { background: rgba(255, 214, 130, .7); fi
       }
       const cls = 'sp sp-' + w.kind + ' ' + w.cls;
       const html = this.sideHTML(w);
+      el.dataset.seat = w.seat;
+      el.dataset.kind = w.kind;
       if (el.className !== cls) el.className = cls;
       if (el._h !== html) {
         el.innerHTML = html;
@@ -3638,7 +3876,7 @@ html[data-q='high'] .cd.reveal::before { background: rgba(255, 214, 130, .7); fi
         break;
       case 'BETTING_OPEN':
         title = 'Bahislerinizi koyun';
-        sub = ctx.hasSeat ? 'Fişe dokun, bahsini kur ve onayla.' : ctx.canBB ? 'Bir oyuncunun bahis alanına dokunarak Bet Behind yapabilirsin.' : 'Oyuncular bahislerini koyuyor.';
+        sub = ctx.hasSeat ? (st.side_bets ? 'Fişe dokun, bahsini kur, Hazır’a bas. Yan bahis: yuvadaki PP / 21+3.' : 'Fişe dokun, bahsini kur, Hazır’a bas.') : ctx.canBB ? 'Bir oyuncunun bahis alanına dokunarak Bet Behind yapabilirsin.' : 'Oyuncular bahislerini koyuyor.';
         timer = dl;
         total = 15000;
         mode = 'hero';
@@ -3717,7 +3955,7 @@ html[data-q='high'] .cd.reveal::before { background: rgba(255, 214, 130, .7); fi
     if (st.status === 'closing' && !title) sub = 'Masa bu turdan sonra kapanacak.';
     const m = this.msg;
     const secs = Math.max(0, Math.ceil(timer / 1000));
-    const key = `${this.layout}|${mode}|${tone}|${title}|${sub}`;
+    const key = `${this.layout}|${mode}|${tone}|${title}|${sub}|${this.noDealer ? 'nd' : ''}`;
     if (this._msgKey !== key) {
       this._msgKey = key;
       if (!title && !sub) m.el.hidden = true;
@@ -3725,7 +3963,7 @@ html[data-q='high'] .cd.reveal::before { background: rgba(255, 214, 130, .7); fi
         m.el.hidden = false;
         m.el.className = 'dmsg ' + mode + (tone ? ' t-' + tone : '');
         const L = this.L;
-        if (mode === 'hero') {
+        if (mode === 'hero' || this.noDealer) {
           m.el.style.left = L.cx + 'px';
           m.el.style.top = (st.dealer && st.dealer.cards && st.dealer.cards.length ? L.dcards.y + this.dcw * 0.95 : L.msg) + 'px';
         } else {
@@ -3735,7 +3973,7 @@ html[data-q='high'] .cd.reveal::before { background: rgba(255, 214, 130, .7); fi
         m.title.textContent = title;
         m.sub.textContent = sub;
         m.sub.hidden = !sub;
-        const tx = mode === 'hero' ? '-50%' : '0';
+        const tx = mode === 'hero' || this.noDealer ? '-50%' : '0';
         if (!this.calm()) m.el.animate([{ opacity: 0, transform: `translate(${tx},-50%) scale(.94)` }, { opacity: 1, transform: `translate(${tx},-50%) scale(1)` }], { duration: 240, easing: 'ease-out' });
       }
     }
@@ -3914,6 +4152,8 @@ html[data-q='high'] .cd.reveal::before { background: rgba(255, 214, 130, .7); fi
     const prev = this.st;
     this.st = st;
     this.me = me || {};
+    // v3.4.1: fiş yığınları masanın fişiyle (koyduğun fişler aynen görünür)
+    if (C.setUnit) C.setUnit(st.chip || ((st.bets || []).slice().sort((a, b) => a - b)[0]) || 0);
     const ctx = this.hooks.ctx ? this.hooks.ctx(st, this.me) : {};
     const rid = st.round ? st.round.id : null;
     if (rid !== this.roundId) {
@@ -4371,6 +4611,18 @@ html[data-q='high'] .cd.reveal::before { background: rgba(255, 214, 130, .7); fi
         onSide,
       });
       G.scene.dealer.setReduced(opts.reduced || opts.quality === 'low');
+      G.scene.setNoDealer(noDealer());
+      // v3.4.1: masadaki yan bahis yuvasına dokun → o yan bahse fiş ekle
+      $('#scene').addEventListener('click', (e) => {
+        const sp = e.target.closest('.sp.tap');
+        if (!sp) return;
+        e.stopPropagation();
+        const no = +sp.dataset.seat;
+        const k = sp.dataset.kind;
+        if (!no || (k !== 'pp' && k !== 't3')) return;
+        const r = sp.getBoundingClientRect();
+        if (bumpSide(no, k, 'chip') && G.scene.tossChip) G.scene.tossChip(no, { x: r.left + r.width / 2, y: r.top + r.height + 40 }, betLim().chip, k);
+      }, true);
       $('#hud').addEventListener('click', onHud);
       $('#controls').addEventListener('click', onControls);
       // kontrol paneli büyüyüp küçüldükçe masa yeniden sığdırılır
@@ -4600,7 +4852,7 @@ html[data-q='high'] .cd.reveal::before { background: rgba(255, 214, 130, .7); fi
       canSit: st.status === 'open' && mine.length < 2 && me && me.eligible !== false,
       canBB: st.state === 'BETTING_OPEN' && st.spectators && !mine.length,
       betting: st.state === 'BETTING_OPEN',
-      sideSel: st.state === 'BETTING_OPEN' && st.side_bets && G.betKind !== 'main' ? G.betKind : null,
+      sideTap: st.state === 'BETTING_OPEN' && !!st.side_bets,
       turnSeat: st.turn ? st.turn.seat : null,
       turnHand: st.turn ? st.turn.hand : null,
       turnDeadline: st.turn ? st.turn.deadline : null,
@@ -4660,10 +4912,7 @@ html[data-q='high'] .cd.reveal::before { background: rgba(255, 214, 130, .7); fi
     if (act === 'sit') {
       SND.play('click');
       call('bg_bj_sit', { p_seat: seat, p_session: SESSION });
-    } else if (act === 'bet') {
-      if (G.betKind !== 'main' && sideOn() && seatBet(seat)) bumpSide(seat, G.betKind, 'chip');
-      else bumpBet(seat, 'chip');
-    }
+    } else if (act === 'bet') bumpBet(seat, 'chip');
     else if (act === 'bb') bbBump(seat, 'chip');
     else if (act === 'stand') {
       const inPlay = mySeatInPlay(seat);
@@ -4991,8 +5240,8 @@ html[data-q='high'] .cd.reveal::before { background: rgba(255, 214, 130, .7); fi
       });
       const canRebet = mySeats.some((s) => !seatBet(s.no) && betValid(s.last_bet));
       const side = sideOn();
-      if (!side) G.betKind = 'main';
-      const kind = G.betKind;
+      G.betKind = 'main';
+      const kind = 'main';
       const sd = seatSide(tgt);
       const S = sideLim();
       const tabs = mySeats.length > 1
@@ -5002,23 +5251,23 @@ html[data-q='high'] .cd.reveal::before { background: rgba(255, 214, 130, .7); fi
             return `<button type="button" data-bs="${s.no}" aria-pressed="${s.no === tgt}"><em>P${s.no}</em>${b ? fmt(b) + (x.confirmed && G.opt[s.no] == null ? ' ✓' : '') : '—'}</button>`;
           }).join('')}</span>`
         : '';
-      // v3.4: bahis türü seçimi (yan bahis açık masalarda)
-      const kinds = side
-        ? `<span class="dk-kind" role="group" aria-label="Bahis türü">${[['main', 'Ana bahis', 'Ana', amt], ['pp', 'Perfect Pairs', 'PP', sd.pp], ['t3', '21+3', '21+3', sd.t3]]
-            .map(([k, l, sh, v]) => `<button type="button" class="bk-${k}" data-bk="${k}" aria-pressed="${k === kind}" aria-label="${l}"><span class="kl">${l}</span><span class="ks">${sh}</span><em>${v ? fmt(v) : '—'}</em></button>`)
-            .join('')}</span>`
+      // v3.4.1: yan bahisler kendi sayaçlarında: dokun → fiş ekle, × → temizle (masadaki yuvaya dokunmak da ekler)
+      const hasMain = !!amt;
+      const sideRow = side
+        ? `<span class="sbk-row" role="group" aria-label="Yan bahisler">${[['pp', 'PP', 'Perfect Pairs: ilk iki kartın çift (6:1 · 12:1 · 25:1)'], ['t3', '21+3', '21+3: iki kartın ve krupiyenin açık kartı (5:1 – 100:1)']]
+            .map(([k, sh, tip]) => `<span class="sbk sbk-${k}${sd[k] ? ' on' : ''}${hasMain ? '' : ' off'}"><button type="button" class="sbk-add" data-sb="${k}" title="${tip}" aria-label="${SIDE_LBL[k]} için ${fmt(S.chip)} BP ekle"${hasMain ? '' : ' aria-disabled="true"'}><i>${sh}</i><b>${sd[k] ? fmt(sd[k]) : '+' + fmt(S.chip)}</b></button>${sd[k] ? `<button type="button" class="sbk-x" data-sbx="${k}" aria-label="${SIDE_LBL[k]} temizle">×</button>` : ''}</span>`)
+            .join('')}<small class="sbk-cap">yan bahis · en fazla ${fmt(S.max)}</small></span>`
         : '';
-      const who = kind === 'main'
-        ? `<p class="dk-who${side ? ' has-kind' : ''}"><b>Bahis</b><span class="dk-amt">${fmt(amt)} BP</span><small>${fmt(L.min)}–${fmt(L.max)} BP · fiş ${fmt(L.chip)}</small></p>`
-        : `<p class="dk-who has-kind"><b class="bk-t">${SIDE_LBL[kind]}</b><span class="dk-amt">${fmt(sd[kind])} BP</span><small>${kind === 'pp' ? 'İlk iki kartın çift: 6:1 · 12:1 · 25:1' : 'İki kartın + krupiyenin açık kartı: 5:1 – 100:1'} · en fazla ${fmt(S.max)} BP</small></p>`;
-      const info = `${who}${kinds}${tabs}${arPills(mySeats)}`;
-      const maxOk = kind === 'main' ? amt < L.max : !!amt && sd[kind] < S.max;
+      const allReadyHint = mySeats.length && anyBet ? (allOk ? 'Hazırsın. Herkes hazırsa süre 3 sn’ye iner.' : 'Bahsini koy ve Hazır’a bas; herkes hazırsa 3 sn kalır.') : 'Fişe dokun, bahsini kur, Hazır’a bas.';
+      const who = `<p class="dk-who${side ? ' has-kind' : ''}"><b>Bahis</b><span class="dk-amt">${fmt(amt)} BP</span><small>${fmt(L.min)}–${fmt(L.max)} BP · fiş ${fmt(L.chip)} · ${allReadyHint}</small></p>`;
+      const info = `${who}${sideRow}${tabs}${arPills(mySeats)}`;
+      const maxOk = amt < L.max;
       html = dock(
         'bet',
         info,
         sbtn('data-clear', ic.clear, 'Temizle', { ok: anyBet }) + sbtn('data-rebet', ic.redo, 'Tekrarla', { ok: canRebet, aria: 'Son bahsini tekrarla' }),
-        sbtn('data-max', ic.max, 'Max', { ok: maxOk, aria: kind === 'main' ? `En yüksek bahis (${fmt(L.max)} BP)` : `${SIDE_LBL[kind]} en fazla (${fmt(S.max)} BP)` }) + sbtn('data-confirm', ic.check, 'Onayla', { ok: anyBet && !allOk, cls: 'go' }),
-        chipBtn(L, kind === 'main' ? `${fmt(L.chip)} BP fiş ekle` : `${SIDE_LBL[kind]} için ${fmt(L.chip)} BP fiş ekle`),
+        sbtn('data-max', ic.max, 'Max', { ok: maxOk, aria: `En yüksek bahis (${fmt(L.max)} BP)` }) + sbtn('data-confirm', ic.check, allOk && anyBet ? 'Hazırsın' : 'Hazır', { ok: anyBet && !allOk, cls: 'go' + (allOk && anyBet ? ' done' : '') }),
+        chipBtn(L, `${fmt(L.chip)} BP fiş ekle`),
       );
     } else if (st.state === 'BETTING_OPEN' && st.spectators && !mySeats.length) {
       const bb = me.bb && me.bb.status === 'PENDING' ? me.bb : null;
@@ -5122,9 +5371,8 @@ html[data-q='high'] .cd.reveal::before { background: rgba(255, 214, 130, .7); fi
       if ((me.seats || []).length) {
         const no = betTarget();
         const r = b.getBoundingClientRect();
-        const k = sideOn() ? G.betKind : 'main';
-        const up = k === 'main' ? bumpBet(no, 'chip') : bumpSide(no, k, 'chip');
-        if (up && G.scene.tossChip) G.scene.tossChip(no, { x: r.left + r.width / 2, y: r.top + r.height / 2 }, betLim().chip, k);
+        const up = bumpBet(no, 'chip');
+        if (up && G.scene.tossChip) G.scene.tossChip(no, { x: r.left + r.width / 2, y: r.top + r.height / 2 }, betLim().chip, 'main');
         return;
       }
       return bbBump(null, 'chip');
@@ -5134,13 +5382,15 @@ html[data-q='high'] .cd.reveal::before { background: rgba(255, 214, 130, .7); fi
       SND.play('click');
       return renderControls();
     }
-    if (b.dataset.bk) {
-      G.betKind = b.dataset.bk;
-      SND.play('click');
-      paint();
+    if (b.dataset.sb) {
+      const no = betTarget();
+      if (!seatBet(no)) return toast('Yan bahis için önce ana bahsini koy.', 'info');
+      const r = b.getBoundingClientRect();
+      if (bumpSide(no, b.dataset.sb, 'chip') && G.scene.tossChip) G.scene.tossChip(no, { x: r.left + r.width / 2, y: r.top + r.height / 2 }, sideLim().chip, b.dataset.sb);
       return;
     }
-    if (b.hasAttribute('data-max')) return sideOn() && G.betKind !== 'main' ? bumpSide(betTarget(), G.betKind, 'max') : bumpBet(betTarget(), 'max');
+    if (b.dataset.sbx) return bumpSide(betTarget(), b.dataset.sbx, 'clear');
+    if (b.hasAttribute('data-max')) return bumpBet(betTarget(), 'max');
     if (b.hasAttribute('data-bbmax')) return bbBump(null, 'max');
     if (b.hasAttribute('data-clear')) {
       for (const s of me.seats || []) if (seatBet(s.no)) bumpBet(s.no, 'clear');
@@ -5408,6 +5658,7 @@ html[data-q='high'] .cd.reveal::before { background: rgba(255, 214, 130, .7); fi
         <button type="button" data-m="hist">Oyun geçmişim</button>
         <button type="button" data-m="stats">İstatistiklerim</button>
         <button type="button" data-m="rules">Kurallar</button>
+        <button type="button" data-m="dealer">${noDealer() ? 'Krupiyeyi göster' : 'Krupiyeyi gizle (masa büyür)'}</button>
         <button type="button" data-m="settings">Ses ve görüntü</button>
         ${fsSupported() ? `<button type="button" data-m="full">${fsOn() ? 'Tam ekrandan çık' : 'Tam ekran'}</button>` : ''}
         ${owner ? '<button type="button" data-m="close" class="danger">Masayı kapat</button>' : ''}
@@ -5426,11 +5677,28 @@ html[data-q='high'] .cd.reveal::before { background: rgba(255, 214, 130, .7); fi
       else if (m === 'stats') statsSheet();
       else if (m === 'rules') rulesSheet();
       else if (m === 'settings') settingsSheet();
+      else if (m === 'dealer') setNoDealer(!noDealer());
       else if (m === 'full') toggleFull();
       else if (m === 'leave') backToLobby();
       else if (m === 'close')
         T.confirm('Masayı kapat', 'Devam eden tur varsa tamamlanır, sonra masa kapanır. Bütün oyuncular lobiye döner.', 'Kapat', 'danger').then((ok) => ok && call('bg_bj_close', {}, 'Masa kapanıyor.'));
     });
+  }
+
+  /* ---------------- v3.4.1: krupiyesiz görünüm (bu cihazda saklanır) ---------------- */
+  function noDealer() {
+    try {
+      return localStorage.getItem('bj.noDealer') === '1';
+    } catch (e) {
+      return false;
+    }
+  }
+  function setNoDealer(on) {
+    try {
+      localStorage.setItem('bj.noDealer', on ? '1' : '0');
+    } catch (e) {}
+    if (G.scene) G.scene.setNoDealer(on);
+    toast(on ? 'Krupiye gizlendi: masa büyüdü. Menüden geri açabilirsin.' : 'Krupiye yeniden masada.', 'info');
   }
 
   /* ---------------- ayarlar ---------------- */
