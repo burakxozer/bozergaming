@@ -347,6 +347,12 @@ button {
 .tile-gold {
   --tc: #f3d892;
 }
+.tile-teal {
+  --tc: #4fd6d0;
+}
+.tile-wood {
+  --tc: #e0a46a;
+}
 .tile-xs {
   font-size: 15px;
 }
@@ -791,6 +797,21 @@ textarea.input {
   font-weight: 650;
   cursor: pointer;
 }
+/* v3.4: basılmayı bekleyen rozet varken avatarın köşesinde altın ışık */
+.userbtn { position: relative; }
+.userbtn.has-badge-dot::after {
+  content: "";
+  position: absolute;
+  left: 30px;
+  top: 3px;
+  width: 11px;
+  height: 11px;
+  border-radius: 50%;
+  background: radial-gradient(circle at 35% 35%, #fff6c8, #ffc21a 55%, #c47a00);
+  box-shadow: 0 0 0 2px var(--surface), 0 0 10px 2px rgba(255, 190, 30, 0.85);
+  animation: bd-light 1.2s ease-in-out infinite;
+}
+@media (prefers-reduced-motion: reduce) { .userbtn.has-badge-dot::after { animation: none; } }
 .userbtn:hover {
   background: var(--surface-2);
 }
@@ -2246,6 +2267,15 @@ html.watch-open,
 html.watch-open body {
   overflow: hidden;
 }
+/* v3.4: oyun açıkken site kaymaz, sallanmaz, çift dokunuşla yakınlaşmaz */
+html.page-lock,
+html.page-lock body {
+  overscroll-behavior: none;
+}
+html.page-lock body,
+.game-layer {
+  touch-action: manipulation;
+}
 .gamebar {
   flex: none;
   display: flex;
@@ -2337,23 +2367,40 @@ html.watch-open body {
   display: none;
 }
 .live-dot {
+  position: relative;
   width: 8px;
   height: 8px;
   border-radius: 50%;
   background: var(--red);
   flex: none;
+}
+/* v3.4: nabız halkası yalnız ölçek ve saydamlıkla (gölge animasyonu oyun sırasında her karede
+   sayfayı yeniden çizdiriyordu) */
+.live-dot::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  border-radius: 50%;
+  background: rgba(236, 74, 67, 0.55);
   animation: livePulse 1.6s infinite;
+  will-change: transform, opacity;
 }
 @keyframes livePulse {
   0% {
-    box-shadow: 0 0 0 0 rgba(236, 74, 67, 0.55);
+    transform: scale(1);
+    opacity: 1;
   }
   70% {
-    box-shadow: 0 0 0 7px rgba(236, 74, 67, 0);
+    transform: scale(2.75);
+    opacity: 0;
   }
   100% {
-    box-shadow: 0 0 0 0 rgba(236, 74, 67, 0);
+    transform: scale(2.75);
+    opacity: 0;
   }
+}
+@media (prefers-reduced-motion: reduce) {
+  .live-dot::after { animation: none; opacity: 0; }
 }
 .watch-state[data-s="connecting"],
 .watch-state[data-s="paused"] {
@@ -4306,3 +4353,61 @@ a.hv-live-item:hover {
 .ec-levels td .input[data-am], .ec-levels td .input[data-dk] { width: 66px; }
 .ec-levels td .input[data-k="fee"] { width: 84px; }
 .ec-ranks-wrap { max-height: 560px; overflow: auto; }
+
+/* v3.3: ekonomi ayarları — bölüm kısayolları, Americano rütbe şartı anahtarı, veritabanı uyarısı */
+.ec-jump { display: flex; gap: 8px; flex-wrap: wrap; margin: 0 0 14px; }
+.ec-jump a { padding: 7px 14px; border-radius: 99px; border: 1px solid var(--line); background: var(--surface); color: var(--text); font-weight: 700; font-size: 14px; text-decoration: none; }
+.ec-jump a:hover { border-color: var(--line-2); background: var(--surface-2); }
+.ec-pair { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
+.ec-tier .ec-tier-sum { margin: 2px 0 0; line-height: 1.4; }
+.ec-switch { display: flex; align-items: flex-start; gap: 12px; margin: 4px 0 14px; padding: 12px 14px; border-radius: 14px; border: 1px solid var(--line); background: var(--surface-2); cursor: pointer; }
+.ec-switch input { width: 20px; height: 20px; margin: 2px 0 0; accent-color: var(--accent); flex: none; }
+.ec-switch span { display: flex; flex-direction: column; gap: 3px; }
+.ec-switch small { color: var(--muted); font-size: 13px; line-height: 1.4; }
+.ec-dbold { border-color: color-mix(in srgb, var(--danger) 60%, var(--line)); background: color-mix(in srgb, var(--danger) 10%, var(--surface)); margin-bottom: 16px; }
+.ec-dbold h2 { display: flex; align-items: center; gap: 8px; color: var(--danger-text); }
+.ec-dbold p { margin: 0 0 8px; line-height: 1.5; }
+.admin-dbwarn { margin-bottom: 4px; }
+@media (max-width: 760px) {
+  .ec-sec .panel-lead { font-size: 14px; }
+  .ec-tier .input-sm { min-height: 40px; font-size: 16px; }
+  .ec-table .input-sm { min-height: 38px; font-size: 15px; }
+}
+
+/* ---------------- v3.4.1: panel → oyunların yayın durumu ---------------- */
+.pub-h { margin: 18px 0 8px; font-size: 13px; color: var(--muted); font-weight: 750; letter-spacing: 0.02em; }
+.pub-list { display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap: 8px; }
+.pub-row { display: flex; align-items: center; gap: 12px; padding: 10px 12px; border-radius: 14px; border: 1px solid var(--line); background: var(--surface-2); cursor: pointer; transition: border-color 0.15s, opacity 0.15s; }
+.pub-row:hover { border-color: var(--line-2); }
+.pub-row.is-off { opacity: 0.72; border-style: dashed; }
+.pub-name { display: flex; flex-direction: column; gap: 2px; flex: 1; min-width: 0; }
+.pub-name small { color: var(--muted); font-size: 12px; }
+.pub-row.is-off .pub-name small { color: var(--danger-text); }
+.pub-sw { position: relative; flex: none; width: 46px; height: 26px; }
+.pub-sw input { position: absolute; inset: 0; opacity: 0; margin: 0; cursor: pointer; }
+.pub-sw i { position: absolute; inset: 0; border-radius: 99px; background: var(--surface-3); border: 1px solid var(--line-2); transition: background 0.18s; pointer-events: none; }
+.pub-sw i::after { content: ''; position: absolute; top: 2px; left: 2px; width: 20px; height: 20px; border-radius: 50%; background: #fff; box-shadow: 0 1px 3px rgba(0, 0, 0, 0.35); transition: transform 0.18s; }
+.pub-sw input:checked + i { background: var(--online, #3ccf86); border-color: transparent; }
+.pub-sw input:checked + i::after { transform: translateX(20px); }
+.pub-sw input:focus-visible + i { outline: 2px solid var(--accent); outline-offset: 2px; }
+.pub-sw input:disabled + i { opacity: 0.6; }
+/* yayında olmayan oyun (yönetici görür) */
+.game-off-tag { display: inline-flex; align-items: center; gap: 4px; padding: 2px 8px; border-radius: 99px; background: color-mix(in srgb, var(--danger-text, #ff6b6b) 18%, transparent); color: var(--danger-text, #ff6b6b); font-size: 11px; font-weight: 800; }
+.is-game-off { outline: 2px dashed color-mix(in srgb, var(--danger-text, #ff6b6b) 70%, transparent); outline-offset: 3px; border-radius: 14px; }
+.hv-card.is-game-off::before, .game-row.is-game-off::before, .hv-tool.is-game-off::before, .hv-dartcard.is-game-off::before { content: 'Yayında değil'; position: absolute; z-index: 3; margin: 6px; padding: 2px 8px; border-radius: 99px; background: var(--danger-text, #ff6b6b); color: #fff; font-size: 11px; font-weight: 800; pointer-events: none; }
+.hv-card.is-game-off, .game-row.is-game-off, .hv-tool.is-game-off, .hv-dartcard.is-game-off { position: relative; }
+/* v3.4.1: yeni oyun etiketi (ana sayfa kartı) */
+.hv-shot { position: relative; }
+.hv-new-tag {
+  position: absolute;
+  top: 12px;
+  left: 12px;
+  padding: 3px 10px;
+  border-radius: 99px;
+  background: linear-gradient(180deg, #f6dd98, #c99a3d);
+  color: #1d1404;
+  font-weight: 850;
+  font-size: 11.5px;
+  letter-spacing: 0.04em;
+  box-shadow: 0 4px 14px rgba(0, 0, 0, 0.45);
+}

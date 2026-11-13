@@ -1035,6 +1035,7 @@ select.t-input {
 
 /* emoji seçici ve mağaza kartı */
 .t-emo-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 8px; }
+.t-emo-tabs { display: flex; width: max-content; max-width: 100%; margin: 0 auto 12px; }
 .t-emo-it { appearance: none; border: 1px solid var(--t-line); background: var(--t-panel); border-radius: 14px; padding: 8px; cursor: pointer; line-height: 0; transition: transform .12s; }
 .t-emo-it:hover { transform: scale(1.06); border-color: var(--t-line-2); }
 .t-emo-it img { width: 100%; height: auto; aspect-ratio: 1; }
