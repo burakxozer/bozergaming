@@ -799,7 +799,7 @@
   const EMOJI_RE = /^\[\[emoji:(vip|premium|cilgin):([a-z_]+):(\d*)\]\]$/;
   const giftSrc = (code, x) => 'assets/gifts/' + code + (x === 2 ? '@2x' : '') + '.webp';
   // v3.4: Çılgın paket hareketli SVG'dir (tek dosya)
-  const EMOJI_SVG = { cilgin: true };
+  const EMOJI_SVG = { cilgin: true, vip: true, premium: true }; // v3.4.1: VIP ve Premium da hareketli SVG
   const emojiSrc = (pack, code, x) => 'assets/emoji/' + pack + '/' + code + (EMOJI_SVG[pack] ? '.svg' : (x === 2 ? '@2x' : '') + '.webp');
   T.emojiSrc = emojiSrc;
   T.giftOf = (body) => {
@@ -1542,7 +1542,11 @@
     if (T.cfg.game === 'dostkazigi-online') return `Kazanan takımın her oyuncusu <b>${dkPrize(fee, seats || n)} BP</b> alır; kaybeden takım almaz. Bütün takımlar berabere kalırsa ücretler iade edilir.`;
     if (n < 2) return 'Tek gerçek oyuncuyla (botlara karşı) masa ücretsiz ve ödülsüzdür.';
     const pr = amPrizes(fee, n);
-    return `${n} gerçek oyuncuyla ödüller: ${pr.map((v, i) => `${i + 1}. <b>${v} BP</b>`).join(' · ')}`;
+    // v3.4.1: Tavla tek kazanan; sıfır ödüllü sıralar yazılmaz
+    if (T.cfg.game === 'tavla-online') return `Maçı kazanan <b>${pr[0] || 0} BP</b> alır.`;
+    const pos = pr.map((v, i) => [v, i]).filter((x) => x[0] > 0);
+    const pairs = T.cfg.game === 'pisti-online' && T.cfg.pairsNote ? ' Eşli oyunda kazanan takımın iki oyuncusu 1. ve 2. ödülü paylaşır.' : '';
+    return `${n} gerçek oyuncuyla ödüller: ${(pos.length ? pos : [[0, 0]]).map(([v, i]) => `${i + 1}. <b>${v} BP</b>`).join(' · ')}${pairs}`;
   }
   T.prizeText = prizeText;
   /** v3.3: Americano'da masa ücretlerinde rütbe şartı yok — herkes her ücretle açar (panelden açılabilir).
@@ -1552,6 +1556,9 @@
     const ps = (B && B.publicSettings) || {};
     // v3.4: iki oyunda da panel anahtarı (Americano varsayılan kapalı, Dost Kazığı varsayılan açık)
     if (T.cfg.game === 'americano-online') return !!ps.am_rank_lock;
+    // v3.4.1: Pişti ve Tavla (varsayılan kapalı)
+    if (T.cfg.game === 'pisti-online') return !!ps.ps_rank_lock;
+    if (T.cfg.game === 'tavla-online') return !!ps.tv_rank_lock;
     return ps.dk_rank_lock !== false;
   }
   function feeHTML(fee, n) {
@@ -2448,7 +2455,9 @@
       this.retryAt = 0;
       this.fails = 0;
       const at = T.now();
-      batch.forEach((x, i) => this.onRow({ seq: from + i, seat: x.seat, kind: x.kind, data: x.data, by: null, at }, true));
+      // v3.4.1: sunucunun değiştirdiği hamle verisi (Tavla zarı) yerel kopyaya da işlenir
+      const fix = (r && r.fix) || {};
+      batch.forEach((x, i) => this.onRow({ seq: from + i, seat: x.seat, kind: x.kind, data: fix[i] || fix[String(i)] || x.data, by: null, at }, true));
       if (r && r.seq && r.seq !== from + batch.length - 1) this.scheduleFetch(0);
       again = true;
     } catch (e) {

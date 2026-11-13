@@ -21,6 +21,8 @@
     'americano-online': [['tpl-rules-americano', 'Americano oyun kuralları', 'book']],
     'dostkazigi-online': [['tpl-rules-dostkazigi', 'Dost Kazığı oyun kuralları', 'book']],
     blackjack: [['tpl-rules-blackjack', 'Blackjack Royale oyun kuralları', 'book']],
+    'pisti-online': [['tpl-rules-pisti', 'Pişti oyun kuralları', 'book']],
+    'tavla-online': [['tpl-rules-tavla', 'Tavla oyun kuralları', 'book']],
   };
   /** Online masa oyunlarına geçen adres parametreleri */
   const TABLE_PARAMS = ['masa', 'izle', 'kim', 'mod'];
@@ -161,7 +163,7 @@
      Oyun açıkken sayfa yakınlaştırılamaz ve oyunun arkasındaki site kaymaz. Online kart
      oyunlarında (Blackjack, Americano, Dost Kazığı) ve tam ekranda oyun ekranının kendisi de
      kaymaz; yalnız sohbet, liste gibi kendi kaydırma alanı olan bölümler kaydırılır. */
-  const STRICT = ['blackjack', 'americano-online', 'dostkazigi-online'];
+  const STRICT = ['blackjack', 'americano-online', 'dostkazigi-online', 'pisti-online', 'tavla-online'];
   const NOZOOM = 'width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no, viewport-fit=cover';
   let vpOrig = null;
   let lockOn = false;

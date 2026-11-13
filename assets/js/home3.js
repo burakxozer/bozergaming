@@ -120,7 +120,7 @@
         </a>
 
         <section class="hv-group">
-          <h2 class="hv-title">Kart masaları</h2>
+          <h2 class="hv-title">Online masalar</h2>
           <div class="hv-pair">
             <article class="hv-card" data-game="americano-online">
               <a class="hv-shot" href="#/oyun/americano-online?mod=online" tabindex="-1" aria-hidden="true"><img src="assets/shots/americano-online.webp?v=${esc(BG.config.version)}" alt="" loading="lazy" decoding="async"></a>
@@ -141,6 +141,28 @@
                 <div class="hv-acts">
                   <a class="btn btn-soft btn-sm" href="#/oyun/dostkazigi-online?mod=bot">${icon('play', 16)}Botlara karşı</a>
                   <a class="btn btn-primary btn-sm" href="#/oyun/dostkazigi-online?mod=online">${icon('users', 16)}Online</a>
+                </div>
+              </div>
+            </article>
+            <article class="hv-card" data-game="pisti-online">
+              <a class="hv-shot" href="#/oyun/pisti-online?mod=online" tabindex="-1" aria-hidden="true"><img src="assets/shots/pisti-online.webp?v=${esc(BG.config.version)}" alt="" loading="lazy" decoding="async"><span class="hv-new-tag">Yeni</span></a>
+              ${docBtn('tpl-rules-pisti', 'Pişti oyun kuralları')}
+              <div class="hv-card-body">
+                <div class="hv-name">${BG.gameTile('pisti-online', 'tile-s')}<h3>Pişti Online</h3></div>
+                <div class="hv-acts">
+                  <a class="btn btn-soft btn-sm" href="#/oyun/pisti-online?mod=bot">${icon('play', 16)}Botlara karşı</a>
+                  <a class="btn btn-primary btn-sm" href="#/oyun/pisti-online?mod=online">${icon('users', 16)}Online</a>
+                </div>
+              </div>
+            </article>
+            <article class="hv-card" data-game="tavla-online">
+              <a class="hv-shot" href="#/oyun/tavla-online?mod=online" tabindex="-1" aria-hidden="true"><img src="assets/shots/tavla-online.webp?v=${esc(BG.config.version)}" alt="" loading="lazy" decoding="async"><span class="hv-new-tag">Yeni</span></a>
+              ${docBtn('tpl-rules-tavla', 'Tavla oyun kuralları')}
+              <div class="hv-card-body">
+                <div class="hv-name">${BG.gameTile('tavla-online', 'tile-s')}<h3>Tavla Online</h3></div>
+                <div class="hv-acts">
+                  <a class="btn btn-soft btn-sm" href="#/oyun/tavla-online?mod=bot">${icon('play', 16)}Bota karşı</a>
+                  <a class="btn btn-primary btn-sm" href="#/oyun/tavla-online?mod=online">${icon('users', 16)}Online</a>
                 </div>
               </div>
             </article>
@@ -251,12 +273,15 @@
     renderResume();
     renderWallet();
     if (me) BG.mountLeaderboard(root.querySelector('.lb'));
+    BG.applyGamesOff(root);
     const offs = [
       BG.bus.on('friends', renderLive),
       BG.bus.on('games-changed', () => {
         BG.games.invalidate();
         renderResume();
       }),
+      // v3.4.1: panelden yayın durumu değişince
+      BG.bus.on('econ-settings', () => BG.applyGamesOff(root)),
     ];
     return { node: root, cleanup: () => offs.forEach((f) => f()) };
   }

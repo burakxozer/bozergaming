@@ -244,7 +244,10 @@
   const PROD_SHORT = { emoji_vip: 'VIP Emoji', emoji_premium: 'Premium Emoji', emoji_cilgin: 'Çılgın Emoji', geveze: 'Geveze', gifter_pack: 'Gifter', frame_bronz: 'Bronz', frame_gumus: 'Gümüş', frame_altin: 'Altın', frame_neon: 'Neon', frame_ates: 'Ateş', frame_buz: 'Buz', frame_kraliyet: 'Kraliyet',
     frame_zumrut: 'Zümrüt', frame_yildirim: 'Yıldırım', frame_rgb: 'RGB', frame_galaksi: 'Galaksi', frame_elmas: 'Elmas', dealer_alev: 'Alev Pack',
     felt_kraliyet: 'Kraliyet keçe', felt_bordo: 'Bordo keçe', felt_oniks: 'Oniks keçe', felt_ametist: 'Ametist keçe', felt_neon: 'Neon keçe',
-    bg_aurora: 'Kuzey Işıkları', bg_galaksi: 'Galaksi arka plan', bg_volkan: 'Volkan', bg_neon: 'Neon Şehir', bg_saray: 'Altın Saray' };
+    bg_aurora: 'Kuzey Işıkları', bg_galaksi: 'Galaksi arka plan', bg_volkan: 'Volkan', bg_neon: 'Neon Şehir', bg_saray: 'Altın Saray',
+    frame_sarikirmizi: 'Sarı-Kırmızı çerçeve', frame_sarilacivert: 'Sarı-Lacivert çerçeve', frame_siyahbeyaz: 'Siyah-Beyaz çerçeve',
+    bg_sarikirmizi: 'Sarı-Kırmızı Tribün', bg_sarilacivert: 'Sarı-Lacivert Tribün', bg_siyahbeyaz: 'Siyah-Beyaz Tribün',
+    dealer_golcu: 'Golcü Doruk', dealer_kanat: 'Kanatçı Kayra' };
   // mağaza sekmesinde ürünler türe göre gruplanır
   const KIND_N = [['emoji', 'Emoji paketleri'], ['chat', 'Sohbet'], ['gifter', 'Hediye'], ['frame', 'Profil çerçeveleri'], ['bg', 'Profil arka planları'], ['dealer', 'Blackjack krupiyesi'], ['felt', 'Blackjack keçeleri']];
 
@@ -316,9 +319,9 @@
 
   /* ---------------- v3.2: Ekonomi ayarları (rütbeler, Blackjack seviyeleri, masa seviyeleri, haftalık destek) ---------------- */
   const TIER_N = { bronze: 'Bronze', silver: 'Silver', gold: 'Gold' };
-  const AUDIT_KEY = { ranks: 'Rütbeler', prestige: 'Prestij', bj_tiers: 'Blackjack seviyeleri', table_levels: 'Americano / Dost Kazığı masaları', weekly_support: 'Haftalık destek', am_rank_lock: 'Americano rütbe şartı', dk_rank_lock: 'Dost Kazığı rütbe şartı', fc_rules: 'Friend Coins kuralları' };
+  const AUDIT_KEY = { ranks: 'Rütbeler', prestige: 'Prestij', bj_tiers: 'Blackjack seviyeleri', table_levels: 'Online masa ücretleri ve ödülleri', weekly_support: 'Haftalık destek', am_rank_lock: 'Americano rütbe şartı', dk_rank_lock: 'Dost Kazığı rütbe şartı', ps_rank_lock: 'Pişti rütbe şartı', tv_rank_lock: 'Tavla rütbe şartı', fc_rules: 'Friend Coins kuralları', games_off: 'Oyun yayın durumu' };
   /* v3.3: sitenin beklediği veritabanı sürümü (kurulum.sql). Eski veritabanında ekonomi ayarları kaydedilemez. */
-  const DB_WANT = '3.4.0';
+  const DB_WANT = '3.4.1';
   const verLess = (a, b) => {
     const p = (v) => String(v || '0').split('.').map((x) => parseInt(x, 10) || 0);
     const x = p(a);
@@ -330,13 +333,18 @@
       <div class="panel-head"><h2>${icon('alert', 20)}Veritabanı güncel değil</h2></div>
       <p>Site ${DB_WANT} sürümünde, veritabanı ${have ? esc(have) : '3.2 ya da daha eski'}. Ekonomi ayarlarını (Blackjack seviyeleri, Americano / Dost Kazığı masaları, rütbeler) panelden yönetebilmek için <b>kurulum.sql</b> dosyasını Supabase → SQL Editor’da baştan sona bir kez çalıştır. Mevcut üyeler, bakiyeler ve kayıtlar korunur.</p>
       <p class="muted small">Çalışınca sonuç satırında “Kurulum tamamlandı · ${DB_WANT}” görünür. Sonra bu sayfayı yenile.</p></section>`;
+  let econTok = 0;
   async function econSetPane(root) {
     const box = root.querySelector('[data-pane="econset"]');
     if (!box.firstElementChild) box.innerHTML = '<p class="loading-row">Yükleniyor…</p>';
+    // v3.4.1: üst üste yenilemede yalnız en son istek çizer (eski yanıt, yazılmakta olan alanı ezmesin)
+    const tok = ++econTok;
     let d;
     try {
       d = await BG.api.rpc('bg_admin_econ_get', {});
+      if (tok !== econTok) return;
     } catch (e) {
+      if (tok !== econTok) return;
       // v3.2 kurulumu yoksa fonksiyon bulunamaz: ham hata yerine ne yapılacağı yazılır
       const missing = /bg_admin_econ_get|could not find|schema cache|does not exist|PGRST202/i.test(String((e && (e.message || e.code)) || ''));
       box.innerHTML = missing ? dbOldHTML(null) : `<p class="loading-row">${esc(e.message)}</p>`;
@@ -378,9 +386,11 @@
     const tag = (k) => (custom.has(k) ? '<span class="chip chip-quiet">Panelden değiştirildi</span>' : '<span class="chip chip-quiet">Varsayılan</span>');
     const amLock = !!d.am_rank_lock;
     const dkLock = d.dk_rank_lock !== false;
-    const fr = d.fc_rules || { am: 10, dk: 10, bj_hands: 10, bj: 1, pair_daily: 0 };
+    const psLock = !!d.ps_rank_lock;
+    const tvLock = !!d.tv_rank_lock;
+    const fr = Object.assign({ am: 10, dk: 10, ps: 10, tv: 10, bj_hands: 10, bj: 1, pair_daily: 0 }, d.fc_rules || {});
     box.innerHTML = `${!d.db_version || verLess(d.db_version, DB_WANT) ? dbOldHTML(d.db_version) : ''}
-      <nav class="ec-jump" aria-label="Ekonomi ayarları bölümleri"><a href="#ec-bj" data-jump="bj">Blackjack</a><a href="#ec-levels" data-jump="levels">Americano ve Dost Kazığı</a><a href="#ec-ranks" data-jump="ranks">Rütbeler</a><a href="#ec-weekly" data-jump="weekly">Haftalık destek</a><a href="#ec-fc" data-jump="fc">Friend Coins</a></nav>
+      <nav class="ec-jump" aria-label="Ekonomi ayarları bölümleri"><a href="#ec-bj" data-jump="bj">Blackjack</a><a href="#ec-levels" data-jump="levels">Online masa ücretleri</a><a href="#ec-ranks" data-jump="ranks">Rütbeler</a><a href="#ec-weekly" data-jump="weekly">Haftalık destek</a><a href="#ec-fc" data-jump="fc">Friend Coins</a></nav>
       <section class="panel ec-sec" data-sec="ranks" id="ec-ranks">
         <div class="panel-head"><h2>Rütbeler</h2>${tag('ranks')}</div>
         <p class="panel-lead">Rütbe adı, başladığı BP, rengi ve simgesi. Alt sınırlar yukarıdan aşağı artmalı; ilk rütbe 0 BP’den başlar. Kaydedince bütün üyelerin rütbesi yeni tabloya göre hesaplanır.</p>
@@ -413,11 +423,13 @@
         <div class="ec-acts"><span class="grow"></span><button class="btn btn-ghost" type="button" data-reset="bj_tiers">Varsayılana dön</button><button class="btn btn-primary" type="button" data-save="bj_tiers">Blackjack ayarlarını kaydet</button></div>
       </section>
       <section class="panel ec-sec" data-sec="levels" id="ec-levels">
-        <div class="panel-head"><h2>Americano ve Dost Kazığı masaları</h2>${tag('table_levels')}</div>
-        <p class="panel-lead">Masa ücreti seçenekleri, o ücreti açabilen en düşük rütbe ve ödüller (BP). Americano: oyuncu sayısına göre 1. ve 2. olanın aldığı toplam BP. Dost Kazığı: kazanan takımın her oyuncusuna. Maç başlarken geçerli değerler o maç bitene kadar kullanılır.</p>
+        <div class="panel-head"><h2>Online masa ücretleri ve ödülleri</h2>${tag('table_levels')}</div>
+        <p class="panel-lead">Masa ücreti seçenekleri, o ücreti açabilen en düşük rütbe ve ödüller (BP). Americano, Pişti ve Tavla: oyuncu sayısına göre 1. ve 2. olanın aldığı toplam BP (AM sütunları; Tavla 2 kişilik sütunu kullanır). Dost Kazığı: kazanan takımın her oyuncusuna. Maç başlarken geçerli değerler o maç bitene kadar kullanılır.</p>
         <label class="ec-switch"><input type="checkbox" data-amlock ${amLock ? 'checked' : ''}><span><b>Americano’da rütbe şartı uygula</b><small>${amLock ? 'Açık: Americano masa ücretleri rütbe şartına bağlı.' : 'Kapalı: Americano’da herkes bakiyesi yettiği sürece her ücretle masa açabilir.'}</small></span></label>
         <label class="ec-switch"><input type="checkbox" data-dklock ${dkLock ? 'checked' : ''}><span><b>Dost Kazığı’nda rütbe şartı uygula</b><small>${dkLock ? 'Açık: Dost Kazığı masa ücretleri rütbe şartına bağlı.' : 'Kapalı: Dost Kazığı’nda herkes bakiyesi yettiği sürece her ücretle masa açabilir.'}</small></span></label>
-        <div class="am-scroll"><table class="ec-table ec-levels"><thead><tr><th>Ücret</th><th>En düşük rütbe${amLock && dkLock ? '' : amLock ? '<br><small>Americano</small>' : dkLock ? '<br><small>Dost Kazığı</small>' : '<br><small>şu an kullanılmıyor</small>'}</th><th>AM 2 kişi<br><small>1.</small></th><th>AM 3 kişi<br><small>1. · 2.</small></th><th>AM 4 kişi<br><small>1. · 2.</small></th><th>AM 5 kişi<br><small>1. · 2.</small></th><th>DK 4 kişi</th><th>DK 6 kişi</th><th>DK 8 kişi</th><th></th></tr></thead>
+        <label class="ec-switch"><input type="checkbox" data-pslock ${psLock ? 'checked' : ''}><span><b>Pişti’de rütbe şartı uygula</b><small>${psLock ? 'Açık: Pişti masa ücretleri rütbe şartına bağlı.' : 'Kapalı: Pişti’de herkes bakiyesi yettiği sürece her ücretle masa açabilir.'}</small></span></label>
+        <label class="ec-switch"><input type="checkbox" data-tvlock ${tvLock ? 'checked' : ''}><span><b>Tavla’da rütbe şartı uygula</b><small>${tvLock ? 'Açık: Tavla masa ücretleri rütbe şartına bağlı.' : 'Kapalı: Tavla’da herkes bakiyesi yettiği sürece her ücretle masa açabilir.'}</small></span></label>
+        <div class="am-scroll"><table class="ec-table ec-levels"><thead><tr><th>Ücret</th><th>En düşük rütbe${(() => { const on = [amLock && 'AM', dkLock && 'DK', psLock && 'Pişti', tvLock && 'Tavla'].filter(Boolean); return on.length === 4 ? '' : on.length ? '<br><small>' + on.join(', ') + '</small>' : '<br><small>şu an kullanılmıyor</small>'; })()}</th><th>AM 2 kişi<br><small>1.</small></th><th>AM 3 kişi<br><small>1. · 2.</small></th><th>AM 4 kişi<br><small>1. · 2.</small></th><th>AM 5 kişi<br><small>1. · 2.</small></th><th>DK 4 kişi</th><th>DK 6 kişi</th><th>DK 8 kişi</th><th></th></tr></thead>
           <tbody>${lv.map(levelRow).join('')}</tbody></table></div>
         <div class="ec-acts"><button class="btn btn-soft" type="button" data-add-level>${icon('plus', 16)}Seviye ekle</button>
           <span class="grow"></span><button class="btn btn-ghost" type="button" data-reset="table_levels">Varsayılana dön</button><button class="btn btn-primary" type="button" data-save="table_levels">Masa seviyelerini kaydet</button></div>
@@ -438,6 +450,8 @@
         <div class="ec-weekly ec-fc">
           <label>Americano maç sonu, arkadaş başına (FC)${num(fr.am, 'data-k="am"')}</label>
           <label>Dost Kazığı maç sonu, arkadaş başına (FC)${num(fr.dk, 'data-k="dk"')}</label>
+          <label>Pişti maç sonu, arkadaş başına (FC)${num(fr.ps, 'data-k="ps"')}</label>
+          <label>Tavla maç sonu, arkadaş başına (FC)${num(fr.tv, 'data-k="tv"')}</label>
           <label>Blackjack: her kaç ortak elde${num(fr.bj_hands, 'data-k="bj_hands"')}</label>
           <label>Blackjack: arkadaş başına (FC)${num(fr.bj, 'data-k="bj"')}</label>
           <label>Aynı iki arkadaşın günlük FC sınırı (0 = sınırsız)${num(fr.pair_daily, 'data-k="pair_daily"')}</label>
@@ -526,7 +540,7 @@
       if (key === 'fc_rules') {
         const sec = box.querySelector('[data-sec="fc"]');
         const v = (k) => intOf(sec.querySelector(`[data-k="${k}"]`));
-        return { am: v('am'), dk: v('dk'), bj_hands: v('bj_hands'), bj: v('bj'), pair_daily: v('pair_daily') };
+        return { am: v('am'), dk: v('dk'), ps: v('ps'), tv: v('tv'), bj_hands: v('bj_hands'), bj: v('bj'), pair_daily: v('pair_daily') };
       }
       if (key === 'weekly_support') {
         const sec = box.querySelector('[data-sec="weekly"]');
@@ -582,6 +596,8 @@
     };
     lockSwitch('[data-amlock]', 'am_rank_lock', 'Americano’da rütbe şartı açıldı.', 'Americano’da bütün masa ücretleri herkese açık.');
     lockSwitch('[data-dklock]', 'dk_rank_lock', 'Dost Kazığı’nda rütbe şartı açıldı.', 'Dost Kazığı’nda bütün masa ücretleri herkese açık.');
+    lockSwitch('[data-pslock]', 'ps_rank_lock', 'Pişti’de rütbe şartı açıldı.', 'Pişti’de bütün masa ücretleri herkese açık.');
+    lockSwitch('[data-tvlock]', 'tv_rank_lock', 'Tavla’da rütbe şartı açıldı.', 'Tavla’da bütün masa ücretleri herkese açık.');
     box.querySelector('.ec-jump').addEventListener('click', (e) => {
       const a = e.target.closest('[data-jump]');
       if (!a) return;
@@ -624,7 +640,60 @@
   }
 
   /* ---------------- v3.2: açık Americano / Dost Kazığı masaları ---------------- */
-  const GAME_N = { 'americano-online': 'Americano Online', 'dostkazigi-online': 'Dost Kazığı Online' };
+  const GAME_N = { 'americano-online': 'Americano Online', 'dostkazigi-online': 'Dost Kazığı Online', 'pisti-online': 'Pişti Online', 'tavla-online': 'Tavla Online' };
+
+  /* ---------------- v3.4.1: oyunların yayın durumu ---------------- */
+  // Yayından kaldırılan oyun sitede görünmez ve yeni masa açılmaz; süren masalar ve kayıtlar bozulmadan devam eder.
+  const PUB_GROUPS = [
+    ['Online masalar', ['blackjack', 'americano-online', 'dostkazigi-online', 'pisti-online', 'tavla-online']],
+    ['Dart', ['dartbot', 'dart-mac', 'dart-turnuva', 'dart-lig']],
+    ['Skor tabloları ve araçlar', ['americano', 'somali', 'lig', 'kura']],
+  ];
+  async function gamesPane(root) {
+    const box = root.querySelector('[data-pane="games"]');
+    if (!box.firstChild) box.innerHTML = '<p class="loading-row">Yükleniyor…</p>';
+    let d;
+    try {
+      d = await BG.api.rpc('bg_admin_econ_get', {});
+    } catch (e) {
+      box.innerHTML = `<p class="loading-row">${esc(e.message)}</p>`;
+      return;
+    }
+    const off = new Set(Array.isArray(d.games_off) ? d.games_off : []);
+    const row = (k) => {
+      const g = BG.GAMES[k];
+      if (!g) return '';
+      const on = !off.has(k);
+      return `<label class="pub-row${on ? '' : ' is-off'}"><span class="pub-tile">${BG.gameTile(k, 'tile-s')}</span>
+        <span class="pub-name"><b>${esc(g.name)}</b><small>${on ? 'Yayında' : 'Yayında değil: sitede görünmez, yeni masa açılamaz'}</small></span>
+        <span class="pub-sw"><input type="checkbox" data-pub="${esc(k)}" ${on ? 'checked' : ''} aria-label="${esc(g.name)} yayında"><i aria-hidden="true"></i></span></label>`;
+    };
+    box.innerHTML = `${!d.db_version || verLess(d.db_version, DB_WANT) ? dbOldHTML(d.db_version) : ''}
+      <section class="panel">
+        <div class="panel-head"><h2>Oyunların yayın durumu</h2><span class="chip chip-quiet">${off.size ? n0(off.size) + ' oyun kapalı' : 'Hepsi yayında'}</span></div>
+        <p class="panel-lead">Kapattığın oyun ana sayfadan ve menülerden kalkar, yeni masa açılamaz. O an süren masalar, maç ödülleri, istatistikler ve kayıtlar bozulmadan devam eder. Yönetici olarak sen kapalı oyunları yine açıp deneyebilirsin. Açınca oyun hemen geri gelir.</p>
+        ${PUB_GROUPS.map(([t, keys]) => `<h3 class="pub-h">${esc(t)}</h3><div class="pub-list">${keys.map(row).join('')}</div>`).join('')}
+      </section>`;
+    box.querySelectorAll('[data-pub]').forEach((inp) =>
+      inp.addEventListener('change', async () => {
+        const k = inp.dataset.pub;
+        const next = new Set(off);
+        if (inp.checked) next.delete(k);
+        else next.add(k);
+        box.querySelectorAll('[data-pub]').forEach((x) => (x.disabled = true));
+        try {
+          await BG.api.rpc('bg_admin_econ_set', { p_key: 'games_off', p_value: Array.from(next) });
+          const s2 = await BG.api.rpc('bg_public_settings', {});
+          if (BG.applyEconSettings) BG.applyEconSettings(s2);
+          BG.toast({ type: 'success', text: `${(BG.GAMES[k] || {}).name || k} ${inp.checked ? 'yayına alındı.' : 'yayından kaldırıldı.'}` });
+        } catch (e) {
+          BG.toastError(e);
+        }
+        gamesPane(root);
+      }),
+    );
+  }
+
   async function tablesPane(root) {
     const box = root.querySelector('[data-pane="tables"]');
     if (!box.firstElementChild) box.innerHTML = '<p class="loading-row">Yükleniyor…</p>';
@@ -637,7 +706,7 @@
     }
     box.innerHTML = `<section class="panel">
         <div class="panel-head"><h2>Açık online masalar</h2></div>
-        <p class="panel-lead">Lobide bekleyen ve oynanan Americano / Dost Kazığı masaları. Kapatılan masada ücret alınmış ve sonuçlanmamış maç varsa masada kalan oyunculara ücretleri iade edilir. Blackjack masaları Blackjack sekmesinde.</p>
+        <p class="panel-lead">Lobide bekleyen ve oynanan Americano, Dost Kazığı, Pişti ve Tavla masaları. Kapatılan masada ücret alınmış ve sonuçlanmamış maç varsa masada kalan oyunculara ücretleri iade edilir. Blackjack masaları Blackjack sekmesinde.</p>
         <div class="bja-list">${list.map((t) => `<article class="bja-t" data-tid="${esc(t.id)}">
             <header><b>${esc(t.title || GAME_N[t.game] || t.game)}</b><span class="chip">${esc(GAME_N[t.game] || t.game)}</span><span class="chip chip-quiet">${t.status === 'playing' ? 'Oynanıyor' : 'Lobide'}</span>${t.fee ? `<span class="chip chip-quiet">${n0(t.fee)} BP ücret</span>` : ''}</header>
             <p class="muted">Kuran ${esc(t.host || '—')} · ${t.seats_n} koltuk · son hareket ${esc(BG.fmt.ago(t.updated_at))}</p>
@@ -701,6 +770,9 @@
         <section class="eco-game"><h3>${BG.gameTile('dostkazigi-online', 'tile-xs')}Dost Kazığı Online</h3><dl>
           ${row('Tamamlanan ücretli maç', n0(dk.matches))}${row('Giriş ücretleri', n0(dk.fees))}${row('Maç ödülleri (toplanan)', n0(dk.prizes))}${row('Ücret iadeleri', n0(dk.refunds))}${row('Görev ödülleri', n0(dk.missions))}
           <div class="net"><dt>Net BP farkı (oyuncular)</dt><dd class="${sg(dk.net)}">${sgn(dk.net)}</dd></div></dl></section>
+        ${[['pisti-online', 'Pişti Online', d.pisti || {}], ['tavla-online', 'Tavla Online', d.tavla || {}]].map(([k, n, g]) => `<section class="eco-game"><h3>${BG.gameTile(k, 'tile-xs')}${n}</h3><dl>
+          ${row('Tamamlanan ücretli maç', n0(g.matches))}${row('Giriş ücretleri', n0(g.fees))}${row('Maç ödülleri (toplanan)', n0(g.prizes))}${row('Ücret iadeleri', n0(g.refunds))}${row('Görev ödülleri', n0(g.missions))}
+          <div class="net"><dt>Net BP farkı (oyuncular)</dt><dd class="${sg(g.net)}">${sgn(g.net)}</dd></div></dl></section>`).join('')}
         <section class="eco-game"><h3>${BG.gameTile('blackjack', 'tile-xs')}Blackjack Royale</h3><dl>
           ${row('Toplam bahis (ana + ek + sigorta)', n0(bj.bets))}${row('Bet Behind bahisleri', n0(bj.bb_bets))}${row('Normal kazanç ödemeleri', n0(bj.wins))}${row('Blackjack (3:2) ödemeleri', n0(bj.naturals))}
           ${row('Bet Behind ödemeleri', n0(bj.bb_pay))}${row('Sigorta ödemeleri', n0(bj.insurance_pay))}${row('Berabere / teslim iadeleri', n0(bj.returns))}${row('İptal iadeleri', n0(bj.refunds))}${row('Jackpot ödülleri', n0(bj.jackpots))}${row('Görev ödülleri', n0(bj.missions))}
@@ -873,7 +945,7 @@
     const root = BG.frag(`
       <div class="page admin">
         <header class="page-head">
-          <div><h1>Yönetim paneli</h1><p class="page-lead">Üyeler ve BP bakiyeleri, oyun ekonomisi ayarları (Blackjack seviyeleri, Americano ve Dost Kazığı masa ücretleri ve ödülleri, rütbeler), BP yönetimi, mağaza, Blackjack ve online masalar. Şifreler hiçbir zaman görüntülenmez.</p></div>
+          <div><h1>Yönetim paneli</h1><p class="page-lead">Üyeler ve BP bakiyeleri, oyun ekonomisi ayarları (Blackjack seviyeleri, online masa ücretleri ve ödülleri, rütbeler), BP yönetimi, mağaza, Blackjack, online masalar ve oyunların yayın durumu. Şifreler hiçbir zaman görüntülenmez.</p></div>
           <button class="btn btn-soft" type="button" data-refresh>${icon('refresh', 18)}Yenile</button>
         </header>
         <div class="admin-dbwarn" hidden></div>
@@ -886,6 +958,7 @@
           <button class="filter" data-tab="reports" role="tab" aria-selected="false">${icon('flag', 16)}Yorum bildirimleri</button>
           <button class="filter" data-tab="bj" role="tab" aria-selected="false">Blackjack</button>
           <button class="filter" data-tab="tables" role="tab" aria-selected="false">${icon('tiles', 16)}Online masalar</button>
+          <button class="filter" data-tab="games" role="tab" aria-selected="false">${icon('play', 16)}Oyunlar</button>
         </nav>
         <div class="admin-pane" data-pane="bp" hidden></div>
         <div class="admin-pane" data-pane="eco" hidden></div>
@@ -894,6 +967,7 @@
         <div class="admin-pane" data-pane="bj" hidden></div>
         <div class="admin-pane" data-pane="econset" hidden></div>
         <div class="admin-pane" data-pane="tables" hidden></div>
+        <div class="admin-pane" data-pane="games" hidden></div>
         <div class="stat-strip" aria-live="polite" data-pane-users></div>
         <section class="panel" data-pane-users>
           <div class="table-tools">
@@ -1054,7 +1128,7 @@
         draw();
       })
     );
-    const refreshTab = () => (tab === 'bp' ? bpPane(root) : tab === 'eco' ? ecoPane(root) : tab === 'store' ? storePane(root) : tab === 'reports' ? reportsPane(root) : tab === 'bj' ? bjPane(root) : tab === 'econset' ? econSetPane(root) : tab === 'tables' ? tablesPane(root) : load());
+    const refreshTab = () => (tab === 'bp' ? bpPane(root) : tab === 'eco' ? ecoPane(root) : tab === 'store' ? storePane(root) : tab === 'reports' ? reportsPane(root) : tab === 'bj' ? bjPane(root) : tab === 'econset' ? econSetPane(root) : tab === 'tables' ? tablesPane(root) : tab === 'games' ? gamesPane(root) : load());
     root.querySelector('[data-refresh]').addEventListener('click', refreshTab);
     // v3.3: veritabanı sürümü siteden eskiyse panelin en üstünde ne yapılacağı yazılır
     BG.api

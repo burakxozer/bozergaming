@@ -228,6 +228,11 @@
     R.add('/oyun/:key', (params, query, loc) => {
       BG.closeAllModals();
       if (!BG.GAMES[params.key]) return BG.router.go('/', true);
+      // v3.4.1: yayından kaldırılan oyun açılmaz (süren masaya/kayda dönüş ve yönetici hariç)
+      if (BG.gameOff && BG.gameOff(params.key) && !(BG.store.me && BG.store.me.is_admin) && !query.masa && !query.devam) {
+        BG.toast({ type: 'info', title: (BG.GAMES[params.key] || {}).name || 'Oyun', text: 'Bu oyun şu an yayında değil.' });
+        return BG.router.go('/', true);
+      }
       // Arka planda ana sayfa dursun (doğrudan bağlantıyla gelindiyse)
       if (!currentView || !view.firstElementChild) mount(BG.views.home());
       BG.host.open(params.key, { resume: query.devam || null, query });

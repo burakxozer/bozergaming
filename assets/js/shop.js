@@ -26,7 +26,7 @@
     cl_seytan: 'Şeytan', cl_bulanti: 'Midem bulandı',
   };
   /** Hareketli paketler SVG'dir (tek dosya her çözünürlükte keskin) */
-  BG.EMOJI_SVG = { cilgin: true };
+  BG.EMOJI_SVG = { cilgin: true, vip: true, premium: true }; // v3.4.1: VIP ve Premium da hareketli SVG
   BG.emojiSrc = (pack, code, x2) => (BG.EMOJI_SVG[pack] ? `assets/emoji/${pack}/${code}.svg?v=${V()}` : `assets/emoji/${pack}/${code}${x2 ? '@2x' : ''}.webp?v=${V()}`);
   BG.emojiImg = (pack, code, size) =>
     `<img class="emo" src="${BG.emojiSrc(pack, code)}"${BG.EMOJI_SVG[pack] ? '' : ` srcset="${BG.emojiSrc(pack, code, true)} 2x"`} alt="${esc(BG.EMOJI_NAMES[code] || code)}" width="${size || 40}" height="${size || 40}" loading="lazy" decoding="async">`;
@@ -68,7 +68,7 @@
     const equipped = !!(eqk && eq[eqk[0]] === p.id);
     const can = BG.bp.state && BG.bp.state.balance >= p.price;
     let act;
-    if (!p.owned) act = `<button class="btn btn-primary" type="button" data-buy="${esc(p.id)}" ${p.active ? '' : 'disabled'}>${icon('coin', 17)}${fmt(p.price)} BP · Satın al</button>${!can ? `<small class="sp-need">${fmt(p.price - ((BG.bp.state && BG.bp.state.balance) || 0))} BP eksik</small>` : ''}`;
+    if (!p.owned) act = `<button class="btn btn-primary sp-buy" type="button" data-buy="${esc(p.id)}" ${p.active ? '' : 'disabled'} aria-label="${fmt(p.price)} BP ile satın al"><span class="sp-buy-p">${icon('coin', 17)}${fmt(p.price)} BP</span><span class="sp-buy-t">Satın al</span></button>${!can ? `<small class="sp-need">${fmt(p.price - ((BG.bp.state && BG.bp.state.balance) || 0))} BP eksik</small>` : ''}`;
     else if (eqk)
       act = `<span class="sp-owned">${icon('check', 15)}SAHİP OLUNDU</span>${equipped ? `<button class="btn btn-soft btn-sm" type="button" data-unequip="${esc(p.kind)}">${eqk[1]}</button>` : `<button class="btn btn-soft btn-sm" type="button" data-equip="${esc(p.id)}" data-kind="${esc(p.kind)}">Kuşan</button>`}`;
     else act = `<span class="sp-owned">${icon('check', 15)}SAHİP OLUNDU</span><small class="muted">Üç online oyunda kalıcı olarak açık</small>`;
@@ -172,6 +172,8 @@
   const MG = [
     ['americano-online', 'Americano'],
     ['dostkazigi-online', 'Dost Kazığı'],
+    ['pisti-online', 'Pişti'],
+    ['tavla-online', 'Tavla'],
     ['blackjack', 'Blackjack'],
   ];
   BG.views.missions = function (params, query, loc, opts) {

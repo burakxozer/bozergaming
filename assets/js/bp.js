@@ -47,8 +47,17 @@
     bj_mission: 'Blackjack görev ödülü',
     bj_side: 'Blackjack yan bahis (Perfect Pairs, 21+3)',
     badge: 'Rozet basımı',
+    badge_gift: 'Bözer Gaming rozeti hediyesi',
+    ps_fee: 'Pişti masa ücreti',
+    ps_prize: 'Pişti maç ödülü',
+    ps_refund: 'Pişti ücret iadesi',
+    ps_mission: 'Pişti görev ödülü',
+    tv_fee: 'Tavla masa ücreti',
+    tv_prize: 'Tavla maç ödülü',
+    tv_refund: 'Tavla ücret iadesi',
+    tv_mission: 'Tavla görev ödülü',
   };
-  const GAME = { 'americano-online': 'Americano', 'dostkazigi-online': 'Dost Kazığı', blackjack: 'Blackjack' };
+  const GAME = { 'americano-online': 'Americano', 'dostkazigi-online': 'Dost Kazığı', 'pisti-online': 'Pişti', 'tavla-online': 'Tavla', blackjack: 'Blackjack' };
   econ.kindLabel = (k) => KIND[k] || k;
   econ.gameLabel = (g) => GAME[g] || 'Site';
   // v3.2: Blackjack seviyeleri panelden gelir (bakiye eşiği ve bahis değerleri)
@@ -389,7 +398,7 @@
           <div class="bpx-filters">
             <label class="bpx-f"><span>Oyun</span><select class="input" data-f="game">
               <option value="">Tümü</option><option value="site">Site (bonus, mağaza, yönetici)</option>
-              <option value="americano-online">Americano</option><option value="dostkazigi-online">Dost Kazığı</option><option value="blackjack">Blackjack</option>
+              <option value="americano-online">Americano</option><option value="dostkazigi-online">Dost Kazığı</option><option value="pisti-online">Pişti</option><option value="tavla-online">Tavla</option><option value="blackjack">Blackjack</option>
             </select></label>
             <label class="bpx-f"><span>Başlangıç</span><input class="input" type="date" data-f="from"></label>
             <label class="bpx-f"><span>Bitiş</span><input class="input" type="date" data-f="to"></label>
