@@ -1,6 +1,6 @@
 /* =====================================================================
    Bözer Gaming — profil: avatar (hazır / yükle + yuvarlak kırpma),
-   ad soyad, şifre, yönetici e-postası, tema, çıkış
+   nick, şifre, yönetici e-postası, tema, çıkış
    ===================================================================== */
 (function () {
   'use strict';
@@ -288,9 +288,10 @@
             </section>
 
             <section class="panel">
-              <div class="panel-head"><h2>Ad soyad</h2></div>
+              <div class="panel-head"><h2>Nick</h2></div>
+              <p class="panel-lead">Oyunlarda, masalarda ve profilinde görünen adın.</p>
               <form class="form inline-form" id="nameForm" novalidate>
-                <div class="field grow"><label class="field-label sr-only" for="pfName">Ad soyad</label><input class="input" id="pfName" maxlength="60" autocomplete="name"><p class="field-msg"></p></div>
+                <div class="field grow"><label class="field-label sr-only" for="pfName">Nick</label><input class="input" id="pfName" maxlength="24" autocomplete="nickname" spellcheck="false"><p class="field-msg"></p></div>
                 <button class="btn btn-soft" type="submit">Kaydet</button>
               </form>
             </section>
@@ -398,7 +399,7 @@
       })
     );
 
-    // Ad soyad
+    // Nick (v3.4.1: eski adıyla "Ad soyad")
     const nameIn = root.querySelector('#pfName');
     nameIn.value = me.full_name || '';
     root.querySelector('#nameForm').addEventListener('submit', async (e) => {

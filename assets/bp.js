@@ -6,6 +6,15 @@
    ===================================================================== */
 (function () {
   'use strict';
+  /** v3.4: rütbeye bağlı masa ücreti sınırı hangi oyunlarda geçerli (panel anahtarları) */
+  function feeLimitText(max, inline) {
+    const ps = BG.publicSettings || {};
+    const am = !!ps.am_rank_lock;
+    const dk = ps.dk_rank_lock !== false;
+    if (!am && !dk) return inline ? ' · Masa ücretlerinde rütbe şartı yok' : 'Bütün masa ücretleri herkese açık';
+    const where = am && dk ? '' : am ? 'Americano’da ' : 'Dost Kazığı’nda ';
+    return inline ? ` · ${where ? where.replace('’da ', ' masa').replace('’nda ', ' masa') : 'Masa'} ücreti sınırın: <b>${max} BP</b>` : `${where}${max} BP’ye kadar masa açabilirsin`;
+  }
   const BG = window.BG;
   const { esc, icon } = BG;
   const econ = (BG.econ = BG.bp = { state: null, ch: null, busy: false, unread: 0 });
@@ -36,18 +45,36 @@
     bj_bb: 'Bet Behind',
     bj_jackpot: 'Jackpot ödülü',
     bj_mission: 'Blackjack görev ödülü',
+    bj_side: 'Blackjack yan bahis (Perfect Pairs, 21+3)',
+    badge: 'Rozet basımı',
+    badge_gift: 'Bözer Gaming rozeti hediyesi',
+    ps_fee: 'Pişti masa ücreti',
+    ps_prize: 'Pişti maç ödülü',
+    ps_refund: 'Pişti ücret iadesi',
+    ps_mission: 'Pişti görev ödülü',
+    tv_fee: 'Tavla masa ücreti',
+    tv_prize: 'Tavla maç ödülü',
+    tv_refund: 'Tavla ücret iadesi',
+    tv_mission: 'Tavla görev ödülü',
   };
-  const GAME = { 'americano-online': 'Americano', 'dostkazigi-online': 'Dost Kazığı', blackjack: 'Blackjack' };
+  const GAME = { 'americano-online': 'Americano', 'dostkazigi-online': 'Dost Kazığı', 'pisti-online': 'Pişti', 'tavla-online': 'Tavla', blackjack: 'Blackjack' };
   econ.kindLabel = (k) => KIND[k] || k;
   econ.gameLabel = (g) => GAME[g] || 'Site';
   // v3.2: Blackjack seviyeleri panelden gelir (bakiye eşiği ve bahis değerleri)
   const TIER_NAME = { bronze: 'Bronze', silver: 'Silver', gold: 'Gold' };
-  const tiers = () => (BG.publicSettings && BG.publicSettings.bj_tiers) || { bronze: { min_balance: 0, bets: [10] }, silver: { min_balance: 4000, bets: [10, 20] }, gold: { min_balance: 8000, bets: [10, 20, 100] } };
-  /** Bakiyenin yettiği en yüksek bahis (bütün seviyeler içinde) */
+  // v3.3: fiş değeri + en düşük / en yüksek bahis (eski kayıt biçimi — bahis listesi — da okunur)
+  const tiers = () =>
+    (BG.publicSettings && BG.publicSettings.bj_tiers) || {
+      bronze: { min_balance: 0, chip: 10, min_bet: 10, max_bet: 50 },
+      silver: { min_balance: 0, chip: 20, min_bet: 20, max_bet: 100 },
+      gold: { min_balance: 4000, chip: 50, min_bet: 50, max_bet: 300 },
+    };
+  const tierMax = (t) => (t.max_bet != null ? +t.max_bet : Math.max(0, ...(t.bets || [0])));
+  /** Bakiyenin yettiği en yüksek bahis (oturabildiği seviyeler içinde) */
   econ.maxBetFor = (bal) => {
     let m = 0;
     Object.values(tiers()).forEach((t) => {
-      if ((t.min_balance || 0) <= bal) (t.bets || []).forEach((b) => (m = Math.max(m, b)));
+      if ((t.min_balance || 0) <= bal) m = Math.max(m, tierMax(t));
     });
     return m || 10;
   };
@@ -193,8 +220,8 @@
           <div class="rankup-ic">${BG.rankIcon(rank, 120)}</div>
           <p class="rankup-k">Yeni rütbe</p>
           <h2 class="rankup-name">${esc(r.name)}</h2>
-          <p class="rankup-sub">${r.group ? esc(r.group) + ' · ' : ''}${r.maxFee} BP’ye kadar masa açabilirsin</p>
-          <button class="btn btn-primary" type="button">Harika</button>
+          <p class="rankup-sub">${r.group ? esc(r.group) + ' · ' : ''}${feeLimitText(r.maxFee)}</p>
+          <div class="rankup-acts"><a class="btn btn-ghost" href="#/rutbeler">Rütbeleri gör</a><button class="btn btn-primary" type="button">Harika</button></div>
         </div>
       </div>`);
     document.body.appendChild(ov);
@@ -350,6 +377,9 @@
       });
     }
     document.querySelectorAll('[data-missions-badge]').forEach((b) => (b.innerHTML = BG.countBadge(econ.state && econ.state.missions_ready)));
+    // v3.4: basılmayı bekleyen rozetler (profil sekmesi ve menüde)
+    document.querySelectorAll('[data-badge="badges"]').forEach((b) => (b.innerHTML = BG.countBadge(econ.state && econ.state.badges_ready)));
+    document.querySelectorAll('.userbtn').forEach((b) => b.classList.toggle('has-badge-dot', !!(econ.state && econ.state.badges_ready)));
     BG.bus.emit('bp', econ.state);
   };
 
@@ -368,7 +398,7 @@
           <div class="bpx-filters">
             <label class="bpx-f"><span>Oyun</span><select class="input" data-f="game">
               <option value="">Tümü</option><option value="site">Site (bonus, mağaza, yönetici)</option>
-              <option value="americano-online">Americano</option><option value="dostkazigi-online">Dost Kazığı</option><option value="blackjack">Blackjack</option>
+              <option value="americano-online">Americano</option><option value="dostkazigi-online">Dost Kazığı</option><option value="pisti-online">Pişti</option><option value="tavla-online">Tavla</option><option value="blackjack">Blackjack</option>
             </select></label>
             <label class="bpx-f"><span>Başlangıç</span><input class="input" type="date" data-f="from"></label>
             <label class="bpx-f"><span>Bitiş</span><input class="input" type="date" data-f="to"></label>
@@ -416,7 +446,8 @@
           <div class="bpx-rkname">${esc(r.name)} <small>· ${esc(r.group)}</small>${pr ? ' ' + BG.prestigeChip(pr) : ''}</div>
           <div class="bp-prog lg" aria-hidden="true"><i style="width:${prog.toFixed(1)}%"></i></div>
           <p class="muted small">${r.next ? `Sonraki rütbe ${esc(r.nextName)}: ${fmt(r.next)} BP (${fmt(r.next - st.balance)} BP kaldı)` : `En yüksek rütbe: ${esc(r.name)}. Prestij ilerlemesi aşağıda.`}
-            · En yüksek rütben: <b>${esc(BG.rankInfo(st.best_rank).name)}</b> · Masa ücreti sınırın: <b>${r.maxFee} BP</b></p>
+            · En yüksek rütben: <b>${esc(BG.rankInfo(st.best_rank).name)}</b>${feeLimitText(r.maxFee, true)}</p>
+          <a class="btn btn-soft btn-sm bpx-ranks" href="#/rutbeler">${icon('trophy', 16)}Bütün rütbeler</a>
         </div>
         <section class="bpx-sec">
           <h3>${icon('gift', 17)}Günlük bonus</h3>
@@ -590,7 +621,7 @@
   };
 
   /* ---------------- bildirim merkezi ---------------- */
-  const NIC = { admin_bp: 'shield', rank: 'award', prestige: 'star', reward: 'trophy', refund: 'coin', comment: 'message', gift: 'gift', weekly: 'coin', table: 'flag' };
+  const NIC = { admin_bp: 'shield', rank: 'award', prestige: 'star', reward: 'trophy', refund: 'coin', comment: 'message', gift: 'gift', weekly: 'coin', table: 'flag', badge: 'award' };
   econ.openNotifications = async function () {
     const body = BG.frag(`<div class="notif"><ul class="notif-list"><li class="muted small">Yükleniyor…</li></ul><button class="btn btn-ghost btn-sm notif-more" type="button" hidden>Daha eski</button></div>`);
     const list = body.querySelector('.notif-list');
@@ -609,6 +640,7 @@
             BG.closeAllModals();
             if (n.kind === 'reward' || n.kind === 'admin_bp' || n.kind === 'refund' || n.kind === 'weekly') econ.openPanel(n.kind === 'admin_bp' ? 'history' : 'wallet');
             else if (n.kind === 'comment' || n.kind === 'rank' || n.kind === 'prestige') BG.router.go('/profil');
+            else if (n.kind === 'badge') BG.router.go('/profil?rozet=1');
           });
           list.appendChild(li);
         });
@@ -656,13 +688,14 @@
       econ.refresh();
       return;
     }
-    if (n.kind === 'admin_bp' || n.kind === 'reward' || n.kind === 'refund' || n.kind === 'prestige') econ.refresh();
+    if (n.kind === 'admin_bp' || n.kind === 'reward' || n.kind === 'refund' || n.kind === 'prestige' || n.kind === 'badge') econ.refresh();
     BG.toast({
       type: n.kind === 'admin_bp' && n.data && n.data.change < 0 ? 'info' : 'success',
       title: n.title,
       text: n.body,
-      duration: 6000,
-      onClick: () => econ.openNotifications(),
+      duration: n.kind === 'badge' ? 8000 : 6000,
+      // rozet bildirimi: oyun açık değilse doğrudan profildeki Rozetler bölümüne gider
+      onClick: () => (n.kind === 'badge' && !(BG.host && BG.host.isOpen()) ? BG.router.go('/profil?rozet=1') : econ.openNotifications()),
     });
   }
 
@@ -728,6 +761,108 @@
     if (econ.ch) BG.api.removeChannel(econ.ch);
     econ.ch = null;
   }
+  /* =====================================================================
+     v3.3 RÜTBELER — bütün rütbeler ve BP aralıkları; bakan üyenin rütbesi
+     halka içinde (halka, sonraki rütbeye ilerlemeyi de gösterir)
+     ===================================================================== */
+  /** Rütbe tablosunun aralığı: "2.500 – 2.999 BP" / son rütbe "200.000+ BP" */
+  const rankRange = (r) => (r.next != null ? `${fmt(r.min)} – ${fmt(r.next - 1)} BP` : `${fmt(r.min)}+ BP`);
+  /** Rütbelerin renk grupları; tek rütbelik ardışık gruplar "Üst rütbeler" altında toplanır */
+  function rankGroups() {
+    const out = [];
+    BG.RANKS.forEach((x, i) => {
+      const r = BG.rankInfo(i + 1);
+      const last = out[out.length - 1];
+      if (last && last.color === r.color) last.items.push(r);
+      else out.push({ color: r.color, name: r.group || '', items: [r] });
+    });
+    const merged = [];
+    out.forEach((g) => {
+      const prev = merged[merged.length - 1];
+      if (g.items.length === 1 && prev && prev.top) prev.items.push(g.items[0]);
+      else if (g.items.length === 1) merged.push({ top: true, name: 'Üst rütbeler', items: [g.items[0]] });
+      else merged.push(g);
+    });
+    return merged;
+  }
+  econ.rankRange = rankRange;
+  BG.views = BG.views || {};
+  BG.views.ranks = function () {
+    const root = BG.frag(`<div class="page ranks">
+        <header class="page-head">
+          <div><h1>${icon('trophy', 26)}Rütbeler</h1><p class="page-lead">Rütben güncel BP bakiyene göre belirlenir: bakiyen arttıkça yükselir, azalınca iner. Ulaştığın en yüksek rütbe profilinde kalır.</p></div>
+        </header>
+        <section class="rk-hero" aria-live="polite"></section>
+        <div class="rk-groups"></div>
+      </div>`);
+    const hero = root.querySelector('.rk-hero');
+    const box = root.querySelector('.rk-groups');
+    let scrolled = false;
+    function paint() {
+      const st = BG.isAuthed() ? econ.state : null;
+      const cur = st ? st.rank || BG.rankOf(st.balance) : 0;
+      const best = st ? st.best_rank || cur : 0;
+      const total = BG.RANKS.length;
+      if (st) {
+        const r = BG.rankInfo(cur);
+        const span = r.next ? Math.max(1, r.next - r.min) : 1;
+        const prog = r.next ? Math.max(0, Math.min(100, ((st.balance - r.min) / span) * 100)) : 100;
+        hero.className = `rk-hero g${r.grp}`;
+        hero.setAttribute('style', BG.rankStyle(r));
+        hero.innerHTML = `<div class="rk-ring" style="--p:${prog.toFixed(1)}" role="img" aria-label="Rütben ${esc(r.name)}, sonraki rütbeye %${Math.round(prog)}">
+            <span class="rk-ring-in">${BG.rankIcon(cur, 74)}</span></div>
+          <div class="rk-hero-t">
+            <span class="rk-k">Rütben · ${cur}/${total}</span>
+            <h2>${esc(r.name)}</h2>
+            <p class="rk-sub">${r.group ? esc(r.group) + ' · ' : ''}${esc(rankRange(r))}</p>
+            <p class="rk-bal"><b>${fmt(st.balance)}</b> BP</p>
+            <p class="muted small">${r.next ? `Sonraki rütbe <b>${esc(r.nextName)}</b>: ${fmt(r.next)} BP · ${fmt(r.next - st.balance)} BP kaldı` : 'En yüksek rütbedesin.'}${best > cur ? ` · En yüksek rütben: <b>${esc(BG.rankInfo(best).name)}</b>` : ''}</p>
+          </div>`;
+      } else {
+        hero.className = 'rk-hero is-guest';
+        hero.removeAttribute('style');
+        hero.innerHTML = `<div class="rk-hero-t"><h2>Rütbeni gör</h2><p class="muted">Giriş yapınca rütben bu listede halka içinde görünür.</p><a class="btn btn-primary" href="#/giris">Giriş yap</a></div>`;
+      }
+      const lv = BG.LEVELS || [];
+      const amFree = !(BG.publicSettings && BG.publicSettings.am_rank_lock);
+      box.innerHTML = rankGroups()
+        .map((g) => {
+          const lo = g.items[0];
+          const hi = g.items[g.items.length - 1];
+          const head = g.top ? `${esc(g.name)}` : `${esc(g.name)} rütbeler`;
+          return `<section class="rk-group${g.top ? ' is-top' : ''}" style="${g.top ? '' : BG.rankStyle(lo)}">
+            <header class="rk-gh"><h2>${head}</h2><span class="muted small">${fmt(lo.min)}${hi.next != null ? ' – ' + fmt(hi.next - 1) : '+'} BP</span></header>
+            <ol class="rk-list" start="${lo.idx}">${g.items
+              .map((r) => {
+                const tags = [];
+                lv.filter((l) => l[1] === r.idx && l[1] > 1).forEach((l) => tags.push(`${amFree ? 'Dost Kazığı ' : ''}${l[0]} BP masası`));
+                if (r.idx === BG.PRESTIGE_MIN) tags.push('Prestij başlar');
+                if (best && r.idx === best && best !== cur) tags.push('En yüksek rütben');
+                const state = !cur ? '' : r.idx === cur ? ' is-cur' : r.idx < cur ? ' is-done' : ' is-up';
+                return `<li class="rk-row${state}" style="${BG.rankStyle(r)}" data-rk="${r.idx}"${r.idx === cur ? ' aria-current="true"' : ''}>
+                  <span class="rk-ic">${BG.rankIcon(r.idx, 36)}</span>
+                  <span class="rk-nm"><b>${esc(r.name)}</b><small>${r.idx}. rütbe${tags.length ? ' · ' + tags.map(esc).join(' · ') : ''}</small></span>
+                  <span class="rk-bp">${esc(rankRange(r))}</span>
+                  ${r.idx === cur ? '<em class="rk-you">Sen</em>' : ''}
+                </li>`;
+              })
+              .join('')}</ol></section>`;
+        })
+        .join('');
+      if (cur && !scrolled) {
+        scrolled = true;
+        requestAnimationFrame(() => {
+          const el = box.querySelector('.rk-row.is-cur');
+          if (el && el.getBoundingClientRect().top > window.innerHeight * 0.75) el.scrollIntoView({ block: 'center', behavior: 'smooth' });
+        });
+      }
+    }
+    paint();
+    if (BG.isAuthed() && !econ.state) econ.refresh();
+    const offs = [BG.bus.on('bp', paint), BG.bus.on('econ-settings', paint)];
+    return { node: root, cleanup: () => offs.forEach((f) => f()) };
+  };
+
   BG.bus.on('auth', (on) => {
     if (on) {
       econ.refresh();

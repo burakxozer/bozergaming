@@ -28,6 +28,143 @@
   T.esc = esc;
   T.el = el;
 
+  /* ---------------- ses: iPhone / iPad kilidi ve sessiz mod (v3.3) ----------------
+     iOS Safari'de Web Audio ancak bir dokunuşun içinde başlar, uygulama değişince
+     "interrupted" durumunda kalabilir ve telefon yan anahtardan sessize alınmışsa
+     varsayılan olarak susar. Oyunların ses bağlamları buraya kaydolur: her dokunuşta
+     duran bağlam sürdürülür, ilk dokunuşta tek örneklik sessiz ses çalınır (eski iOS),
+     ses oturumu "oynatma" türüne alınır (iOS 17+: navigator.audioSession; daha eskide
+     sessiz, döngülü bir <audio>). Böylece oyun sesleri sessiz modda da duyulur; oyunun
+     ses ayarından kapatılabilir. Oyunun sesi kapalıysa oturum serbest bırakılır. */
+  const AU = (T.audio = T.audio || {});
+  (function () {
+    const ctxs = [];
+    const ua = navigator.userAgent || '';
+    const iOS = /iP(hone|ad|od)/.test(ua) || (navigator.platform === 'MacIntel' && navigator.maxTouchPoints > 1);
+    const KEY = 'bg.snd.silentok';
+    let pref = true;
+    let want = true;
+    let tag = null;
+    try {
+      pref = localStorage.getItem(KEY) !== '0';
+    } catch (e) {}
+    const u16 = (v) => String.fromCharCode(v & 255, (v >> 8) & 255);
+    const u32 = (v) => u16(v & 65535) + u16((v >>> 16) & 65535);
+    function silentSrc() {
+      const n = 2000; // 0,25 sn, 8 kHz, 8 bit, sessiz
+      const head = 'RIFF' + u32(36 + n) + 'WAVEfmt ' + u32(16) + u16(1) + u16(1) + u32(8000) + u32(8000) + u16(1) + u16(8) + 'data' + u32(n);
+      return 'data:audio/wav;base64,' + btoa(head + String.fromCharCode(128).repeat(n));
+    }
+    function session(on) {
+      try {
+        const s = navigator.audioSession;
+        if (s && 'type' in s) {
+          const t = on ? 'playback' : 'auto';
+          if (s.type !== t) s.type = t;
+          return true;
+        }
+      } catch (e) {}
+      return false;
+    }
+    function tagPlay(on) {
+      if (!on) {
+        if (tag && !tag.paused) tag.pause();
+        return;
+      }
+      try {
+        if (!tag) {
+          tag = document.createElement('audio');
+          tag.setAttribute('playsinline', '');
+          tag.setAttribute('x-webkit-airplay', 'deny');
+          tag.preload = 'auto';
+          tag.loop = true;
+          tag.disableRemotePlayback = true;
+          tag.src = silentSrc();
+        }
+        if (tag.paused) {
+          const p = tag.play();
+          if (p && p.catch) p.catch(() => {});
+        }
+      } catch (e) {}
+    }
+    function playthrough() {
+      if (!iOS) return;
+      const on = pref && want && document.visibilityState === 'visible';
+      if (session(pref && want)) return;
+      tagPlay(on);
+    }
+    function resume(c) {
+      if (!c || c.state === 'running' || c.state === 'closed') return;
+      try {
+        const p = c.resume();
+        if (p && p.catch) p.catch(() => {});
+      } catch (e) {}
+    }
+    /** Her dokunuşta: duran bağlamları sürdür, ilk seferde sessiz ses çal, oturumu ayarla */
+    function kick() {
+      let any = false;
+      ctxs.forEach((c) => {
+        if (!c || c.state === 'closed') return;
+        any = true;
+        resume(c);
+        if (!c.__bgKick) {
+          c.__bgKick = true;
+          try {
+            const s = c.createBufferSource();
+            s.buffer = c.createBuffer(1, 1, 22050);
+            s.connect(c.destination);
+            s.start(0);
+          } catch (e) {}
+        }
+      });
+      if (any && want) playthrough();
+    }
+    ['touchstart', 'touchend', 'pointerdown', 'pointerup', 'mousedown', 'click', 'keydown'].forEach((ev) =>
+      window.addEventListener(ev, kick, { capture: true, passive: true }),
+    );
+    document.addEventListener('visibilitychange', () => {
+      if (document.visibilityState === 'visible') {
+        ctxs.forEach(resume);
+        if (want && ctxs.length) playthrough();
+      } else tagPlay(false);
+    });
+    window.addEventListener('pagehide', () => tagPlay(false));
+    AU.iOS = iOS;
+    /** Oyunun ses bağlamını kaydeder (iOS kilidi, kesinti sonrası sürdürme) */
+    AU.add = (c) => {
+      if (!c || ctxs.indexOf(c) >= 0) return c;
+      ctxs.push(c);
+      try {
+        c.addEventListener('statechange', () => {
+          if (c.state === 'interrupted' && document.visibilityState === 'visible') setTimeout(() => resume(c), 300);
+        });
+      } catch (e) {}
+      if (iOS && want) session(pref);
+      return c;
+    };
+    AU.kick = kick;
+    /** Oyunun sesi açık mı (kapalıysa iOS ses oturumu serbest bırakılır, müzik uygulamaları kesilmez) */
+    AU.want = (on) => {
+      want = !!on;
+      if (!want) {
+        session(false);
+        tagPlay(false);
+      } else if (ctxs.length) playthrough();
+    };
+    /** Sessiz modda (yan anahtar) da çal: varsayılan açık */
+    AU.silentOk = () => pref;
+    AU.setSilentOk = (on) => {
+      pref = !!on;
+      try {
+        localStorage.setItem(KEY, pref ? '1' : '0');
+      } catch (e) {}
+      if (!pref) {
+        session(false);
+        tagPlay(false);
+      } else if (want && ctxs.length) playthrough();
+    };
+  })();
+
   const ICON = {
     chat: '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4.5 6.5a2.5 2.5 0 0 1 2.5-2.5h10a2.5 2.5 0 0 1 2.5 2.5v7a2.5 2.5 0 0 1-2.5 2.5H11l-4.2 3.3c-.5.4-1.3 0-1.3-.6V16a2.5 2.5 0 0 1-1-2z" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"/><circle cx="9" cy="10" r="1.1" fill="currentColor"/><circle cx="12" cy="10" r="1.1" fill="currentColor"/><circle cx="15" cy="10" r="1.1" fill="currentColor"/></svg>',
     eye: '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M2.5 12S6 5.5 12 5.5 21.5 12 21.5 12 18 18.5 12 18.5 2.5 12 2.5 12z" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"/><circle cx="12" cy="12" r="3" fill="none" stroke="currentColor" stroke-width="1.8"/></svg>',
@@ -659,9 +796,12 @@
 
   /* ---------------- sistem satırları: hediye ve emoji ---------------- */
   const GIFT_RE = /^\[\[gift:([a-z_]+):([0-9a-f-]{36})(?::(\d*))?\]\]\s*(.*)$/;
-  const EMOJI_RE = /^\[\[emoji:(vip|premium):([a-z_]+):(\d*)\]\]$/;
+  const EMOJI_RE = /^\[\[emoji:(vip|premium|cilgin):([a-z_]+):(\d*)\]\]$/;
   const giftSrc = (code, x) => 'assets/gifts/' + code + (x === 2 ? '@2x' : '') + '.webp';
-  const emojiSrc = (pack, code, x) => 'assets/emoji/' + pack + '/' + code + (x === 2 ? '@2x' : '') + '.webp';
+  // v3.4: Çılgın paket hareketli SVG'dir (tek dosya)
+  const EMOJI_SVG = { cilgin: true, vip: true, premium: true }; // v3.4.1: VIP ve Premium da hareketli SVG
+  const emojiSrc = (pack, code, x) => 'assets/emoji/' + pack + '/' + code + (EMOJI_SVG[pack] ? '.svg' : (x === 2 ? '@2x' : '') + '.webp');
+  T.emojiSrc = emojiSrc;
   T.giftOf = (body) => {
     const m = GIFT_RE.exec(body || '');
     return m ? { code: m[1], to: m[2], seat: m[3] === '' || m[3] == null ? null : +m[3], text: m[4] } : null;
@@ -677,6 +817,7 @@
     gifter_pack: { name: 'Gifter Pack', price: 200, text: 'Masadaki arkadaşlarına ve rakiplerine eğlenceli hediyeler gönder! 16 premium sanal hediye, tek seferlik satın alma ve üç online oyunda sınırsız kullanım.' },
     emoji_vip: { name: 'Blackjack VIP Emoji Paketi', price: 50, text: 'Masada avatarının yanında beliren 16 premium emoji tepkisi.' },
     emoji_premium: { name: 'Premium Emoji Paketi', price: 100, text: 'Bözer Gaming imzalı 16 premium emoji tepkisi.' },
+    emoji_cilgin: { name: 'Çılgın Emoji Paketi', price: 150, text: 'Hareketli 16 emoji: küfürbaz sinirli, yerlere yatan kahkaha, şimşek çakan şok ve fazlası.' },
   };
   T.buySheet = async function (id, done) {
     const B = site();
@@ -739,7 +880,11 @@
   const EMOJI = {
     vip: ['hello_wave', 'applause', 'warm_smile', 'laughing_tears', 'crying', 'angry_tilt', 'shocked', 'cheeky', 'thumbs_up', 'fingers_crossed', 'cool_sunglasses', 'nervous_sweat', 'party_celebration', 'winner_chips', 'bad_beat', 'facepalm'],
     premium: ['hello_wave', 'applause', 'big_smile', 'laughing_tears', 'crying', 'tilt_angry', 'shocked', 'playful_wink', 'thumbs_up', 'fingers_crossed', 'cool_confident', 'nervous_sweat', 'party_celebration', 'champion_trophy', 'bad_luck', 'facepalm'],
+    cilgin: ['cl_selam', 'cl_kahkaha', 'cl_kufur', 'cl_sok', 'cl_aglama', 'cl_ask', 'cl_havali', 'cl_para', 'cl_alev', 'cl_oldum', 'cl_palyaco', 'cl_uyku', 'cl_dusunce', 'cl_parti', 'cl_seytan', 'cl_bulanti'],
   };
+  // ürün → paket (kuşanılan ürün hangi emoji listesini açar)
+  const PACK_OF = { emoji_vip: 'vip', emoji_premium: 'premium', emoji_cilgin: 'cilgin' };
+  const PACK_NAME = { vip: 'VIP', premium: 'Premium', cilgin: 'Çılgın' };
   T.EMOJI = EMOJI;
   T.GIFTS = GIFTS;
   let giftCat = null;
@@ -826,18 +971,25 @@
     const game = opts.game || (T.cfg && T.cfg.game);
     if (!tableId || !T.me()) return;
     const packId = e0 && e0.emoji_pack;
-    if (!packId || !T.owns(packId)) return T.buySheet('emoji', () => T.emojiPicker(opts));
-    const pack = packId === 'emoji_premium' ? 'premium' : 'vip';
+    if (!packId || !T.owns(packId) || !PACK_OF[packId]) return T.buySheet('emoji', () => T.emojiPicker(opts));
+    const pack = PACK_OF[packId];
+    // v3.4: birden çok paket alındıysa üstte paket seçimi (seçilen paket kuşanılır)
+    const owned = Object.keys(PACK_OF).filter((id) => T.owns(id));
+    const tabs = owned.length > 1
+      ? `<div class="t-seg t-emo-tabs" role="group" aria-label="Emoji paketi">${owned.map((id) => `<button type="button" data-pack="${id}" aria-pressed="${id === packId}">${esc(PACK_NAME[PACK_OF[id]])}</button>`).join('')}</div>`
+      : '';
     const sh = T.sheet({
       title: 'Emoji tepkisi',
       top: true,
-      body: `<div class="t-emo-grid">${EMOJI[pack].map((c) => `<button type="button" class="t-emo-it" data-emo="${c}" aria-label="${esc(c)}"><img src="${emojiSrc(pack, c)}" srcset="${emojiSrc(pack, c, 2)} 2x" alt="" loading="lazy"></button>`).join('')}</div>
-        <p class="t-note">Seçtiğin emoji kısa süre avatarının yanında görünür; masadaki herkes görür.${T.owns('emoji_vip') && T.owns('emoji_premium') ? ' <button type="button" class="t-link" data-swap>Diğer paketi kuşan</button>' : ''}</p>`,
+      body: `${tabs}<div class="t-emo-grid">${EMOJI[pack].map((c) => `<button type="button" class="t-emo-it" data-emo="${c}" aria-label="${esc(c)}"><img src="${emojiSrc(pack, c)}"${EMOJI_SVG[pack] ? '' : ` srcset="${emojiSrc(pack, c, 2)} 2x"`} alt="" loading="lazy"></button>`).join('')}</div>
+        <p class="t-note">Seçtiğin emoji avatarının yanında görünür; masadaki herkes görür.</p>`,
     });
     sh.body.addEventListener('click', async (e) => {
-      if (e.target.closest('[data-swap]')) {
+      const sw = e.target.closest('[data-pack]');
+      if (sw) {
+        if (sw.dataset.pack === packId) return;
         try {
-          await call('bg_store_equip', { p_kind: 'emoji', p_product: pack === 'vip' ? 'emoji_premium' : 'emoji_vip' });
+          await call('bg_store_equip', { p_kind: 'emoji', p_product: sw.dataset.pack });
           const B = site();
           if (B && B.bp) await B.bp.refresh();
           sh.close();
@@ -937,23 +1089,24 @@
       img.style.top = window.innerHeight * 0.4 + 'px';
     }
     document.body.appendChild(img);
-    // v3.2: emoji 1 sn daha uzun görünür (giriş ve çıkış aynı hızda, bekleme uzadı)
+    // v3.4: emoji ekranda 1,5 sn daha uzun kalır (giriş ve çıkış aynı hızda, bekleme uzadı: toplam 4,9 sn)
     if (reduceMo()) {
-      setTimeout(() => img.remove(), 3200);
+      setTimeout(() => img.remove(), 4700);
       return !!c;
     }
     const an = img.animate(
       [
         { transform: 'scale(.2) rotate(-18deg)', opacity: 0 },
-        { transform: 'scale(1.18) rotate(6deg)', opacity: 1, offset: 0.127 },
-        { transform: 'scale(1) rotate(0)', opacity: 1, offset: 0.226 },
-        { transform: 'translateY(-6px) scale(1.04)', opacity: 1, offset: 0.788 },
+        { transform: 'scale(1.18) rotate(6deg)', opacity: 1, offset: 0.088 },
+        { transform: 'scale(1) rotate(0)', opacity: 1, offset: 0.157 },
+        { transform: 'translateY(-4px) scale(1.03)', opacity: 1, offset: 0.5 },
+        { transform: 'translateY(-6px) scale(1.04)', opacity: 1, offset: 0.853 },
         { transform: 'translateY(-26px) scale(.9)', opacity: 0 },
       ],
-      { duration: 3400, easing: 'cubic-bezier(.2,.8,.3,1)' }
+      { duration: 4900, easing: 'cubic-bezier(.2,.8,.3,1)' }
     );
     if (an) an.onfinish = () => img.remove();
-    else setTimeout(() => img.remove(), 3400);
+    else setTimeout(() => img.remove(), 4900);
     return !!c;
   };
   /** Hediye: gönderenin avatarından alıcının avatarına uçar (kuyrukta, üst üste binmez) */
@@ -993,18 +1146,19 @@
     const my = Math.min(sy, ey) - Math.max(60, Math.abs(ex - sx) * 0.25);
     const short = lvl === 'reduced' || reduceMo();
     const anim = img.animate(
-      // v3.2: hediye alıcının avatarında 1 sn daha uzun kalır (uçuş aynı hızda)
+      // v3.4: hediye alıcının avatarında 1,5 sn daha uzun kalır (uçuş aynı hızda; toplam 5,1 sn)
       short
-        ? [{ transform: `translate(${ex}px,${ey}px) scale(.4)`, opacity: 0 }, { transform: `translate(${ex}px,${ey}px) scale(1)`, opacity: 1, offset: 0.175 }, { transform: `translate(${ex}px,${ey}px) scale(1)`, opacity: 1, offset: 0.8 }, { transform: `translate(${ex}px,${ey}px) scale(1)`, opacity: 0 }]
+        ? [{ transform: `translate(${ex}px,${ey}px) scale(.4)`, opacity: 0 }, { transform: `translate(${ex}px,${ey}px) scale(1)`, opacity: 1, offset: 0.108 }, { transform: `translate(${ex}px,${ey}px) scale(1)`, opacity: 1, offset: 0.877 }, { transform: `translate(${ex}px,${ey}px) scale(1)`, opacity: 0 }]
         : [
             { transform: `translate(${sx}px,${sy}px) scale(.45) rotate(-20deg)`, opacity: 0 },
-            { transform: `translate(${sx}px,${sy - 14}px) scale(.8) rotate(-10deg)`, opacity: 1, offset: 0.072 },
-            { transform: `translate(${mx}px,${my}px) scale(1.25) rotate(8deg)`, opacity: 1, offset: 0.325 },
-            { transform: `translate(${ex}px,${ey}px) scale(1) rotate(0)`, opacity: 1, offset: 0.52 },
-            { transform: `translate(${ex}px,${ey - 6}px) scale(1.06)`, opacity: 1, offset: 0.899 },
+            { transform: `translate(${sx}px,${sy - 14}px) scale(.8) rotate(-10deg)`, opacity: 1, offset: 0.051 },
+            { transform: `translate(${mx}px,${my}px) scale(1.25) rotate(8deg)`, opacity: 1, offset: 0.229 },
+            { transform: `translate(${ex}px,${ey}px) scale(1) rotate(0)`, opacity: 1, offset: 0.367 },
+            { transform: `translate(${ex}px,${ey - 4}px) scale(1.04)`, opacity: 1, offset: 0.65 },
+            { transform: `translate(${ex}px,${ey - 6}px) scale(1.06)`, opacity: 1, offset: 0.929 },
             { transform: `translate(${ex}px,${ey - 18}px) scale(.85)`, opacity: 0 },
           ],
-      { duration: short ? 2400 : 3600, easing: 'cubic-bezier(.45,.05,.35,1)', fill: 'forwards' }
+      { duration: short ? 3900 : 5100, easing: 'cubic-bezier(.45,.05,.35,1)', fill: 'forwards' }
     );
     if (!short)
       setTimeout(() => {
@@ -1022,9 +1176,9 @@
       setTimeout(fx.next, 120);
     };
     if (anim) anim.onfinish = done;
-    else setTimeout(done, short ? 2400 : 3600);
+    else setTimeout(done, short ? 3900 : 5100);
     toEl.classList.add('t-got-gift');
-    setTimeout(() => toEl.classList.remove('t-got-gift'), 3600);
+    setTimeout(() => toEl.classList.remove('t-got-gift'), 5100);
   };
   function giftBanner(job) {
     const r = job.row || {};
@@ -1032,8 +1186,8 @@
     const me = T.me();
     const b = el(`<div class="t-giftfx" aria-live="polite"><img src="${giftSrc(job.code, 2)}" alt=""><p><b>${esc(me && job.from === me.id ? 'Sen' : who(r))}</b> → ${esc(g.text)}</p></div>`);
     document.body.appendChild(b);
-    setTimeout(() => b.classList.add('is-out'), 3000);
-    setTimeout(() => b.remove(), 3500);
+    setTimeout(() => b.classList.add('is-out'), 4500);
+    setTimeout(() => b.remove(), 5000);
   }
 
   /* ---------------- maç sonu: ödüller (ÖDÜLLERİ TOPLA) ---------------- */
@@ -1063,7 +1217,13 @@
         return;
       }
       if (d.state === 'free') {
-        box.innerHTML = `<p class="t-muted">Bu maç ücretsizdi (tek gerçek oyuncu), BP ödülü ve görev ilerlemesi yok.</p>`;
+        // v3.4: ücretsiz maçta da arkadaşlar için Friend Coins (sonucu ilk bildiren oyuncunun ardından yazılır)
+        const fc = d.fc_free || 0;
+        box.innerHTML = fc > 0
+          ? `<p class="t-ok">🤝 Arkadaşlarınla oynadığın için <b>+${fc} Friend Coins</b> hesabına eklendi.</p><p class="t-muted">Bu maç ücretsizdi: BP ödülü ve görev ilerlemesi yok.</p>`
+          : `<p class="t-muted">Bu maç ücretsizdi: BP ödülü ve görev ilerlemesi yok.</p>`;
+        if (!fc && (d.expected || 0) >= 2 && tries < 5) setTimeout(tick, 1500);
+        else if (fc && B && B.bp) B.bp.refresh();
         return;
       }
       if (d.state === 'disputed' || d.state === 'refunded') {
@@ -1082,12 +1242,12 @@
         <ul class="t-rw-list">${rows
           .map(
             (r) => `<li class="${me && r.u === me.id ? 'is-me' : ''}"><span class="t-rw-pl">${r.kind === 'refund' ? '=' : medal(r.place)}</span><span class="t-rw-n">${esc(r.name)}${T.cfg.game === 'dostkazigi-online' ? ` <small class="t-muted">Takım ${r.team + 1}</small>` : ''}</span>
-              <b class="t-rw-bp">${r.kind === 'refund' ? 'iade ' : ''}+${r.bp} BP</b>${r.fc ? `<span class="t-rw-fc">🤝 +${r.fc}</span>` : ''}</li>`
+              <b class="t-rw-bp">${r.kind === 'refund' ? 'iade ' : ''}+${r.bp} BP</b>${r.fc ? `<span class="t-rw-fc" title="Friend Coins: maçı birlikte bitirdiğin arkadaşların için">🤝 +${r.fc} FC</span>` : ''}</li>`
           )
           .join('')}</ul>
         ${
           rw && !rw.claimed
-            ? `<button type="button" class="t-btn is-primary is-lg t-rw-go">${ICON.coin}ÖDÜLLERİ TOPLA · +${rw.bp} BP${rw.fc ? ' · +' + rw.fc + ' FC' : ''}</button>`
+            ? `<button type="button" class="t-btn is-primary is-lg t-rw-go">${ICON.coin}ÖDÜLLERİ TOPLA · ${[rw.bp ? '+' + rw.bp + ' BP' : '', rw.fc ? '+' + rw.fc + ' FC' : ''].filter(Boolean).join(' · ') || '+0 BP'}</button>`
             : rw && rw.claimed
             ? `<p class="t-ok">${ICON.check}Ödüllerin hesabına eklendi.</p>`
             : `<p class="t-muted">Bu maçta sana BP ödülü çıkmadı. Görev ilerlemen işlendi.</p>`
@@ -1100,7 +1260,7 @@
             const r = B && B.bp && B.bp.collect ? await B.bp.collect(null, tableId) : await call('bg_rewards_claim', { p_table: tableId });
             if (r) {
               burst(go);
-              go.outerHTML = `<p class="t-ok">${ICON.check}+${r.bp} BP${r.fc ? ' ve +' + r.fc + ' Friend Coins' : ''} hesabına eklendi.</p>`;
+              go.outerHTML = `<p class="t-ok">${ICON.check}${[r.bp ? '+' + r.bp + ' BP' : '', r.fc ? '+' + r.fc + ' Friend Coins' : ''].filter(Boolean).join(' ve ') || 'Ödül'} hesabına eklendi.</p>`;
             } else go.disabled = false;
           } catch (e) {
             go.disabled = false;
@@ -1382,23 +1542,40 @@
     if (T.cfg.game === 'dostkazigi-online') return `Kazanan takımın her oyuncusu <b>${dkPrize(fee, seats || n)} BP</b> alır; kaybeden takım almaz. Bütün takımlar berabere kalırsa ücretler iade edilir.`;
     if (n < 2) return 'Tek gerçek oyuncuyla (botlara karşı) masa ücretsiz ve ödülsüzdür.';
     const pr = amPrizes(fee, n);
-    return `${n} gerçek oyuncuyla ödüller: ${pr.map((v, i) => `${i + 1}. <b>${v} BP</b>`).join(' · ')}`;
+    // v3.4.1: Tavla tek kazanan; sıfır ödüllü sıralar yazılmaz
+    if (T.cfg.game === 'tavla-online') return `Maçı kazanan <b>${pr[0] || 0} BP</b> alır.`;
+    const pos = pr.map((v, i) => [v, i]).filter((x) => x[0] > 0);
+    const pairs = T.cfg.game === 'pisti-online' && T.cfg.pairsNote ? ' Eşli oyunda kazanan takımın iki oyuncusu 1. ve 2. ödülü paylaşır.' : '';
+    return `${n} gerçek oyuncuyla ödüller: ${(pos.length ? pos : [[0, 0]]).map(([v, i]) => `${i + 1}. <b>${v} BP</b>`).join(' · ')}${pairs}`;
   }
   T.prizeText = prizeText;
+  /** v3.3: Americano'da masa ücretlerinde rütbe şartı yok — herkes her ücretle açar (panelden açılabilir).
+      Dost Kazığı'nda her ücret seviyesinin rütbe şartı geçerli. */
+  function rankLocked() {
+    const B = site();
+    const ps = (B && B.publicSettings) || {};
+    // v3.4: iki oyunda da panel anahtarı (Americano varsayılan kapalı, Dost Kazığı varsayılan açık)
+    if (T.cfg.game === 'americano-online') return !!ps.am_rank_lock;
+    // v3.4.1: Pişti ve Tavla (varsayılan kapalı)
+    if (T.cfg.game === 'pisti-online') return !!ps.ps_rank_lock;
+    if (T.cfg.game === 'tavla-online') return !!ps.tv_rank_lock;
+    return ps.dk_rank_lock !== false;
+  }
   function feeHTML(fee, n) {
     const e = T.econ();
     const max = (e && e.max_fee) || 10;
     const bal = e ? e.balance : 0;
     const rank = (e && e.rank) || 1;
     const B = site();
+    const locked = rankLocked();
     const rname = (r) => (B && B.rankInfo ? B.rankInfo(r).name : r + '. rütbe');
     return `<div class="t-field t-feebox"><span class="t-lab">Masa ücreti</span><div class="t-seg t-fee" data-seg="fee">${levels().map((l) => {
       const v = +l.fee;
-      const lock = (l.min_rank || 1) > rank ? `Bu masa için en az ${rname(l.min_rank)} rütbesi gerekli` : v > bal ? 'BP bakiyen yetmiyor' : '';
+      const lock = locked && (l.min_rank || 1) > rank ? `Bu masa için en az ${rname(l.min_rank)} rütbesi gerekli` : v > bal ? 'BP bakiyen yetmiyor' : '';
       return `<button type="button" data-v="${v}" aria-pressed="${v === fee}" ${lock ? `disabled title="${esc(lock)}"` : ''}>${v}${lock ? ICON.lock : ''}</button>`;
     }).join('')}</div>
       <p class="t-note t-prize" data-prize>${prizeText(fee, Math.min(n, 5), n)}</p>
-      <p class="t-note">Rütben en fazla <b>${max} BP</b>’lik masa açmana izin veriyor. Ücret, oyun başlarken en az 2 gerçek oyuncu varsa herkesten alınır; ödüller maç sonunda “Ödülleri topla” ile hesaba geçer.</p></div>`;
+      <p class="t-note">${locked ? `Rütben en fazla <b>${max} BP</b>’lik masa açmana izin veriyor.` : 'Bütün masa ücretleri herkese açık; bakiyen yettiği sürece istediğin ücreti seç.'} Ücret, oyun başlarken en az 2 gerçek oyuncu varsa herkesten alınır; ödüller maç sonunda “Ödülleri topla” ile hesaba geçer.</p></div>`;
   }
   function wireForm(body, state) {
     body.addEventListener('click', (e) => {
@@ -1447,7 +1624,8 @@
       // seçili ücret yoksa ya da artık açılamıyorsa: açılabilen en yüksek seviye (bakiye yetmezse en düşük)
       const rank = (e && e.rank) || 1;
       const bal = e ? e.balance : 0;
-      const ok = levels().filter((l) => (l.min_rank || 1) <= rank && +l.fee <= bal).map((l) => +l.fee);
+      const locked = rankLocked();
+      const ok = levels().filter((l) => (!locked || (l.min_rank || 1) <= rank) && +l.fee <= bal).map((l) => +l.fee);
       if (!ok.includes(state.rules.fee)) {
         const below = ok.filter((f) => state.rules.fee && f <= state.rules.fee);
         state.rules.fee = below.length ? Math.max(...below) : ok.length ? ok[0] : +levels()[0].fee;
@@ -2122,6 +2300,12 @@
   SP.hold = function (ms) {
     this.holdUntil = Math.max(this.holdUntil, Date.now() + ms);
   };
+  /** v3.4: uzak hamle oynatma aralığı. Arka arkaya gelen hamleler (bot çekip atınca) aynı karede
+      uygulanmaz; her biri kendi kart uçuşunu gösterir. Birikme büyürse aralık atlanır. Hamle yapmayı
+      (canAct) engellemez. */
+  SP.pace = function (ms) {
+    this.paceUntil = Math.max(this.paceUntil || 0, Date.now() + ms);
+  };
   SP.drain = function () {
     if (!this.started || this.closed || this.draining) return;
     this.draining = true;
@@ -2135,6 +2319,12 @@
         }
         const a = this.buf.get(this.seq + 1);
         if (!a) break;
+        const pw = (this.paceUntil || 0) - Date.now();
+        if (pw > 0 && this.buf.size < 6 && !document.hidden) {
+          clearTimeout(this.holdT);
+          this.holdT = setTimeout(() => this.drain(), pw + 5);
+          break;
+        }
         this.buf.delete(a.seq);
         this.process(a);
       }
@@ -2179,6 +2369,7 @@
     if (!this.split && !this.needRebase) {
       const r = GA.applyRemote(a, false);
       if (r && r.hold) this.hold(r.hold);
+      if (r && r.pace) this.pace(r.pace);
     } else {
       GA.apply(this.base, a);
       this.needRebase = true;
@@ -2264,7 +2455,9 @@
       this.retryAt = 0;
       this.fails = 0;
       const at = T.now();
-      batch.forEach((x, i) => this.onRow({ seq: from + i, seat: x.seat, kind: x.kind, data: x.data, by: null, at }, true));
+      // v3.4.1: sunucunun değiştirdiği hamle verisi (Tavla zarı) yerel kopyaya da işlenir
+      const fix = (r && r.fix) || {};
+      batch.forEach((x, i) => this.onRow({ seq: from + i, seat: x.seat, kind: x.kind, data: fix[i] || fix[String(i)] || x.data, by: null, at }, true));
       if (r && r.seq && r.seq !== from + batch.length - 1) this.scheduleFetch(0);
       again = true;
     } catch (e) {

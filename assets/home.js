@@ -239,6 +239,48 @@
                 <button class="btn btn-ghost btn-sm" type="button" data-doc="tpl-rules-dostkazigi" data-title="Dost Kazığı oyun kuralları">${icon('book', 18)}Kurallar</button>
               </div>
             </article>
+            <article class="game-row" data-game="pisti-online">
+              <div class="game-glyph">${BG.gameTile('pisti-online', 'tile-l')}</div>
+              <div class="game-main">
+                <h3 class="game-name">Pişti Online</h3>
+                <p class="game-desc">Klasik Pişti: aynı kartla al, valeyle süpür, tek kartı yakalayınca pişti. 2–4 kişi, eşli de oynanır.</p>
+                <ul class="modes">
+                  <li class="mode">
+                    <div><strong>Botlara karşı</strong><span>2, 3 ya da 4 kişilik masa, hedef puanı ve bot seviyesini seç</span></div>
+                    <div class="mode-actions"><a class="btn btn-primary btn-sm" href="#/oyun/pisti-online?mod=bot">${icon('play', 16)}Başla</a></div>
+                  </li>
+                  <li class="mode">
+                    <div><strong>Online</strong><span>Masa kur ya da katıl; emoji ve hediyeler masada açık</span></div>
+                    <div class="mode-actions"><a class="btn btn-primary btn-sm" href="#/oyun/pisti-online?mod=online">${icon('users', 16)}Masalar</a></div>
+                  </li>
+                </ul>
+                <p class="game-resume" hidden></p>
+              </div>
+              <div class="game-actions">
+                <button class="btn btn-ghost btn-sm" type="button" data-doc="tpl-rules-pisti" data-title="Pişti oyun kuralları">${icon('book', 18)}Kurallar</button>
+              </div>
+            </article>
+            <article class="game-row" data-game="tavla-online">
+              <div class="game-glyph">${BG.gameTile('tavla-online', 'tile-l')}</div>
+              <div class="game-main">
+                <h3 class="game-name">Tavla Online</h3>
+                <p class="game-desc">1’e 1 tavla: kapı kur, açık taşı kır, taşlarını ilk sen topla. Mars 2 sayı; zarlar sunucuda atılır.</p>
+                <ul class="modes">
+                  <li class="mode">
+                    <div><strong>Botlara karşı</strong><span>Tek oyun, 3 ya da 5 sayılık maç; bot seviyesini seç</span></div>
+                    <div class="mode-actions"><a class="btn btn-primary btn-sm" href="#/oyun/tavla-online?mod=bot">${icon('play', 16)}Başla</a></div>
+                  </li>
+                  <li class="mode">
+                    <div><strong>Online</strong><span>Arkadaşınla 1’e 1 masa; izleyiciler maçı canlı görür</span></div>
+                    <div class="mode-actions"><a class="btn btn-primary btn-sm" href="#/oyun/tavla-online?mod=online">${icon('users', 16)}Masalar</a></div>
+                  </li>
+                </ul>
+                <p class="game-resume" hidden></p>
+              </div>
+              <div class="game-actions">
+                <button class="btn btn-ghost btn-sm" type="button" data-doc="tpl-rules-tavla" data-title="Tavla oyun kuralları">${icon('book', 18)}Kurallar</button>
+              </div>
+            </article>
 
             <article class="game-row" data-game="kura">
               <div class="game-glyph">${BG.gameTile('kura', 'tile-l')}</div>
@@ -357,7 +399,9 @@
       if (w) BG.bp.mountWallet(w);
       BG.mountLeaderboard(root.querySelector('.lb'));
     }
-    const offs = [BG.bus.on('friends', renderLive), BG.bus.on('games-changed', () => { BG.games.invalidate(); renderResume(); })];
+    if (root.querySelectorAll) BG.applyGamesOff(root);
+    const offs = [BG.bus.on('friends', renderLive), BG.bus.on('games-changed', () => { BG.games.invalidate(); renderResume(); }),
+      BG.bus.on('econ-settings', () => root.querySelectorAll && BG.applyGamesOff(root))];
     return { node: root, cleanup: () => offs.forEach((f) => f()) };
   };
 

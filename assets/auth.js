@@ -102,7 +102,7 @@
         await BG.api.signIn(u, pass.value);
         const me = await BG.app.loadMe(true);
         if (!me) throw new Error('Profil bulunamadı. Lütfen yöneticiye ulaş.');
-        BG.toast({ type: 'success', title: 'Hoş geldin, ' + String(me.full_name || me.username).split(' ')[0] });
+        BG.toast({ type: 'success', title: 'Hoş geldin, ' + String(me.full_name || me.username) });
         // Giriş sürerken başka bir sayfaya geçildiyse kullanıcıyı geri çekme
         if (BG.router.parse().path === '/giris') BG.router.go(query.r || '/', true);
       } catch (ex) {
@@ -131,8 +131,9 @@
           ${offlineNotice()}
           <form class="form" novalidate>
             <div class="field">
-              <label class="field-label" for="rgName">Ad soyad</label>
-              <input class="input" id="rgName" type="text" autocomplete="name" maxlength="60" required>
+              <label class="field-label" for="rgName">Nick</label>
+              <input class="input" id="rgName" type="text" autocomplete="nickname" maxlength="24" required spellcheck="false">
+              <p class="field-hint field-hint-tight">Oyunlarda, masalarda ve profilinde görünen adın. Sonra profilinden değiştirebilirsin.</p>
               <p class="field-msg" aria-live="polite"></p>
             </div>
             ${usernameField('rgUser', 'Kullanıcı adı', 'username')}
@@ -209,7 +210,7 @@
       const u = BG.normalizeUsername(user.value);
       let bad = null;
       if (fullName.length < 2) {
-        BG.fieldMsg(name, 'Adını ve soyadını yaz.', 'error');
+        BG.fieldMsg(name, 'Bir nick yaz (en az 2 karakter).', 'error');
         bad = bad || name;
       }
       if (!BG.validUsername(u)) {

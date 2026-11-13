@@ -390,7 +390,27 @@
   BG.LEVELS = [[10, 1], [20, 6], [30, 11], [40, 16], [50, 20], [60, 24], [70, 26]];
   BG.PRESTIGE_MIN = 26;
   BG.PRESTIGE_STEPS = [25000, 50000, 100000, 200000, 400000, 750000, 1250000, 2000000, 3500000, 5000000];
-  BG.FRAMES = { bronz: 'Bronz', gumus: 'Gümüş', altin: 'Altın', neon: 'Neon Mavi', ates: 'Ateş', buz: 'Buz', kraliyet: 'Kraliyet' };
+  BG.FRAMES = { bronz: 'Bronz', gumus: 'Gümüş', altin: 'Altın', neon: 'Neon', ates: 'Ateş', buz: 'Buz', kraliyet: 'Kraliyet',
+    zumrut: 'Zümrüt', yildirim: 'Yıldırım', rgb: 'RGB', galaksi: 'Galaksi', elmas: 'Elmas',
+    // v3.4.1 taraftar çerçeveleri (renk temalı, logosuz)
+    sarikirmizi: 'Sarı-Kırmızı', sarilacivert: 'Sarı-Lacivert', siyahbeyaz: 'Siyah-Beyaz' };
+  /* v3.4: profil arka planları (mağazadan; hareketli, yalnız CSS) */
+  BG.PBG = { aurora: 'Kuzey Işıkları', galaksi: 'Galaksi', volkan: 'Volkan', neon: 'Neon Şehir', saray: 'Altın Saray',
+    // v3.4.1 taraftar tribünleri (renk temalı; kulüp arması kullanılmaz)
+    sarikirmizi: 'Sarı-Kırmızı Tribün', sarilacivert: 'Sarı-Lacivert Tribün', siyahbeyaz: 'Siyah-Beyaz Tribün' };
+  // Volkan sahnesinde koninin üstünde akan lav ırmakları (satır içi SVG; renkler düz, kimlik kullanılmaz)
+  const PBG_EXTRA = {
+    sarikirmizi: `<svg class="art lion" viewBox="0 0 220 200" preserveAspectRatio="xMidYMid meet" focusable="false"> <g class="lion-g"><path class="mane" d="M110.0 8.0 L126.0 33.8 L151.7 17.5 L154.9 47.7 L185.1 44.1 L174.9 72.8 L203.6 82.6 L182.0 104.0 L203.6 125.4 L174.9 135.2 L185.1 163.9 L154.9 160.3 L151.7 190.5 L126.0 174.2 L110.0 200.0 L94.0 174.2 L68.3 190.5 L65.1 160.3 L34.9 163.9 L45.1 135.2 L16.4 125.4 L38.0 104.0 L16.4 82.6 L45.1 72.8 L34.9 44.1 L65.1 47.7 L68.3 17.5 L94.0 33.8 Z"/><path class="mane2" d="M127.8 26.0 L136.9 48.1 L159.9 41.5 L158.5 65.3 L182.1 69.3 L170.4 90.2 L190.0 104.0 L170.4 117.8 L182.1 138.7 L158.5 142.7 L159.9 166.5 L136.9 159.9 L127.8 182.0 L110.0 166.0 L92.2 182.0 L83.1 159.9 L60.1 166.5 L61.5 142.7 L37.9 138.7 L49.6 117.8 L30.0 104.0 L49.6 90.2 L37.9 69.3 L61.5 65.3 L60.1 41.5 L83.1 48.1 L92.2 26.0 L110.0 42.0 Z"/> <path class="ear" d="M138.0 30.0 L160.0 22.0 L154.0 50.0 Z"/><path class="ear" d="M82.0 30.0 L60.0 22.0 L66.0 50.0 Z"/> <path class="face" d="M110.0 34.0 L140.0 48.0 L152.0 84.0 L146.0 118.0 L130.0 146.0 L110.0 160.0 L90.0 146.0 L74.0 118.0 L68.0 84.0 L80.0 48.0 Z"/><path class="fore" d="M110.0 36.0 L136.0 50.0 L128.0 72.0 L110.0 78.0 L92.0 72.0 L84.0 50.0 Z"/><path class="cheek" d="M136.0 92.0 L150.0 86.0 L144.0 118.0 L126.0 128.0 L122.0 108.0 Z"/><path class="cheek" d="M84.0 92.0 L70.0 86.0 L76.0 118.0 L94.0 128.0 L98.0 108.0 Z"/> <path class="muz" d="M96.0 116.0 L110.0 112.0 L124.0 116.0 L128.0 132.0 L118.0 142.0 L110.0 140.0 L102.0 142.0 L92.0 132.0 Z"/><path class="nose" d="M96.0 104.0 L124.0 104.0 L118.0 116.0 L110.0 120.0 L102.0 116.0 Z"/> <path class="brow" d="M118 82 L144 74 M102 82 L76 74"/> <path class="eye" d="M120.0 88.0 L140.0 82.0 L136.0 92.0 L124.0 94.0 Z"/><path class="eye" d="M100.0 88.0 L80.0 82.0 L84.0 92.0 L96.0 94.0 Z"/> <circle class="glint" cx="131" cy="87" r="2"/><circle class="glint" cx="89" cy="87" r="2"/> <path class="mouth" d="M110 120 V130 M110 130 C104 136 98 136 94 132 M110 130 C116 136 122 136 126 132"/> <path class="whisk" d="M122 124 h10 M122 128 h8 M98 124 h-10 M98 128 h-8"/></g> </svg>`,
+    sarilacivert: `<svg class="art lighthouse" viewBox="0 0 220 200" preserveAspectRatio="xMidYMax meet" focusable="false"> <g class="beam"><path d="M110 58 L-420 0 L-420 116 Z" class="bm"/><path d="M110 58 L-420 26 L-420 90 Z" class="bm in"/><path d="M110 58 L640 0 L640 116 Z" class="bm"/><path d="M110 58 L640 26 L640 90 Z" class="bm in"/></g> <path class="rock" d="M40 200 C52 180 70 176 84 178 C96 170 124 168 138 178 C156 174 176 182 186 200 Z"/> <path class="tower" d="M98 78 H122 L132 184 H88 Z"/> <path class="stripe" d="M96.4 96 H123.6 L125.4 116 H94.6 Z M93 134 H127 L128.8 154 H91.2 Z"/> <path class="door" d="M104 184 V170 a6 6 0 0 1 12 0 V184 Z"/> <rect class="gallery" x="92" y="72" width="36" height="8" rx="2"/> <path class="rail" d="M94 72 V66 M102 72 V66 M110 72 V66 M118 72 V66 M126 72 V66 M92 66 H128"/> <rect class="lamp" x="100" y="48" width="20" height="18" rx="3"/> <path class="roof" d="M96 48 H124 L110 32 Z"/><circle class="tip" cx="110" cy="31" r="2.6"/> <circle class="glow" cx="110" cy="58" r="18"/> </svg><svg class="art canary" viewBox="0 0 64 40" focusable="false"> <g class="bird"><path class="w1" d="M31 24 C25 12 15 6 2 7 C10 12 17 19 24 28 Z"/> <path class="tl" d="M24 26 L14 22 L16 30 Z"/> <ellipse class="bd" cx="32" cy="27" rx="10" ry="6.4"/><circle class="bd" cx="41.5" cy="22" r="5.6"/> <path class="bk" d="M46.4 20.6 L52 22.4 L46.4 24.2 Z"/><circle class="ey" cx="43" cy="20.8" r="1.2"/> <path class="w2" d="M34 24 C40 11 50 5 62 5 C55 11 49 18 43 28 Z"/></g> </svg>`,
+    siyahbeyaz: `<svg class="art eagle" viewBox="0 0 220 200" preserveAspectRatio="xMidYMid meet" focusable="false"> <g class="wing wl"><g transform="translate(220 0) scale(-1 1)"><path class="fp" d="M130.6 95.5 Q158.3 45.0 161.6 21.4 Q143.8 37.3 117.4 88.5 Z"/><path class="fp" d="M136.4 94.2 Q179.9 50.2 190.7 27.1 Q168.1 38.7 125.6 83.8 Z"/><path class="fp" d="M141.8 92.5 Q199.5 60.0 217.7 40.0 Q191.2 45.7 134.2 79.5 Z"/><path class="fp" d="M146.8 90.3 Q207.1 76.0 228.4 62.2 Q203.1 60.0 143.2 75.7 Z"/><path class="fp" d="M151.7 87.5 Q209.3 90.3 232.0 82.8 Q209.9 73.8 152.3 72.5 Z"/><path class="fp" d="M156.7 84.1 Q207.1 101.3 229.4 99.9 Q212.2 85.6 161.3 69.9 Z"/><path class="cov" d="M116 104 C120 84 136 66 160 58 C176 54 190 58 196 64 C182 66 168 74 156 86 C146 96 134 106 120 112 Z"/><path class="cov2" d="M118 108 C130 96 146 88 166 86 C176 86 184 90 188 96 C172 96 158 102 144 110 C136 114 126 116 118 116 Z"/></g></g><g class="wing wr"><path class="fp" d="M130.6 95.5 Q158.3 45.0 161.6 21.4 Q143.8 37.3 117.4 88.5 Z"/><path class="fp" d="M136.4 94.2 Q179.9 50.2 190.7 27.1 Q168.1 38.7 125.6 83.8 Z"/><path class="fp" d="M141.8 92.5 Q199.5 60.0 217.7 40.0 Q191.2 45.7 134.2 79.5 Z"/><path class="fp" d="M146.8 90.3 Q207.1 76.0 228.4 62.2 Q203.1 60.0 143.2 75.7 Z"/><path class="fp" d="M151.7 87.5 Q209.3 90.3 232.0 82.8 Q209.9 73.8 152.3 72.5 Z"/><path class="fp" d="M156.7 84.1 Q207.1 101.3 229.4 99.9 Q212.2 85.6 161.3 69.9 Z"/><path class="cov" d="M116 104 C120 84 136 66 160 58 C176 54 190 58 196 64 C182 66 168 74 156 86 C146 96 134 106 120 112 Z"/><path class="cov2" d="M118 108 C130 96 146 88 166 86 C176 86 184 90 188 96 C172 96 158 102 144 110 C136 114 126 116 118 116 Z"/></g><path class="tf" d="M94.7 158.8 Q103.6 176.9 113.1 180.7 Q115.3 170.7 105.3 153.2 Z"/><path class="tf" d="M99.2 157.5 Q104.2 180.0 112.7 187.0 Q117.0 176.8 110.8 154.5 Z"/><path class="tf" d="M104.0 156.0 Q103.4 181.9 110.0 192.0 Q116.6 181.9 116.0 156.0 Z"/><path class="tf" d="M109.2 154.5 Q103.0 176.8 107.3 187.0 Q115.8 180.0 120.8 157.5 Z"/><path class="tf" d="M114.7 153.2 Q104.7 170.7 106.9 180.7 Q116.4 176.9 125.3 158.8 Z"/> <path class="body" d="M110 66 C126 66 134 80 134 98 C134 122 126 144 118 160 L102 160 C94 144 86 122 86 98 C86 80 94 66 110 66 Z"/> <path class="chest" d="M98 92 C104 98 116 98 122 92 M96 106 C104 112 116 112 124 106 M98 120 C104 126 116 126 122 120 M100 134 C106 140 114 140 120 134"/> <path class="talon" d="M100 156 l-8 12 M104 158 l-3 14 M116 158 l3 14 M120 156 l8 12"/> <path class="head" d="M100 42 C110 35 124 37 130 47 C134 54 134 62 130 68 L122 76 L100 76 C93 71 91 62 93 54 C94 48 96 45 100 42 Z"/><path class="beak" d="M125 49 C136 49 145 55 145 64 C145 70 141 75 136 77 C137 71 134 67 128 67 L121 67 Z"/> <path class="brow" d="M110 51 L130 47"/><circle class="eye" cx="121" cy="55" r="2.8"/><path class="neck" d="M100 76 C104 80 116 80 122 76"/> </svg>`,
+    volkan: `<svg viewBox="0 0 100 100" preserveAspectRatio="none" focusable="false"><path class="rim" d="M0 100 L33 21 L41 11 M59 11 L67 21"/>
+      <path class="lava-g" d="M48 13 C46 30 40 42 42 58 C44 72 36 86 31 100"/><path class="lava" d="M48 13 C46 30 40 42 42 58 C44 72 36 86 31 100"/><path class="lava-h" d="M48 13 C46 30 40 42 42 58 C44 72 36 86 31 100"/>
+      <path class="lava-g" d="M53 13 C56 28 62 40 60 54 C58 66 66 82 71 100"/><path class="lava" d="M53 13 C56 28 62 40 60 54 C58 66 66 82 71 100"/><path class="lava-h b" d="M53 13 C56 28 62 40 60 54 C58 66 66 82 71 100"/></svg>`,
+  };
+  BG.pbgHTML = (k) =>
+    k && BG.PBG[k]
+      ? `<div class="pbg pbg-${k}" aria-hidden="true"><span class="l1"></span><span class="l2"></span><span class="l3">${PBG_EXTRA[k] || ''}</span><span class="l4"></span><span class="pt">${'<i></i>'.repeat(12)}</span></div>`
+      : '';
   /** Sunucudaki herkese açık ayarlardan rütbe tablosu ve masa seviyeleri (açılışta ve panelde kaydedince) */
   BG.applyEconSettings = function (r) {
     if (!r) return;
@@ -402,8 +422,51 @@
     }
     if (Array.isArray(r.levels) && r.levels.length) BG.LEVELS = r.levels.map((l) => [Number(l.fee) || 0, Number(l.min_rank) || 1]);
     if (r.prestige_min_rank) BG.PRESTIGE_MIN = r.prestige_min_rank;
+    // v3.4.1: yayından kaldırılan oyunlar (açılışta hemen uygulanabilsin diye saklanır)
+    if (Array.isArray(r.games_off)) {
+      try {
+        localStorage.setItem('bg.gamesOff', JSON.stringify(r.games_off));
+      } catch (e) {}
+    }
     BG.publicSettings = r;
     if (BG.bus) BG.bus.emit('econ-settings', r);
+  };
+  /* ---------------- v3.4.1: oyunların yayın durumu (panelden) ---------------- */
+  BG.gamesOffList = function () {
+    const ps = BG.publicSettings;
+    if (ps && Array.isArray(ps.games_off)) return ps.games_off;
+    try {
+      const v = JSON.parse(localStorage.getItem('bg.gamesOff') || '[]');
+      return Array.isArray(v) ? v : [];
+    } catch (e) {
+      return [];
+    }
+  };
+  BG.gameOff = (key) => !!key && BG.gamesOffList().indexOf(key) >= 0;
+  const DART_KEYS = ['dartbot', 'dart-mac', 'dart-turnuva', 'dart-lig'];
+  /** Ana sayfa gibi listelerde yayında olmayan oyunları gizler (yönetici kesik çerçeveyle görür) */
+  BG.applyGamesOff = function (root) {
+    if (!root || !root.querySelectorAll) return;
+    const admin = !!(BG.store && BG.store.me && BG.store.me.is_admin);
+    root.querySelectorAll('[data-game]').forEach((el) => {
+      const k = el.dataset.game;
+      const off = k === 'dart' ? DART_KEYS.every(BG.gameOff) : BG.gameOff(k);
+      el.hidden = off && !admin;
+      el.classList.toggle('is-game-off', off);
+    });
+    root.querySelectorAll('a[href^="#/oyun/"]').forEach((a) => {
+      const m = /^#\/oyun\/([^?]+)(?:\?(.*))?$/.exec(a.getAttribute('href') || '');
+      if (!m || /(^|&)(masa|devam)=/.test(m[2] || '')) return;
+      const off = BG.gameOff(m[1]);
+      const holder = a.closest('.mode, .hv-mode');
+      if (holder) {
+        holder.hidden = off && !admin;
+        holder.classList.toggle('is-game-off', off);
+      } else if (!a.closest('[data-game]')) {
+        a.hidden = off && !admin;
+        a.classList.toggle('is-game-off', off);
+      }
+    });
   };
   BG.rankOf = function (bal) {
     bal = Number(bal) || 0;
@@ -510,6 +573,8 @@
     'americano-online': { key: 'americano-online', file: 'americano-online.html', name: 'Americano Online', glyph: 'A', color: 'green', activity: 'Americano Online oynuyor', group: 'americano-online', table: true },
     'dostkazigi-online': { key: 'dostkazigi-online', file: 'dost-kazigi-online.html', name: 'Dost Kazığı Online', glyph: 'DK', color: 'rose', activity: 'Dost Kazığı oynuyor', group: 'dostkazigi-online', table: true },
     blackjack: { key: 'blackjack', file: 'blackjack.html', name: 'Blackjack Royale', glyph: 'BJ', color: 'gold', activity: 'Blackjack Royale masasında', group: 'blackjack', table: true },
+    'pisti-online': { key: 'pisti-online', file: 'pisti-online.html', name: 'Pişti Online', glyph: 'P', color: 'teal', activity: 'Pişti oynuyor', group: 'pisti-online', table: true },
+    'tavla-online': { key: 'tavla-online', file: 'tavla-online.html', name: 'Tavla Online', glyph: 'T', color: 'wood', activity: 'Tavla oynuyor', group: 'tavla-online', table: true },
   };
   /** Arkadaşı izleme bağlantısı: online masada masaya izleyici olarak, diğerlerinde canlı yayına */
   BG.watchHref = function (game, sessionId, userId) {

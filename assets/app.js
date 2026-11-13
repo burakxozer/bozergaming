@@ -65,7 +65,7 @@
         <div class="top-actions">
           ${
             authed
-              ? `<span class="bp-slot"></span><span class="bell-slot"></span><button class="userbtn" type="button" aria-haspopup="menu" aria-expanded="false">${BG.avatar(me, { size: 34, frame: BG.bp && BG.bp.state ? frameOf(BG.bp.state.frame) : null })}<span class="userbtn-name">${esc(String(me.full_name || me.username).split(' ')[0])}</span></button>`
+              ? `<span class="bp-slot"></span><span class="bell-slot"></span><button class="userbtn${BG.bp && BG.bp.state && BG.bp.state.badges_ready ? ' has-badge-dot' : ''}" type="button" aria-haspopup="menu" aria-expanded="false">${BG.avatar(me, { size: 34, frame: BG.bp && BG.bp.state ? frameOf(BG.bp.state.frame) : null })}<span class="userbtn-name">${esc(String(me.full_name || me.username).split(' ')[0])}</span></button>`
               : `<a class="btn btn-ghost btn-sm" href="#/giris">Giriş yap</a><a class="btn btn-primary btn-sm" href="#/kayit">Kayıt ol</a>`
           }
         </div>
@@ -73,7 +73,7 @@
     tabbar.innerHTML = authed
       ? `${navLink('/', 'tiles', 'Oyunlar')}${navLink('/arkadaslar', 'users', 'Arkadaşlar', 'requests')}${navLink('/mesajlar', 'message', 'Mesajlar', 'unread')}${navLink('/magaza', 'bag', 'Mağaza')}${
           me.is_admin ? navLink('/panel', 'shield', 'Panel') : ''
-        }${navLink('/profil', 'user', 'Profil')}`
+        }${navLink('/profil', 'user', 'Profil', 'badges')}`
       : `${navLink('/', 'tiles', 'Oyunlar')}${navLink('/oyunlarim', 'cloud', 'Kayıtlarım')}${navLink('/iletisim', 'help', 'İletişim')}${navLink('/giris', 'login', 'Giriş')}`;
     const ub = topbar.querySelector('.userbtn');
     if (ub) ub.addEventListener('click', userMenu);
@@ -107,9 +107,10 @@
     const me = BG.store.me;
     const menu = BG.frag(`<div class="user-menu" role="menu">
         <div class="um-head">${BG.avatar(me, { size: 44, frame: BG.myFrame() })}<div><strong>${esc(me.full_name)}</strong><span>@${esc(me.username)}</span>${BG.bp && BG.bp.state ? `<span class="um-rank">${BG.rankChip(BG.bp.state.rank)}${BG.prestigeChip(BG.bp.state.prestige, { short: true })}</span>` : ''}</div></div>
-        <a role="menuitem" href="#/profil">${icon('user', 18)}Profilim</a>
+        <a role="menuitem" href="#/profil">${icon('user', 18)}Profilim <span data-badge="badges">${BG.countBadge(BG.bp && BG.bp.state && BG.bp.state.badges_ready)}</span></a>
         <button role="menuitem" type="button" data-bp-open>${icon('coin', 18)}BP cüzdanım</button>
         <a role="menuitem" href="#/gorevler">${icon('target', 18)}Görevler <span data-missions-badge>${BG.countBadge(BG.bp && BG.bp.state && BG.bp.state.missions_ready)}</span></a>
+        <a role="menuitem" href="#/rutbeler">${icon('trophy', 18)}Rütbeler</a>
         <a role="menuitem" href="#/magaza">${icon('bag', 18)}Mağaza</a>
         <a role="menuitem" href="#/profil/ayarlar">${icon('settings', 18)}Profil ayarları</a>
         <a role="menuitem" href="#/oyunlarim">${icon('cloud', 18)}Kayıtlı oyunlarım</a>
@@ -213,11 +214,12 @@
     R.add('/kayit', page(BG.views.register));
     R.add('/iletisim', page(BG.views.contact));
     R.add('/oyunlarim', page(BG.views.saved));
-    R.add('/profil', page(() => BG.views.player({}), authed));
+    R.add('/profil', page((params, query) => BG.views.player({}, query), authed));
     R.add('/profil/ayarlar', page(BG.views.profile, authed));
     R.add('/profil/:id', page(BG.views.player, authed));
     R.add('/magaza', page(BG.views.store, authed));
     R.add('/gorevler', page(BG.views.missions, authed));
+    R.add('/rutbeler', page(BG.views.ranks));
     R.add('/arkadaslar', page(BG.views.friends, authed));
     R.add('/mesajlar', page(BG.views.messages, authed));
     R.add('/mesajlar/:username', page(BG.views.messages, authed));
@@ -226,6 +228,11 @@
     R.add('/oyun/:key', (params, query, loc) => {
       BG.closeAllModals();
       if (!BG.GAMES[params.key]) return BG.router.go('/', true);
+      // v3.4.1: yayından kaldırılan oyun açılmaz (süren masaya/kayda dönüş ve yönetici hariç)
+      if (BG.gameOff && BG.gameOff(params.key) && !(BG.store.me && BG.store.me.is_admin) && !query.masa && !query.devam) {
+        BG.toast({ type: 'info', title: (BG.GAMES[params.key] || {}).name || 'Oyun', text: 'Bu oyun şu an yayında değil.' });
+        return BG.router.go('/', true);
+      }
       // Arka planda ana sayfa dursun (doğrudan bağlantıyla gelindiyse)
       if (!currentView || !view.firstElementChild) mount(BG.views.home());
       BG.host.open(params.key, { resume: query.devam || null, query });

@@ -78,14 +78,16 @@
     const dk = st.dostkazigi || {};
     const bj = st.blackjack || {};
     const body = BG.frag(`<div class="pp-mini g${r.grp}" style="${BG.rankStyle(r)}">
-        <div class="pp-mini-top">${BG.avatar(d.user, { size: 84, frame: d.user.frame })}
+        <div class="pp-mini-top${d.bg && BG.PBG[d.bg] ? ' has-pbg' : ''}">${d.bg && BG.PBG[d.bg] ? BG.pbgHTML(d.bg) : ''}${BG.avatar(d.user, { size: 84, frame: d.user.frame })}
           <div><h3>${esc(d.user.full_name || d.user.username)}</h3><p class="muted">@${esc(d.user.username)}</p>
-          <p class="pp-chips">${BG.rankChip(d.bp.rank)}${BG.prestigeChip(d.bp.prestige)}</p></div>
+          <p class="pp-chips">${BG.rankChip(d.bp.rank)}${BG.prestigeChip(d.bp.prestige)}</p>${badgeRow(d.badges, 24)}</div>
           <div class="pp-mini-bp"><b>${fmt(d.bp.balance)}</b><span>BP</span></div>
         </div>
         <dl class="pp-mini-stats">
           <div><dt>Americano</dt><dd>${fmt(am.played || 0)} maç · ${fmt(am.wins || 0)} birincilik · ${BG.pct(am.wins || 0, am.played || 0)}</dd></div>
           <div><dt>Dost Kazığı</dt><dd>${fmt(dk.played || 0)} maç · ${fmt(dk.wins || 0)} galibiyet · ${BG.pct(dk.wins || 0, dk.played || 0)}</dd></div>
+          ${(st.pisti || {}).played ? `<div><dt>Pişti</dt><dd>${fmt(st.pisti.played)} maç · ${fmt(st.pisti.wins || 0)} birincilik</dd></div>` : ''}
+          ${(st.tavla || {}).played ? `<div><dt>Tavla</dt><dd>${fmt(st.tavla.played)} maç · ${fmt(st.tavla.wins || 0)} galibiyet</dd></div>` : ''}
           <div><dt>Blackjack</dt><dd>${fmt(bj.played || 0)} ana el · ${fmt(bj.wins || 0)} kazanç · ${BG.pct(bj.wins || 0, bj.played || 0)}</dd></div>
           <div><dt>En yüksek rütbe</dt><dd>${esc(BG.rankInfo(d.bp.best_rank).name)}</dd></div>
         </dl>
@@ -114,6 +116,202 @@
     });
   };
 
+  /* ---------------- v3.4 rozetler (v3.4.1: "Rozetler" düğmesi + ayrıntı penceresi, altın parıltısı) ---------------- */
+  const TIER_K = ['', 'bronze', 'silver', 'gold'];
+  const TIER_N = ['', 'Bronz', 'Gümüş', 'Altın'];
+  const badgeSrc = (code, tier, x2) => `assets/badges/${code === 'bozer' ? 'bozer' : code}_${TIER_K[tier] || 'bronze'}${x2 ? '@2x' : ''}.webp`;
+  /** Rozet görseli. Altın kademe ve Bözer Gaming rozeti parıltılı çerçeveyle gelir (fx=false: düz görsel). */
+  const badgeImg = (code, tier, size, alt, fx) => {
+    const img = `<img class="bd-ic" src="${badgeSrc(code, tier)}" srcset="${badgeSrc(code, tier, true)} 2x" width="${size}" height="${size}" alt="${esc(alt || '')}" loading="lazy" decoding="async">`;
+    const master = code === 'bozer';
+    if (fx === false || (tier < 3 && !master)) return img;
+    const m = `url('${badgeSrc(code, tier, size > 64)}')`;
+    return `<span class="bd-fx${master ? ' is-bozer' : ' is-gold'}" style="width:${size}px;height:${size}px">${master ? '<i class="bd-rays2" aria-hidden="true"></i>' : ''}${img}<i class="bd-sh" aria-hidden="true" style="-webkit-mask-image:${m};mask-image:${m}"></i><i class="bd-tw" aria-hidden="true"></i>${master ? '<i class="bd-tw b" aria-hidden="true"></i>' : ''}</span>`;
+  };
+  BG.badgeImg = badgeImg;
+  const MASTER_N = 'Bözer Gaming Altın Rozeti';
+  /** Profil kartında basılmış rozetler: önce Bözer Gaming rozeti, sonra en yüksek kademeden. extra: satırın sonuna eklenir. */
+  function badgeRow(b, size, extra) {
+    const items = ((b && b.items) || []).filter((x) => x.minted > 0 || x.tier).slice().sort((x, y) => (y.tier || y.minted) - (x.tier || x.minted));
+    const master = !!(b && b.master);
+    if (!items.length && !master && !extra) return '';
+    const max = 8;
+    const shown = items.slice(0, master ? max - 1 : max);
+    const tierOf = (x) => x.tier || x.minted;
+    return `<p class="pp-badgerow" aria-label="Rozetler">${master ? `<span class="pp-bd is-master" title="${MASTER_N}">${badgeImg('bozer', 3, size + 10, MASTER_N)}</span>` : ''}${shown
+      .map((x) => `<span class="pp-bd t${tierOf(x)}" title="${esc(TIER_N[tierOf(x)] + ' · ' + x.name)}">${badgeImg(x.code, tierOf(x), size, TIER_N[tierOf(x)] + ' ' + x.name)}</span>`)
+      .join('')}${items.length > shown.length ? `<span class="pp-bd-more">+${items.length - shown.length}</span>` : ''}${extra || ''}</p>`;
+  }
+  /** "Rozetler" düğmesi: kendi profilimde basılabilir (hak edilmiş ve BP'si yeten) rozet sayısını gösterir */
+  function badgesBtn(d) {
+    const b = d.badges || {};
+    const own = d.relation === 'self';
+    const n = ((b.items || []).length || 0) + (b.master ? 1 : 0);
+    if (!own && !n) return '';
+    const ready = own ? +b.ready || 0 : 0;
+    return `<button type="button" class="pp-bdbtn${ready ? ' has-ready' : ''}" data-badges aria-haspopup="dialog">${icon('award', 16)}<span>Rozetler</span>${
+      ready ? `<span class="pp-bdbtn-n" aria-label="${ready} rozet basılmaya hazır">${ready > 99 ? '99+' : ready}</span>` : n ? `<small>${fmt(n)}</small>` : ''
+    }</button>`;
+  }
+  /** Başkasının rozetleri (pencerede): basılmış rozetler vitrini, Bözer Gaming en başta */
+  function badgesShowcaseHTML(b) {
+    const items = ((b && b.items) || []).slice().sort((x, y) => (y.tier || y.minted) - (x.tier || x.minted));
+    if (!items.length && !(b && b.master)) return '<p class="muted">Henüz basılmış rozet yok.</p>';
+    return `<ul class="bd-show">${b.master ? `<li class="is-master">${badgeImg('bozer', 3, 84, MASTER_N)}<b>Bözer Gaming</b><small>En nadir rozet</small></li>` : ''}${items
+      .map((x) => {
+        const t = x.tier || x.minted;
+        return `<li class="t${t}">${badgeImg(x.code, t, 64, x.name)}<b>${esc(x.name)}</b><small>${TIER_N[t]}</small></li>`;
+      })
+      .join('')}</ul>`;
+  }
+  /** Kendi profilim: bütün başarımlar, ilerleme ve basım */
+  function badgeCard(it, bal) {
+    const next = it.minted + 1;
+    const ready = it.earned > it.minted;
+    const done = it.minted >= 3;
+    const t = done ? it.tiers[2] : it.tiers[next - 1];
+    const afford = ready && bal != null && bal >= t.cost;
+    const pct = done || ready ? 100 : Math.max(0, Math.min(100, (it.value / Math.max(1, t.n)) * 100));
+    const pip = (k) => `<i class="p${k}${it.minted >= k ? ' on' : ready && next === k ? ' rdy' : ''}" title="${TIER_N[k]}: ${esc(it.tiers[k - 1].label)}"></i>`;
+    const cost = (k) => (k === 1 ? `${fmt(it.tiers[0].cost)} BP` : `${TIER_N[k - 1]} rozet + ${fmt(it.tiers[k - 1].cost)} BP`);
+    const act = done
+      ? `<span class="bd-done">${icon('check', 14)}Altın rozet basıldı</span>`
+      : ready
+      ? `<button class="btn ${afford || bal == null ? 'btn-primary' : 'btn-ghost'} btn-sm bd-mint" type="button" data-mint="${esc(it.code)}" data-tier="${next}">${icon('award', 15)}${TIER_N[next]} üret · ${cost(next)}</button>${
+          !afford && bal != null ? `<small class="bd-need">${fmt(t.cost - bal)} BP eksik</small>` : ''
+        }`
+      : `<span class="muted small">${TIER_N[next]}: ${esc(t.label)}</span>`;
+    return `<article class="bd-card t${it.minted}${afford ? ' is-ready' : ready ? ' is-earned' : ''}${done ? ' is-done' : ''}" data-code="${esc(it.code)}">
+        <div class="bd-img">${badgeImg(it.code, Math.max(1, it.minted), 76, it.name, it.minted >= 3 ? undefined : false)}${afford ? '<span class="bd-light" title="Basılmaya hazır"></span>' : ''}</div>
+        <div class="bd-b">
+          <h3>${esc(it.name)}</h3>
+          <span class="bd-pips">${pip(1)}${pip(2)}${pip(3)}</span>
+          <div class="bd-prog" role="progressbar" aria-valuemin="0" aria-valuemax="${t.n}" aria-valuenow="${Math.min(it.value, t.n)}"><i style="width:${pct.toFixed(1)}%"></i></div>
+          <small class="bd-cnt">${done ? esc(it.tiers[2].label) : ready ? `${TIER_N[next]} rozet hak edildi: ${esc(t.label)}` : `${fmt(Math.min(it.value, t.n))} / ${fmt(t.n)}`}</small>
+          <div class="bd-act">${act}</div>
+        </div>
+      </article>`;
+  }
+  function badgesOwnHTML(b) {
+    const items = b.items || [];
+    const golds = items.filter((x) => x.minted >= 3).length;
+    const minted = items.reduce((a, x) => a + x.minted, 0);
+    const bal = b.balance != null ? +b.balance : null;
+    const gift = b.master_gift || 40000;
+    const mcost = b.master_cost || 10000;
+    // sıra: basılmaya hazır olanlar önce, sonra hak edilmiş, sonra kalanlar (kendi sırasıyla); altını basılmışlar en sonda
+    const rank = (it) => {
+      const ready = it.earned > it.minted;
+      const afford = ready && bal != null && bal >= it.tiers[Math.min(2, it.minted)].cost;
+      return it.minted >= 3 ? 3 : afford ? 0 : ready ? 1 : 2;
+    };
+    const order = items.map((it, k) => [it, k]).sort((x, y) => rank(x[0]) - rank(y[0]) || x[1] - y[1]).map((x) => x[0]);
+    return `<div class="bd-head">
+        <p class="bd-sum"><b>${fmt(minted)}</b> / ${fmt(items.length * 3)} kademe · <b>${fmt(golds)}</b> / ${fmt(items.length)} altın${bal != null ? ` · Bakiye <b>${fmt(bal)} BP</b>` : ''}</p>
+        ${b.ready ? `<span class="bd-ready-n">${icon('award', 13)}${fmt(b.ready)} rozet basılmaya hazır</span>` : ''}
+      </div>
+      <article class="bd-master${b.master ? ' is-done' : ''}${b.master_ready ? ' is-ready' : ''}">
+        <div class="bd-img">${badgeImg('bozer', 3, 108, MASTER_N, b.master || b.master_ready ? undefined : false)}${b.master_ready && bal != null && bal >= mcost ? '<span class="bd-light"></span>' : ''}</div>
+        <div class="bd-b">
+          <h3>Bözer Gaming Rozeti</h3>
+          <p class="small">Bütün başarımların (Kazık Üstadı dahil) altın rozetini bastıktan sonra ${fmt(mcost)} BP ile basılır; başka rozet harcanmaz. Basınca hesabına <b>${fmt(gift)} BP hediye</b> gelir ve profilinde en başta sergilenir.</p>
+          <div class="bd-prog"><i style="width:${items.length ? ((golds / items.length) * 100).toFixed(1) : 0}%"></i></div>
+          <small class="bd-cnt">${fmt(golds)} / ${fmt(items.length)} altın rozet</small>
+          <div class="bd-act">${b.master ? `<span class="bd-done">${icon('check', 14)}Basıldı · ${esc(BG.fmt.date(b.master_at))}</span>` : b.master_ready ? `<button class="btn btn-primary btn-sm bd-mint" type="button" data-mint="bozer" data-tier="3">${icon('award', 15)}Üret · ${fmt(mcost)} BP</button>` : ''}</div>
+        </div>
+      </article>
+      <p class="muted small bd-lead">Başarımı tamamlayınca rozeti hak edersin; BP ile basınca profilinde herkese görünür. Bronz ${fmt(items[0] ? items[0].tiers[0].cost : 10)} BP · Gümüş: bronz rozetin + ${fmt(items[0] ? items[0].tiers[1].cost : 100)} BP · Altın: gümüş rozetin + ${fmt(items[0] ? items[0].tiers[2].cost : 1000)} BP.</p>
+      <div class="bd-grid">${order.map((it) => badgeCard(it, bal)).join('')}</div>`;
+  }
+  /** Rozet basımı: 2 saniyelik "rozet üretiliyor" gösterisi, ardından "başarıyla üretildi" */
+  async function mintBadge(code, tier, name, cost, after, gift) {
+    const master = code === 'bozer';
+    if (cost >= 100) {
+      const ok = await BG.confirm({
+        title: master ? 'Bözer Gaming Rozeti' : `${TIER_N[tier]} rozet: ${name}`,
+        text: master
+          ? `${fmt(cost)} BP harcanır. Rozet profilinde en başta sergilenir ve hesabına ${fmt(gift || 40000)} BP hediye eklenir.`
+          : `${TIER_N[tier - 1]} rozetin ve ${fmt(cost)} BP harcanır; yerine ${TIER_N[tier]} rozet basılır ve profilinde sergilenir.`,
+        okText: 'Üret',
+      });
+      if (!ok) return;
+    }
+    const src = badgeSrc(code, tier, true);
+    const box = BG.frag(`<div class="bd-forge is-forging${master ? ' is-master' : ''}">
+        <div class="bd-forge-stage"><span class="bd-rays"></span><span class="bd-ring"></span>
+          <img class="bd-forge-img" src="${src}" alt="" width="150" height="150"><span class="bd-sparks">${'<i></i>'.repeat(14)}</span></div>
+        <p class="bd-forge-t" aria-live="polite">Rozet üretiliyor…</p>
+        <div class="bd-forge-bar"><i></i></div>
+      </div>`);
+    const m = BG.modal({ title: '', body: box, size: 's', dismissable: false, actions: [] });
+    m.el.classList.add('bd-modal');
+    const t0 = Date.now();
+    let res = null;
+    let err = null;
+    try {
+      res = await BG.api.rpc('bg_badge_mint', { p_code: code });
+    } catch (e) {
+      err = e;
+    }
+    await new Promise((r) => setTimeout(r, Math.max(0, 2000 - (Date.now() - t0))));
+    box.classList.remove('is-forging');
+    const t = box.querySelector('.bd-forge-t');
+    if (err) {
+      box.classList.add('is-failed');
+      t.textContent = err.message || 'Rozet üretilemedi.';
+    } else {
+      box.classList.add('is-done');
+      t.innerHTML = master
+        ? `<b>Bözer Gaming rozeti senin!</b><span>Profilinde en başta sergileniyor.</span>${res && res.gift ? `<em class="bd-gift">+${fmt(res.gift)} BP hediye hesabında</em>` : ''}`
+        : `<b>Başarıyla üretildi!</b><span>${esc(TIER_N[tier] + ' · ' + name)} profilinde sergileniyor.</span>`;
+      if (res && res.balance != null && BG.bp.setBalance) BG.bp.setBalance(res.balance);
+      BG.bp.refresh();
+    }
+    const close = BG.h('button', { type: 'button', class: 'btn btn-primary' }, err ? 'Kapat' : 'Harika');
+    close.addEventListener('click', () => {
+      m.close();
+      if (!err && after) after();
+    });
+    box.appendChild(close);
+    close.focus({ preventScroll: true });
+  }
+  /** Rozetler penceresi: kendi profilimde başarımlar ve basım, başkasınınkinde basılmış rozetler */
+  function openBadges(d, opts) {
+    const own = d.relation === 'self';
+    const box = BG.frag(`<div class="bd-sheet${own ? ' is-own' : ''}"><p class="loading-row">Rozetler yükleniyor…</p></div>`);
+    const m = BG.modal({ title: own ? 'Rozetlerim' : `${d.user.full_name || d.user.username} · Rozetler`, body: box, size: 'l' });
+    m.el.classList.add('bd-sheet-modal');
+    if (!own) {
+      box.innerHTML = badgesShowcaseHTML(d.badges || {});
+      return m;
+    }
+    let b = null;
+    const paint = async () => {
+      try {
+        b = await BG.api.rpc('bg_badges', {});
+      } catch (e) {
+        if (box.isConnected) box.innerHTML = `<p class="muted">${esc(e.message)}</p>`;
+        return;
+      }
+      if (box.isConnected) box.innerHTML = badgesOwnHTML(b);
+    };
+    box.addEventListener('click', (e) => {
+      const btn = e.target.closest('[data-mint]');
+      if (!btn || !b) return;
+      const code = btn.dataset.mint;
+      const tier = +btn.dataset.tier;
+      const it = (b.items || []).find((x) => x.code === code);
+      const cost = code === 'bozer' ? b.master_cost || 10000 : it ? it.tiers[tier - 1].cost : 0;
+      mintBadge(code, tier, it ? it.name : '', cost, () => {
+        paint();
+        if (opts && opts.reload) opts.reload();
+      }, b.master_gift);
+    });
+    paint();
+    return m;
+  }
+  player.openBadges = openBadges;
+
   /* ---------------- tam profil ---------------- */
   function heroHTML(d) {
     const r = BG.rankInfo(d.bp.rank);
@@ -123,13 +321,15 @@
     const online = pres && pres.online;
     const now = online && pres.game ? `<span class="pp-now">${BG.gameTile(pres.game, 'tile-xs')}Şu an: ${esc(gname(pres.game))}${pres.session_id && d.relation !== 'self' ? ` · <a href="${esc(BG.watchHref(pres.game, pres.session_id, d.user.id))}">İzle</a>` : ''}</span>` : '';
     const lp = d.last_played;
-    return `<header class="pp-hero g${r.grp}" style="${BG.rankStyle(r)}">
-        <div class="pp-hero-bg" aria-hidden="true"></div>
+    const pbg = d.bg && BG.PBG[d.bg] ? BG.pbgHTML(d.bg) : '';
+    return `<header class="pp-hero g${r.grp}${pbg ? ' has-pbg' : ''}" style="${BG.rankStyle(r)}">
+        ${pbg || '<div class="pp-hero-bg" aria-hidden="true"></div>'}
         <div class="pp-ava">${BG.avatar(d.user, { size: 148, frame: d.user.frame, online: pres ? !!online : undefined })}</div>
         <div class="pp-id">
           <h1>${esc(d.user.full_name || d.user.username)}</h1>
           <p class="pp-user">@${esc(d.user.username)} · ${fmt(d.friends_count)} arkadaş · Üye: ${esc(BG.fmt.date(d.user.member_since))}</p>
           <p class="pp-chips">${BG.rankChip(d.bp.rank, { size: 20 })}${BG.prestigeChip(d.bp.prestige)}${pres ? `<span class="pp-online${online ? ' is-on' : ''}">${online ? 'Çevrimiçi' : pres.last_seen_at ? 'Son görülme ' + esc(BG.fmt.ago(pres.last_seen_at)) : 'Çevrimdışı'}</span>` : ''}</p>
+          ${badgeRow(d.badges, 30, badgesBtn(d))}
           <p class="pp-last">${now || (lp ? `Son oynanan: <b>${esc(gname(lp.game))}</b> · ${esc(BG.fmt.ago(lp.at))}` : 'Henüz oyun süresi kaydı yok')}${d.favorite ? ` · Favori oyun: <b>${esc(gname(d.favorite))}</b>` : ''}</p>
           <div class="pp-actions">${relButtons(d)}<button class="btn btn-ghost" type="button" data-share>${icon('copy', 16)}Profil bağlantısı</button></div>
         </div>
@@ -139,6 +339,7 @@
           <span class="bp-prog" aria-hidden="true"><i style="width:${prog.toFixed(1)}%"></i></span>
           <small>${r.next ? `${esc(r.nextName)}: ${fmt(r.next)} BP` : `${esc(r.name)} — en yüksek rütbe`}</small>
           <small>En yüksek rütbe: <b>${esc(BG.rankInfo(d.bp.best_rank).name)}</b></small>
+          <a class="pp-ranks" href="#/rutbeler">${icon('trophy', 14)}Bütün rütbeler</a>
         </div>
       </header>`;
   }
@@ -168,7 +369,9 @@
     const am = st.americano || {};
     const dk = st.dostkazigi || {};
     const bj = st.blackjack || {};
-    const online = ['americano-online', 'dostkazigi-online', 'blackjack'];
+    const ps = st.pisti || {};
+    const tv = st.tavla || {};
+    const online = ['americano-online', 'dostkazigi-online', 'pisti-online', 'tavla-online', 'blackjack'];
     const others = (d.playtime || []).filter((g) => online.indexOf(g.game) < 0 && g.secs >= 60);
     return `<section class="pp-sec">
         <h2>${icon('gamepad', 18)}Oyunlar</h2>
@@ -185,6 +388,17 @@
             ['Takım mağlubiyeti', fmt(dk.losses || 0)],
             ['Kazanma oranı', BG.pct(dk.wins || 0, dk.played || 0)],
           ], secs('dostkazigi-online'), '#ff6fb3')}
+          ${gameCard('pisti-online', 'Pişti Online', [
+            ['Toplam maç', fmt(ps.played || 0)],
+            ['Birincilik', fmt(ps.wins || 0)],
+            ['Kazanma oranı', BG.pct(ps.wins || 0, ps.played || 0)],
+          ], secs('pisti-online'), '#4fd6d0')}
+          ${gameCard('tavla-online', 'Tavla Online', [
+            ['Toplam maç', fmt(tv.played || 0)],
+            ['Galibiyet', fmt(tv.wins || 0)],
+            ['Mağlubiyet', fmt(tv.losses || 0)],
+            ['Kazanma oranı', BG.pct(tv.wins || 0, tv.played || 0)],
+          ], secs('tavla-online'), '#e0a46a')}
           ${gameCard('blackjack', 'Blackjack Royale', [
             ['Toplam ana el', fmt(bj.played || 0)],
             ['Kazanılan', fmt(bj.wins || 0)],
@@ -220,16 +434,25 @@
         </section>`;
     }
     const frames = prods.filter((p) => p.kind === 'frame');
-    const packs = prods.filter((p) => p.kind !== 'frame');
+    const bgs = prods.filter((p) => p.kind === 'bg' && p.meta && BG.PBG[p.meta.bg]);
+    const packs = prods.filter((p) => p.kind !== 'frame' && p.kind !== 'bg');
+    const itemIc = (p) =>
+      p.kind === 'emoji' ? BG.emojiImg(p.meta.pack, BG.EMOJI[p.meta.pack][0], 30)
+        : p.kind === 'gifter' ? BG.giftImg('gift_box', 30)
+        : p.kind === 'dealer' ? `<span class="pp-ic-dealer dl-${esc((p.meta && p.meta.dealer) || 'alev')}" aria-hidden="true"></span>`
+        : p.kind === 'felt' ? `<span class="pp-ic-felt felt-${esc((p.meta && p.meta.felt) || '')}" aria-hidden="true"></span>`
+        : icon('message', 22);
     html += `<section class="pp-sec">
         <h2>${icon('bag', 18)}Satın alınanlar</h2>
         ${
           prods.length
-            ? `<ul class="pp-items">${packs.map((p) => `<li class="pp-item k-${esc(p.kind)}">${p.kind === 'emoji' ? BG.emojiImg(p.meta.pack, BG.EMOJI[p.meta.pack][0], 30) : p.kind === 'gifter' ? BG.giftImg('gift_box', 30) : icon('message', 22)}<span>${esc(p.name)}</span></li>`).join('')}
-               ${frames.map((p) => `<li class="pp-item k-frame">${BG.avatar(d.user, { size: 30, frame: p.meta.frame })}<span>${esc(p.name)}</span></li>`).join('')}</ul>`
+            ? `<ul class="pp-items">${packs.map((p) => `<li class="pp-item k-${esc(p.kind)}">${itemIc(p)}<span>${esc(p.name)}</span></li>`).join('')}
+               ${frames.map((p) => `<li class="pp-item k-frame">${BG.avatar(d.user, { size: 30, frame: p.meta.frame })}<span>${esc(p.name)}</span></li>`).join('')}
+               ${bgs.map((p) => `<li class="pp-item k-bg"><span class="pp-ic-bg">${BG.pbgHTML(p.meta.bg)}</span><span>${esc(p.name)}</span></li>`).join('')}</ul>`
             : `<p class="muted small">Henüz ürün yok.${own ? ' <a href="#/magaza">Mağazaya göz at</a>' : ''}</p>`
         }
         ${own && frames.length ? `<div class="pp-frames"><span class="muted small">Aktif çerçeve:</span><button type="button" class="pp-fr${!d.user.frame ? ' is-on' : ''}" data-frame="">Yok</button>${frames.map((p) => `<button type="button" class="pp-fr${d.user.frame === p.meta.frame ? ' is-on' : ''}" data-frame="${esc(p.id)}">${esc(BG.FRAMES[p.meta.frame] || p.name)}</button>`).join('')}</div>` : ''}
+        ${own && bgs.length ? `<div class="pp-frames"><span class="muted small">Profil arka planı:</span><button type="button" class="pp-fr${!d.bg ? ' is-on' : ''}" data-pbg="">Yok</button>${bgs.map((p) => `<button type="button" class="pp-fr${d.bg === p.meta.bg ? ' is-on' : ''}" data-pbg="${esc(p.id)}">${esc(BG.PBG[p.meta.bg] || p.name)}</button>`).join('')}</div>` : ''}
       </section>
       <section class="pp-sec">
         <h2>${icon('gift', 18)}Hediye vitrini <span class="muted">${fmt(gifts.total || 0)}</span></h2>
@@ -367,6 +590,7 @@
       </div>
       <footer class="pp-total"><span>BÖZER GAMING TOPLAM AKTİF SÜRE</span><b>${esc(BG.hours(d.total_active_secs))}</b></footer>`;
     mountComments(root, d);
+    if (opts.focusBadges && d.relation === 'self') setTimeout(() => openBadges(d, opts), 0);
     // kendi profilinde: hediyeleri kimin gönderdiği (yalnızca sahibi görür)
     const og = root.querySelector('[data-own-gifts]');
     if (og)
@@ -387,6 +611,10 @@
         if (await relAct(d, rb.dataset.rel, rb)) opts.reload();
         return;
       }
+      if (e.target.closest('[data-badges]')) {
+        openBadges(d, opts);
+        return;
+      }
       if (e.target.closest('[data-share]')) {
         BG.copy(player.link(d.user.id), 'Profil bağlantısı kopyalandı.');
         return;
@@ -396,9 +624,10 @@
         return;
       }
       const fr = e.target.closest('[data-frame]');
-      if (fr) {
+      const pb = e.target.closest('[data-pbg]');
+      if (fr || pb) {
         try {
-          await BG.api.rpc('bg_store_equip', { p_kind: 'frame', p_product: fr.dataset.frame || null });
+          await BG.api.rpc('bg_store_equip', fr ? { p_kind: 'frame', p_product: fr.dataset.frame || null } : { p_kind: 'bg', p_product: pb.dataset.pbg || null });
           BG.bp.refresh();
           opts.reload();
         } catch (err) {
@@ -408,20 +637,23 @@
     });
   }
 
-  BG.views.player = function (params) {
+  BG.views.player = function (params, query) {
     const id = params && params.id ? params.id : BG.store.me && BG.store.me.id;
+    let focusBadges = !!(query && query.rozet);
     const root = BG.frag(`<div class="page player"><div class="pp-wrap"><p class="loading-row">Profil yükleniyor…</p></div></div>`);
     const wrap = root.querySelector('.pp-wrap');
     if (!id || !UUID.test(id)) {
       wrap.innerHTML = '<p class="loading-row">Profil bulunamadı.</p>';
       return { node: root };
     }
-    async function load() {
+    async function load(o) {
+      if (o && o.focusBadges) focusBadges = true;
       try {
         const d = await BG.api.rpc('bg_profile', { p_user: id });
         const inner = document.createElement('div');
         inner.className = 'pp-in';
-        renderProfile(inner, d, { reload: load });
+        renderProfile(inner, d, { reload: load, focusBadges });
+        focusBadges = false;
         wrap.replaceChildren(inner);
         document.title = (d.user.full_name || d.user.username) + ' · Bözer Gaming';
       } catch (e) {
