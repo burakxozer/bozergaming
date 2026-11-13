@@ -390,7 +390,20 @@
   BG.LEVELS = [[10, 1], [20, 6], [30, 11], [40, 16], [50, 20], [60, 24], [70, 26]];
   BG.PRESTIGE_MIN = 26;
   BG.PRESTIGE_STEPS = [25000, 50000, 100000, 200000, 400000, 750000, 1250000, 2000000, 3500000, 5000000];
-  BG.FRAMES = { bronz: 'Bronz', gumus: 'Gümüş', altin: 'Altın', neon: 'Neon Mavi', ates: 'Ateş', buz: 'Buz', kraliyet: 'Kraliyet' };
+  BG.FRAMES = { bronz: 'Bronz', gumus: 'Gümüş', altin: 'Altın', neon: 'Neon', ates: 'Ateş', buz: 'Buz', kraliyet: 'Kraliyet',
+    zumrut: 'Zümrüt', yildirim: 'Yıldırım', rgb: 'RGB', galaksi: 'Galaksi', elmas: 'Elmas' };
+  /* v3.4: profil arka planları (mağazadan; hareketli, yalnız CSS) */
+  BG.PBG = { aurora: 'Kuzey Işıkları', galaksi: 'Galaksi', volkan: 'Volkan', neon: 'Neon Şehir', saray: 'Altın Saray' };
+  // Volkan sahnesinde koninin üstünde akan lav ırmakları (satır içi SVG; renkler düz, kimlik kullanılmaz)
+  const PBG_EXTRA = {
+    volkan: `<svg viewBox="0 0 100 100" preserveAspectRatio="none" focusable="false"><path class="rim" d="M0 100 L33 21 L41 11 M59 11 L67 21"/>
+      <path class="lava-g" d="M48 13 C46 30 40 42 42 58 C44 72 36 86 31 100"/><path class="lava" d="M48 13 C46 30 40 42 42 58 C44 72 36 86 31 100"/><path class="lava-h" d="M48 13 C46 30 40 42 42 58 C44 72 36 86 31 100"/>
+      <path class="lava-g" d="M53 13 C56 28 62 40 60 54 C58 66 66 82 71 100"/><path class="lava" d="M53 13 C56 28 62 40 60 54 C58 66 66 82 71 100"/><path class="lava-h b" d="M53 13 C56 28 62 40 60 54 C58 66 66 82 71 100"/></svg>`,
+  };
+  BG.pbgHTML = (k) =>
+    k && BG.PBG[k]
+      ? `<div class="pbg pbg-${k}" aria-hidden="true"><span class="l1"></span><span class="l2"></span><span class="l3">${PBG_EXTRA[k] || ''}</span><span class="l4"></span><span class="pt">${'<i></i>'.repeat(12)}</span></div>`
+      : '';
   /** Sunucudaki herkese açık ayarlardan rütbe tablosu ve masa seviyeleri (açılışta ve panelde kaydedince) */
   BG.applyEconSettings = function (r) {
     if (!r) return;

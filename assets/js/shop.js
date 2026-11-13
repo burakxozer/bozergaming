@@ -13,16 +13,23 @@
   BG.EMOJI = {
     vip: ['hello_wave', 'applause', 'warm_smile', 'laughing_tears', 'crying', 'angry_tilt', 'shocked', 'cheeky', 'thumbs_up', 'fingers_crossed', 'cool_sunglasses', 'nervous_sweat', 'party_celebration', 'winner_chips', 'bad_beat', 'facepalm'],
     premium: ['hello_wave', 'applause', 'big_smile', 'laughing_tears', 'crying', 'tilt_angry', 'shocked', 'playful_wink', 'thumbs_up', 'fingers_crossed', 'cool_confident', 'nervous_sweat', 'party_celebration', 'champion_trophy', 'bad_luck', 'facepalm'],
+    // v3.4: Çılgın Emoji Paketi (hareketli SVG)
+    cilgin: ['cl_selam', 'cl_kahkaha', 'cl_kufur', 'cl_sok', 'cl_aglama', 'cl_ask', 'cl_havali', 'cl_para', 'cl_alev', 'cl_oldum', 'cl_palyaco', 'cl_uyku', 'cl_dusunce', 'cl_parti', 'cl_seytan', 'cl_bulanti'],
   };
   BG.EMOJI_NAMES = {
     hello_wave: 'Merhaba', applause: 'Alkış', warm_smile: 'Gülümseme', big_smile: 'Kocaman gülüş', laughing_tears: 'Kahkaha', crying: 'Ağlıyor',
     angry_tilt: 'Sinirli', tilt_angry: 'Sinirli', shocked: 'Şaşkın', cheeky: 'Muzip', playful_wink: 'Göz kırpma', thumbs_up: 'Süper',
     fingers_crossed: 'Şans dile', cool_sunglasses: 'Havalı', cool_confident: 'Havalı', nervous_sweat: 'Gergin', party_celebration: 'Kutlama',
     winner_chips: 'Kazandım', champion_trophy: 'Şampiyon', bad_beat: 'Kötü el', bad_luck: 'Şanssızlık', facepalm: 'Of ya',
+    cl_selam: 'Selam', cl_kahkaha: 'Kahkaha', cl_kufur: 'Küfürbaz', cl_sok: 'Şok', cl_aglama: 'Hüngür hüngür', cl_ask: 'Aşık', cl_havali: 'Havalı',
+    cl_para: 'Para babası', cl_alev: 'Alev alev', cl_oldum: 'Öldüm', cl_palyaco: 'Palyaço', cl_uyku: 'Uykum geldi', cl_dusunce: 'Hmm…', cl_parti: 'Parti',
+    cl_seytan: 'Şeytan', cl_bulanti: 'Midem bulandı',
   };
-  BG.emojiSrc = (pack, code, x2) => `assets/emoji/${pack}/${code}${x2 ? '@2x' : ''}.webp?v=${V()}`;
+  /** Hareketli paketler SVG'dir (tek dosya her çözünürlükte keskin) */
+  BG.EMOJI_SVG = { cilgin: true };
+  BG.emojiSrc = (pack, code, x2) => (BG.EMOJI_SVG[pack] ? `assets/emoji/${pack}/${code}.svg?v=${V()}` : `assets/emoji/${pack}/${code}${x2 ? '@2x' : ''}.webp?v=${V()}`);
   BG.emojiImg = (pack, code, size) =>
-    `<img class="emo" src="${BG.emojiSrc(pack, code)}" srcset="${BG.emojiSrc(pack, code, true)} 2x" alt="${esc(BG.EMOJI_NAMES[code] || code)}" width="${size || 40}" height="${size || 40}" loading="lazy" decoding="async">`;
+    `<img class="emo" src="${BG.emojiSrc(pack, code)}"${BG.EMOJI_SVG[pack] ? '' : ` srcset="${BG.emojiSrc(pack, code, true)} 2x"`} alt="${esc(BG.EMOJI_NAMES[code] || code)}" width="${size || 40}" height="${size || 40}" loading="lazy" decoding="async">`;
   BG.GIFTS = ['beer', 'wine', 'whisky', 'raki', 'cocktail', 'poop', 'hotdog', 'hamburger', 'trophy', 'tea', 'coffee', 'flowers', 'baby_bottle', 'gift_box', 'nazar_boncugu', 'okey_token'];
   BG.giftImg = (code, size) =>
     `<img class="gft" src="assets/gifts/${code}.webp" srcset="assets/gifts/${code}@2x.webp 2x" alt="" width="${size || 40}" height="${size || 40}" loading="lazy" decoding="async">`;
@@ -34,7 +41,12 @@
     [['emoji'], 'Emoji paketleri', 'İki paketi de alabilirsin; masada kuşandığın paket kullanılır. Emojiler avatarının yanında kısa süre görünür.'],
     [['chat', 'gifter'], 'Sohbet ve hediye', 'Geveze Paketi masa sohbetine yazmayı açar (paketi olmayanlar sohbeti okuyabilir ama yazamaz; arkadaşlarınla özel mesajlaşma ücretsizdir). Gifter Pack ile masadaki herkese animasyonlu hediye gönderirsin; gönderim ücretsizdir, iki hediye arasında 5 saniye beklenir.'],
     [['frame'], 'Profil çerçeveleri', 'Avatarının çevresinde görünür: profilde, arkadaş listesinde ve üç online oyunun masalarında. İstediğin zaman değiştirebilir ya da kapatabilirsin.'],
+    [['bg'], 'Profil arka planları', 'Profil kartının arkasında hareketli sahne. Profiline bakan herkes görür; istediğin zaman değiştirebilir ya da kaldırabilirsin.'],
+    [['dealer'], 'Blackjack krupiyesi', 'Kuşandığında kurduğun Blackjack masalarında krupiye değişir ve masadaki herkes görür. Çıkarınca krupiye Neriman’a döner. İade edilmez.'],
+    [['felt'], 'Blackjack keçeleri', 'Kuşandığın keçe kurduğun Blackjack masalarında herkese görünür. Çıkarınca varsayılan yeşil keçeye döner. İade edilmez.'],
   ];
+  // kuşanılabilen ürünler ve çıkarma düğmesinin yazısı
+  const EQUIP = { frame: ['frame', 'Çerçeveyi kapat'], emoji: ['emoji_pack', 'Paketi çıkar'], bg: ['bg', 'Arka planı kaldır'], dealer: ['dealer', 'Krupiyeyi çıkar'], felt: ['felt', 'Keçeyi çıkar'] };
   function previewHTML(p) {
     const me = BG.store.me || {};
     if (p.kind === 'emoji') {
@@ -45,15 +57,20 @@
     if (p.kind === 'chat')
       return `<div class="sp-chat"><div class="sp-bub">${BG.avatar(me, { size: 34 })}<p>İyi oyunlar! 😄 <time>21:04</time></p></div><div class="sp-bub is-r"><p>Rövanş isterim <time>21:05</time></p></div></div>`;
     if (p.kind === 'frame') return `<div class="sp-frame">${BG.avatar(me, { size: 96, frame: p.meta && p.meta.frame })}</div>`;
+    if (p.kind === 'bg')
+      return `<div class="sp-bgprev">${BG.pbgHTML(p.meta && p.meta.bg)}<div class="sp-bgprev-in">${BG.avatar(me, { size: 58, frame: me.frame })}<span><b>${esc(me.full_name || me.username || 'Sen')}</b><small>${esc(BG.PBG[(p.meta && p.meta.bg) || ''] || '')}</small></span></div></div>`;
+    if (p.kind === 'dealer') return `<div class="sp-dealer" style="background-image:url('assets/store/dealer_${esc((p.meta && p.meta.dealer) || 'alev')}.svg?v=${V()}')"><span class="sp-dealer-n">Krupiye ${esc(((p.meta && p.meta.dealer) || 'alev').replace(/^./, (c) => c.toLocaleUpperCase('tr')))}</span></div>`;
+    if (p.kind === 'felt') return `<div class="sp-felt" style="background-image:url('assets/store/felt_${esc((p.meta && p.meta.felt) || '')}.svg?v=${V()}')"></div>`;
     return '';
   }
   function cardHTML(p, eq) {
-    const equipped = (p.kind === 'frame' && eq.frame === p.id) || (p.kind === 'emoji' && eq.emoji_pack === p.id);
+    const eqk = EQUIP[p.kind];
+    const equipped = !!(eqk && eq[eqk[0]] === p.id);
     const can = BG.bp.state && BG.bp.state.balance >= p.price;
     let act;
     if (!p.owned) act = `<button class="btn btn-primary" type="button" data-buy="${esc(p.id)}" ${p.active ? '' : 'disabled'}>${icon('coin', 17)}${fmt(p.price)} BP · Satın al</button>${!can ? `<small class="sp-need">${fmt(p.price - ((BG.bp.state && BG.bp.state.balance) || 0))} BP eksik</small>` : ''}`;
-    else if (p.kind === 'frame' || p.kind === 'emoji')
-      act = `<span class="sp-owned">${icon('check', 15)}SAHİP OLUNDU</span>${equipped ? `<button class="btn btn-soft btn-sm" type="button" data-unequip="${esc(p.kind)}">${p.kind === 'frame' ? 'Çerçeveyi kapat' : 'Paketi çıkar'}</button>` : `<button class="btn btn-soft btn-sm" type="button" data-equip="${esc(p.id)}" data-kind="${esc(p.kind)}">Kuşan</button>`}`;
+    else if (eqk)
+      act = `<span class="sp-owned">${icon('check', 15)}SAHİP OLUNDU</span>${equipped ? `<button class="btn btn-soft btn-sm" type="button" data-unequip="${esc(p.kind)}">${eqk[1]}</button>` : `<button class="btn btn-soft btn-sm" type="button" data-equip="${esc(p.id)}" data-kind="${esc(p.kind)}">Kuşan</button>`}`;
     else act = `<span class="sp-owned">${icon('check', 15)}SAHİP OLUNDU</span><small class="muted">Üç online oyunda kalıcı olarak açık</small>`;
     return `<article class="sp-card k-${esc(p.kind)}${p.owned ? ' is-owned' : ''}${equipped ? ' is-equipped' : ''}" data-id="${esc(p.id)}">
         <div class="sp-prev">${previewHTML(p)}${equipped ? `<span class="sp-eq">${icon('check', 13)}Kuşanıldı</span>` : ''}</div>
@@ -118,7 +135,9 @@
             card.classList.add('just-bought');
             BG.bp.burst(card.querySelector('.sp-prev'), 26);
           }
-          BG.toast({ type: 'success', title: p.name, text: 'Satın alındı. Ürün artık hesabında.' });
+          const eqk = EQUIP[p.kind];
+          const on = !!(eqk && data && data.equipped && data.equipped[eqk[0]] === p.id);
+          BG.toast({ type: 'success', title: p.name, text: on ? 'Satın alındı ve kuşanıldı. İstediğin zaman çıkarabilirsin.' : eqk ? 'Satın alındı. Kullanmak için “Kuşan”a dokun.' : 'Satın alındı. Ürün artık hesabında.' });
         } catch (err) {
           BG.toastError(err);
           b.disabled = false;

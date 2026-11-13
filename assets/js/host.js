@@ -157,6 +157,106 @@
     return true;
   };
 
+  /* ---------------- Kayma ve yakınlaşma kilidi (v3.4) ----------------
+     Oyun açıkken sayfa yakınlaştırılamaz ve oyunun arkasındaki site kaymaz. Online kart
+     oyunlarında (Blackjack, Americano, Dost Kazığı) ve tam ekranda oyun ekranının kendisi de
+     kaymaz; yalnız sohbet, liste gibi kendi kaydırma alanı olan bölümler kaydırılır. */
+  const STRICT = ['blackjack', 'americano-online', 'dostkazigi-online'];
+  const NOZOOM = 'width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no, viewport-fit=cover';
+  let vpOrig = null;
+  let lockOn = false;
+  let scrollKeep = 0;
+  const stopGesture = (e) => e.preventDefault();
+  /** Dokunuşun altında kendi kaydırma alanı var mı (o yönde kaydırılabilir mi) */
+  function scrollableFrom(node, stop, rootOk) {
+    for (let n = node; n && n !== stop && n.nodeType === 1; n = n.parentNode) {
+      const cs = n.ownerDocument.defaultView.getComputedStyle(n);
+      const oy = cs.overflowY;
+      const ox = cs.overflowX;
+      if ((oy === 'auto' || oy === 'scroll') && n.scrollHeight > n.clientHeight + 1) return true;
+      if ((ox === 'auto' || ox === 'scroll') && n.scrollWidth > n.clientWidth + 1) return true;
+      if (n.tagName === 'INPUT' || n.tagName === 'TEXTAREA' || n.tagName === 'SELECT' || n.isContentEditable) return true;
+    }
+    // uzun sayfalı eski oyunlar (lig tablosu gibi) kendi sayfasında kaydırılabilir
+    const doc = node && node.ownerDocument;
+    const se = doc && doc.scrollingElement;
+    return !!(rootOk && se && se.scrollHeight > se.clientHeight + 1);
+  }
+  function touchGuard(strictFn, rootFn) {
+    return function (e) {
+      if (e.touches && e.touches.length > 1) {
+        if (e.cancelable) e.preventDefault();
+        return;
+      }
+      if (!strictFn()) return;
+      const doc = e.target && e.target.ownerDocument;
+      if (!scrollableFrom(e.target, doc && doc.documentElement, rootFn ? rootFn() : false) && e.cancelable) e.preventDefault();
+    };
+  }
+  const siteTouch = touchGuard(() => true);
+  function lockPage(on) {
+    if (on === lockOn) return;
+    lockOn = on;
+    const vp = document.querySelector('meta[name="viewport"]');
+    if (on) {
+      scrollKeep = window.scrollY || 0;
+      if (vp) {
+        if (vpOrig == null) vpOrig = vp.getAttribute('content');
+        vp.setAttribute('content', NOZOOM);
+      }
+      document.documentElement.classList.add('page-lock');
+      ['gesturestart', 'gesturechange', 'gestureend'].forEach((ev) => document.addEventListener(ev, stopGesture, { passive: false }));
+      // site katmanında (oyun çubuğu, kenarlar) yakınlaşma ve kayma olmaz
+      document.addEventListener('touchmove', siteTouch, { passive: false });
+    } else {
+      if (vp && vpOrig != null) vp.setAttribute('content', vpOrig);
+      document.documentElement.classList.remove('page-lock');
+      ['gesturestart', 'gesturechange', 'gestureend'].forEach((ev) => document.removeEventListener(ev, stopGesture));
+      document.removeEventListener('touchmove', siteTouch);
+      if (scrollKeep) window.scrollTo(0, scrollKeep);
+    }
+  }
+  /** Oyun belgesinin içinde: iki parmak yakınlaşma, çift dokunma yakınlaşması ve (sıkı modda) sayfa kayması yok */
+  function lockFrame() {
+    const c = host.cur;
+    let d;
+    let w;
+    try {
+      d = frame && frame.contentDocument;
+      w = frame && frame.contentWindow;
+    } catch (e) {
+      return;
+    }
+    if (!d || !w || !c) return;
+    w.__bgStrict = STRICT.indexOf(c.key) >= 0 || host.isFull();
+    if (d.__bgLock) return;
+    d.__bgLock = 1;
+    ['gesturestart', 'gesturechange', 'gestureend'].forEach((ev) => d.addEventListener(ev, stopGesture, { passive: false }));
+    d.addEventListener('touchmove', touchGuard(() => !!w.__bgStrict, () => !w.__bgCard), { passive: false, capture: true });
+    // online kart oyunlarının belgesi hiç kaymaz (iPhone'da adres çubuğu yüzünden taşsa bile)
+    w.__bgCard = STRICT.indexOf(c.key) >= 0;
+    if (w.__bgCard) d.documentElement.classList.add('bg-strict');
+    try {
+      const st = d.createElement('style');
+      st.textContent =
+        'html{touch-action:manipulation;-webkit-text-size-adjust:100%;text-size-adjust:100%}' +
+        'html,body{overscroll-behavior:none}' +
+        'html.bg-strict,html.bg-strict body{overflow:hidden;height:100%}';
+      (d.head || d.documentElement).appendChild(st);
+    } catch (e) {}
+  }
+  function strictFrame() {
+    try {
+      const w = frame && frame.contentWindow;
+      const d = frame && frame.contentDocument;
+      const c = host.cur;
+      if (!w || !d || !c) return;
+      w.__bgStrict = STRICT.indexOf(c.key) >= 0 || host.isFull();
+      // tam ekranda sayfası kayan eski oyunlar (lig, dart) yine kendi içinde kaydırılabilir:
+      // yalnız belge kökünün sallanması (rubber band) ve yakınlaşma durur
+    } catch (e) {}
+  }
+
   /* ---------------- Tam ekran ----------------
      Oyun katmanı tarayıcının tam ekranına alınır; site çubukları gizlenir.
      Tam ekrana izin vermeyen tarayıcılarda (iPhone Safari) site çubukları yine
@@ -169,6 +269,7 @@
     if (!layer) return;
     layer.classList.toggle('is-full', on);
     document.documentElement.classList.toggle('game-full', on);
+    strictFrame();
     layer.querySelector('.gl-float').hidden = !on;
     const b = bar.querySelector('.gb-full');
     b.innerHTML = icon(on ? 'compress' : 'expand');
@@ -455,6 +556,7 @@
     const c = host.cur;
     if (!c || frame.getAttribute('src') === 'about:blank') return;
     c.loads++;
+    lockFrame();
     // Aktif süre: oyun içindeki dokunuş / tuş da etkinlik sayılır (v3.1)
     try {
       const d = frame.contentDocument;
@@ -535,6 +637,7 @@
     paintLive();
     layer.hidden = false;
     document.documentElement.classList.add('game-open');
+    lockPage(true);
     document.title = g.name + ' · Bözer Gaming';
 
     if (wantResume && wantResume !== 'yerel' && BG.isAuthed()) {
@@ -618,6 +721,7 @@
     if (frame) frame.setAttribute('src', 'about:blank');
     if (layer) layer.hidden = true;
     document.documentElement.classList.remove('game-open');
+    lockPage(false);
     BG.app.paintTitle();
     BG.presence.set(null, null);
     BG.games.invalidate();

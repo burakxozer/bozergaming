@@ -241,7 +241,12 @@
     BG.modal({ title: `${u.full_name || u.username} · BP hareketleri`, body, size: 'm', actions: [{ label: 'Kapat', kind: 'ghost' }] });
   }
 
-  const PROD_SHORT = { emoji_vip: 'VIP Emoji', emoji_premium: 'Premium Emoji', geveze: 'Geveze', gifter_pack: 'Gifter', frame_bronz: 'Bronz', frame_gumus: 'Gümüş', frame_altin: 'Altın', frame_neon: 'Neon', frame_ates: 'Ateş', frame_buz: 'Buz', frame_kraliyet: 'Kraliyet' };
+  const PROD_SHORT = { emoji_vip: 'VIP Emoji', emoji_premium: 'Premium Emoji', emoji_cilgin: 'Çılgın Emoji', geveze: 'Geveze', gifter_pack: 'Gifter', frame_bronz: 'Bronz', frame_gumus: 'Gümüş', frame_altin: 'Altın', frame_neon: 'Neon', frame_ates: 'Ateş', frame_buz: 'Buz', frame_kraliyet: 'Kraliyet',
+    frame_zumrut: 'Zümrüt', frame_yildirim: 'Yıldırım', frame_rgb: 'RGB', frame_galaksi: 'Galaksi', frame_elmas: 'Elmas', dealer_alev: 'Alev Pack',
+    felt_kraliyet: 'Kraliyet keçe', felt_bordo: 'Bordo keçe', felt_oniks: 'Oniks keçe', felt_ametist: 'Ametist keçe', felt_neon: 'Neon keçe',
+    bg_aurora: 'Kuzey Işıkları', bg_galaksi: 'Galaksi arka plan', bg_volkan: 'Volkan', bg_neon: 'Neon Şehir', bg_saray: 'Altın Saray' };
+  // mağaza sekmesinde ürünler türe göre gruplanır
+  const KIND_N = [['emoji', 'Emoji paketleri'], ['chat', 'Sohbet'], ['gifter', 'Hediye'], ['frame', 'Profil çerçeveleri'], ['bg', 'Profil arka planları'], ['dealer', 'Blackjack krupiyesi'], ['felt', 'Blackjack keçeleri']];
 
   /* ---------------- BP yönetimi: ayarlar + yönetici kayıtları ---------------- */
   async function bpPane(root) {
@@ -311,9 +316,9 @@
 
   /* ---------------- v3.2: Ekonomi ayarları (rütbeler, Blackjack seviyeleri, masa seviyeleri, haftalık destek) ---------------- */
   const TIER_N = { bronze: 'Bronze', silver: 'Silver', gold: 'Gold' };
-  const AUDIT_KEY = { ranks: 'Rütbeler', prestige: 'Prestij', bj_tiers: 'Blackjack seviyeleri', table_levels: 'Americano / Dost Kazığı masaları', weekly_support: 'Haftalık destek', am_rank_lock: 'Americano rütbe şartı' };
+  const AUDIT_KEY = { ranks: 'Rütbeler', prestige: 'Prestij', bj_tiers: 'Blackjack seviyeleri', table_levels: 'Americano / Dost Kazığı masaları', weekly_support: 'Haftalık destek', am_rank_lock: 'Americano rütbe şartı', dk_rank_lock: 'Dost Kazığı rütbe şartı', fc_rules: 'Friend Coins kuralları' };
   /* v3.3: sitenin beklediği veritabanı sürümü (kurulum.sql). Eski veritabanında ekonomi ayarları kaydedilemez. */
-  const DB_WANT = '3.3.0';
+  const DB_WANT = '3.4.0';
   const verLess = (a, b) => {
     const p = (v) => String(v || '0').split('.').map((x) => parseInt(x, 10) || 0);
     const x = p(a);
@@ -372,8 +377,10 @@
     const custom = new Set(d.custom || []);
     const tag = (k) => (custom.has(k) ? '<span class="chip chip-quiet">Panelden değiştirildi</span>' : '<span class="chip chip-quiet">Varsayılan</span>');
     const amLock = !!d.am_rank_lock;
+    const dkLock = d.dk_rank_lock !== false;
+    const fr = d.fc_rules || { am: 10, dk: 10, bj_hands: 10, bj: 1, pair_daily: 0 };
     box.innerHTML = `${!d.db_version || verLess(d.db_version, DB_WANT) ? dbOldHTML(d.db_version) : ''}
-      <nav class="ec-jump" aria-label="Ekonomi ayarları bölümleri"><a href="#ec-bj" data-jump="bj">Blackjack</a><a href="#ec-levels" data-jump="levels">Americano ve Dost Kazığı</a><a href="#ec-ranks" data-jump="ranks">Rütbeler</a><a href="#ec-weekly" data-jump="weekly">Haftalık destek</a></nav>
+      <nav class="ec-jump" aria-label="Ekonomi ayarları bölümleri"><a href="#ec-bj" data-jump="bj">Blackjack</a><a href="#ec-levels" data-jump="levels">Americano ve Dost Kazığı</a><a href="#ec-ranks" data-jump="ranks">Rütbeler</a><a href="#ec-weekly" data-jump="weekly">Haftalık destek</a><a href="#ec-fc" data-jump="fc">Friend Coins</a></nav>
       <section class="panel ec-sec" data-sec="ranks" id="ec-ranks">
         <div class="panel-head"><h2>Rütbeler</h2>${tag('ranks')}</div>
         <p class="panel-lead">Rütbe adı, başladığı BP, rengi ve simgesi. Alt sınırlar yukarıdan aşağı artmalı; ilk rütbe 0 BP’den başlar. Kaydedince bütün üyelerin rütbesi yeni tabloya göre hesaplanır.</p>
@@ -387,7 +394,7 @@
       </section>
       <section class="panel ec-sec" data-sec="bj" id="ec-bj">
         <div class="panel-head"><h2>Blackjack seviyeleri</h2>${tag('bj_tiers')}</div>
-        <p class="panel-lead">Her seviyenin fiş değeri, en düşük ve en yüksek bahsi (bahis fiş katlarıyla kurulur; sınırlar fiş değerinin katı olmalı, fiş çift sayı), oturmak için gereken güncel bakiye (0 = şart yok) ve jackpot ödülleri. Kaydedince açık masalar yeni değerlere hemen geçer.</p>
+        <p class="panel-lead">Her seviyenin fiş değeri, en düşük ve en yüksek bahsi (bahis fiş katlarıyla kurulur; sınırlar fiş değerinin katı olmalı, fiş çift sayı), yan bahislerin (Perfect Pairs, 21+3) üst sınırı, oturmak için gereken güncel bakiye (0 = şart yok) ve jackpot ödülleri. Kaydedince açık masalar yeni değerlere hemen geçer.</p>
         <div class="ec-tiers">${['bronze', 'silver', 'gold'].map((k) => {
           const t = bj[k] || {};
           const b = (t.bets || []).slice().sort((x, y) => x - y);
@@ -397,6 +404,7 @@
           return `<div class="ec-tier ${k}" data-tier="${k}"><h3>${TIER_N[k]}</h3>
             <label>Fiş değeri (BP)${num(chip, 'data-k="chip" step="2"')}</label>
             <div class="ec-pair"><label>En düşük bahis${num(lo, 'data-k="min_bet"')}</label><label>En yüksek bahis${num(hi, 'data-k="max_bet"')}</label></div>
+            <label>Yan bahis en fazla (her biri, BP)${num(t.side_max != null ? t.side_max : chip * 2, 'data-k="side_max"')}</label>
             <label>Oturmak için en az bakiye (BP)${num(t.min_balance, 'data-k="min_balance"')}</label>
             <label>Jackpot, pot başına (BP)${num(t.jp_seat, 'data-k="jp_seat"')}</label>
             <label>Jackpot, Bet Behind izleyicisine (BP)${num(t.jp_spec, 'data-k="jp_spec"')}</label>
@@ -407,8 +415,9 @@
       <section class="panel ec-sec" data-sec="levels" id="ec-levels">
         <div class="panel-head"><h2>Americano ve Dost Kazığı masaları</h2>${tag('table_levels')}</div>
         <p class="panel-lead">Masa ücreti seçenekleri, o ücreti açabilen en düşük rütbe ve ödüller (BP). Americano: oyuncu sayısına göre 1. ve 2. olanın aldığı toplam BP. Dost Kazığı: kazanan takımın her oyuncusuna. Maç başlarken geçerli değerler o maç bitene kadar kullanılır.</p>
-        <label class="ec-switch"><input type="checkbox" data-amlock ${amLock ? 'checked' : ''}><span><b>Americano’da da rütbe şartı uygula</b><small>${amLock ? 'Açık: Americano masa ücretleri de rütbe şartına bağlı.' : 'Kapalı: Americano’da herkes 10–70 BP her ücretle masa açabilir. Rütbe şartı yalnız Dost Kazığı’nda geçerli.'}</small></span></label>
-        <div class="am-scroll"><table class="ec-table ec-levels"><thead><tr><th>Ücret</th><th>En düşük rütbe${amLock ? '' : '<br><small>Dost Kazığı</small>'}</th><th>AM 2 kişi<br><small>1.</small></th><th>AM 3 kişi<br><small>1. · 2.</small></th><th>AM 4 kişi<br><small>1. · 2.</small></th><th>AM 5 kişi<br><small>1. · 2.</small></th><th>DK 4 kişi</th><th>DK 6 kişi</th><th>DK 8 kişi</th><th></th></tr></thead>
+        <label class="ec-switch"><input type="checkbox" data-amlock ${amLock ? 'checked' : ''}><span><b>Americano’da rütbe şartı uygula</b><small>${amLock ? 'Açık: Americano masa ücretleri rütbe şartına bağlı.' : 'Kapalı: Americano’da herkes bakiyesi yettiği sürece her ücretle masa açabilir.'}</small></span></label>
+        <label class="ec-switch"><input type="checkbox" data-dklock ${dkLock ? 'checked' : ''}><span><b>Dost Kazığı’nda rütbe şartı uygula</b><small>${dkLock ? 'Açık: Dost Kazığı masa ücretleri rütbe şartına bağlı.' : 'Kapalı: Dost Kazığı’nda herkes bakiyesi yettiği sürece her ücretle masa açabilir.'}</small></span></label>
+        <div class="am-scroll"><table class="ec-table ec-levels"><thead><tr><th>Ücret</th><th>En düşük rütbe${amLock && dkLock ? '' : amLock ? '<br><small>Americano</small>' : dkLock ? '<br><small>Dost Kazığı</small>' : '<br><small>şu an kullanılmıyor</small>'}</th><th>AM 2 kişi<br><small>1.</small></th><th>AM 3 kişi<br><small>1. · 2.</small></th><th>AM 4 kişi<br><small>1. · 2.</small></th><th>AM 5 kişi<br><small>1. · 2.</small></th><th>DK 4 kişi</th><th>DK 6 kişi</th><th>DK 8 kişi</th><th></th></tr></thead>
           <tbody>${lv.map(levelRow).join('')}</tbody></table></div>
         <div class="ec-acts"><button class="btn btn-soft" type="button" data-add-level>${icon('plus', 16)}Seviye ekle</button>
           <span class="grow"></span><button class="btn btn-ghost" type="button" data-reset="table_levels">Varsayılana dön</button><button class="btn btn-primary" type="button" data-save="table_levels">Masa seviyelerini kaydet</button></div>
@@ -422,6 +431,18 @@
           <label>Bakiye eşiği (BP, bu ve altı)${num(w.threshold, 'data-k="threshold"')}</label>
         </div>
         <div class="ec-acts"><span class="grow"></span><button class="btn btn-ghost" type="button" data-reset="weekly_support">Varsayılana dön</button><button class="btn btn-primary" type="button" data-save="weekly_support">Haftalık desteği kaydet</button></div>
+      </section>
+      <section class="panel ec-sec" data-sec="fc" id="ec-fc">
+        <div class="panel-head"><h2>Friend Coins</h2>${tag('fc_rules')}</div>
+        <p class="panel-lead">Arkadaşlarla oynayınca kazanılan Friend Coins (10 FC = 1 BP). Maç sonu ödülü, maçı birlikte bitiren her arkadaş için verilir; Blackjack’te aynı turda eli hesaplanan arkadaşlarla sayılır ve sayaç masa değişse de sürer.</p>
+        <div class="ec-weekly ec-fc">
+          <label>Americano maç sonu, arkadaş başına (FC)${num(fr.am, 'data-k="am"')}</label>
+          <label>Dost Kazığı maç sonu, arkadaş başına (FC)${num(fr.dk, 'data-k="dk"')}</label>
+          <label>Blackjack: her kaç ortak elde${num(fr.bj_hands, 'data-k="bj_hands"')}</label>
+          <label>Blackjack: arkadaş başına (FC)${num(fr.bj, 'data-k="bj"')}</label>
+          <label>Aynı iki arkadaşın günlük FC sınırı (0 = sınırsız)${num(fr.pair_daily, 'data-k="pair_daily"')}</label>
+        </div>
+        <div class="ec-acts"><span class="grow"></span><button class="btn btn-ghost" type="button" data-reset="fc_rules">Varsayılana dön</button><button class="btn btn-primary" type="button" data-save="fc_rules">Friend Coins kurallarını kaydet</button></div>
       </section>
       <div class="admin-grid">
         <section class="panel"><div class="panel-head"><h2>Son ayar değişiklikleri</h2></div>
@@ -487,7 +508,7 @@
         const o = {};
         $$('[data-tier]').forEach((el) => {
           const v = (k) => intOf(el.querySelector(`[data-k="${k}"]`));
-          o[el.dataset.tier] = { chip: v('chip'), min_bet: v('min_bet'), max_bet: v('max_bet'), min_balance: v('min_balance'), jp_seat: v('jp_seat'), jp_spec: v('jp_spec') };
+          o[el.dataset.tier] = { chip: v('chip'), min_bet: v('min_bet'), max_bet: v('max_bet'), side_max: v('side_max'), min_balance: v('min_balance'), jp_seat: v('jp_seat'), jp_spec: v('jp_spec') };
         });
         return o;
       }
@@ -501,6 +522,11 @@
           $$('[data-dk]', tr).forEach((inp) => (dk[inp.dataset.dk] = intOf(inp)));
           return { fee: intOf(tr.querySelector('[data-k="fee"]')), min_rank: +tr.querySelector('[data-k="min_rank"]').value, am, dk };
         });
+      }
+      if (key === 'fc_rules') {
+        const sec = box.querySelector('[data-sec="fc"]');
+        const v = (k) => intOf(sec.querySelector(`[data-k="${k}"]`));
+        return { am: v('am'), dk: v('dk'), bj_hands: v('bj_hands'), bj: v('bj'), pair_daily: v('pair_daily') };
       }
       if (key === 'weekly_support') {
         const sec = box.querySelector('[data-sec="weekly"]');
@@ -523,30 +549,39 @@
         out.textContent = 'Fiş çift sayı, sınırlar fiş değerinin katı olmalı.';
         return;
       }
+      const sm = v('side_max');
+      if (!(sm >= chip) || sm % chip || sm > hi) {
+        out.textContent = 'Yan bahis üst sınırı fiş değerinin katı olmalı ve en yüksek bahsi geçmemeli.';
+        return;
+      }
       const steps = [];
       for (let x = lo; x <= hi && steps.length < 9; x += chip) steps.push(x);
       const n = Math.floor((hi - lo) / chip) + 1;
-      out.textContent = `Masada bahisler: ${steps.map(n0).join(', ')}${n > steps.length ? ' …' : ''} BP (${n} adım)${v('min_balance') > 0 ? ` · oturmak için ${n0(v('min_balance'))} BP` : ' · giriş şartı yok'}`;
+      out.textContent = `Masada bahisler: ${steps.map(n0).join(', ')}${n > steps.length ? ' …' : ''} BP (${n} adım) · yan bahis ${n0(chip)}–${n0(sm)} BP${v('min_balance') > 0 ? ` · oturmak için ${n0(v('min_balance'))} BP` : ' · giriş şartı yok'}`;
     };
     $$('[data-tier]').forEach((el) => {
       tierSum(el);
       el.addEventListener('input', () => tierSum(el));
     });
-    const amBox = box.querySelector('[data-amlock]');
-    amBox.addEventListener('change', async () => {
-      amBox.disabled = true;
-      try {
-        await BG.api.rpc('bg_admin_econ_set', { p_key: 'am_rank_lock', p_value: amBox.checked });
-        const s2 = await BG.api.rpc('bg_public_settings', {});
-        if (BG.applyEconSettings) BG.applyEconSettings(s2);
-        BG.toast({ type: 'success', text: amBox.checked ? 'Americano’da rütbe şartı açıldı.' : 'Americano’da bütün masa ücretleri herkese açık.' });
-        econSetPane(root);
-      } catch (e) {
-        BG.toastError(e);
-        amBox.checked = !amBox.checked;
-        amBox.disabled = false;
-      }
-    });
+    const lockSwitch = (sel, key, on, off) => {
+      const el = box.querySelector(sel);
+      el.addEventListener('change', async () => {
+        el.disabled = true;
+        try {
+          await BG.api.rpc('bg_admin_econ_set', { p_key: key, p_value: el.checked });
+          const s2 = await BG.api.rpc('bg_public_settings', {});
+          if (BG.applyEconSettings) BG.applyEconSettings(s2);
+          BG.toast({ type: 'success', text: el.checked ? on : off });
+          econSetPane(root);
+        } catch (e) {
+          BG.toastError(e);
+          el.checked = !el.checked;
+          el.disabled = false;
+        }
+      });
+    };
+    lockSwitch('[data-amlock]', 'am_rank_lock', 'Americano’da rütbe şartı açıldı.', 'Americano’da bütün masa ücretleri herkese açık.');
+    lockSwitch('[data-dklock]', 'dk_rank_lock', 'Dost Kazığı’nda rütbe şartı açıldı.', 'Dost Kazığı’nda bütün masa ücretleri herkese açık.');
     box.querySelector('.ec-jump').addEventListener('click', (e) => {
       const a = e.target.closest('[data-jump]');
       if (!a) return;
@@ -575,7 +610,7 @@
     $$('[data-save]').forEach((b) =>
       b.addEventListener('click', () => {
         const key = b.dataset.save;
-        save(key, collect(key), b, { ranks: 'Rütbeler kaydedildi.', bj_tiers: 'Blackjack seviyeleri kaydedildi.', table_levels: 'Masa seviyeleri kaydedildi.', weekly_support: 'Haftalık destek kaydedildi.' }[key]);
+        save(key, collect(key), b, { ranks: 'Rütbeler kaydedildi.', bj_tiers: 'Blackjack seviyeleri kaydedildi.', table_levels: 'Masa seviyeleri kaydedildi.', weekly_support: 'Haftalık destek kaydedildi.', fc_rules: 'Friend Coins kuralları kaydedildi.' }[key]);
       }),
     );
     $$('[data-reset]').forEach((b) =>
@@ -690,9 +725,14 @@
     }
     box.innerHTML = `<section class="panel"><div class="panel-head"><h2>Mağaza ürünleri</h2></div>
       <p class="panel-lead">Fiyat değişikliği yalnızca yeni satın alımları etkiler; satın alınmış ürünler kalıcıdır. Pasif ürün mağazada satılmaz (sahipleri kullanmaya devam eder).</p>
-      ${(d.products || []).map((p) => `<div class="price-row" data-id="${esc(p.id)}"><span><b>${esc(p.name)}</b><small class="muted"> · ${n0(p.owners)} sahibi</small></span>
+      ${KIND_N.concat([[null, 'Diğer']]).map(([k, title]) => {
+        const list = (d.products || []).filter((p) => (k ? p.kind === k : !KIND_N.some((x) => x[0] === p.kind)));
+        return list.length
+          ? `<h3 class="price-h">${esc(title)}</h3>` + list.map((p) => `<div class="price-row" data-id="${esc(p.id)}"><span><b>${esc(p.name)}</b><small class="muted"> · ${n0(p.owners)} sahibi${p.active ? '' : ' · satışta değil'}</small></span>
         <input class="input" type="number" min="0" max="1000000" value="${p.price}" aria-label="${esc(p.name)} fiyatı"><label class="check"><input type="checkbox" ${p.active ? 'checked' : ''}><span>Satışta</span></label>
-        <button class="btn btn-soft btn-sm" type="button" data-save>Kaydet</button></div>`).join('')}</section>`;
+        <button class="btn btn-soft btn-sm" type="button" data-save>Kaydet</button></div>`).join('')
+          : '';
+      }).join('')}</section>`;
     box.querySelectorAll('[data-save]').forEach((b) =>
       b.addEventListener('click', async () => {
         const r = b.closest('.price-row');

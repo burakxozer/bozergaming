@@ -796,9 +796,12 @@
 
   /* ---------------- sistem satırları: hediye ve emoji ---------------- */
   const GIFT_RE = /^\[\[gift:([a-z_]+):([0-9a-f-]{36})(?::(\d*))?\]\]\s*(.*)$/;
-  const EMOJI_RE = /^\[\[emoji:(vip|premium):([a-z_]+):(\d*)\]\]$/;
+  const EMOJI_RE = /^\[\[emoji:(vip|premium|cilgin):([a-z_]+):(\d*)\]\]$/;
   const giftSrc = (code, x) => 'assets/gifts/' + code + (x === 2 ? '@2x' : '') + '.webp';
-  const emojiSrc = (pack, code, x) => 'assets/emoji/' + pack + '/' + code + (x === 2 ? '@2x' : '') + '.webp';
+  // v3.4: Çılgın paket hareketli SVG'dir (tek dosya)
+  const EMOJI_SVG = { cilgin: true };
+  const emojiSrc = (pack, code, x) => 'assets/emoji/' + pack + '/' + code + (EMOJI_SVG[pack] ? '.svg' : (x === 2 ? '@2x' : '') + '.webp');
+  T.emojiSrc = emojiSrc;
   T.giftOf = (body) => {
     const m = GIFT_RE.exec(body || '');
     return m ? { code: m[1], to: m[2], seat: m[3] === '' || m[3] == null ? null : +m[3], text: m[4] } : null;
@@ -814,6 +817,7 @@
     gifter_pack: { name: 'Gifter Pack', price: 200, text: 'Masadaki arkadaşlarına ve rakiplerine eğlenceli hediyeler gönder! 16 premium sanal hediye, tek seferlik satın alma ve üç online oyunda sınırsız kullanım.' },
     emoji_vip: { name: 'Blackjack VIP Emoji Paketi', price: 50, text: 'Masada avatarının yanında beliren 16 premium emoji tepkisi.' },
     emoji_premium: { name: 'Premium Emoji Paketi', price: 100, text: 'Bözer Gaming imzalı 16 premium emoji tepkisi.' },
+    emoji_cilgin: { name: 'Çılgın Emoji Paketi', price: 150, text: 'Hareketli 16 emoji: küfürbaz sinirli, yerlere yatan kahkaha, şimşek çakan şok ve fazlası.' },
   };
   T.buySheet = async function (id, done) {
     const B = site();
@@ -876,7 +880,11 @@
   const EMOJI = {
     vip: ['hello_wave', 'applause', 'warm_smile', 'laughing_tears', 'crying', 'angry_tilt', 'shocked', 'cheeky', 'thumbs_up', 'fingers_crossed', 'cool_sunglasses', 'nervous_sweat', 'party_celebration', 'winner_chips', 'bad_beat', 'facepalm'],
     premium: ['hello_wave', 'applause', 'big_smile', 'laughing_tears', 'crying', 'tilt_angry', 'shocked', 'playful_wink', 'thumbs_up', 'fingers_crossed', 'cool_confident', 'nervous_sweat', 'party_celebration', 'champion_trophy', 'bad_luck', 'facepalm'],
+    cilgin: ['cl_selam', 'cl_kahkaha', 'cl_kufur', 'cl_sok', 'cl_aglama', 'cl_ask', 'cl_havali', 'cl_para', 'cl_alev', 'cl_oldum', 'cl_palyaco', 'cl_uyku', 'cl_dusunce', 'cl_parti', 'cl_seytan', 'cl_bulanti'],
   };
+  // ürün → paket (kuşanılan ürün hangi emoji listesini açar)
+  const PACK_OF = { emoji_vip: 'vip', emoji_premium: 'premium', emoji_cilgin: 'cilgin' };
+  const PACK_NAME = { vip: 'VIP', premium: 'Premium', cilgin: 'Çılgın' };
   T.EMOJI = EMOJI;
   T.GIFTS = GIFTS;
   let giftCat = null;
@@ -963,18 +971,25 @@
     const game = opts.game || (T.cfg && T.cfg.game);
     if (!tableId || !T.me()) return;
     const packId = e0 && e0.emoji_pack;
-    if (!packId || !T.owns(packId)) return T.buySheet('emoji', () => T.emojiPicker(opts));
-    const pack = packId === 'emoji_premium' ? 'premium' : 'vip';
+    if (!packId || !T.owns(packId) || !PACK_OF[packId]) return T.buySheet('emoji', () => T.emojiPicker(opts));
+    const pack = PACK_OF[packId];
+    // v3.4: birden çok paket alındıysa üstte paket seçimi (seçilen paket kuşanılır)
+    const owned = Object.keys(PACK_OF).filter((id) => T.owns(id));
+    const tabs = owned.length > 1
+      ? `<div class="t-seg t-emo-tabs" role="group" aria-label="Emoji paketi">${owned.map((id) => `<button type="button" data-pack="${id}" aria-pressed="${id === packId}">${esc(PACK_NAME[PACK_OF[id]])}</button>`).join('')}</div>`
+      : '';
     const sh = T.sheet({
       title: 'Emoji tepkisi',
       top: true,
-      body: `<div class="t-emo-grid">${EMOJI[pack].map((c) => `<button type="button" class="t-emo-it" data-emo="${c}" aria-label="${esc(c)}"><img src="${emojiSrc(pack, c)}" srcset="${emojiSrc(pack, c, 2)} 2x" alt="" loading="lazy"></button>`).join('')}</div>
-        <p class="t-note">Seçtiğin emoji kısa süre avatarının yanında görünür; masadaki herkes görür.${T.owns('emoji_vip') && T.owns('emoji_premium') ? ' <button type="button" class="t-link" data-swap>Diğer paketi kuşan</button>' : ''}</p>`,
+      body: `${tabs}<div class="t-emo-grid">${EMOJI[pack].map((c) => `<button type="button" class="t-emo-it" data-emo="${c}" aria-label="${esc(c)}"><img src="${emojiSrc(pack, c)}"${EMOJI_SVG[pack] ? '' : ` srcset="${emojiSrc(pack, c, 2)} 2x"`} alt="" loading="lazy"></button>`).join('')}</div>
+        <p class="t-note">Seçtiğin emoji avatarının yanında görünür; masadaki herkes görür.</p>`,
     });
     sh.body.addEventListener('click', async (e) => {
-      if (e.target.closest('[data-swap]')) {
+      const sw = e.target.closest('[data-pack]');
+      if (sw) {
+        if (sw.dataset.pack === packId) return;
         try {
-          await call('bg_store_equip', { p_kind: 'emoji', p_product: pack === 'vip' ? 'emoji_premium' : 'emoji_vip' });
+          await call('bg_store_equip', { p_kind: 'emoji', p_product: sw.dataset.pack });
           const B = site();
           if (B && B.bp) await B.bp.refresh();
           sh.close();
@@ -1074,23 +1089,24 @@
       img.style.top = window.innerHeight * 0.4 + 'px';
     }
     document.body.appendChild(img);
-    // v3.2: emoji 1 sn daha uzun görünür (giriş ve çıkış aynı hızda, bekleme uzadı)
+    // v3.4: emoji ekranda 1,5 sn daha uzun kalır (giriş ve çıkış aynı hızda, bekleme uzadı: toplam 4,9 sn)
     if (reduceMo()) {
-      setTimeout(() => img.remove(), 3200);
+      setTimeout(() => img.remove(), 4700);
       return !!c;
     }
     const an = img.animate(
       [
         { transform: 'scale(.2) rotate(-18deg)', opacity: 0 },
-        { transform: 'scale(1.18) rotate(6deg)', opacity: 1, offset: 0.127 },
-        { transform: 'scale(1) rotate(0)', opacity: 1, offset: 0.226 },
-        { transform: 'translateY(-6px) scale(1.04)', opacity: 1, offset: 0.788 },
+        { transform: 'scale(1.18) rotate(6deg)', opacity: 1, offset: 0.088 },
+        { transform: 'scale(1) rotate(0)', opacity: 1, offset: 0.157 },
+        { transform: 'translateY(-4px) scale(1.03)', opacity: 1, offset: 0.5 },
+        { transform: 'translateY(-6px) scale(1.04)', opacity: 1, offset: 0.853 },
         { transform: 'translateY(-26px) scale(.9)', opacity: 0 },
       ],
-      { duration: 3400, easing: 'cubic-bezier(.2,.8,.3,1)' }
+      { duration: 4900, easing: 'cubic-bezier(.2,.8,.3,1)' }
     );
     if (an) an.onfinish = () => img.remove();
-    else setTimeout(() => img.remove(), 3400);
+    else setTimeout(() => img.remove(), 4900);
     return !!c;
   };
   /** Hediye: gönderenin avatarından alıcının avatarına uçar (kuyrukta, üst üste binmez) */
@@ -1130,18 +1146,19 @@
     const my = Math.min(sy, ey) - Math.max(60, Math.abs(ex - sx) * 0.25);
     const short = lvl === 'reduced' || reduceMo();
     const anim = img.animate(
-      // v3.2: hediye alıcının avatarında 1 sn daha uzun kalır (uçuş aynı hızda)
+      // v3.4: hediye alıcının avatarında 1,5 sn daha uzun kalır (uçuş aynı hızda; toplam 5,1 sn)
       short
-        ? [{ transform: `translate(${ex}px,${ey}px) scale(.4)`, opacity: 0 }, { transform: `translate(${ex}px,${ey}px) scale(1)`, opacity: 1, offset: 0.175 }, { transform: `translate(${ex}px,${ey}px) scale(1)`, opacity: 1, offset: 0.8 }, { transform: `translate(${ex}px,${ey}px) scale(1)`, opacity: 0 }]
+        ? [{ transform: `translate(${ex}px,${ey}px) scale(.4)`, opacity: 0 }, { transform: `translate(${ex}px,${ey}px) scale(1)`, opacity: 1, offset: 0.108 }, { transform: `translate(${ex}px,${ey}px) scale(1)`, opacity: 1, offset: 0.877 }, { transform: `translate(${ex}px,${ey}px) scale(1)`, opacity: 0 }]
         : [
             { transform: `translate(${sx}px,${sy}px) scale(.45) rotate(-20deg)`, opacity: 0 },
-            { transform: `translate(${sx}px,${sy - 14}px) scale(.8) rotate(-10deg)`, opacity: 1, offset: 0.072 },
-            { transform: `translate(${mx}px,${my}px) scale(1.25) rotate(8deg)`, opacity: 1, offset: 0.325 },
-            { transform: `translate(${ex}px,${ey}px) scale(1) rotate(0)`, opacity: 1, offset: 0.52 },
-            { transform: `translate(${ex}px,${ey - 6}px) scale(1.06)`, opacity: 1, offset: 0.899 },
+            { transform: `translate(${sx}px,${sy - 14}px) scale(.8) rotate(-10deg)`, opacity: 1, offset: 0.051 },
+            { transform: `translate(${mx}px,${my}px) scale(1.25) rotate(8deg)`, opacity: 1, offset: 0.229 },
+            { transform: `translate(${ex}px,${ey}px) scale(1) rotate(0)`, opacity: 1, offset: 0.367 },
+            { transform: `translate(${ex}px,${ey - 4}px) scale(1.04)`, opacity: 1, offset: 0.65 },
+            { transform: `translate(${ex}px,${ey - 6}px) scale(1.06)`, opacity: 1, offset: 0.929 },
             { transform: `translate(${ex}px,${ey - 18}px) scale(.85)`, opacity: 0 },
           ],
-      { duration: short ? 2400 : 3600, easing: 'cubic-bezier(.45,.05,.35,1)', fill: 'forwards' }
+      { duration: short ? 3900 : 5100, easing: 'cubic-bezier(.45,.05,.35,1)', fill: 'forwards' }
     );
     if (!short)
       setTimeout(() => {
@@ -1159,9 +1176,9 @@
       setTimeout(fx.next, 120);
     };
     if (anim) anim.onfinish = done;
-    else setTimeout(done, short ? 2400 : 3600);
+    else setTimeout(done, short ? 3900 : 5100);
     toEl.classList.add('t-got-gift');
-    setTimeout(() => toEl.classList.remove('t-got-gift'), 3600);
+    setTimeout(() => toEl.classList.remove('t-got-gift'), 5100);
   };
   function giftBanner(job) {
     const r = job.row || {};
@@ -1169,8 +1186,8 @@
     const me = T.me();
     const b = el(`<div class="t-giftfx" aria-live="polite"><img src="${giftSrc(job.code, 2)}" alt=""><p><b>${esc(me && job.from === me.id ? 'Sen' : who(r))}</b> → ${esc(g.text)}</p></div>`);
     document.body.appendChild(b);
-    setTimeout(() => b.classList.add('is-out'), 3000);
-    setTimeout(() => b.remove(), 3500);
+    setTimeout(() => b.classList.add('is-out'), 4500);
+    setTimeout(() => b.remove(), 5000);
   }
 
   /* ---------------- maç sonu: ödüller (ÖDÜLLERİ TOPLA) ---------------- */
@@ -1200,7 +1217,13 @@
         return;
       }
       if (d.state === 'free') {
-        box.innerHTML = `<p class="t-muted">Bu maç ücretsizdi (tek gerçek oyuncu), BP ödülü ve görev ilerlemesi yok.</p>`;
+        // v3.4: ücretsiz maçta da arkadaşlar için Friend Coins (sonucu ilk bildiren oyuncunun ardından yazılır)
+        const fc = d.fc_free || 0;
+        box.innerHTML = fc > 0
+          ? `<p class="t-ok">🤝 Arkadaşlarınla oynadığın için <b>+${fc} Friend Coins</b> hesabına eklendi.</p><p class="t-muted">Bu maç ücretsizdi: BP ödülü ve görev ilerlemesi yok.</p>`
+          : `<p class="t-muted">Bu maç ücretsizdi: BP ödülü ve görev ilerlemesi yok.</p>`;
+        if (!fc && (d.expected || 0) >= 2 && tries < 5) setTimeout(tick, 1500);
+        else if (fc && B && B.bp) B.bp.refresh();
         return;
       }
       if (d.state === 'disputed' || d.state === 'refunded') {
@@ -1219,12 +1242,12 @@
         <ul class="t-rw-list">${rows
           .map(
             (r) => `<li class="${me && r.u === me.id ? 'is-me' : ''}"><span class="t-rw-pl">${r.kind === 'refund' ? '=' : medal(r.place)}</span><span class="t-rw-n">${esc(r.name)}${T.cfg.game === 'dostkazigi-online' ? ` <small class="t-muted">Takım ${r.team + 1}</small>` : ''}</span>
-              <b class="t-rw-bp">${r.kind === 'refund' ? 'iade ' : ''}+${r.bp} BP</b>${r.fc ? `<span class="t-rw-fc">🤝 +${r.fc}</span>` : ''}</li>`
+              <b class="t-rw-bp">${r.kind === 'refund' ? 'iade ' : ''}+${r.bp} BP</b>${r.fc ? `<span class="t-rw-fc" title="Friend Coins: maçı birlikte bitirdiğin arkadaşların için">🤝 +${r.fc} FC</span>` : ''}</li>`
           )
           .join('')}</ul>
         ${
           rw && !rw.claimed
-            ? `<button type="button" class="t-btn is-primary is-lg t-rw-go">${ICON.coin}ÖDÜLLERİ TOPLA · +${rw.bp} BP${rw.fc ? ' · +' + rw.fc + ' FC' : ''}</button>`
+            ? `<button type="button" class="t-btn is-primary is-lg t-rw-go">${ICON.coin}ÖDÜLLERİ TOPLA · ${[rw.bp ? '+' + rw.bp + ' BP' : '', rw.fc ? '+' + rw.fc + ' FC' : ''].filter(Boolean).join(' · ') || '+0 BP'}</button>`
             : rw && rw.claimed
             ? `<p class="t-ok">${ICON.check}Ödüllerin hesabına eklendi.</p>`
             : `<p class="t-muted">Bu maçta sana BP ödülü çıkmadı. Görev ilerlemen işlendi.</p>`
@@ -1237,7 +1260,7 @@
             const r = B && B.bp && B.bp.collect ? await B.bp.collect(null, tableId) : await call('bg_rewards_claim', { p_table: tableId });
             if (r) {
               burst(go);
-              go.outerHTML = `<p class="t-ok">${ICON.check}+${r.bp} BP${r.fc ? ' ve +' + r.fc + ' Friend Coins' : ''} hesabına eklendi.</p>`;
+              go.outerHTML = `<p class="t-ok">${ICON.check}${[r.bp ? '+' + r.bp + ' BP' : '', r.fc ? '+' + r.fc + ' Friend Coins' : ''].filter(Boolean).join(' ve ') || 'Ödül'} hesabına eklendi.</p>`;
             } else go.disabled = false;
           } catch (e) {
             go.disabled = false;
@@ -1525,9 +1548,11 @@
   /** v3.3: Americano'da masa ücretlerinde rütbe şartı yok — herkes her ücretle açar (panelden açılabilir).
       Dost Kazığı'nda her ücret seviyesinin rütbe şartı geçerli. */
   function rankLocked() {
-    if (T.cfg.game !== 'americano-online') return true;
     const B = site();
-    return !!(B && B.publicSettings && B.publicSettings.am_rank_lock);
+    const ps = (B && B.publicSettings) || {};
+    // v3.4: iki oyunda da panel anahtarı (Americano varsayılan kapalı, Dost Kazığı varsayılan açık)
+    if (T.cfg.game === 'americano-online') return !!ps.am_rank_lock;
+    return ps.dk_rank_lock !== false;
   }
   function feeHTML(fee, n) {
     const e = T.econ();
@@ -2268,6 +2293,12 @@
   SP.hold = function (ms) {
     this.holdUntil = Math.max(this.holdUntil, Date.now() + ms);
   };
+  /** v3.4: uzak hamle oynatma aralığı. Arka arkaya gelen hamleler (bot çekip atınca) aynı karede
+      uygulanmaz; her biri kendi kart uçuşunu gösterir. Birikme büyürse aralık atlanır. Hamle yapmayı
+      (canAct) engellemez. */
+  SP.pace = function (ms) {
+    this.paceUntil = Math.max(this.paceUntil || 0, Date.now() + ms);
+  };
   SP.drain = function () {
     if (!this.started || this.closed || this.draining) return;
     this.draining = true;
@@ -2281,6 +2312,12 @@
         }
         const a = this.buf.get(this.seq + 1);
         if (!a) break;
+        const pw = (this.paceUntil || 0) - Date.now();
+        if (pw > 0 && this.buf.size < 6 && !document.hidden) {
+          clearTimeout(this.holdT);
+          this.holdT = setTimeout(() => this.drain(), pw + 5);
+          break;
+        }
         this.buf.delete(a.seq);
         this.process(a);
       }
@@ -2325,6 +2362,7 @@
     if (!this.split && !this.needRebase) {
       const r = GA.applyRemote(a, false);
       if (r && r.hold) this.hold(r.hold);
+      if (r && r.pace) this.pace(r.pace);
     } else {
       GA.apply(this.base, a);
       this.needRebase = true;

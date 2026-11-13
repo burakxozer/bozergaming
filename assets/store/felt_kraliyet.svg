@@ -1,0 +1,63 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="300 190 1000 420" preserveAspectRatio="xMidYMid slice">
+      <defs>
+        <radialGradient id="bjFelt" cx="50%" cy="20%" r="85%">
+          <stop offset="0" stop-color="#2c66dc"/><stop offset=".45" stop-color="#1a46a6"/><stop offset=".8" stop-color="#0e2c70"/><stop offset="1" stop-color="#061843"/>
+        </radialGradient>
+        <pattern id="bjPat" width="64" height="64" patternUnits="userSpaceOnUse"><path d="M32 6 C40 16 48 18 58 18 C50 26 48 34 58 46 C46 44 40 48 32 58 C24 48 18 44 6 46 C16 34 14 26 6 18 C16 18 24 16 32 6 Z" fill="none" stroke="#cfdcf5" stroke-opacity=".13" stroke-width="1.3"/><circle cx="32" cy="32" r="4" fill="none" stroke="#cfdcf5" stroke-opacity=".14"/></pattern>
+        
+        <linearGradient id="bjRail" x1="0" y1="0" x2="0" y2="1">
+          <stop offset="0" stop-color="#2a1d14"/><stop offset=".35" stop-color="#140d09"/><stop offset=".7" stop-color="#090605"/><stop offset="1" stop-color="#1b120c"/>
+        </linearGradient>
+        <linearGradient id="bjTrim" x1="0" x2="1"><stop offset="0" stop-color="#7c8698"/><stop offset=".5" stop-color="#f6f9fd"/><stop offset="1" stop-color="#7c8698"/></linearGradient>
+        <linearGradient id="bjEdge" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#0d0907"/><stop offset="1" stop-color="#2b1e15"/></linearGradient>
+        <filter id="bjNoise" x="0" y="0" width="100%" height="100%">
+          <feTurbulence type="fractalNoise" baseFrequency=".85" numOctaves="2" stitchTiles="stitch" result="n"/>
+          <feColorMatrix in="n" type="matrix" values="0 0 0 0 0  0 0 0 0 0  0 0 0 0 0  0 0 0 .55 0"/>
+          <feComposite in2="SourceGraphic" operator="in"/>
+        </filter>
+        <radialGradient id="bjLight" cx="50%" cy="0%" r="75%"><stop offset="0" stop-color="#fff2c8" stop-opacity=".2"/><stop offset="1" stop-color="#fff2c8" stop-opacity="0"/></radialGradient>
+        <linearGradient id="bjPrint" x1="0" x2="1"><stop offset="0" stop-color="#a9b5c7"/><stop offset=".5" stop-color="#ffffff"/><stop offset="1" stop-color="#a9b5c7"/></linearGradient>
+        <radialGradient id="bjSpot" cx="50%" cy="40%" r="60%"><stop offset="0" stop-color="#0b2765" stop-opacity=".25"/><stop offset="1" stop-color="#030c22" stop-opacity=".55"/></radialGradient>
+        <radialGradient id="bjVig" cx="50%" cy="10%" r="95%"><stop offset=".55" stop-color="#000" stop-opacity="0"/><stop offset="1" stop-color="#000" stop-opacity=".45"/></radialGradient>
+        <path id="bjArc1" d="M466.7 727.3 A710 484 0 0 0 1133.3 727.3"/>
+        <path id="bjArc2" d="M365.0 405.7 A480 250 0 0 0 1235.0 405.7"/>
+      </defs>
+      <path d="M26 300 A774 560 0 0 0 1574 300 Z" fill="#000" opacity=".55" transform="translate(0 10)" style="filter:blur(10px)"/>
+      <path d="M34 300 A766 552 0 0 0 1566 300 Z" fill="url(#bjRail)"/>
+      <path d="M40 300 A760 546 0 0 0 1560 300 Z" fill="none" stroke="#3a2a1d" stroke-width="2" opacity=".8"/>
+      
+      <path d="M72 300 A728 526 0 0 0 1528 300 Z" fill="none" stroke="url(#bjTrim)" stroke-width="3"/>
+      <path d="M78 300 A722 520 0 0 0 1522 300 Z" fill="url(#bjFelt)"/>
+      <path d="M78 300 A722 520 0 0 0 1522 300 Z" fill="#0a2050" filter="url(#bjNoise)" opacity=".5"/>
+      <path d="M78 300 A722 520 0 0 0 1522 300 Z" fill="url(#bjPat)"/>
+      <path d="M78 300 A722 520 0 0 0 1522 300 Z" fill="url(#bjLight)"/>
+      <path d="M78 300 A722 520 0 0 0 1522 300 Z" fill="url(#bjVig)"/>
+      <rect x="28" y="278" width="1544" height="24" fill="url(#bjEdge)"/>
+      <rect x="28" y="300" width="1544" height="2" fill="url(#bjTrim)" opacity=".8"/>
+      <text font-family="Cinzel, Georgia, serif" font-weight="700" font-size="44" letter-spacing="9.68" fill="url(#bjPrint)" opacity=".86" text-anchor="middle" x="800" y="500">BÃ–ZER ROYALE</text>
+      <text font-family="Manrope, 'Segoe UI', sans-serif" font-weight="600" font-size="13.2" letter-spacing="4.84" fill="#e3eaf6" opacity=".55" text-anchor="middle" x="800" y="527.28">BLACKJACK â€¢ 3:2 â€¢ DEALER STANDS ON SOFT 17</text>
+      <text font-family="Manrope, 'Segoe UI', sans-serif" font-weight="600" font-size="11.88" letter-spacing="5.279999999999999" fill="#e3eaf6" opacity=".4" text-anchor="middle" x="800" y="551.92">INSURANCE PAYS 2 TO 1</text>
+      <text font-family="Manrope, 'Segoe UI', sans-serif" font-weight="700" font-size="11" letter-spacing="4.4" fill="url(#bjPrint)" opacity=".62" text-anchor="middle" x="800" y="573.04">PERFECT PAIRS 25:1 â€¢ 21+3 100:1</text>
+      <g transform="translate(1388.0 465.8)">
+        <circle r="50" fill="url(#bjSpot)" stroke="url(#bjTrim)" stroke-width="2.4"/>
+        <circle r="41" fill="none" stroke="#e3eaf6" stroke-opacity=".28" stroke-width="1" stroke-dasharray="2 6"/>
+      </g><g transform="translate(1192.0 632.0)">
+        <circle r="50" fill="url(#bjSpot)" stroke="url(#bjTrim)" stroke-width="2.4"/>
+        <circle r="41" fill="none" stroke="#e3eaf6" stroke-opacity=".28" stroke-width="1" stroke-dasharray="2 6"/>
+      </g><g transform="translate(996.0 699.8)">
+        <circle r="50" fill="url(#bjSpot)" stroke="url(#bjTrim)" stroke-width="2.4"/>
+        <circle r="41" fill="none" stroke="#e3eaf6" stroke-opacity=".28" stroke-width="1" stroke-dasharray="2 6"/>
+      </g><g transform="translate(800.0 720.0)">
+        <circle r="50" fill="url(#bjSpot)" stroke="url(#bjTrim)" stroke-width="2.4"/>
+        <circle r="41" fill="none" stroke="#e3eaf6" stroke-opacity=".28" stroke-width="1" stroke-dasharray="2 6"/>
+      </g><g transform="translate(604.0 699.8)">
+        <circle r="50" fill="url(#bjSpot)" stroke="url(#bjTrim)" stroke-width="2.4"/>
+        <circle r="41" fill="none" stroke="#e3eaf6" stroke-opacity=".28" stroke-width="1" stroke-dasharray="2 6"/>
+      </g><g transform="translate(408.0 632.0)">
+        <circle r="50" fill="url(#bjSpot)" stroke="url(#bjTrim)" stroke-width="2.4"/>
+        <circle r="41" fill="none" stroke="#e3eaf6" stroke-opacity=".28" stroke-width="1" stroke-dasharray="2 6"/>
+      </g><g transform="translate(212.0 465.8)">
+        <circle r="50" fill="url(#bjSpot)" stroke="url(#bjTrim)" stroke-width="2.4"/>
+        <circle r="41" fill="none" stroke="#e3eaf6" stroke-opacity=".28" stroke-width="1" stroke-dasharray="2 6"/>
+      </g>
+    </svg>

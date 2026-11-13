@@ -6,6 +6,15 @@
    ===================================================================== */
 (function () {
   'use strict';
+  /** v3.4: rütbeye bağlı masa ücreti sınırı hangi oyunlarda geçerli (panel anahtarları) */
+  function feeLimitText(max, inline) {
+    const ps = BG.publicSettings || {};
+    const am = !!ps.am_rank_lock;
+    const dk = ps.dk_rank_lock !== false;
+    if (!am && !dk) return inline ? ' · Masa ücretlerinde rütbe şartı yok' : 'Bütün masa ücretleri herkese açık';
+    const where = am && dk ? '' : am ? 'Americano’da ' : 'Dost Kazığı’nda ';
+    return inline ? ` · ${where ? where.replace('’da ', ' masa').replace('’nda ', ' masa') : 'Masa'} ücreti sınırın: <b>${max} BP</b>` : `${where}${max} BP’ye kadar masa açabilirsin`;
+  }
   const BG = window.BG;
   const { esc, icon } = BG;
   const econ = (BG.econ = BG.bp = { state: null, ch: null, busy: false, unread: 0 });
@@ -36,6 +45,8 @@
     bj_bb: 'Bet Behind',
     bj_jackpot: 'Jackpot ödülü',
     bj_mission: 'Blackjack görev ödülü',
+    bj_side: 'Blackjack yan bahis (Perfect Pairs, 21+3)',
+    badge: 'Rozet basımı',
   };
   const GAME = { 'americano-online': 'Americano', 'dostkazigi-online': 'Dost Kazığı', blackjack: 'Blackjack' };
   econ.kindLabel = (k) => KIND[k] || k;
@@ -200,7 +211,7 @@
           <div class="rankup-ic">${BG.rankIcon(rank, 120)}</div>
           <p class="rankup-k">Yeni rütbe</p>
           <h2 class="rankup-name">${esc(r.name)}</h2>
-          <p class="rankup-sub">${r.group ? esc(r.group) + ' · ' : ''}${BG.publicSettings && BG.publicSettings.am_rank_lock ? '' : 'Dost Kazığı’nda '}${r.maxFee} BP’ye kadar masa açabilirsin</p>
+          <p class="rankup-sub">${r.group ? esc(r.group) + ' · ' : ''}${feeLimitText(r.maxFee)}</p>
           <div class="rankup-acts"><a class="btn btn-ghost" href="#/rutbeler">Rütbeleri gör</a><button class="btn btn-primary" type="button">Harika</button></div>
         </div>
       </div>`);
@@ -357,6 +368,9 @@
       });
     }
     document.querySelectorAll('[data-missions-badge]').forEach((b) => (b.innerHTML = BG.countBadge(econ.state && econ.state.missions_ready)));
+    // v3.4: basılmayı bekleyen rozetler (profil sekmesi ve menüde)
+    document.querySelectorAll('[data-badge="badges"]').forEach((b) => (b.innerHTML = BG.countBadge(econ.state && econ.state.badges_ready)));
+    document.querySelectorAll('.userbtn').forEach((b) => b.classList.toggle('has-badge-dot', !!(econ.state && econ.state.badges_ready)));
     BG.bus.emit('bp', econ.state);
   };
 
@@ -423,7 +437,7 @@
           <div class="bpx-rkname">${esc(r.name)} <small>· ${esc(r.group)}</small>${pr ? ' ' + BG.prestigeChip(pr) : ''}</div>
           <div class="bp-prog lg" aria-hidden="true"><i style="width:${prog.toFixed(1)}%"></i></div>
           <p class="muted small">${r.next ? `Sonraki rütbe ${esc(r.nextName)}: ${fmt(r.next)} BP (${fmt(r.next - st.balance)} BP kaldı)` : `En yüksek rütbe: ${esc(r.name)}. Prestij ilerlemesi aşağıda.`}
-            · En yüksek rütben: <b>${esc(BG.rankInfo(st.best_rank).name)}</b> · ${BG.publicSettings && BG.publicSettings.am_rank_lock ? 'Masa' : 'Dost Kazığı masa'} ücreti sınırın: <b>${r.maxFee} BP</b></p>
+            · En yüksek rütben: <b>${esc(BG.rankInfo(st.best_rank).name)}</b>${feeLimitText(r.maxFee, true)}</p>
           <a class="btn btn-soft btn-sm bpx-ranks" href="#/rutbeler">${icon('trophy', 16)}Bütün rütbeler</a>
         </div>
         <section class="bpx-sec">
@@ -598,7 +612,7 @@
   };
 
   /* ---------------- bildirim merkezi ---------------- */
-  const NIC = { admin_bp: 'shield', rank: 'award', prestige: 'star', reward: 'trophy', refund: 'coin', comment: 'message', gift: 'gift', weekly: 'coin', table: 'flag' };
+  const NIC = { admin_bp: 'shield', rank: 'award', prestige: 'star', reward: 'trophy', refund: 'coin', comment: 'message', gift: 'gift', weekly: 'coin', table: 'flag', badge: 'award' };
   econ.openNotifications = async function () {
     const body = BG.frag(`<div class="notif"><ul class="notif-list"><li class="muted small">Yükleniyor…</li></ul><button class="btn btn-ghost btn-sm notif-more" type="button" hidden>Daha eski</button></div>`);
     const list = body.querySelector('.notif-list');
@@ -617,6 +631,7 @@
             BG.closeAllModals();
             if (n.kind === 'reward' || n.kind === 'admin_bp' || n.kind === 'refund' || n.kind === 'weekly') econ.openPanel(n.kind === 'admin_bp' ? 'history' : 'wallet');
             else if (n.kind === 'comment' || n.kind === 'rank' || n.kind === 'prestige') BG.router.go('/profil');
+            else if (n.kind === 'badge') BG.router.go('/profil?rozet=1');
           });
           list.appendChild(li);
         });
@@ -664,13 +679,14 @@
       econ.refresh();
       return;
     }
-    if (n.kind === 'admin_bp' || n.kind === 'reward' || n.kind === 'refund' || n.kind === 'prestige') econ.refresh();
+    if (n.kind === 'admin_bp' || n.kind === 'reward' || n.kind === 'refund' || n.kind === 'prestige' || n.kind === 'badge') econ.refresh();
     BG.toast({
       type: n.kind === 'admin_bp' && n.data && n.data.change < 0 ? 'info' : 'success',
       title: n.title,
       text: n.body,
-      duration: 6000,
-      onClick: () => econ.openNotifications(),
+      duration: n.kind === 'badge' ? 8000 : 6000,
+      // rozet bildirimi: oyun açık değilse doğrudan profildeki Rozetler bölümüne gider
+      onClick: () => (n.kind === 'badge' && !(BG.host && BG.host.isOpen()) ? BG.router.go('/profil?rozet=1') : econ.openNotifications()),
     });
   }
 
