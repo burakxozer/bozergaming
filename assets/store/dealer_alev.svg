@@ -43,7 +43,7 @@
 
   <ellipse cx="300" cy="512" rx="190" ry="20" fill="#000" opacity=".35" filter="url(#alShadowF)"></ellipse>
   <g>
-    <!-- gÃ¶vde: kÄ±rmÄ±zÄ± saten gÃ¶mlek, siyah yelek -->
+    <!-- gövde: kırmızı saten gömlek, siyah yelek -->
     <g clip-path="url(#alTable)" transform="translate(0 0)">
       <path d="M150 336 C158 300 206 286 258 272 L342 272 C394 286 442 300 450 336 L466 560 L134 560 Z" fill="url(#alVest)"></path>
       <path d="M262 272 L338 272 L300 386 Z" fill="url(#alShirt)"></path>
@@ -60,12 +60,12 @@
         <rect x="0" y="0" width="56" height="15" rx="2.5" fill="url(#alGold)"></rect>
         <text x="28" y="10.8" text-anchor="middle" font-family="Georgia, serif" font-size="8.5" font-weight="700" letter-spacing="2.2" fill="#3a2608">ALEV</text>
       </g>
-      <!-- kolye: ince altÄ±n zincir ve kÄ±rmÄ±zÄ± taÅŸ -->
+      <!-- kolye: ince altın zincir ve kırmızı taş -->
       <path d="M274 262 Q300 300 326 262" fill="none" stroke="url(#alGold)" stroke-width="1.8"></path>
       <path d="M300 288 l6 8 -6 10 -6 -10 z" fill="#d6203a" stroke="#ffe7a8" stroke-width="1.2"></path>
     </g>
 
-    <!-- baÅŸ: arkadaki uzun dalgalÄ± saÃ§ omuzlara dÃ¶kÃ¼lÃ¼r -->
+    <!-- baş: arkadaki uzun dalgalı saç omuzlara dökülür -->
     <g transform="translate(0 0) rotate(0 300 240)">
       <path d="M300 50 C236 50 200 98 202 168 C204 228 214 268 190 326 C206 344 236 346 256 330 C268 316 270 300 272 286
                L328 286 C330 300 332 316 344 330 C364 346 394 344 410 326 C386 268 396 228 398 168 C400 98 364 50 300 50 Z" fill="url(#alHairBack)"></path>
@@ -83,11 +83,11 @@
       <path d="M298 150 Q297 168 296 178" stroke="#fff6ef" stroke-width="2.4" stroke-linecap="round" fill="none" opacity=".45"></path>
       <ellipse cx="264" cy="186" rx="15" ry="8" fill="#f08f8a" opacity=".3" filter="url(#alSoft)"></ellipse>
       <ellipse cx="336" cy="186" rx="15" ry="8" fill="#f08f8a" opacity=".3" filter="url(#alSoft)"></ellipse>
-      <!-- kaÅŸlar: aÃ§Ä±k kumral -->
+      <!-- kaşlar: açık kumral -->
       <g fill="none" stroke="#9a6a35" stroke-width="2.8" stroke-linecap="round" opacity=".95" transform="">
         <path d="M255 136 Q271 127 288 134"></path><path d="M312 134 Q329 127 345 136"></path>
       </g>
-      <!-- gÃ¶zler: yeÅŸil, sÃ¼rmeli -->
+      <!-- gözler: yeşil, sürmeli -->
       <g transform="translate(300 157) scale(.97 .94) translate(-300 -157)">
         <path d="M256 158 Q271 146 287 157 Q271 166 256 158 Z" fill="#fdf9f6"></path>
         <path d="M313 157 Q329 146 344 158 Q329 166 313 157 Z" fill="#fdf9f6"></path>
@@ -113,7 +113,7 @@
       <!-- burun -->
       <path d="M297 166 Q296 178 294 185" fill="none" stroke="#d29a80" stroke-width="1.4" stroke-linecap="round" opacity=".8"></path>
       <path d="M293 189 Q297 192 300 190.5 Q303 192 307 189" fill="none" stroke="#b97d62" stroke-width="1.4" stroke-linecap="round"></path>
-      <!-- aÄŸÄ±z: kÄ±rmÄ±zÄ± ruj -->
+      <!-- ağız: kırmızı ruj -->
       
       <g>
         <path d="M279 203 Q300 207 321 203 Q300 222 279 203 Z" fill="#7d1020"></path>
@@ -121,7 +121,7 @@
         <path d="M279 203 Q290 197.5 300 201.5 Q310 197.5 321 203 Q300 206 279 203 Z" fill="url(#alLip)"></path>
         <path d="M280 204 Q300 226 320 204 Q300 219 280 204 Z" fill="#c4182f"></path>
       </g>
-      <!-- Ã¶n saÃ§: yandan ayrÄ±lmÄ±ÅŸ dalgalÄ± perÃ§em, yÃ¼zÃ¼n iki yanÄ±ndan dÃ¶kÃ¼len buklelar -->
+      <!-- ön saç: yandan ayrılmış dalgalı perçem, yüzün iki yanından dökülen buklelar -->
       <path d="M232 172 C224 108 258 62 304 60 C350 58 382 102 372 174 C366 146 356 126 342 112 C326 98 310 92 296 92
                C278 98 260 108 250 128 C242 142 236 156 232 172 Z" fill="url(#alHair)"></path>
       <path d="M296 92 C312 112 336 120 356 150 C350 120 334 96 314 88 Z" fill="#f6dc94" opacity=".85"></path>
@@ -132,7 +132,7 @@
       <path d="M246 92 Q236 104 238 122" stroke="#fff4cf" stroke-width="2" fill="none" opacity=".4"></path>
     </g>
 
-    <!-- kollar: omuz â†’ dirsek â†’ bilek -->
+    <!-- kollar: omuz → dirsek → bilek -->
     <g data-x="166" data-y="318" transform="translate(166 318) rotate(14)">
       <path d="M-24 -6 C-26 40 -22 90 -19 128 L19 128 C22 90 24 40 22 -6 C10 -18 -12 -18 -24 -6 Z" fill="url(#alSleeve)"></path>
       <path d="M-15 108 Q0 116 15 108 M-10 60 Q-4 66 2 62" stroke="#ff6b7d" stroke-width="1.4" fill="none" opacity=".45"></path>
@@ -167,14 +167,14 @@
         </g>
       </g>
     </g>
-    <!-- yelek omuzlarÄ± kollarÄ±n Ã¼stÃ¼nde -->
+    <!-- yelek omuzları kolların üstünde -->
     <g clip-path="url(#alTable)" transform="translate(0 0)">
       <path d="M140 352 C142 322 156 304 182 296 C200 291 214 290 226 292 C210 304 200 318 196 334 C194 342 194 350 195 356 Z" fill="url(#alVest)"></path>
       <path d="M460 352 C458 322 444 304 418 296 C400 291 386 290 374 292 C390 304 400 318 404 334 C406 342 406 350 405 356 Z" fill="url(#alVest)"></path>
       <path d="M150 340 C156 318 172 304 194 298" stroke="#d6a645" stroke-width="1.6" fill="none" opacity=".7"></path>
       <path d="M450 340 C444 318 428 304 406 298" stroke="#d6a645" stroke-width="1.6" fill="none" opacity=".7"></path>
     </g>
-    <!-- karÄ±ÅŸtÄ±rma destesi -->
+    <!-- karıştırma destesi -->
     
   </g>
 </svg>

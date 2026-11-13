@@ -1,0 +1,132 @@
+<svg viewBox="210 44 180 180" xmlns="http://www.w3.org/2000/svg">
+  <defs>
+    <radialGradient id="kayraSkin" cx="42%" cy="36%" r="70%"><stop offset="0" stop-color="#fde3cf"></stop><stop offset=".55" stop-color="#f2c6a8"></stop><stop offset="1" stop-color="#d9a283"></stop></radialGradient>
+    <linearGradient id="kayraSkinArm" x1="0" x2="1"><stop offset="0" stop-color="#d9a283"></stop><stop offset=".5" stop-color="#fde3cf"></stop><stop offset="1" stop-color="#d9a283"></stop></linearGradient>
+    <linearGradient id="kayraNeck" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#b57a5c"></stop><stop offset=".5" stop-color="#f2c6a8"></stop><stop offset="1" stop-color="#f2c6a8"></stop></linearGradient>
+    <linearGradient id="kayraHair" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#8a5a34"></stop><stop offset=".55" stop-color="#5a3418"></stop><stop offset="1" stop-color="#2e180a"></stop></linearGradient>
+    <linearGradient id="kayraA" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#ffe14d"></stop><stop offset="1" stop-color="#e6bc00"></stop></linearGradient>
+    <linearGradient id="kayraB" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#1d3a8c"></stop><stop offset="1" stop-color="#081646"></stop></linearGradient>
+    <linearGradient id="kayraShade" x1="0" x2="1"><stop offset="0" stop-color="#000" stop-opacity=".42"></stop><stop offset=".22" stop-color="#000" stop-opacity="0"></stop><stop offset=".78" stop-color="#000" stop-opacity="0"></stop><stop offset="1" stop-color="#000" stop-opacity=".42"></stop></linearGradient>
+    <radialGradient id="kayraIris" cx="50%" cy="45%" r="55%"><stop offset="0" stop-color="#9cc98a"></stop><stop offset=".6" stop-color="#3d6b3a"></stop><stop offset="1" stop-color="#140c06"></stop></radialGradient>
+    <filter id="kayraSoft" x="-20%" y="-20%" width="140%" height="140%"><feGaussianBlur stdDeviation="3"></feGaussianBlur></filter>
+    <filter id="kayraShadowF" x="-20%" y="-20%" width="140%" height="160%"><feGaussianBlur stdDeviation="6"></feGaussianBlur></filter>
+    <clipPath id="kayraTable"><rect x="0" y="0" width="600" height="498"></rect></clipPath>
+    <clipPath id="kayraTorso"><path d="M150 336 C158 300 206 286 258 272 L342 272 C394 286 442 300 450 336 L466 560 L134 560 Z"></path></clipPath>
+  </defs>
+  <ellipse cx="300" cy="512" rx="196" ry="20" fill="#000" opacity=".35" filter="url(#kayraShadowF)"></ellipse>
+  <g>
+    <!-- gövde: forma (logosuz), V yaka, göğüste numara -->
+    <g clip-path="url(#kayraTable)" transform="translate(0 0)">
+      <g clip-path="url(#kayraTorso)"><rect x="120" y="260" width="360" height="300" fill="url(#kayraB)"></rect><rect x="168" y="260" width="28" height="300" fill="url(#kayraA)"></rect><rect x="228" y="260" width="28" height="300" fill="url(#kayraA)"></rect><rect x="288" y="260" width="28" height="300" fill="url(#kayraA)"></rect><rect x="348" y="260" width="28" height="300" fill="url(#kayraA)"></rect><rect x="408" y="260" width="28" height="300" fill="url(#kayraA)"></rect><path d="M150 336 C158 300 206 286 258 272 L342 272 C394 286 442 300 450 336 L466 560 L134 560 Z" fill="url(#kayraShade)"></path>
+        <path d="M206 330 C226 380 246 430 256 498 M394 330 C374 380 354 430 344 498" stroke="#000" stroke-width="3" fill="none" opacity=".12"></path>
+        <path d="M232 300 C262 318 338 318 368 300" stroke="#fff" stroke-width="2" fill="none" opacity=".18"></path></g>
+      <path d="M266 270 L300 318 L334 270 Z" fill="url(#kayraNeck)"></path>
+      <path d="M260 268 L300 324 L340 268" fill="none" stroke="#0b1f5e" stroke-width="9" stroke-linejoin="round"></path>
+      <path d="M262 272 L300 326 L338 272" fill="none" stroke="#ffd500" stroke-width="2.4" stroke-linejoin="round"></path>
+      <text x="354" y="372" text-anchor="middle" font-family="'Arial Black', Impact, sans-serif" font-weight="900" font-size="34" fill="#ffffff" stroke="#0b1f5e" stroke-width="2.4" paint-order="stroke">11</text>
+    </g>
+
+    <!-- baş -->
+    <g transform="translate(0 0) rotate(0 300 240)">
+      <circle cx="300" cy="64" r="22" fill="url(#kayraHair)"></circle><path d="M286 62 C292 54 308 54 314 62" stroke="#b07a4a" stroke-width="2.4" fill="none" opacity=".7"></path><rect x="290" y="80" width="20" height="8" rx="3" fill="#0b1f5e"></rect>
+      <path d="M272 206 L274 270 Q300 286 326 270 L328 206 Z" fill="url(#kayraNeck)"></path>
+      <path d="M276 236 Q300 254 324 236 L325 250 Q300 266 275 250 Z" fill="#b57a5c" opacity=".35"></path>
+      <ellipse cx="233" cy="162" rx="9.5" ry="16" fill="#f2c6a8"></ellipse><ellipse cx="367" cy="162" rx="9.5" ry="16" fill="#d9a283"></ellipse>
+      <path d="M231 154 Q236 162 232 170 M369 154 Q364 162 368 170" stroke="#b57a5c" stroke-width="2" fill="none" opacity=".5"></path>
+      <path d="M300 90 C348 90 366 122 366 158 C366 186 360 206 346 222 C334 236 318 242 300 244 C282 242 266 236 254 222 C240 206 234 186 234 158 C234 122 252 90 300 90 Z" fill="url(#kayraSkin)"></path>
+      <path d="M350 196 C340 220 322 234 300 240 C320 230 334 214 342 194 Z" fill="#b57a5c" opacity=".28"></path>
+      <path d="M244 170 C248 200 266 224 300 236 C272 224 254 200 250 172 Z" fill="#b57a5c" opacity=".2" filter="url(#kayraSoft)"></path>
+      <ellipse cx="262" cy="188" rx="15" ry="8" fill="#ef8a7a" opacity=".2" filter="url(#kayraSoft)"></ellipse>
+      <ellipse cx="338" cy="188" rx="15" ry="8" fill="#ef8a7a" opacity=".2" filter="url(#kayraSoft)"></ellipse>
+      <g fill="#b9784f" opacity=".45"><circle cx="258" cy="180" r="1.5"></circle><circle cx="265" cy="184" r="1.3"></circle><circle cx="252" cy="186" r="1.2"></circle><circle cx="342" cy="180" r="1.5"></circle><circle cx="335" cy="184" r="1.3"></circle><circle cx="348" cy="186" r="1.2"></circle><circle cx="294" cy="172" r="1.1"></circle><circle cx="306" cy="172" r="1.1"></circle></g>
+      <ellipse cx="300" cy="226" rx="22" ry="10" fill="#b57a5c" opacity=".08" filter="url(#kayraSoft)"></ellipse>
+      <path d="M298 146 Q297 166 296 176" stroke="#fff" stroke-width="2.4" stroke-linecap="round" fill="none" opacity=".25"></path>
+      <!-- kaşlar -->
+      <g fill="none" stroke="#4a2c18" stroke-width="5.4" stroke-linecap="round" transform="">
+        <path d="M252 137 Q270 127 288 133"></path><path d="M312 133 Q330 127 348 137"></path>
+      </g>
+      <!-- gözler -->
+      <g>
+        <path d="M256 158 Q271 147 287 157 Q271 166 256 158 Z" fill="#fdfaf6"></path>
+        <path d="M313 157 Q329 147 344 158 Q329 166 313 157 Z" fill="#fdfaf6"></path>
+        <g transform="translate(0 0)">
+          <circle cx="271.5" cy="156.8" r="6.4" fill="url(#kayraIris)"></circle><circle cx="271.5" cy="156.8" r="2.7" fill="#0b0805"></circle><circle cx="273.8" cy="154.4" r="1.8" fill="#fff"></circle>
+          <circle cx="328.5" cy="156.8" r="6.4" fill="url(#kayraIris)"></circle><circle cx="328.5" cy="156.8" r="2.7" fill="#0b0805"></circle><circle cx="330.8" cy="154.4" r="1.8" fill="#fff"></circle>
+        </g>
+        <g fill="#f2c6a8">
+          <path d="M254 157 Q271 144 289 156 Q271 168 254 157 Z" transform="translate(0 152) scale(1 0) translate(0 -152)"></path>
+          <path d="M311 156 Q329 144 346 157 Q329 168 311 156 Z" transform="translate(0 152) scale(1 0) translate(0 -152)"></path>
+        </g>
+        <g fill="none" stroke="#1a0d07" stroke-linecap="round" stroke-width="2.6">
+          <path d="M254 158 Q270 145 289 155"></path><path d="M311 155 Q330 145 346 158"></path>
+        </g>
+        <path d="M258 166 Q271 170 284 165 M316 165 Q329 170 342 166" stroke="#b57a5c" stroke-width="1.4" fill="none" opacity=".45"></path>
+      </g>
+      <!-- burun -->
+      <path d="M297 160 Q295 177 290 186" fill="none" stroke="#b57a5c" stroke-width="2" stroke-linecap="round" opacity=".75"></path>
+      <path d="M288 189 Q294 195 300 192.5 Q306 195 312 189" fill="none" stroke="#b57a5c" stroke-width="2" stroke-linecap="round"></path>
+      <!-- ağız -->
+      
+      <g>
+        <path d="M277 202 Q300 232 323 202 Q300 208 277 202 Z" fill="#5a1a12"></path>
+        <path d="M281 203.4 Q300 209 319 203.4 Q300 215 281 203.4 Z" fill="#fff"></path>
+        <path d="M290 219 Q300 225 310 219 Q300 216 290 219 Z" fill="#d65a5a"></path>
+        <path d="M277 202 Q300 208 323 202" fill="none" stroke="#b2574c" stroke-width="2.2" stroke-linecap="round"></path>
+      </g>
+      <path d="M236 158 C230 118 252 82 300 80 C348 82 370 118 364 158 C360 132 350 116 336 108 C320 100 306 100 300 100 C294 100 280 100 264 108 C250 116 240 132 236 158 Z" fill="url(#kayraHair)"></path>
+      <path d="M252 104 C268 96 286 92 300 92 C314 92 332 96 348 104" stroke="#111" stroke-width="5" fill="none" stroke-linecap="round"></path>
+      <path d="M262 92 C272 86 286 84 296 86 M304 86 C316 84 330 88 340 94 M248 120 C252 110 260 102 270 98 M352 120 C348 110 340 102 330 98" stroke="#b07a4a" stroke-width="2.4" fill="none" opacity=".65" stroke-linecap="round"></path>
+      <path d="M242 132 C238 146 240 160 246 172 C246 158 248 146 252 136 Z M358 132 C362 146 360 160 354 172 C354 158 352 146 348 136 Z" fill="url(#kayraHair)"></path>
+      <path d="M262 112 C280 100 304 100 326 112 C336 118 342 126 344 134 C334 122 318 114 300 114 C290 114 282 118 276 124 C272 118 266 116 262 112 Z" fill="url(#kayraHair)"></path>
+      <path d="M276 108 C290 104 310 104 326 112" stroke="#c08a58" stroke-width="2" fill="none" opacity=".6" stroke-linecap="round"></path>
+    </g>
+    
+    <g data-x="166" data-y="318" transform="translate(166 318) rotate(14)">
+      <path d="M-22 -6 C-24 40 -21 90 -18 128 L18 128 C21 90 24 40 22 -6 C10 -16 -10 -16 -22 -6 Z" fill="url(#kayraSkinArm)"></path>
+      <path d="M-9 84 Q-3 98 -7 114" stroke="#b57a5c" stroke-width="2" fill="none" opacity=".35" stroke-linecap="round"></path>
+      <path d="M-27 -10 C-29 16 -28 38 -26 60 Q0 68 26 60 C28 38 29 16 27 -10 C14 -22 -14 -22 -27 -10 Z" fill="url(#kayraB)"></path>
+      <path d="M-26 57 Q0 65 26 57" stroke="#ffd500" stroke-width="4.5" fill="none"></path>
+      <path d="M-20 10 Q-14 30 -18 48" stroke="#000" stroke-width="2" fill="none" opacity=".12" stroke-linecap="round"></path>
+      <g transform="translate(0 126) rotate(-58)">
+        <path d="M-18 0 C-17 40 -14 80 -12 104 L12 104 C14 80 17 40 18 0 Z" fill="url(#kayraSkinArm)"></path>
+        <path d="M-6 30 Q0 40 -3 56" stroke="#b57a5c" stroke-width="1.6" fill="none" opacity=".3" stroke-linecap="round"></path>
+        <rect x="-15" y="86" width="30" height="17" rx="6" fill="#0b1f5e" stroke="rgba(0,0,0,.35)" stroke-width="1.2"></rect>
+        <path d="M-15 94.5 H15" stroke="#ffd500" stroke-width="2.4"></path>
+        <g transform="translate(0 104) rotate(-8)">
+          <path d="M-14 -2 C-17 12 -17 27 -13 37 C-9 47 9 47 13 37 C17 27 17 12 14 -2 Z" fill="url(#kayraSkinArm)"></path>
+          <path d="M-12 28 C-13 40 -11 52 -8 58 M-4 32 C-5 44 -4 56 -2 62 M5 32 C5 44 5 55 6 60 M13 26 C15 38 14 48 13 54" stroke="url(#kayraSkinArm)" stroke-width="7.6" stroke-linecap="round" fill="none"></path>
+          <path d="M-9 30 Q0 34 9 30" stroke="#b57a5c" stroke-width="1.2" fill="none" opacity=".35"></path>
+          
+        </g>
+      </g>
+    </g>
+    
+    <g data-x="434" data-y="318" transform="translate(434 318) rotate(-14)">
+      <path d="M-22 -6 C-24 40 -21 90 -18 128 L18 128 C21 90 24 40 22 -6 C10 -16 -10 -16 -22 -6 Z" fill="url(#kayraSkinArm)"></path>
+      <path d="M-9 84 Q-3 98 -7 114" stroke="#b57a5c" stroke-width="2" fill="none" opacity=".35" stroke-linecap="round"></path>
+      <path d="M-27 -10 C-29 16 -28 38 -26 60 Q0 68 26 60 C28 38 29 16 27 -10 C14 -22 -14 -22 -27 -10 Z" fill="url(#kayraB)"></path>
+      <path d="M-26 57 Q0 65 26 57" stroke="#ffd500" stroke-width="4.5" fill="none"></path>
+      <path d="M-20 10 Q-14 30 -18 48" stroke="#000" stroke-width="2" fill="none" opacity=".12" stroke-linecap="round"></path>
+      <g transform="translate(0 126) rotate(58)">
+        <path d="M-18 0 C-17 40 -14 80 -12 104 L12 104 C14 80 17 40 18 0 Z" fill="url(#kayraSkinArm)"></path>
+        <path d="M-6 30 Q0 40 -3 56" stroke="#b57a5c" stroke-width="1.6" fill="none" opacity=".3" stroke-linecap="round"></path>
+        <rect x="-15" y="86" width="30" height="17" rx="6" fill="#0b1f5e" stroke="rgba(0,0,0,.35)" stroke-width="1.2"></rect>
+        <path d="M-15 94.5 H15" stroke="#ffd500" stroke-width="2.4"></path>
+        <g transform="translate(0 104) rotate(8)">
+          <path d="M-14 -2 C-17 12 -17 27 -13 37 C-9 47 9 47 13 37 C17 27 17 12 14 -2 Z" fill="url(#kayraSkinArm)"></path>
+          <path d="M-13 26 C-15 38 -14 48 -13 54 M-5 32 C-5 44 -5 55 -6 60 M4 32 C5 44 4 56 2 62 M12 28 C13 40 11 52 8 58" stroke="url(#kayraSkinArm)" stroke-width="7.6" stroke-linecap="round" fill="none"></path>
+          <path d="M-9 30 Q0 34 9 30" stroke="#b57a5c" stroke-width="1.2" fill="none" opacity=".35"></path>
+          
+        </g>
+      </g>
+    </g>
+    <!-- forma omuzları kolların üstünde -->
+    <g clip-path="url(#kayraTable)" transform="translate(0 0)">
+      <path d="M138 352 C140 322 154 304 180 296 C198 291 212 290 224 292 C208 304 198 318 194 334 C192 342 192 350 193 356 Z" fill="url(#kayraB)"></path>
+      <path d="M462 352 C460 322 446 304 420 296 C402 291 388 290 376 292 C392 304 402 318 406 334 C408 342 408 350 407 356 Z" fill="url(#kayraB)"></path>
+      <path d="M148 340 C154 318 170 304 192 298 M452 340 C446 318 430 304 408 298" stroke="#ffd500" stroke-width="2" fill="none" opacity=".75"></path>
+    </g>
+    <!-- karıştırma destesi -->
+    
+  </g>
+</svg>
