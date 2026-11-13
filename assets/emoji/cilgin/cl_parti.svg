@@ -1,0 +1,42 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 128 128" width="128" height="128">
+  <style>
+.a{transform-box:view-box;transform-origin:64px 66px}
+.fb{transform-box:fill-box;transform-origin:50% 50%}
+.fbb{transform-box:fill-box;transform-origin:50% 100%}
+.fbt{transform-box:fill-box;transform-origin:50% 0%}
+@media (prefers-reduced-motion: reduce){*{animation:none!important}}
+
+.party{animation:party .6s ease-in-out infinite alternate}
+.horn{transform-box:fill-box;transform-origin:0% 50%;animation:horn .6s ease-in-out infinite alternate}
+.pom{transform-box:fill-box;transform-origin:50% 50%;animation:pom .6s ease-in-out infinite alternate}
+.cf{transform-box:fill-box;transform-origin:50% 50%;animation:cf 1.8s linear infinite}
+.k1{animation-delay:.3s}.k2{animation-delay:.9s}.k3{animation-delay:.5s}.k4{animation-delay:1.2s}.k5{animation-delay:.15s}
+@keyframes party{from{transform:rotate(-5deg) translateY(0)}to{transform:rotate(5deg) translateY(-3px)}}
+@keyframes horn{from{transform:scaleX(.55)}to{transform:scaleX(1.08)}}
+@keyframes pom{from{transform:scale(1)}to{transform:scale(1.3)}}
+@keyframes cf{0%{transform:translateY(0) rotate(0);opacity:0}10%{opacity:1}90%{opacity:1}100%{transform:translateY(136px) rotate(540deg);opacity:0}}
+</style>
+  <defs><radialGradient id="f" cx="38%" cy="30%" r="78%">
+      <stop offset="0" stop-color="#fff6b0"/><stop offset=".42" stop-color="#ffd43b"/><stop offset=".86" stop-color="#f8a100"/><stop offset="1" stop-color="#d96a00"/></radialGradient><radialGradient id="hl" cx="50%" cy="50%" r="50%"><stop offset="0" stop-color="#fff" stop-opacity=".85"/><stop offset="1" stop-color="#fff" stop-opacity="0"/></radialGradient>
+    <radialGradient id="blush" cx="50%" cy="50%" r="50%"><stop offset="0" stop-color="#ff5d73" stop-opacity=".7"/><stop offset="1" stop-color="#ff5d73" stop-opacity="0"/></radialGradient>
+    <linearGradient id="tear" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#bff0ff"/><stop offset="1" stop-color="#2e9bff"/></linearGradient>
+    <radialGradient id="mouth" cx="50%" cy="35%" r="70%"><stop offset="0" stop-color="#7a1022"/><stop offset="1" stop-color="#3b0610"/></radialGradient>
+    <linearGradient id="tongue" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#ff8a9b"/><stop offset="1" stop-color="#e2405c"/></linearGradient>
+    <linearGradient id="gold" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#fff3b0"/><stop offset=".5" stop-color="#f2b705"/><stop offset="1" stop-color="#a86b00"/></linearGradient><linearGradient id="hat" x1="0" y1="0" x2="1" y2="0"><stop offset="0" stop-color="#7b2cff"/><stop offset=".5" stop-color="#ff3b6b"/><stop offset="1" stop-color="#ff8a00"/></linearGradient>
+    <linearGradient id="hornc" x1="0" y1="0" x2="1" y2="0"><stop offset="0" stop-color="#ff3b6b"/><stop offset=".5" stop-color="#ffd43b"/><stop offset="1" stop-color="#2fc8ff"/></linearGradient></defs>
+  
+  <g class="a party">
+    <circle cx="64" cy="66" r="52" fill="url(#f)"/>
+      <path d="M20 80 C30 108 98 108 108 80 C100 112 28 112 20 80 Z" fill="#b45200" opacity=".18"/>
+      <circle cx="64" cy="66" r="51" fill="none" stroke="#b45200" stroke-opacity=".45" stroke-width="2.5"/>
+      <ellipse cx="44" cy="34" rx="20" ry="11" fill="url(#hl)" transform="rotate(-28 44 34)"/>
+    <g transform="rotate(-18 52 18)"><path d="M36 30 L52 -6 L68 30 Z" fill="url(#hat)"/><path d="M40 22 L64 22 M44 12 L60 12" stroke="#fff" stroke-width="3" opacity=".7"/><circle class="pom" cx="52" cy="-6" r="5" fill="#ffd43b"/></g>
+    <path d="M34 56 Q42 48 50 56" fill="none" stroke="#3a2410" stroke-width="5" stroke-linecap="round"/>
+    <path d="M78 56 Q86 48 94 56" fill="none" stroke="#3a2410" stroke-width="5" stroke-linecap="round"/>
+    <ellipse cx="32" cy="74" rx="10" ry="6" fill="url(#blush)"/><ellipse cx="96" cy="74" rx="10" ry="6" fill="url(#blush)"/>
+    <ellipse cx="64" cy="86" rx="7" ry="6" fill="url(#mouth)"/>
+    <g class="horn"><path d="M68 84 L110 70 L114 84 L70 90 Z" fill="url(#hornc)" stroke="#a3002a" stroke-width="1.6"/>
+      <path d="M110 70 C118 66 122 72 120 78 C118 84 114 84 114 84" fill="#ffd43b" stroke="#b37a00" stroke-width="1.6"/></g>
+  </g>
+  <g><rect class="cf k0" x="14" y="-8" width="5" height="8" rx="1" fill="#ff3b6b"/><rect class="cf k1" x="34" y="-8" width="5" height="8" rx="1" fill="#2fc8ff"/><rect class="cf k2" x="58" y="-8" width="5" height="8" rx="1" fill="#ffd43b"/><rect class="cf k3" x="84" y="-8" width="5" height="8" rx="1" fill="#7cff6b"/><rect class="cf k4" x="104" y="-8" width="5" height="8" rx="1" fill="#b06bff"/><rect class="cf k5" x="120" y="-8" width="5" height="8" rx="1" fill="#ff8a00"/></g>
+</svg>

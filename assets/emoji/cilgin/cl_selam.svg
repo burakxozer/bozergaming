@@ -1,0 +1,42 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 128 128" width="128" height="128">
+  <style>
+.a{transform-box:view-box;transform-origin:64px 66px}
+.fb{transform-box:fill-box;transform-origin:50% 50%}
+.fbb{transform-box:fill-box;transform-origin:50% 100%}
+.fbt{transform-box:fill-box;transform-origin:50% 0%}
+@media (prefers-reduced-motion: reduce){*{animation:none!important}}
+
+.bob{animation:bob 1.2s ease-in-out infinite}
+.hand{transform-box:fill-box;transform-origin:20% 95%;animation:wave .55s ease-in-out infinite alternate}
+.wink{transform-box:fill-box;transform-origin:50% 50%;animation:wink 2.4s ease-in-out infinite}
+.wv{animation:wv .55s ease-in-out infinite alternate}
+@keyframes bob{0%,100%{transform:translateY(0) rotate(-2deg)}50%{transform:translateY(-3px) rotate(2deg)}}
+@keyframes wave{from{transform:rotate(-22deg)}to{transform:rotate(14deg)}}
+@keyframes wink{0%,70%,100%{transform:scaleY(1)}80%{transform:scaleY(.4)}}
+@keyframes wv{from{opacity:.2}to{opacity:1}}
+</style>
+  <defs><radialGradient id="f" cx="38%" cy="30%" r="78%">
+      <stop offset="0" stop-color="#fff6b0"/><stop offset=".42" stop-color="#ffd43b"/><stop offset=".86" stop-color="#f8a100"/><stop offset="1" stop-color="#d96a00"/></radialGradient><radialGradient id="hl" cx="50%" cy="50%" r="50%"><stop offset="0" stop-color="#fff" stop-opacity=".85"/><stop offset="1" stop-color="#fff" stop-opacity="0"/></radialGradient>
+    <radialGradient id="blush" cx="50%" cy="50%" r="50%"><stop offset="0" stop-color="#ff5d73" stop-opacity=".7"/><stop offset="1" stop-color="#ff5d73" stop-opacity="0"/></radialGradient>
+    <linearGradient id="tear" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#bff0ff"/><stop offset="1" stop-color="#2e9bff"/></linearGradient>
+    <radialGradient id="mouth" cx="50%" cy="35%" r="70%"><stop offset="0" stop-color="#7a1022"/><stop offset="1" stop-color="#3b0610"/></radialGradient>
+    <linearGradient id="tongue" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#ff8a9b"/><stop offset="1" stop-color="#e2405c"/></linearGradient>
+    <linearGradient id="gold" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#fff3b0"/><stop offset=".5" stop-color="#f2b705"/><stop offset="1" stop-color="#a86b00"/></linearGradient></defs>
+  
+  <g class="a bob">
+    <circle cx="64" cy="66" r="52" fill="url(#f)"/>
+      <path d="M20 80 C30 108 98 108 108 80 C100 112 28 112 20 80 Z" fill="#b45200" opacity=".18"/>
+      <circle cx="64" cy="66" r="51" fill="none" stroke="#b45200" stroke-opacity=".45" stroke-width="2.5"/>
+      <ellipse cx="44" cy="34" rx="20" ry="11" fill="url(#hl)" transform="rotate(-28 44 34)"/>
+    <ellipse cx="34" cy="80" rx="11" ry="7" fill="url(#blush)"/><ellipse cx="94" cy="80" rx="11" ry="7" fill="url(#blush)"/>
+    <ellipse cx="46" cy="58" rx="6.5" ry="9" fill="#3a2410"/><circle cx="48" cy="54.5" r="2.4" fill="#fff"/>
+    <path class="wink" d="M74 60 Q83 52 92 60" fill="none" stroke="#3a2410" stroke-width="5" stroke-linecap="round"/>
+    <path d="M40 76 Q64 102 88 76 Q64 90 40 76 Z" fill="url(#mouth)"/>
+    <path d="M52 88 Q64 96 76 88 Q64 92 52 88 Z" fill="url(#tongue)"/>
+  </g>
+  <g class="hand">
+    <path d="M98 104 C92 92 92 80 96 72 C98 68 103 69 103 74 L104 84 L106 62 C106 57 112 57 112 62 L112 80 L115 60 C115 55 121 55 121 60 L120 82 L123 68 C124 63 129 64 128 70 L125 92 C123 104 110 112 98 104 Z" fill="url(#f)" stroke="#b45200" stroke-width="2"/>
+    <path d="M100 92 C104 96 110 96 114 92" fill="none" stroke="#b45200" stroke-width="1.6" opacity=".6"/>
+  </g>
+  <g class="wv" fill="none" stroke="#ffd43b" stroke-width="3" stroke-linecap="round"><path d="M118 46 Q124 50 124 56"/><path d="M110 42 Q120 44 124 40"/></g>
+</svg>

@@ -1,0 +1,38 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 128 128" width="128" height="128">
+  <style>
+.a{transform-box:view-box;transform-origin:64px 66px}
+.fb{transform-box:fill-box;transform-origin:50% 50%}
+.fbb{transform-box:fill-box;transform-origin:50% 100%}
+.fbt{transform-box:fill-box;transform-origin:50% 0%}
+@media (prefers-reduced-motion: reduce){*{animation:none!important}}
+
+.sway{animation:sway 2s ease-in-out infinite}
+.hb{transform-box:fill-box;transform-origin:50% 50%;animation:beat .7s ease-in-out infinite}
+.up{transform-box:fill-box;transform-origin:50% 50%;animation:up 2.1s ease-out infinite}
+.u2{animation-delay:.7s}.u3{animation-delay:1.4s}
+@keyframes sway{0%,100%{transform:rotate(-5deg)}50%{transform:rotate(5deg)}}
+@keyframes beat{0%,100%{transform:scale(1)}15%{transform:scale(1.3)}30%{transform:scale(1)}45%{transform:scale(1.2)}}
+@keyframes up{0%{transform:translateY(10px) scale(.4);opacity:0}25%{opacity:1}100%{transform:translateY(-60px) scale(1.2);opacity:0}}
+</style>
+  <defs><radialGradient id="f" cx="38%" cy="30%" r="78%">
+      <stop offset="0" stop-color="#fff6b0"/><stop offset=".42" stop-color="#ffd43b"/><stop offset=".86" stop-color="#f8a100"/><stop offset="1" stop-color="#d96a00"/></radialGradient><radialGradient id="hl" cx="50%" cy="50%" r="50%"><stop offset="0" stop-color="#fff" stop-opacity=".85"/><stop offset="1" stop-color="#fff" stop-opacity="0"/></radialGradient>
+    <radialGradient id="blush" cx="50%" cy="50%" r="50%"><stop offset="0" stop-color="#ff5d73" stop-opacity=".7"/><stop offset="1" stop-color="#ff5d73" stop-opacity="0"/></radialGradient>
+    <linearGradient id="tear" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#bff0ff"/><stop offset="1" stop-color="#2e9bff"/></linearGradient>
+    <radialGradient id="mouth" cx="50%" cy="35%" r="70%"><stop offset="0" stop-color="#7a1022"/><stop offset="1" stop-color="#3b0610"/></radialGradient>
+    <linearGradient id="tongue" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#ff8a9b"/><stop offset="1" stop-color="#e2405c"/></linearGradient>
+    <linearGradient id="gold" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#fff3b0"/><stop offset=".5" stop-color="#f2b705"/><stop offset="1" stop-color="#a86b00"/></linearGradient></defs>
+  
+  <g class="a sway">
+    <circle cx="64" cy="66" r="52" fill="url(#f)"/>
+      <path d="M20 80 C30 108 98 108 108 80 C100 112 28 112 20 80 Z" fill="#b45200" opacity=".18"/>
+      <circle cx="64" cy="66" r="51" fill="none" stroke="#b45200" stroke-opacity=".45" stroke-width="2.5"/>
+      <ellipse cx="44" cy="34" rx="20" ry="11" fill="url(#hl)" transform="rotate(-28 44 34)"/>
+    <ellipse cx="32" cy="80" rx="12" ry="7" fill="url(#blush)"/><ellipse cx="96" cy="80" rx="12" ry="7" fill="url(#blush)"/>
+    <g transform="translate(44 56)"><path class="hb" d="M0 -4 C-4 -12 -16 -10 -16 -1 C-16 7 -6 12 0 18 C6 12 16 7 16 -1 C16 -10 4 -12 0 -4 Z" fill="#ff2d55" stroke="#a3002a" stroke-width="2"/></g>
+    <g transform="translate(84 56)"><path class="hb" d="M0 -4 C-4 -12 -16 -10 -16 -1 C-16 7 -6 12 0 18 C6 12 16 7 16 -1 C16 -10 4 -12 0 -4 Z" fill="#ff2d55" stroke="#a3002a" stroke-width="2"/></g>
+    <path d="M42 84 Q64 104 86 84" fill="none" stroke="#3a2410" stroke-width="5" stroke-linecap="round"/>
+  </g>
+  <g transform="translate(18 40) scale(.45)"><path class="up u1" d="M0 -4 C-4 -12 -16 -10 -16 -1 C-16 7 -6 12 0 18 C6 12 16 7 16 -1 C16 -10 4 -12 0 -4 Z" fill="#ff5c8a"/></g>
+  <g transform="translate(110 36) scale(.4)"><path class="up u2" d="M0 -4 C-4 -12 -16 -10 -16 -1 C-16 7 -6 12 0 18 C6 12 16 7 16 -1 C16 -10 4 -12 0 -4 Z" fill="#ff2d55"/></g>
+  <g transform="translate(104 98) scale(.35)"><path class="up u3" d="M0 -4 C-4 -12 -16 -10 -16 -1 C-16 7 -6 12 0 18 C6 12 16 7 16 -1 C16 -10 4 -12 0 -4 Z" fill="#ff8fb1"/></g>
+</svg>

@@ -46,8 +46,11 @@
 /* ---- avatar üzerindeki rütbe simgesi ---- */
 .avatar-rank { position: absolute; right: -8%; bottom: -8%; z-index: 4; line-height: 0; }
 
-/* ---- profil çerçeveleri (halka: padding + maske) ---- */
-.has-frame { position: relative; }
+/* ---- profil çerçeveleri (halka: padding + maske) ----
+   v3.4: çerçeveler yenilendi ve çoğaldı. ::before halkadır (maskeli), ::after süsleme
+   (perçin, parıltı, alev, kar tanesi, mücevher, yıldızlar…). Kraliyet olduğu gibi kaldı.
+   Bütün ölçüler avatar boyutuna (--s) göre: küçük listelerde sade, profilde gösterişli. */
+.has-frame { position: relative; --u: calc(var(--s, 40px) / 100); }
 .has-frame::before {
   content: "";
   position: absolute;
@@ -62,29 +65,105 @@
   z-index: 3;
   filter: drop-shadow(0 0 var(--frg-r, 0) var(--frg, transparent));
 }
-.fr-bronz { --frm: conic-gradient(from 210deg, #6e3f15, #e8a96a, #8f5a28, #f6c793, #6e3f15, #d99556, #7a4a1e, #6e3f15); --frg: rgba(214, 140, 70, 0.35); --frg-r: 3px; }
-.fr-gumus { --frm: conic-gradient(from 200deg, #5f6873, #f4f7fa, #8a939e, #ffffff, #5f6873, #dfe5ea, #6d7682, #5f6873); --frg: rgba(230, 236, 245, 0.4); --frg-r: 3px; }
-.fr-altin { --frm: conic-gradient(from 200deg, #8a5d00, #ffe58a, #c8900e, #fff6cc, #9c6b05, #ffd95a, #b07a08, #8a5d00); --frg: rgba(255, 196, 46, 0.6); --frg-r: 5px; }
-.fr-neon { --frm: conic-gradient(from 0deg, #00f0ff, #2f6bff, #00f0ff, #7b5cff, #00f0ff); --frg: rgba(0, 220, 255, 0.85); --frg-r: 7px; }
-.fr-ates { --frm: conic-gradient(from 0deg, #ff2d00, #ffb000, #ff5a00, #ffe066, #ff3d00, #ff9a00, #ff2d00); --frg: rgba(255, 110, 0, 0.85); --frg-r: 8px; }
-.fr-buz { --frm: conic-gradient(from 140deg, #7fd3ff, #ffffff, #4fb6ff, #e6f9ff, #9fe3ff, #ffffff, #7fd3ff); --frg: rgba(160, 225, 255, 0.75); --frg-r: 6px; }
-.fr-kraliyet { --frm: conic-gradient(from 200deg, #4a1680, #ffd54f, #7d2fbf, #fff0b8, #5b1a8f, #ffc93d, #4a1680); --frg: rgba(200, 120, 255, 0.6); --frg-r: 6px; }
-.fr-neon::before, .fr-ates::before { animation: fr-spin 5s linear infinite; }
-.fr-ates::before { animation-duration: 2.6s; }
+.has-frame::after { position: absolute; pointer-events: none; }
+
+/* Bronz — dövme bakır-bronz, üzerinde dolaşan ışık ve dört perçin */
+.fr-bronz { --frm: conic-gradient(from 0deg, #5a2f0e, #c47a3c 8%, #ffd2a1 13%, #9a5a24 19%, #5a2f0e 28%, #b8743a 38%, #ffe0b8 44%, #8c4f1d 52%, #5a2f0e 62%, #c98544 72%, #f7c18a 80%, #7a4318 90%, #5a2f0e); --frg: rgba(214, 140, 70, 0.5); --frg-r: 3px; }
+.fr-bronz::before { animation: fr-spin 9s linear infinite; }
+.fr-bronz::after {
+  content: "";
+  inset: calc(var(--s, 40px) * -0.11);
+  border-radius: 50%;
+  --r: calc(var(--u) * 2.4);
+  background: radial-gradient(circle at 50% 3.6%, #ffe6c6 0 calc(var(--r) * 0.55), #5a2f0e var(--r), transparent calc(var(--r) * 1.2)),
+    radial-gradient(circle at 96.4% 50%, #ffe6c6 0 calc(var(--r) * 0.55), #5a2f0e var(--r), transparent calc(var(--r) * 1.2)),
+    radial-gradient(circle at 50% 96.4%, #ffe6c6 0 calc(var(--r) * 0.55), #5a2f0e var(--r), transparent calc(var(--r) * 1.2)),
+    radial-gradient(circle at 3.6% 50%, #ffe6c6 0 calc(var(--r) * 0.55), #5a2f0e var(--r), transparent calc(var(--r) * 1.2));
+  z-index: 4;
+}
+
+/* Gümüş — parlatılmış gümüş, dolaşan ışık ve sağ üstte çakan yıldız */
+.fr-gumus { --frm: conic-gradient(from 0deg, #59626d, #e9eef3 7%, #8c96a2 13%, #ffffff 19%, #6b7581 27%, #c9d1da 38%, #ffffff 45%, #77818d 53%, #59626d 62%, #dfe6ec 72%, #ffffff 78%, #8c96a2 86%, #59626d); --frg: rgba(235, 242, 250, 0.6); --frg-r: 4px; }
+.fr-gumus::before { animation: fr-spin 7s linear infinite; }
+.fr-gumus::after {
+  content: "";
+  right: calc(var(--s, 40px) * -0.2);
+  top: calc(var(--s, 40px) * -0.18);
+  width: calc(var(--s, 40px) * 0.38);
+  height: calc(var(--s, 40px) * 0.38);
+  min-width: 9px;
+  min-height: 9px;
+  background: radial-gradient(circle, #fff 0 18%, #e6f0ff 40%, #c9d6e6);
+  clip-path: polygon(50% 0, 59% 41%, 100% 50%, 59% 59%, 50% 100%, 41% 59%, 0 50%, 41% 41%);
+  animation: fr-glint 3.2s ease-in-out infinite;
+  z-index: 5;
+}
+
+/* Altın — ışığı dönen kalın altın, çevresinde parlayan zerreler */
+.fr-altin { --frm: conic-gradient(from 0deg, #8a5d00, #ffe58a 7%, #c8900e 13%, #fff8d6 18%, #9c6b05 26%, #ffd95a 36%, #b07a08 45%, #fff2b0 54%, #8a5d00 63%, #ffcf40 74%, #c8900e 83%, #fff6cc 92%, #8a5d00); --frg: rgba(255, 196, 46, 0.8); --frg-r: 6px; }
+.fr-altin::before { animation: fr-spin 6s linear infinite; }
+.fr-altin::after {
+  content: "";
+  inset: calc(var(--s, 40px) * -0.22);
+  border-radius: 50%;
+  --r: calc(var(--u) * 2.2);
+  background: radial-gradient(circle at 16% 18%, #fff 0 calc(var(--r) * 0.5), rgba(255, 230, 140, 0.7) calc(var(--r) * 0.8), transparent calc(var(--r) * 1.4)),
+    radial-gradient(circle at 86% 22%, #fff6c0 0 calc(var(--r) * 0.6), transparent calc(var(--r) * 1.3)),
+    radial-gradient(circle at 82% 86%, #fff 0 calc(var(--r) * 0.45), transparent calc(var(--r) * 1.1)),
+    radial-gradient(circle at 9% 70%, #ffe58a 0 calc(var(--r) * 0.5), transparent calc(var(--r) * 1.2)),
+    radial-gradient(circle at 50% 2%, #fff 0 calc(var(--r) * 0.4), transparent calc(var(--r) * 1));
+  animation: fr-twinkle 2.2s ease-in-out infinite;
+  z-index: 4;
+}
+
+/* Neon — pembe ve turkuaz neon tüp, dışında ikinci ince tüp; ara ara titrer */
+.fr-neon { --frm: conic-gradient(from 0deg, #ff2bd6, #ff8ef0 12%, #00f0ff 25%, #9ffcff 37%, #ff2bd6 50%, #ff8ef0 62%, #00f0ff 75%, #9ffcff 87%, #ff2bd6); --frg: rgba(255, 43, 214, 0.95); --frg-r: 8px; }
+.fr-neon::before { animation: fr-spin 4s linear infinite, fr-flicker 3.4s steps(1) infinite; }
+.fr-neon::after {
+  content: "";
+  inset: calc(var(--s, 40px) * -0.2);
+  border-radius: 50%;
+  border: max(1px, calc(var(--u) * 2.2)) solid #7ffcff;
+  box-shadow: 0 0 calc(var(--u) * 7) rgba(0, 240, 255, 0.9), inset 0 0 calc(var(--u) * 5) rgba(0, 240, 255, 0.7);
+  animation: fr-tube 2.6s ease-in-out infinite;
+  z-index: 2;
+}
+
+/* Ateş — dönen alev halkası, dışında dans eden alev dilleri */
+.fr-ates { --frm: conic-gradient(from 0deg, #ff2d00, #ffb000, #ff5a00, #ffe066, #ff3d00, #ff9a00, #ff2d00); --frg: rgba(255, 110, 0, 0.95); --frg-r: 9px; }
+.fr-ates::before { animation: fr-spin 2.6s linear infinite; }
+.fr-ates::after {
+  content: "";
+  inset: calc(var(--s, 40px) * -0.3);
+  border-radius: 50%;
+  background: repeating-conic-gradient(from 0deg, rgba(255, 70, 0, 0) 0deg, rgba(255, 120, 0, 0.95) 8deg, rgba(255, 236, 140, 0.95) 11deg, rgba(255, 60, 0, 0) 19deg);
+  -webkit-mask: radial-gradient(circle closest-side, transparent 0 70%, #000 76%, rgba(0, 0, 0, 0.6) 88%, transparent 100%);
+  mask: radial-gradient(circle closest-side, transparent 0 70%, #000 76%, rgba(0, 0, 0, 0.6) 88%, transparent 100%);
+  animation: fr-spin 7s linear infinite reverse, fr-blaze 0.32s ease-in-out infinite alternate;
+  z-index: 2;
+}
+
+/* Buz — kristal faset halka, tepede kar tanesi, çevrede donmuş parıltılar */
+.fr-buz { --frm: conic-gradient(from 0deg, #ffffff, #bfeaff 5%, #ffffff 8%, #8fd3ff 13%, #e6f9ff 17%, #ffffff 21%, #a6dcff 27%, #ffffff 31%, #d6f3ff 37%, #7cc6f2 42%, #ffffff 47%, #c8efff 54%, #ffffff 58%, #93d6ff 64%, #e9fbff 70%, #ffffff 75%, #a9e2ff 82%, #ffffff 88%, #c3ecff 94%, #ffffff); --frg: rgba(170, 228, 255, 0.85); --frg-r: 5px; }
+.fr-buz::before { animation: fr-spin 24s linear infinite; }
 .fr-buz::after {
   content: "";
-  position: absolute;
-  inset: calc(var(--s, 40px) * -0.16);
-  border-radius: 50%;
-  background: radial-gradient(circle at 18% 22%, #fff 0 1.4px, transparent 2px), radial-gradient(circle at 84% 30%, #dff6ff 0 1.2px, transparent 1.8px),
-    radial-gradient(circle at 70% 88%, #fff 0 1.3px, transparent 2px), radial-gradient(circle at 12% 74%, #c9efff 0 1px, transparent 1.6px);
-  pointer-events: none;
-  z-index: 4;
+  inset: calc(var(--s, 40px) * -0.3) calc(var(--s, 40px) * -0.18) calc(var(--s, 40px) * -0.16);
+  --r: calc(var(--u) * 1.6);
+  background: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='-12 -12 24 24'%3E%3Cg stroke='%23ffffff' stroke-width='1.8' stroke-linecap='round' fill='none'%3E%3Cpath d='M0-10V10M-8.7-5L8.7 5M-8.7 5L8.7-5'/%3E%3Cpath d='M-2.5-7.5L0-5L2.5-7.5M-2.5 7.5L0 5L2.5 7.5M-7.7-1.3L-5-0.3L-5.2-3.4M7.7 1.3L5 0.3L5.2 3.4M-7.7 1.3L-5 0.3L-5.2 3.4M7.7-1.3L5-0.3L5.2-3.4'/%3E%3C/g%3E%3C/svg%3E") 50% 0 / calc(var(--s, 40px) * 0.3) no-repeat,
+    radial-gradient(circle at 12% 30%, #fff 0 var(--r), transparent calc(var(--r) * 1.6)),
+    radial-gradient(circle at 90% 34%, #dff6ff 0 var(--r), transparent calc(var(--r) * 1.6)),
+    radial-gradient(circle at 76% 92%, #fff 0 calc(var(--r) * 0.8), transparent calc(var(--r) * 1.4)),
+    radial-gradient(circle at 16% 84%, #c9efff 0 calc(var(--r) * 0.8), transparent calc(var(--r) * 1.4));
+  filter: drop-shadow(0 0 calc(var(--u) * 2) rgba(150, 220, 255, 0.9));
   animation: fr-twinkle 2.8s ease-in-out infinite;
+  z-index: 5;
 }
+
+/* Kraliyet — mor-altın halka ve taç (değişmedi) */
+.fr-kraliyet { --frm: conic-gradient(from 200deg, #4a1680, #ffd54f, #7d2fbf, #fff0b8, #5b1a8f, #ffc93d, #4a1680); --frg: rgba(200, 120, 255, 0.6); --frg-r: 6px; }
 .fr-kraliyet::after {
   content: "";
-  position: absolute;
   left: 50%;
   top: calc(var(--s, 40px) * -0.3);
   width: calc(var(--s, 40px) * 0.46);
@@ -96,10 +175,103 @@
   clip-path: polygon(0 100%, 0 30%, 22% 62%, 50% 0, 78% 62%, 100% 30%, 100% 100%);
   filter: drop-shadow(0 1px 1px rgba(0, 0, 0, 0.45));
   z-index: 5;
-  pointer-events: none;
 }
+
+/* Zümrüt — altın yuvalı zümrüt fasetler, tepede ışıldayan zümrüt taşı */
+.fr-zumrut { --frm: conic-gradient(from 0deg, #0b5d38, #45e897 5%, #0e7a49 10%, #e8c66a 11.5% 13%, #0b5d38 14.5%, #6af5b2 20%, #0e7a49 25%, #e8c66a 26.5% 28%, #0b5d38 29.5%, #3fe08f 35%, #0e7a49 40%, #e8c66a 41.5% 43%, #0b5d38 44.5%, #6af5b2 50%, #0e7a49 55%, #e8c66a 56.5% 58%, #0b5d38 59.5%, #45e897 65%, #0e7a49 70%, #e8c66a 71.5% 73%, #0b5d38 74.5%, #6af5b2 80%, #0e7a49 85%, #e8c66a 86.5% 88%, #0b5d38 89.5%, #45e897 95%, #0b5d38); --frg: rgba(40, 230, 140, 0.7); --frg-r: 6px; }
+.fr-zumrut::before { animation: fr-spin 14s linear infinite; }
+.fr-zumrut::after {
+  content: "";
+  left: 50%;
+  top: calc(var(--s, 40px) * -0.25);
+  width: calc(var(--s, 40px) * 0.28);
+  height: calc(var(--s, 40px) * 0.28);
+  min-width: 9px;
+  min-height: 9px;
+  transform: translateX(-50%) rotate(45deg);
+  border-radius: 18%;
+  background: linear-gradient(135deg, #d6ffe9 0%, #5cf0a8 22%, #10a862 48%, #054a2c 100%);
+  box-shadow: 0 0 0 max(1px, calc(var(--u) * 2.2)) #e8c66a, 0 0 calc(var(--u) * 8) rgba(60, 255, 160, 0.85);
+  animation: fr-gem 2.4s ease-in-out infinite;
+  z-index: 5;
+}
+
+/* Yıldırım — elektrik çarpan mor-mavi halka, çevresinde çakan şimşekler */
+.fr-yildirim { --frm: conic-gradient(from 0deg, #1d0a5e, #6a4cff 6%, #ffffff 8%, #3b1fb0 11%, #1d0a5e 18%, #00c2ff 26%, #ffffff 28%, #4a2bd6 31%, #1d0a5e 40%, #8f6bff 52%, #e8e0ff 54%, #3b1fb0 57%, #1d0a5e 66%, #00b4ff 76%, #ffffff 78%, #3b1fb0 81%, #1d0a5e 90%, #7b5cff 96%, #1d0a5e); --frg: rgba(130, 100, 255, 0.95); --frg-r: 8px; }
+.fr-yildirim::before { animation: fr-zap 1.1s steps(1) infinite; }
+.fr-yildirim::after {
+  content: "";
+  inset: calc(var(--s, 40px) * -0.25);
+  background: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Cg fill='%23fff8b0' stroke='%237b5cff' stroke-width='1.2' stroke-linejoin='round'%3E%3Cpath d='M74 2 L86 2 L79 12 L88 12 L70 30 L75 17 L67 17 Z'/%3E%3Cpath d='M8 60 L18 58 L14 67 L22 66 L6 84 L10 71 L3 72 Z'/%3E%3Cpath d='M70 80 L80 82 L74 89 L82 90 L64 100 L69 91 L62 90 Z'/%3E%3C/g%3E%3C/svg%3E") center / 100% 100% no-repeat;
+  filter: drop-shadow(0 0 calc(var(--u) * 3) rgba(160, 140, 255, 0.95));
+  animation: fr-bolts 1.6s steps(1) infinite;
+  z-index: 5;
+}
+
+/* RGB — fotoğrafın çevresinde dönen gökkuşağı ve aynı renklerde ışıyan hale */
+.fr-rgb { --frm: conic-gradient(from 0deg, #ff0040, #ff8a00, #ffe600, #2bff00, #00f0ff, #0066ff, #b100ff, #ff0040); --frg: transparent; --frg-r: 0px; }
+.fr-rgb::before { animation: fr-spin 2.2s linear infinite; }
+.fr-rgb::after {
+  content: "";
+  inset: calc(var(--s, 40px) * -0.17);
+  border-radius: 50%;
+  background: var(--frm);
+  -webkit-mask: radial-gradient(circle closest-side, transparent 0 68%, #000 80%, transparent 100%);
+  mask: radial-gradient(circle closest-side, transparent 0 68%, #000 80%, transparent 100%);
+  filter: blur(calc(var(--u) * 5));
+  opacity: 0.9;
+  animation: fr-spin 2.2s linear infinite;
+  z-index: 2;
+}
+
+/* Galaksi — gece mavisi bulutsu halka, çevresinde dönen yıldızlar */
+.fr-galaksi { --frm: conic-gradient(from 0deg, #0b0630, #3a1c8f 8%, #ff4fd8 14%, #2a1080 22%, #0b0630 32%, #00c8ff 44%, #3a1c8f 52%, #120840 62%, #9b5cff 72%, #0b0630 82%, #ff7ae0 91%, #0b0630); --frg: rgba(150, 90, 255, 0.8); --frg-r: 7px; }
+.fr-galaksi::before { animation: fr-spin 14s linear infinite; }
+.fr-galaksi::after {
+  content: "";
+  inset: calc(var(--s, 40px) * -0.24);
+  border-radius: 50%;
+  --r: calc(var(--u) * 1.7);
+  background: radial-gradient(circle at 50% 3%, #fff 0 var(--r), transparent calc(var(--r) * 1.8)),
+    radial-gradient(circle at 93% 32%, #ffd6ff 0 calc(var(--r) * 0.8), transparent calc(var(--r) * 1.6)),
+    radial-gradient(circle at 80% 90%, #b8ecff 0 var(--r), transparent calc(var(--r) * 1.8)),
+    radial-gradient(circle at 6% 64%, #fff 0 calc(var(--r) * 0.7), transparent calc(var(--r) * 1.4)),
+    radial-gradient(circle at 18% 12%, #e2c8ff 0 calc(var(--r) * 0.6), transparent calc(var(--r) * 1.3)),
+    radial-gradient(circle at 34% 97%, #fff 0 calc(var(--r) * 0.6), transparent calc(var(--r) * 1.3)),
+    radial-gradient(circle at 97% 62%, #fff 0 calc(var(--r) * 0.5), transparent calc(var(--r) * 1.2));
+  filter: drop-shadow(0 0 calc(var(--u) * 2) rgba(200, 160, 255, 0.9));
+  animation: fr-spin 10s linear infinite reverse;
+  z-index: 4;
+}
+
+/* Elmas — ışığı kıran elmas yüzeyli halka, tepede parıldayan elmas */
+.fr-elmas { --frm: conic-gradient(from 0deg, #ffffff, #cfe9ff 3%, #ffffff 6%, #9fb7c9 8%, #ffffff 11%, #ead9ff 14%, #ffffff 17%, #b9f3ff 20%, #8ea3b5 22%, #ffffff 25%, #fff2c9 28%, #ffffff 31%, #a7bccd 33%, #ffffff 36%, #d8f6ff 39%, #ffffff 42%, #93a8ba 44%, #ffffff 47%, #f2dcff 50%, #ffffff 53%, #b9f3ff 56%, #8ea3b5 58%, #ffffff 61%, #ffe9c4 64%, #ffffff 67%, #9fb7c9 69%, #ffffff 72%, #cfe9ff 75%, #ffffff 78%, #93a8ba 80%, #ffffff 83%, #ead9ff 86%, #ffffff 89%, #b9f3ff 92%, #8ea3b5 94%, #ffffff); --frg: rgba(210, 240, 255, 0.95); --frg-r: 6px; }
+.fr-elmas::before { animation: fr-spin 5s linear infinite; }
+.fr-elmas::after {
+  content: "";
+  left: 50%;
+  top: calc(var(--s, 40px) * -0.3);
+  width: calc(var(--s, 40px) * 0.36);
+  height: calc(var(--s, 40px) * 0.27);
+  min-width: 12px;
+  min-height: 9px;
+  transform: translateX(-50%);
+  background: linear-gradient(115deg, #ffffff 0%, #bdefff 18%, #ffffff 30%, #ffd8f6 42%, #ffffff 52%, #c7f7ff 64%, #fff3c4 76%, #ffffff 88%) 0 0 / 300% 100%;
+  clip-path: polygon(22% 0, 78% 0, 100% 34%, 50% 100%, 0 34%);
+  animation: fr-prism 2.6s linear infinite;
+  z-index: 5;
+}
+
 @keyframes fr-spin { to { transform: rotate(360deg); } }
 @keyframes fr-twinkle { 0%, 100% { opacity: 0.35; } 50% { opacity: 1; } }
+@keyframes fr-glint { 0%, 55%, 100% { transform: scale(0) rotate(0); opacity: 0; } 68% { transform: scale(1) rotate(45deg); opacity: 1; } 84% { transform: scale(0.15) rotate(90deg); opacity: 0; } }
+@keyframes fr-flicker { 0%, 100% { opacity: 1; } 61% { opacity: 0.35; } 63% { opacity: 1; } 69% { opacity: 0.5; } 71% { opacity: 1; } }
+@keyframes fr-tube { 0%, 100% { opacity: 0.95; transform: scale(1); } 50% { opacity: 0.5; transform: scale(1.025); } }
+@keyframes fr-blaze { from { scale: 1; opacity: 0.8; } to { scale: 1.06; opacity: 1; } }
+@keyframes fr-gem { 0%, 100% { filter: brightness(1); } 50% { filter: brightness(1.45) saturate(1.2); } }
+@keyframes fr-zap { 0% { transform: rotate(0); } 18% { transform: rotate(83deg); } 37% { transform: rotate(161deg); } 52% { transform: rotate(222deg); } 71% { transform: rotate(301deg); } 86% { transform: rotate(18deg); } }
+@keyframes fr-bolts { 0% { opacity: 1; transform: rotate(0); } 12% { opacity: 0; } 30% { opacity: 1; transform: rotate(120deg); } 40% { opacity: 0; } 58% { opacity: 1; transform: rotate(240deg); } 66% { opacity: 0.2; } 70% { opacity: 1; } 80% { opacity: 0; } }
+@keyframes fr-prism { to { background-position: 300% 0; } }
 @media (prefers-reduced-motion: reduce) {
-  .fr-neon::before, .fr-ates::before, .fr-buz::after { animation: none; }
+  .has-frame::before, .has-frame::after { animation: none !important; }
 }

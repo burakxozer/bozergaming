@@ -791,6 +791,21 @@ textarea.input {
   font-weight: 650;
   cursor: pointer;
 }
+/* v3.4: basılmayı bekleyen rozet varken avatarın köşesinde altın ışık */
+.userbtn { position: relative; }
+.userbtn.has-badge-dot::after {
+  content: "";
+  position: absolute;
+  left: 30px;
+  top: 3px;
+  width: 11px;
+  height: 11px;
+  border-radius: 50%;
+  background: radial-gradient(circle at 35% 35%, #fff6c8, #ffc21a 55%, #c47a00);
+  box-shadow: 0 0 0 2px var(--surface), 0 0 10px 2px rgba(255, 190, 30, 0.85);
+  animation: bd-light 1.2s ease-in-out infinite;
+}
+@media (prefers-reduced-motion: reduce) { .userbtn.has-badge-dot::after { animation: none; } }
 .userbtn:hover {
   background: var(--surface-2);
 }
@@ -2246,6 +2261,15 @@ html.watch-open,
 html.watch-open body {
   overflow: hidden;
 }
+/* v3.4: oyun açıkken site kaymaz, sallanmaz, çift dokunuşla yakınlaşmaz */
+html.page-lock,
+html.page-lock body {
+  overscroll-behavior: none;
+}
+html.page-lock body,
+.game-layer {
+  touch-action: manipulation;
+}
 .gamebar {
   flex: none;
   display: flex;
@@ -2337,23 +2361,40 @@ html.watch-open body {
   display: none;
 }
 .live-dot {
+  position: relative;
   width: 8px;
   height: 8px;
   border-radius: 50%;
   background: var(--red);
   flex: none;
+}
+/* v3.4: nabız halkası yalnız ölçek ve saydamlıkla (gölge animasyonu oyun sırasında her karede
+   sayfayı yeniden çizdiriyordu) */
+.live-dot::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  border-radius: 50%;
+  background: rgba(236, 74, 67, 0.55);
   animation: livePulse 1.6s infinite;
+  will-change: transform, opacity;
 }
 @keyframes livePulse {
   0% {
-    box-shadow: 0 0 0 0 rgba(236, 74, 67, 0.55);
+    transform: scale(1);
+    opacity: 1;
   }
   70% {
-    box-shadow: 0 0 0 7px rgba(236, 74, 67, 0);
+    transform: scale(2.75);
+    opacity: 0;
   }
   100% {
-    box-shadow: 0 0 0 0 rgba(236, 74, 67, 0);
+    transform: scale(2.75);
+    opacity: 0;
   }
+}
+@media (prefers-reduced-motion: reduce) {
+  .live-dot::after { animation: none; opacity: 0; }
 }
 .watch-state[data-s="connecting"],
 .watch-state[data-s="paused"] {

@@ -1,0 +1,47 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 128 128" width="128" height="128">
+  <style>
+.a{transform-box:view-box;transform-origin:64px 66px}
+.fb{transform-box:fill-box;transform-origin:50% 50%}
+.fbb{transform-box:fill-box;transform-origin:50% 100%}
+.fbt{transform-box:fill-box;transform-origin:50% 0%}
+@media (prefers-reduced-motion: reduce){*{animation:none!important}}
+
+.jolt{animation:jolt 1.4s ease-in-out infinite}
+.eyes{transform-box:fill-box;transform-origin:50% 50%;animation:pop 1.4s ease-in-out infinite}
+.mo{transform-box:fill-box;transform-origin:50% 0%;animation:mo 1.4s ease-in-out infinite}
+.bolt{opacity:0;animation:bolt 1.4s steps(1) infinite}
+.b2{animation-delay:.12s}
+.flash{opacity:0;animation:flash 1.4s ease-out infinite}
+@keyframes jolt{0%,8%{transform:scale(1) translateY(0)}12%{transform:scale(1.08) translateY(-5px)}18%{transform:scale(.98) translateY(0)}24%,100%{transform:scale(1)}}
+@keyframes pop{0%,8%{transform:scale(1)}12%{transform:scale(1.25)}30%,100%{transform:scale(1)}}
+@keyframes mo{0%,8%{transform:scaleY(.8)}14%{transform:scaleY(1.15)}40%,100%{transform:scaleY(1)}}
+@keyframes bolt{0%{opacity:0}8%{opacity:1}14%{opacity:0}18%{opacity:1}30%{opacity:0}}
+@keyframes flash{0%,8%{opacity:0}10%{opacity:.55}24%,100%{opacity:0}}
+</style>
+  <defs><radialGradient id="f" cx="38%" cy="30%" r="78%">
+      <stop offset="0" stop-color="#fff6b0"/><stop offset=".42" stop-color="#ffd43b"/><stop offset=".86" stop-color="#f8a100"/><stop offset="1" stop-color="#d96a00"/></radialGradient><radialGradient id="hl" cx="50%" cy="50%" r="50%"><stop offset="0" stop-color="#fff" stop-opacity=".85"/><stop offset="1" stop-color="#fff" stop-opacity="0"/></radialGradient>
+    <radialGradient id="blush" cx="50%" cy="50%" r="50%"><stop offset="0" stop-color="#ff5d73" stop-opacity=".7"/><stop offset="1" stop-color="#ff5d73" stop-opacity="0"/></radialGradient>
+    <linearGradient id="tear" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#bff0ff"/><stop offset="1" stop-color="#2e9bff"/></linearGradient>
+    <radialGradient id="mouth" cx="50%" cy="35%" r="70%"><stop offset="0" stop-color="#7a1022"/><stop offset="1" stop-color="#3b0610"/></radialGradient>
+    <linearGradient id="tongue" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#ff8a9b"/><stop offset="1" stop-color="#e2405c"/></linearGradient>
+    <linearGradient id="gold" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#fff3b0"/><stop offset=".5" stop-color="#f2b705"/><stop offset="1" stop-color="#a86b00"/></linearGradient><radialGradient id="f3" cx="38%" cy="70%" r="80%"><stop offset="0" stop-color="#fff2a8"/><stop offset=".45" stop-color="#ffd43b"/><stop offset=".8" stop-color="#9ec5ff"/><stop offset="1" stop-color="#5b8de0"/></radialGradient></defs>
+  
+  <g class="bolt b1"><path d="M14 6 L28 6 L20 22 L30 22 L10 46 L16 28 L6 28 Z" fill="#ffe14d" stroke="#b37a00" stroke-width="2" stroke-linejoin="round"/></g>
+  <g class="bolt b2"><path d="M110 4 L124 4 L116 20 L126 20 L106 44 L112 26 L102 26 Z" fill="#ffe14d" stroke="#b37a00" stroke-width="2" stroke-linejoin="round"/></g>
+  <g class="a jolt">
+    <circle cx="64" cy="66" r="52" fill="url(#f3)"/>
+      <path d="M20 80 C30 108 98 108 108 80 C100 112 28 112 20 80 Z" fill="#b45200" opacity=".18"/>
+      <circle cx="64" cy="66" r="51" fill="none" stroke="#b45200" stroke-opacity=".45" stroke-width="2.5"/>
+      <ellipse cx="44" cy="34" rx="20" ry="11" fill="url(#hl)" transform="rotate(-28 44 34)"/>
+    <path d="M30 40 Q42 30 54 38" fill="none" stroke="#3a2410" stroke-width="4.5" stroke-linecap="round"/>
+    <path d="M98 40 Q86 30 74 38" fill="none" stroke="#3a2410" stroke-width="4.5" stroke-linecap="round"/>
+    <g class="eyes">
+      <circle cx="43" cy="57" r="12" fill="#fff" stroke="#3a2410" stroke-width="2"/><circle cx="43" cy="57" r="3.6" fill="#1a1208"/>
+      <circle cx="85" cy="57" r="12" fill="#fff" stroke="#3a2410" stroke-width="2"/><circle cx="85" cy="57" r="3.6" fill="#1a1208"/>
+    </g>
+    <ellipse class="mo" cx="64" cy="92" rx="11" ry="16" fill="url(#mouth)"/>
+    <ellipse cx="64" cy="100" rx="7" ry="5" fill="url(#tongue)"/>
+    <path d="M34 72 C30 84 30 96 38 104 M94 72 C98 84 98 96 90 104" fill="none" stroke="#b45200" stroke-width="2" opacity=".35"/>
+  </g>
+  <g class="flash"><circle cx="64" cy="66" r="60" fill="#fffbe0"/></g>
+</svg>

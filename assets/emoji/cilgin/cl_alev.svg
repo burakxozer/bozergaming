@@ -1,0 +1,41 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 128 128" width="128" height="128">
+  <style>
+.a{transform-box:view-box;transform-origin:64px 66px}
+.fb{transform-box:fill-box;transform-origin:50% 50%}
+.fbb{transform-box:fill-box;transform-origin:50% 100%}
+.fbt{transform-box:fill-box;transform-origin:50% 0%}
+@media (prefers-reduced-motion: reduce){*{animation:none!important}}
+
+.fl{transform-box:fill-box;transform-origin:50% 100%;animation:flick .35s ease-in-out infinite alternate}
+.f2{animation-duration:.42s;animation-delay:.1s}.f3{animation-duration:.38s;animation-delay:.2s}
+.burn{animation:burn 1s ease-in-out infinite}
+.em{animation:em 1.2s ease-out infinite}
+@keyframes flick{from{transform:scale(1,1) skewX(-3deg)}to{transform:scale(.92,1.14) skewX(4deg)}}
+@keyframes burn{0%,100%{transform:translateY(0)}50%{transform:translateY(-2px)}}
+@keyframes em{0%{transform:translateY(0);opacity:1}100%{transform:translateY(-40px);opacity:0}}
+</style>
+  <defs><radialGradient id="f" cx="38%" cy="30%" r="78%">
+      <stop offset="0" stop-color="#fff6b0"/><stop offset=".42" stop-color="#ffd43b"/><stop offset=".86" stop-color="#f8a100"/><stop offset="1" stop-color="#d96a00"/></radialGradient><radialGradient id="hl" cx="50%" cy="50%" r="50%"><stop offset="0" stop-color="#fff" stop-opacity=".85"/><stop offset="1" stop-color="#fff" stop-opacity="0"/></radialGradient>
+    <radialGradient id="blush" cx="50%" cy="50%" r="50%"><stop offset="0" stop-color="#ff5d73" stop-opacity=".7"/><stop offset="1" stop-color="#ff5d73" stop-opacity="0"/></radialGradient>
+    <linearGradient id="tear" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#bff0ff"/><stop offset="1" stop-color="#2e9bff"/></linearGradient>
+    <radialGradient id="mouth" cx="50%" cy="35%" r="70%"><stop offset="0" stop-color="#7a1022"/><stop offset="1" stop-color="#3b0610"/></radialGradient>
+    <linearGradient id="tongue" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#ff8a9b"/><stop offset="1" stop-color="#e2405c"/></linearGradient>
+    <linearGradient id="gold" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#fff3b0"/><stop offset=".5" stop-color="#f2b705"/><stop offset="1" stop-color="#a86b00"/></linearGradient><linearGradient id="fire" x1="0" y1="1" x2="0" y2="0"><stop offset="0" stop-color="#ff2a00"/><stop offset=".45" stop-color="#ff8a00"/><stop offset=".85" stop-color="#ffd43b"/><stop offset="1" stop-color="#fff6c0"/></linearGradient></defs>
+  
+  <g class="fl f2"><path d="M26 14 C38 24 46 36 44 52 C42 64 28 66 20 56 C12 46 16 30 26 14 Z" fill="url(#fire)"/></g>
+  <g class="fl f3"><path d="M102 14 C90 24 82 36 84 52 C86 64 100 66 108 56 C116 46 112 30 102 14 Z" fill="url(#fire)"/></g>
+  <g class="fl f1"><path d="M64 0 C82 14 96 26 96 46 C96 60 82 68 64 68 C46 68 32 60 32 46 C32 30 44 24 48 8 C54 20 56 24 62 26 C60 16 60 8 64 0 Z" fill="url(#fire)"/>
+    <path d="M64 22 C72 30 78 36 78 46 C78 54 72 58 64 58 C56 58 50 54 50 46 C50 38 56 34 58 26 C60 32 62 32 64 22 Z" fill="#fff3b0" opacity=".85"/></g>
+  <g transform="translate(64 80) scale(.84) translate(-64 -66)"><g class="a burn">
+    <circle cx="64" cy="66" r="52" fill="url(#f)"/>
+      <path d="M20 80 C30 108 98 108 108 80 C100 112 28 112 20 80 Z" fill="#b45200" opacity=".18"/>
+      <circle cx="64" cy="66" r="51" fill="none" stroke="#b45200" stroke-opacity=".45" stroke-width="2.5"/>
+      <ellipse cx="44" cy="34" rx="20" ry="11" fill="url(#hl)" transform="rotate(-28 44 34)"/>
+    <path d="M30 50 L54 58" stroke="#3a2410" stroke-width="6" stroke-linecap="round"/><path d="M98 50 L74 58" stroke="#3a2410" stroke-width="6" stroke-linecap="round"/>
+    <ellipse cx="44" cy="66" rx="7" ry="8" fill="#3a2410"/><circle cx="46" cy="63" r="2.4" fill="#fff"/>
+    <ellipse cx="84" cy="66" rx="7" ry="8" fill="#3a2410"/><circle cx="86" cy="63" r="2.4" fill="#fff"/>
+    <path d="M38 86 Q64 106 90 86 Q64 94 38 86 Z" fill="url(#mouth)"/>
+    <path d="M41 87 Q64 94 87 87 L85 91 Q64 98 43 91 Z" fill="#fff"/>
+  </g></g>
+  <g class="em"><circle cx="20" cy="70" r="2.2" fill="#ffb300"/><circle cx="108" cy="76" r="2" fill="#ff6a00"/><circle cx="16" cy="90" r="1.8" fill="#ffd43b"/></g>
+</svg>

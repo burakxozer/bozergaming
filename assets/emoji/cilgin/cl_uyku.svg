@@ -1,0 +1,42 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 128 128" width="128" height="128">
+  <style>
+.a{transform-box:view-box;transform-origin:64px 66px}
+.fb{transform-box:fill-box;transform-origin:50% 50%}
+.fbb{transform-box:fill-box;transform-origin:50% 100%}
+.fbt{transform-box:fill-box;transform-origin:50% 0%}
+@media (prefers-reduced-motion: reduce){*{animation:none!important}}
+
+.breathe{animation:br 2.4s ease-in-out infinite}
+.bub{transform-box:fill-box;transform-origin:0% 50%;animation:bub 2.4s ease-in-out infinite}
+.mo{transform-box:fill-box;transform-origin:50% 50%;animation:mo 2.4s ease-in-out infinite}
+.z{opacity:0;animation:z 2.4s ease-out infinite}
+.z2{animation-delay:.4s}.z3{animation-delay:.8s}
+@keyframes br{0%,100%{transform:scale(1) rotate(-4deg)}50%{transform:scale(1.03) rotate(-4deg)}}
+@keyframes bub{0%{transform:scale(.3)}50%{transform:scale(1.5)}55%{transform:scale(1.6)}60%,100%{transform:scale(.3)}}
+@keyframes mo{0%,100%{transform:scale(1,1)}50%{transform:scale(.8,1.3)}}
+@keyframes z{0%{opacity:0;transform:translate(0,6px)}30%{opacity:1}100%{opacity:0;transform:translate(6px,-10px)}}
+</style>
+  <defs><radialGradient id="f" cx="38%" cy="30%" r="78%">
+      <stop offset="0" stop-color="#fff6b0"/><stop offset=".42" stop-color="#ffd43b"/><stop offset=".86" stop-color="#f8a100"/><stop offset="1" stop-color="#d96a00"/></radialGradient><radialGradient id="hl" cx="50%" cy="50%" r="50%"><stop offset="0" stop-color="#fff" stop-opacity=".85"/><stop offset="1" stop-color="#fff" stop-opacity="0"/></radialGradient>
+    <radialGradient id="blush" cx="50%" cy="50%" r="50%"><stop offset="0" stop-color="#ff5d73" stop-opacity=".7"/><stop offset="1" stop-color="#ff5d73" stop-opacity="0"/></radialGradient>
+    <linearGradient id="tear" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#bff0ff"/><stop offset="1" stop-color="#2e9bff"/></linearGradient>
+    <radialGradient id="mouth" cx="50%" cy="35%" r="70%"><stop offset="0" stop-color="#7a1022"/><stop offset="1" stop-color="#3b0610"/></radialGradient>
+    <linearGradient id="tongue" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#ff8a9b"/><stop offset="1" stop-color="#e2405c"/></linearGradient>
+    <linearGradient id="gold" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#fff3b0"/><stop offset=".5" stop-color="#f2b705"/><stop offset="1" stop-color="#a86b00"/></linearGradient></defs>
+  
+  <g class="a breathe">
+    <circle cx="64" cy="66" r="52" fill="url(#f)"/>
+      <path d="M20 80 C30 108 98 108 108 80 C100 112 28 112 20 80 Z" fill="#b45200" opacity=".18"/>
+      <circle cx="64" cy="66" r="51" fill="none" stroke="#b45200" stroke-opacity=".45" stroke-width="2.5"/>
+      <ellipse cx="44" cy="34" rx="20" ry="11" fill="url(#hl)" transform="rotate(-28 44 34)"/>
+    <path d="M32 60 Q42 68 52 60" fill="none" stroke="#3a2410" stroke-width="4.6" stroke-linecap="round"/>
+    <path d="M76 60 Q86 68 96 60" fill="none" stroke="#3a2410" stroke-width="4.6" stroke-linecap="round"/>
+    <ellipse class="mo" cx="64" cy="92" rx="9" ry="7" fill="url(#mouth)"/>
+    <circle class="bub" cx="80" cy="80" r="9" fill="#bfeaff" fill-opacity=".55" stroke="#7cc7ef" stroke-width="1.6"/>
+  </g>
+  <g font-family="'Arial Black', 'Segoe UI Black', Impact, Arial, sans-serif" font-weight="900" fill="#8fd3ff" stroke="#2a6f99" stroke-width="1.2">
+    <text class="z z1" x="92" y="40" font-size="14">Z</text>
+    <text class="z z2" x="104" y="26" font-size="18">Z</text>
+    <text class="z z3" x="112" y="12" font-size="22">Z</text>
+  </g>
+</svg>

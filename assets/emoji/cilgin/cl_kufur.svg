@@ -1,0 +1,56 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 128 128" width="128" height="128">
+  <style>
+.a{transform-box:view-box;transform-origin:64px 66px}
+.fb{transform-box:fill-box;transform-origin:50% 50%}
+.fbb{transform-box:fill-box;transform-origin:50% 100%}
+.fbt{transform-box:fill-box;transform-origin:50% 0%}
+@media (prefers-reduced-motion: reduce){*{animation:none!important}}
+
+.shake{animation:shake .16s linear infinite}
+.steam{transform-box:fill-box;transform-origin:50% 100%;animation:puff 1s ease-out infinite}
+.s2{animation-delay:.5s}
+.cuss text{opacity:0;animation:cuss .9s steps(1) infinite}
+.c2{animation-delay:.3s!important}.c3{animation-delay:.6s!important}
+.vein{transform-box:fill-box;transform-origin:50% 50%;animation:vein .45s ease-in-out infinite alternate}
+.bub{transform-box:fill-box;transform-origin:20% 100%;animation:bub 1.8s ease-in-out infinite}
+.glow{animation:glow .4s ease-in-out infinite alternate}
+@keyframes shake{0%{transform:translate(0,0) rotate(0)}25%{transform:translate(-2px,1px) rotate(-2deg)}50%{transform:translate(2px,-1px) rotate(1.5deg)}75%{transform:translate(-1px,-1px) rotate(-1deg)}100%{transform:translate(0,0) rotate(0)}}
+@keyframes puff{0%{transform:translateY(6px) scale(.4);opacity:0}30%{opacity:.95}100%{transform:translateY(-26px) scale(1.5);opacity:0}}
+@keyframes cuss{0%{opacity:1}33.3%{opacity:0}}
+@keyframes vein{from{transform:scale(.8)}to{transform:scale(1.15)}}
+@keyframes bub{0%,100%{transform:scale(1) rotate(0)}10%{transform:scale(1.15) rotate(-6deg)}20%{transform:scale(1) rotate(3deg)}}
+@keyframes glow{from{fill:#2a0606}to{fill:#ff1a1a}}
+</style>
+  <defs><radialGradient id="f" cx="38%" cy="30%" r="78%">
+      <stop offset="0" stop-color="#fff6b0"/><stop offset=".42" stop-color="#ffd43b"/><stop offset=".86" stop-color="#f8a100"/><stop offset="1" stop-color="#d96a00"/></radialGradient><radialGradient id="hl" cx="50%" cy="50%" r="50%"><stop offset="0" stop-color="#fff" stop-opacity=".85"/><stop offset="1" stop-color="#fff" stop-opacity="0"/></radialGradient>
+    <radialGradient id="blush" cx="50%" cy="50%" r="50%"><stop offset="0" stop-color="#ff5d73" stop-opacity=".7"/><stop offset="1" stop-color="#ff5d73" stop-opacity="0"/></radialGradient>
+    <linearGradient id="tear" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#bff0ff"/><stop offset="1" stop-color="#2e9bff"/></linearGradient>
+    <radialGradient id="mouth" cx="50%" cy="35%" r="70%"><stop offset="0" stop-color="#7a1022"/><stop offset="1" stop-color="#3b0610"/></radialGradient>
+    <linearGradient id="tongue" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#ff8a9b"/><stop offset="1" stop-color="#e2405c"/></linearGradient>
+    <linearGradient id="gold" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#fff3b0"/><stop offset=".5" stop-color="#f2b705"/><stop offset="1" stop-color="#a86b00"/></linearGradient><radialGradient id="f2" cx="38%" cy="30%" r="78%">
+      <stop offset="0" stop-color="#ffb199"/><stop offset=".42" stop-color="#ff4d3a"/><stop offset=".86" stop-color="#d61f1f"/><stop offset="1" stop-color="#8f0b0b"/></radialGradient></defs>
+  
+  <g class="steam s1"><circle cx="10" cy="58" r="7" fill="#e9eef2"/><circle cx="6" cy="48" r="5" fill="#e9eef2"/></g>
+  <g class="steam s2"><circle cx="118" cy="58" r="7" fill="#e9eef2"/><circle cx="122" cy="48" r="5" fill="#e9eef2"/></g>
+  <g class="a shake">
+    <circle cx="64" cy="66" r="52" fill="url(#f2)"/>
+      <path d="M20 80 C30 108 98 108 108 80 C100 112 28 112 20 80 Z" fill="#6b0000" opacity=".18"/>
+      <circle cx="64" cy="66" r="51" fill="none" stroke="#6b0000" stroke-opacity=".45" stroke-width="2.5"/>
+      <ellipse cx="44" cy="34" rx="20" ry="11" fill="url(#hl)" transform="rotate(-28 44 34)"/>
+    <path d="M28 46 L54 58" stroke="#2a0606" stroke-width="7" stroke-linecap="round"/>
+    <path d="M100 46 L74 58" stroke="#2a0606" stroke-width="7" stroke-linecap="round"/>
+    <path d="M34 62 Q44 56 54 64 Q44 70 34 62 Z" fill="#fff"/><circle class="glow" cx="45" cy="63" r="3.4" fill="#2a0606"/>
+    <path d="M94 62 Q84 56 74 64 Q84 70 94 62 Z" fill="#fff"/><circle class="glow" cx="83" cy="63" r="3.4" fill="#2a0606"/>
+    <rect x="30" y="74" width="68" height="28" rx="9" fill="#1a0505" stroke="#2a0606" stroke-width="2"/>
+    <g class="cuss" font-family="'Arial Black', 'Segoe UI Black', Impact, Arial, sans-serif" font-weight="900" font-size="17" text-anchor="middle">
+      <text class="c1" x="64" y="94" fill="#ffd43b">#@$%!</text>
+      <text class="c2" x="64" y="94" fill="#ff8a00">&amp;*@#!</text>
+      <text class="c3" x="64" y="94" fill="#fff">%$#@&amp;</text>
+    </g>
+    <g class="vein"><path d="M92 20 l8 2 l2 -8 M108 24 l-2 8 l8 2 M100 36 l2 -8 M94 28 l8 -2" fill="none" stroke="#ff2a2a" stroke-width="3.4" stroke-linecap="round"/></g>
+  </g>
+  <g class="bub" font-family="'Arial Black', 'Segoe UI Black', Impact, Arial, sans-serif" font-weight="900" text-anchor="middle">
+    <path d="M86 4 h38 a4 4 0 0 1 4 4 v16 a4 4 0 0 1 -4 4 h-22 l-8 7 l1 -7 h-9 a4 4 0 0 1 -4 -4 v-16 a4 4 0 0 1 4 -4 z" fill="#fff" stroke="#1a0505" stroke-width="2"/>
+    <text x="105" y="21" font-size="13" fill="#d00000">!#@%</text>
+  </g>
+</svg>

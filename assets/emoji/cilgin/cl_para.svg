@@ -1,0 +1,41 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 128 128" width="128" height="128">
+  <style>
+.a{transform-box:view-box;transform-origin:64px 66px}
+.fb{transform-box:fill-box;transform-origin:50% 50%}
+.fbb{transform-box:fill-box;transform-origin:50% 100%}
+.fbt{transform-box:fill-box;transform-origin:50% 0%}
+@media (prefers-reduced-motion: reduce){*{animation:none!important}}
+
+.hop{animation:hop .8s ease-in-out infinite}
+.spin{animation:spin 1.4s linear infinite}
+.cn{animation:fall 1.6s linear infinite}
+.c2{animation-delay:.4s}.c3{animation-delay:.8s}.c4{animation-delay:1.2s}
+.tg{transform-box:fill-box;transform-origin:30% 0%;animation:tg .4s ease-in-out infinite alternate}
+@keyframes hop{0%,100%{transform:translateY(0)}50%{transform:translateY(-4px)}}
+@keyframes spin{0%,55%{transform:scaleX(1)}66%{transform:scaleX(.06)}77%{transform:scaleX(-1)}88%{transform:scaleX(.06)}100%{transform:scaleX(1)}}
+@keyframes fall{0%{transform:translateY(-14px);opacity:0}15%{opacity:1}85%{opacity:1}100%{transform:translateY(110px);opacity:0}}
+@keyframes tg{from{transform:rotate(-6deg)}to{transform:rotate(8deg)}}
+</style>
+  <defs><radialGradient id="f" cx="38%" cy="30%" r="78%">
+      <stop offset="0" stop-color="#fff6b0"/><stop offset=".42" stop-color="#ffd43b"/><stop offset=".86" stop-color="#f8a100"/><stop offset="1" stop-color="#d96a00"/></radialGradient><radialGradient id="hl" cx="50%" cy="50%" r="50%"><stop offset="0" stop-color="#fff" stop-opacity=".85"/><stop offset="1" stop-color="#fff" stop-opacity="0"/></radialGradient>
+    <radialGradient id="blush" cx="50%" cy="50%" r="50%"><stop offset="0" stop-color="#ff5d73" stop-opacity=".7"/><stop offset="1" stop-color="#ff5d73" stop-opacity="0"/></radialGradient>
+    <linearGradient id="tear" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#bff0ff"/><stop offset="1" stop-color="#2e9bff"/></linearGradient>
+    <radialGradient id="mouth" cx="50%" cy="35%" r="70%"><stop offset="0" stop-color="#7a1022"/><stop offset="1" stop-color="#3b0610"/></radialGradient>
+    <linearGradient id="tongue" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#ff8a9b"/><stop offset="1" stop-color="#e2405c"/></linearGradient>
+    <linearGradient id="gold" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#fff3b0"/><stop offset=".5" stop-color="#f2b705"/><stop offset="1" stop-color="#a86b00"/></linearGradient></defs>
+  
+  <g class="rain">
+    <g class="cn c1"><g transform="translate(16 14)"><g class="spin"><circle r="7" fill="url(#gold)" stroke="#8a5500" stroke-width="2"/><circle r="3" fill="none" stroke="#fff3b0" stroke-width="1.4" opacity=".8"/><text y="2.9" text-anchor="middle" font-family="'Arial Black', 'Segoe UI Black', Impact, Arial, sans-serif" font-weight="900" font-size="8.0" fill="#8a5500">$</text></g></g></g><g class="cn c2"><g transform="translate(112 8)"><g class="spin"><circle r="6" fill="url(#gold)" stroke="#8a5500" stroke-width="2"/><circle r="2" fill="none" stroke="#fff3b0" stroke-width="1.4" opacity=".8"/><text y="2.5" text-anchor="middle" font-family="'Arial Black', 'Segoe UI Black', Impact, Arial, sans-serif" font-weight="900" font-size="6.9" fill="#8a5500">$</text></g></g></g><g class="cn c3"><g transform="translate(100 30)"><g class="spin"><circle r="5" fill="url(#gold)" stroke="#8a5500" stroke-width="2"/><circle r="1" fill="none" stroke="#fff3b0" stroke-width="1.4" opacity=".8"/><text y="2.1" text-anchor="middle" font-family="'Arial Black', 'Segoe UI Black', Impact, Arial, sans-serif" font-weight="900" font-size="5.8" fill="#8a5500">$</text></g></g></g><g class="cn c4"><g transform="translate(28 30)"><g class="spin"><circle r="5" fill="url(#gold)" stroke="#8a5500" stroke-width="2"/><circle r="1" fill="none" stroke="#fff3b0" stroke-width="1.4" opacity=".8"/><text y="2.1" text-anchor="middle" font-family="'Arial Black', 'Segoe UI Black', Impact, Arial, sans-serif" font-weight="900" font-size="5.8" fill="#8a5500">$</text></g></g></g>
+  </g>
+  <g class="a hop">
+    <circle cx="64" cy="66" r="52" fill="url(#f)"/>
+      <path d="M20 80 C30 108 98 108 108 80 C100 112 28 112 20 80 Z" fill="#b45200" opacity=".18"/>
+      <circle cx="64" cy="66" r="51" fill="none" stroke="#b45200" stroke-opacity=".45" stroke-width="2.5"/>
+      <ellipse cx="44" cy="34" rx="20" ry="11" fill="url(#hl)" transform="rotate(-28 44 34)"/>
+    <g transform="translate(44 56)"><g class="spin"><circle r="13" fill="url(#gold)" stroke="#8a5500" stroke-width="2"/><circle r="9" fill="none" stroke="#fff3b0" stroke-width="1.4" opacity=".8"/><text y="5.5" text-anchor="middle" font-family="'Arial Black', 'Segoe UI Black', Impact, Arial, sans-serif" font-weight="900" font-size="14.9" fill="#8a5500">$</text></g></g>
+    <g transform="translate(84 56)"><g class="spin"><circle r="13" fill="url(#gold)" stroke="#8a5500" stroke-width="2"/><circle r="9" fill="none" stroke="#fff3b0" stroke-width="1.4" opacity=".8"/><text y="5.5" text-anchor="middle" font-family="'Arial Black', 'Segoe UI Black', Impact, Arial, sans-serif" font-weight="900" font-size="14.9" fill="#8a5500">$</text></g></g>
+    <path d="M36 80 Q64 112 92 80 Q64 90 36 80 Z" fill="url(#mouth)"/>
+    <path d="M40 81 Q64 89 88 81 L86 86 Q64 94 42 86 Z" fill="#fff"/>
+    <path class="tg" d="M58 94 Q64 116 74 104 Q78 96 70 94 Z" fill="url(#tongue)"/>
+  </g>
+</svg>

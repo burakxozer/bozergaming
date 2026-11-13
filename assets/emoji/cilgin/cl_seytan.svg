@@ -1,0 +1,41 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 128 128" width="128" height="128">
+  <style>
+.a{transform-box:view-box;transform-origin:64px 66px}
+.fb{transform-box:fill-box;transform-origin:50% 50%}
+.fbb{transform-box:fill-box;transform-origin:50% 100%}
+.fbt{transform-box:fill-box;transform-origin:50% 0%}
+@media (prefers-reduced-motion: reduce){*{animation:none!important}}
+
+.aura{transform-box:fill-box;transform-origin:50% 50%;animation:aura 1.2s ease-in-out infinite alternate}
+.sly{animation:sly 2s ease-in-out infinite}
+.brw{animation:brw 1s ease-in-out infinite}
+@keyframes aura{from{transform:scale(.92);opacity:.55}to{transform:scale(1.04);opacity:1}}
+@keyframes sly{0%,100%{transform:rotate(-4deg)}50%{transform:rotate(4deg) translateY(-2px)}}
+@keyframes brw{0%,60%,100%{transform:translateY(0)}70%{transform:translateY(-5px)}80%{transform:translateY(0)}88%{transform:translateY(-5px)}}
+</style>
+  <defs><radialGradient id="f" cx="38%" cy="30%" r="78%">
+      <stop offset="0" stop-color="#fff6b0"/><stop offset=".42" stop-color="#ffd43b"/><stop offset=".86" stop-color="#f8a100"/><stop offset="1" stop-color="#d96a00"/></radialGradient><radialGradient id="hl" cx="50%" cy="50%" r="50%"><stop offset="0" stop-color="#fff" stop-opacity=".85"/><stop offset="1" stop-color="#fff" stop-opacity="0"/></radialGradient>
+    <radialGradient id="blush" cx="50%" cy="50%" r="50%"><stop offset="0" stop-color="#ff5d73" stop-opacity=".7"/><stop offset="1" stop-color="#ff5d73" stop-opacity="0"/></radialGradient>
+    <linearGradient id="tear" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#bff0ff"/><stop offset="1" stop-color="#2e9bff"/></linearGradient>
+    <radialGradient id="mouth" cx="50%" cy="35%" r="70%"><stop offset="0" stop-color="#7a1022"/><stop offset="1" stop-color="#3b0610"/></radialGradient>
+    <linearGradient id="tongue" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#ff8a9b"/><stop offset="1" stop-color="#e2405c"/></linearGradient>
+    <linearGradient id="gold" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#fff3b0"/><stop offset=".5" stop-color="#f2b705"/><stop offset="1" stop-color="#a86b00"/></linearGradient><radialGradient id="f4" cx="38%" cy="30%" r="78%">
+      <stop offset="0" stop-color="#e9b8ff"/><stop offset=".42" stop-color="#a64dff"/><stop offset=".86" stop-color="#7a1fd6"/><stop offset="1" stop-color="#3d0a63"/></radialGradient>
+    <radialGradient id="aura" cx="50%" cy="55%" r="50%"><stop offset=".72" stop-color="#ff3b00" stop-opacity=".0"/><stop offset=".86" stop-color="#ff5a00" stop-opacity=".55"/><stop offset="1" stop-color="#ff2a00" stop-opacity="0"/></radialGradient>
+    <linearGradient id="horn" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#fff"/><stop offset=".25" stop-color="#ff5c5c"/><stop offset="1" stop-color="#8f0b0b"/></linearGradient></defs>
+  
+  <circle class="aura" cx="64" cy="66" r="58" fill="url(#aura)"/>
+  <g class="a sly">
+    <path d="M24 34 C14 20 16 8 22 2 C24 14 32 22 40 26 Z" fill="url(#horn)"/>
+    <path d="M104 34 C114 20 112 8 106 2 C104 14 96 22 88 26 Z" fill="url(#horn)"/>
+    <circle cx="64" cy="66" r="52" fill="url(#f4)"/>
+      <path d="M20 80 C30 108 98 108 108 80 C100 112 28 112 20 80 Z" fill="#3d0a63" opacity=".18"/>
+      <circle cx="64" cy="66" r="51" fill="none" stroke="#3d0a63" stroke-opacity=".45" stroke-width="2.5"/>
+      <ellipse cx="44" cy="34" rx="20" ry="11" fill="url(#hl)" transform="rotate(-28 44 34)"/>
+    <g class="brw"><path d="M30 44 L54 56" stroke="#1d0533" stroke-width="6" stroke-linecap="round"/><path d="M98 44 L74 56" stroke="#1d0533" stroke-width="6" stroke-linecap="round"/></g>
+    <path d="M34 62 Q44 56 54 64 Q44 68 34 62 Z" fill="#ffe14d"/><circle cx="46" cy="63" r="2.6" fill="#1d0533"/>
+    <path d="M94 62 Q84 56 74 64 Q84 68 94 62 Z" fill="#ffe14d"/><circle cx="82" cy="63" r="2.6" fill="#1d0533"/>
+    <path d="M32 78 Q64 112 96 78 Q64 92 32 78 Z" fill="#1d0533"/>
+    <path d="M36 80 Q64 92 92 80 L90 84 L84 82 L78 86 L72 83 L64 87 L56 83 L50 86 L44 82 L38 84 Z" fill="#fff"/>
+  </g>
+</svg>
