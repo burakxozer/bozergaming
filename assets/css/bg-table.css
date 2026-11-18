@@ -1084,3 +1084,45 @@ select.t-input {
 .t-rw-go svg { width: 20px; height: 20px; }
 .t-rw-note { margin: 0; color: var(--t-accent-hi); }
 @media (prefers-reduced-motion: reduce) { .t-say, .t-say.is-out, .t-got-gift, .t-spin { animation: none; } }
+
+/* v3.4.3: Yalancı Zar masa seviyeleri (Bronze / Silver / Gold) */
+.t-seg.t-tiers {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 6px;
+  padding: 4px;
+  border-radius: 16px;
+}
+.t-seg .t-tier {
+  display: grid;
+  gap: 2px;
+  justify-items: center;
+  padding: 0.55em 0.4em;
+  border-radius: 12px;
+  border: 1px solid transparent;
+}
+.t-seg .t-tier b {
+  font-size: 1.02em;
+  letter-spacing: 0.02em;
+}
+.t-seg .t-tier span {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  font-size: 0.84em;
+  font-weight: 600;
+  opacity: 0.85;
+}
+.t-seg .t-tier svg {
+  width: 12px;
+  height: 12px;
+}
+.t-seg .t-tier-bronze b { color: #e0a274; }
+.t-seg .t-tier-silver b { color: #d5dde6; }
+.t-seg .t-tier-gold b { color: #f3cf62; }
+.t-seg .t-tier[aria-pressed='true'] { color: #1b1206; }
+.t-seg .t-tier-bronze[aria-pressed='true'] { background: linear-gradient(180deg, #e7ac80, #b86f3f); }
+.t-seg .t-tier-silver[aria-pressed='true'] { background: linear-gradient(180deg, #f1f4f7, #a9b3be); }
+.t-seg .t-tier-gold[aria-pressed='true'] { background: linear-gradient(180deg, #ffe38c, #d19a28); }
+.t-seg .t-tier[aria-pressed='true'] b { color: inherit; }
+.t-seg .t-tier[disabled] { opacity: 0.45; cursor: not-allowed; }

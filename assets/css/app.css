@@ -353,6 +353,15 @@ button {
 .tile-wood {
   --tc: #e0a46a;
 }
+.tile-ruby {
+  --tc: #ff6f6a;
+}
+.tile-plum {
+  --tc: #d79bff;
+}
+.tile-navy {
+  --tc: #7fb7ff;
+}
 .tile-xs {
   font-size: 15px;
 }
@@ -3269,6 +3278,31 @@ html.watch-open #toasts {
     position: static;
   }
 }
+/* v3.4.3: 821–1180 px (yatay telefon, tablet): menü yalnız simge, ad gizli — üst çubuk taşmasın */
+@media (min-width: 821px) and (max-width: 1180px) {
+  .nav .nav-link > span:not(.nav-badge) {
+    display: none;
+  }
+  .nav .nav-link {
+    padding: 0 10px;
+  }
+  .nav .nav-badge {
+    position: absolute;
+    top: 2px;
+    right: 2px;
+  }
+  .userbtn-name {
+    display: none;
+  }
+  .topbar-inner {
+    gap: 10px;
+  }
+}
+@media (min-width: 821px) and (max-width: 960px) {
+  .brand-name {
+    display: none;
+  }
+}
 @media (max-width: 820px) {
   .nav,
   .userbtn-name {
@@ -4410,4 +4444,48 @@ a.hv-live-item:hover {
   font-size: 11.5px;
   letter-spacing: 0.04em;
   box-shadow: 0 4px 14px rgba(0, 0, 0, 0.45);
+}
+
+/* v3.4.3: tam ekran ipucu (dokunmatik telefonda ilk oyunlarda) */
+.gb-full {
+  position: relative;
+}
+.gb-full.tip-on {
+  color: var(--accent, #ffd166);
+  animation: gbTipPulse 1.2s ease-in-out infinite;
+}
+.gb-tip {
+  position: absolute;
+  top: calc(100% + 8px);
+  right: -6px;
+  z-index: 10;
+  padding: 5px 10px;
+  border-radius: 10px;
+  font-size: 12.5px;
+  font-weight: 800;
+  white-space: nowrap;
+  color: #1b1206;
+  background: #ffd166;
+  box-shadow: 0 6px 16px rgba(0, 0, 0, 0.4);
+  pointer-events: none;
+  animation: gbTipIn 0.3s ease;
+}
+.gb-tip::before {
+  content: '';
+  position: absolute;
+  right: 16px;
+  bottom: 100%;
+  border: 6px solid transparent;
+  border-bottom-color: #ffd166;
+}
+@keyframes gbTipPulse {
+  50% {
+    box-shadow: 0 0 0 3px rgba(255, 209, 102, 0.55);
+  }
+}
+@keyframes gbTipIn {
+  from {
+    opacity: 0;
+    transform: translateY(-4px);
+  }
 }
