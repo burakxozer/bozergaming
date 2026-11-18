@@ -17,8 +17,8 @@
 <meta property="og:url" content="https://burakxozer.github.io/bozergaming/">
 <meta property="og:title" content="Bözer Gaming · Arkadaşlarınla online oyun masaları">
 <meta property="og:description" content="Blackjack, Americano, Dost Kazığı, Pişti ve Tavla. Arkadaşlarınla aynı masada oyna, BP kazan, rozet bas, emoji ve hediye gönder.">
-<meta property="og:image" content="https://burakxozer.github.io/bozergaming/assets/icons/og.jpg?v=3.4.1">
-<meta property="og:image:secure_url" content="https://burakxozer.github.io/bozergaming/assets/icons/og.jpg?v=3.4.1">
+<meta property="og:image" content="https://burakxozer.github.io/bozergaming/assets/icons/og.jpg?v=3.4.2">
+<meta property="og:image:secure_url" content="https://burakxozer.github.io/bozergaming/assets/icons/og.jpg?v=3.4.2">
 <meta property="og:image:type" content="image/jpeg">
 <meta property="og:image:width" content="1200">
 <meta property="og:image:height" content="630">
@@ -26,18 +26,18 @@
 <meta name="twitter:card" content="summary_large_image">
 <meta name="twitter:title" content="Bözer Gaming · Arkadaşlarınla online oyun masaları">
 <meta name="twitter:description" content="Blackjack, Americano, Dost Kazığı, Pişti ve Tavla. Arkadaşlarınla aynı masada oyna, BP kazan, rozet bas.">
-<meta name="twitter:image" content="https://burakxozer.github.io/bozergaming/assets/icons/og.jpg?v=3.4.1">
+<meta name="twitter:image" content="https://burakxozer.github.io/bozergaming/assets/icons/og.jpg?v=3.4.2">
 <link rel="manifest" href="manifest.webmanifest">
-<link rel="icon" href="assets/icons/favicon.svg?v=3.4.1" type="image/svg+xml">
-<link rel="icon" href="assets/icons/icon-192.png?v=3.4.1" type="image/png" sizes="192x192">
-<link rel="apple-touch-icon" href="assets/icons/apple-touch-icon.png?v=3.4.1">
+<link rel="icon" href="assets/icons/favicon.svg?v=3.4.2" type="image/svg+xml">
+<link rel="icon" href="assets/icons/icon-192.png?v=3.4.2" type="image/png" sizes="192x192">
+<link rel="apple-touch-icon" href="assets/icons/apple-touch-icon.png?v=3.4.2">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="preconnect" href="https://cdn.jsdelivr.net" crossorigin>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Archivo:wdth,wght@62..125,300..900&display=swap">
-<link rel="stylesheet" href="assets/css/app.css?v=3.4.1">
-<link rel="stylesheet" href="assets/css/badges.css?v=3.4.1">
-<link rel="stylesheet" href="assets/css/econ.css?v=3.4.1">
+<link rel="stylesheet" href="assets/css/app.css?v=3.4.2">
+<link rel="stylesheet" href="assets/css/badges.css?v=3.4.2">
+<link rel="stylesheet" href="assets/css/econ.css?v=3.4.2">
 <script>
   try { var t = JSON.parse(localStorage.getItem('bg.theme')); if (t) document.documentElement.setAttribute('data-theme', t); } catch (e) {}
 </script>
@@ -83,6 +83,7 @@
     <li>Çift elinde yazılan ceza 2 kat yazılır.</li>
     <li>Konken: Düz okey gibi tüm kağıtların per oluşturup, bitiş kağıdının ortaya atılmasıyla biter.</li>
     <li>En düşük toplam puana sahip oyuncu kazanır.</li>
+    <li><strong>Online cezalı kart penceresi:</strong> Atılan kart elindeki kartlara (o elin kuralına göre) uymuyorsa pencere seni beklemeden otomatik pas geçilir; uyuyorsa “işine yarar” diye gösterilir. “Bu el isteme” ile o elin sonuna kadar cezalı kart istemezsin. Otomatik pası menüden kapatabilirsin.</li>
   </ul>
 </template>
 
@@ -102,6 +103,7 @@
     <li><strong>Dağıtım:</strong> Her dağıtımda 4’er kart, son dağıtımda 5’er kart. Tüm 108 kart bitince tur tamamlanır.</li>
     <li><strong>Puan:</strong> 2–9 kendi değeri, 10/J/Q/K/A 10, 3’lü 30, Job 60. İki eşin önü de boşsa takıma −100.</li>
     <li><strong>Turlar:</strong> Her oyuncu bir kez saat yönünün tersine, bir kez saat yönünde başlar: 4 kişide 8, 6 kişide 12, 8 kişide 16 tur.</li>
+    <li><strong>Kart atma:</strong> Kartına dokunup bırakınca kart atılır. Basılı tutup yandaki karta kaydırırsan o kart kalkar; hangi kartın üstünde bırakırsan o atılır. Boş bir yerde bırakırsan kart atılmaz. Kartı bir oyuncunun önüne ya da başlangıç kartına sürükleyip bırakırsan oraya işlenir. Oyundaki menüden “Çift tıkla kağıt at”ı açarsan dokunuş yalnız seçer, çift tıklayınca atılır.</li>
     <li><strong>Online masa:</strong> Bağlantın koparsa yerine bot oynar, geri gelince kaldığın yerden devam edersin. Oyundan çıkarsan koltuğunda bot oynamaya devam eder.</li>
   </ul>
 </template>
@@ -112,9 +114,12 @@
     <li><strong>Kart alma:</strong> Attığın kart yerdeki en üst kartla aynı değerdeyse yerdeki bütün kartları alırsın. Vale her zaman yerdekileri alır (yer boş değilse).</li>
     <li><strong>Pişti:</strong> Yerde tek kart varken aynı değerdeki kartla alırsan pişti olur: 10 puan. Tek valeyi valeyle alırsan vale piştisi: 20 puan.</li>
     <li><strong>Puanlar:</strong> Her as 1, her vale 1, sinek 2 → 2, karo 10 → 3 puan. En çok kartı alan 3 puan alır (eşitlikte kimse almaz).</li>
+    <li><strong>Kapalı kartlar:</strong> Yerdeki üç kapalı kartı, yeri ilk kesen (ilk alan) oyuncu görür; başkaları görmez.</li>
     <li><strong>El sonu:</strong> Deste bitince yerde kalan kartlar son alan oyuncuya gider ve el puanlanır.</li>
-    <li><strong>Oyun sonu:</strong> Hedef puana (51, 101 ya da 151) ilk ulaşan kazanır; eşitlikte bir el daha oynanır.</li>
-    <li><strong>Eşli oyun:</strong> 4 kişide karşılıklı oturanlar takımdır; aldıkları kartlar ve puanlar birlikte sayılır. Kazanan takımın iki oyuncusu 1. ve 2. sıranın ödülünü paylaşır.</li>
+    <li><strong>Sıfır cezası:</strong> Bir elde hiç puan alamayan oyuncu (eşli oyunda takım) o elden −51 puan yazar.</li>
+    <li><strong>Oyun sonu:</strong> Hedef puana (51, 101, 151 ya da 201) ilk ulaşan kazanır; eşitlikte bir el daha oynanır. Ceza yüzünden oyun uzamasın diye el sınırı vardır: 51’lik oyun en çok 12, 101’lik 20, 151’lik 28, 201’lik 36 el sürer; son elde önde olan kazanır.</li>
+    <li><strong>Tekli ya da eşli:</strong> Masa kurarken seçilir. Tekli oyunda herkes kendi için oynar (2–4 kişi). Eşli oyun 4 kişiliktir: karşılıklı oturanlar takımdır; aldıkları kartlar ve puanlar birlikte sayılır. Kazanan takımın iki oyuncusu 1. ve 2. sıranın ödülünü paylaşır.</li>
+    <li><strong>Kart atma:</strong> Kartına dokunup bırakınca kart atılır. Basılı tutup yandaki karta kaydırırsan o kart kalkar; hangi kartın üstünde bırakırsan o atılır, boş bir yerde bırakırsan atılmaz. Sıra rakipteyken seçtiğin kart, sıra sana gelince kendiliğinden atılır. Oyundaki menüden “Çift tıkla kağıt at”ı açabilirsin.</li>
     <li><strong>Online masa:</strong> Hamle süresi dolarsa kartın otomatik atılır. Bağlantın koparsa yerine bot oynar; oyundan çıkarsan koltuğunda bot oynamaya devam eder.</li>
   </ul>
 </template>
@@ -128,7 +133,8 @@
     <li><strong>Zorunluluk:</strong> Oynayabildiğin kadar zarı oynamalısın; yalnız biri oynanabiliyorsa büyük zar oynanır. Hamlen yoksa sıra geçer.</li>
     <li><strong>Toplama:</strong> Bütün taşların evindeyken taş toplarsın. Zardan uzakta taşın yoksa büyük zarla en uzaktaki taşı toplarsın.</li>
     <li><strong>Puan:</strong> Oyunu kazanan 1 sayı alır; rakip hiç taş toplamadan bitirirsen mars: 2 sayı. Maç seçilen sayıya (1, 3 ya da 5) ilk ulaşanındır.</li>
-    <li><strong>Online masa:</strong> Hamle süresi dolarsa hamlen otomatik oynanır. Son hamlenden sonra kısa bir süre “Geri al” ile değiştirebilirsin.</li>
+    <li><strong>Zar ve hamle:</strong> Sıra sana gelince “Zar at”a dokun (beklersen zar kendiliğinden atılır). Taşına dokununca gidebileceği yerler yarı saydam taşla ve kullanılacak zarla gösterilir; gideceği yere dokununca taş gider. İlk zarı oynadıktan sonra “Geri al” ile geri alabilirsin; son zarı oynayınca sıra rakibe geçer.</li>
+    <li><strong>Online masa:</strong> Hamle süresi dolarsa hamlen otomatik oynanır.</li>
   </ul>
 </template>
 
@@ -209,20 +215,20 @@
 </template>
 
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-<script src="assets/js/config.js?v=3.4.1"></script>
-<script src="assets/js/core.js?v=3.4.1"></script>
-<script src="assets/js/api.js?v=3.4.1"></script>
-<script src="assets/js/bp.js?v=3.4.1"></script>
-<script src="assets/js/shop.js?v=3.4.1"></script>
-<script src="assets/js/player.js?v=3.4.1"></script>
-<script src="assets/js/home.js?v=3.4.1"></script>
-<script src="assets/js/home3.js?v=3.4.1"></script>
-<script src="assets/js/auth.js?v=3.4.1"></script>
-<script src="assets/js/profile.js?v=3.4.1"></script>
-<script src="assets/js/social.js?v=3.4.1"></script>
-<script src="assets/js/admin.js?v=3.4.1"></script>
-<script src="assets/js/host.js?v=3.4.1"></script>
-<script src="assets/js/watch.js?v=3.4.1"></script>
-<script src="assets/js/app.js?v=3.4.1"></script>
+<script src="assets/js/config.js?v=3.4.2"></script>
+<script src="assets/js/core.js?v=3.4.2"></script>
+<script src="assets/js/api.js?v=3.4.2"></script>
+<script src="assets/js/bp.js?v=3.4.2"></script>
+<script src="assets/js/shop.js?v=3.4.2"></script>
+<script src="assets/js/player.js?v=3.4.2"></script>
+<script src="assets/js/home.js?v=3.4.2"></script>
+<script src="assets/js/home3.js?v=3.4.2"></script>
+<script src="assets/js/auth.js?v=3.4.2"></script>
+<script src="assets/js/profile.js?v=3.4.2"></script>
+<script src="assets/js/social.js?v=3.4.2"></script>
+<script src="assets/js/admin.js?v=3.4.2"></script>
+<script src="assets/js/host.js?v=3.4.2"></script>
+<script src="assets/js/watch.js?v=3.4.2"></script>
+<script src="assets/js/app.js?v=3.4.2"></script>
 </body>
 </html>

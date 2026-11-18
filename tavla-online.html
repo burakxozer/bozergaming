@@ -8,8 +8,8 @@
 <link rel="preconnect" href="https://fonts.googleapis.com" />
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
 <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@600;700;800;900&family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet" />
-<link rel="stylesheet" href="assets/css/bg-table.css?v=3.4.1" />
-<link rel="stylesheet" href="assets/css/badges.css?v=3.4.1" />
+<link rel="stylesheet" href="assets/css/bg-table.css?v=3.4.2" />
+<link rel="stylesheet" href="assets/css/badges.css?v=3.4.2" />
 <style>
 /* =====================================================================
    TAVLA · Görünüm
@@ -158,7 +158,41 @@ button { font: inherit; color: inherit; }
 .ck.is-off::before { box-shadow: 0 2px 0 rgba(0, 0, 0, 0.5); }
 .ck.is-off::after { display: none; }
 
-/* zarlar */
+/* zarlar (v3.4.2: üç boyutlu küp, atış canlandırması) */
+.d3 { position: absolute; width: 58px; height: 58px; margin: -29px 0 0 -29px; perspective: 560px; transition: opacity 0.25s, filter 0.25s; will-change: transform; }
+.d3.used { opacity: 0.4; filter: grayscale(0.5) brightness(0.9); }
+.d3-sh { position: absolute; inset: 5px; border-radius: 14px; background: rgba(0, 0, 0, 0.62); filter: blur(5px); transform: translate(5px, 9px); opacity: 0.6; }
+.d3-cube { position: absolute; inset: 0; transform-style: preserve-3d; }
+.d3-f { position: absolute; inset: 0; border-radius: 11px; background: linear-gradient(145deg, #fffef8 0%, #f4ecd9 52%, #ddcfae 100%); box-shadow: inset 0 0 0 1px rgba(80, 50, 20, 0.12), inset 0 -4px 7px rgba(0, 0, 0, 0.13), inset 0 3px 3px rgba(255, 255, 255, 0.85); backface-visibility: hidden; -webkit-backface-visibility: hidden; }
+.d3-f .die-f { padding: 8px; }
+.d3-f .die-f span { width: 11px; height: 11px; }
+.d3-f .die-f span.on.red { width: 14px; height: 14px; }
+.d3-f.f1 { transform: translateZ(29px); }
+.d3-f.f6 { transform: rotateY(180deg) translateZ(29px); }
+.d3-f.f2 { transform: rotateY(90deg) translateZ(29px); }
+.d3-f.f5 { transform: rotateY(-90deg) translateZ(29px); }
+.d3-f.f3 { transform: rotateX(90deg) translateZ(29px); }
+.d3-f.f4 { transform: rotateX(-90deg) translateZ(29px); }
+.d3.open::after { position: absolute; top: 100%; left: 50%; transform: translateX(-50%); margin-top: 8px; font-size: 13px; font-weight: 800; color: var(--tv-gold-hi); white-space: nowrap; text-shadow: 0 1px 3px rgba(0, 0, 0, 0.8); }
+.d3.open.c0::after { content: 'Beyaz'; }
+.d3.open.c1::after { content: 'Siyah'; }
+.tv-dice .dice-x { position: absolute; transform: translate(-50%, 0); margin: 0; }
+.d3-cup { position: absolute; width: 0; height: 0; }
+.d3.rest { animation: tvShake 0.9s ease-in-out infinite; }
+.d3.rest + .d3.rest { animation-delay: 0.12s; }
+@keyframes tvShake { 0%, 100% { transform: translate(0, 0) rotate(0); } 25% { transform: translate(-2px, -3px) rotate(-6deg); } 60% { transform: translate(2px, 1px) rotate(5deg); } }
+.tv-roll { position: absolute; z-index: 60; transform: translateX(-50%); display: inline-flex; align-items: center; gap: 7px; min-height: 46px; padding: 0 20px; border-radius: 99px; border: 0; cursor: pointer; pointer-events: auto;
+  font: 850 17px/1 var(--tv-font, inherit); letter-spacing: 0.02em; color: #2a1406; background: linear-gradient(180deg, #fff1bf, #f2c766 50%, #c9922e); box-shadow: 0 8px 22px rgba(0, 0, 0, 0.5), 0 0 0 3px rgba(255, 233, 160, 0.25); animation: tvPulse 1.4s ease-in-out infinite; white-space: nowrap; }
+/* önizleme: gidebileceği yerlerde yarı saydam taş ve kullanılacak zar */
+.tv-ghosts { position: absolute; inset: 0; z-index: 3; pointer-events: none; }
+.tv-ghost { position: absolute; left: 0; top: 0; border-radius: 50%; display: grid; place-items: center; pointer-events: auto; cursor: pointer; opacity: 0.62;
+  box-shadow: 0 0 0 3px rgba(255, 224, 140, 0.9), 0 0 22px rgba(255, 214, 110, 0.7); animation: tvGhost 1.1s ease-in-out infinite; }
+.tv-ghost.ck-w { background: radial-gradient(circle at 34% 30%, #fffdf6 0%, #f1e6cf 45%, #c9b48c 100%); }
+.tv-ghost.ck-k { background: radial-gradient(circle at 34% 30%, #6a4a3a 0%, #3a241a 45%, #1d110b 100%); }
+.tv-ghost b { display: grid; place-items: center; min-width: 30px; height: 30px; padding: 0 6px; border-radius: 99px; font-size: 19px; font-weight: 900; color: #2a1406; background: linear-gradient(180deg, #fff1bf, #f2c766); box-shadow: 0 2px 6px rgba(0, 0, 0, 0.45); }
+.tv-ghost em { position: absolute; top: -14px; left: 50%; transform: translateX(-50%); padding: 1px 7px; border-radius: 99px; font-style: normal; font-size: 12px; font-weight: 850; color: #fff; background: #c23b2b; }
+.tv-ghost.off { border-radius: 10px; opacity: 0.72; }
+@keyframes tvGhost { 50% { opacity: 0.85; box-shadow: 0 0 0 4px rgba(255, 224, 140, 1), 0 0 30px rgba(255, 214, 110, 0.9); } }
 .tv-dice { position: absolute; inset: 0; z-index: 4; pointer-events: none; }
 .dice-g { position: absolute; transform: translate(-50%, -50%); display: flex; gap: 18px; align-items: center; }
 .dice-x { position: absolute; left: 50%; top: 100%; margin-top: 10px; transform: translateX(-50%); padding: 3px 10px; border-radius: 99px; font-weight: 850; font-size: 15px; color: #2a1406; background: linear-gradient(180deg, var(--tv-gold-hi), var(--tv-gold-2)); white-space: nowrap; box-shadow: 0 4px 10px rgba(0, 0, 0, 0.4); }
@@ -228,9 +262,13 @@ button { font: inherit; color: inherit; }
 .tv-commit i { position: absolute; left: 0; bottom: 0; height: 3px; width: 100%; background: var(--tv-gold); transform-origin: 0 50%; transform: scaleX(0); }
 .tv-commit.go i { animation: tvBar 1.1s linear forwards; }
 @keyframes tvBar { from { transform: scaleX(1); } to { transform: scaleX(0); } }
-body.tv-port .tv-actions .tv-commit span, body.tv-port #undoBtn span { display: none; }
-body.tv-port #undoBtn { width: 40px; padding: 0; }
+body.tv-port .tv-actions .tv-commit span { display: none; }
+/* v3.4.2: "Geri al" her ekranda yazısıyla, büyük ve belirgin */
+#undoBtn { min-height: 46px; padding: 0 16px; font-size: 15px; color: #2a1406; border-color: transparent; background: linear-gradient(180deg, #f6dd98, #c99a3d 55%, #9c7427); box-shadow: 0 6px 18px rgba(201, 154, 61, 0.35); animation: tvUndoIn 0.25s cubic-bezier(0.2, 1.2, 0.3, 1); }
+@keyframes tvUndoIn { from { transform: scale(0.7); opacity: 0; } }
 .tv-actions .tv-btn, .tv-commit { white-space: nowrap; }
+/* v3.4.2: gizli düğmeler gerçekten gizli (önceden "Geri al" ve onay çubuğu hep görünüyordu) */
+.tv-actions [hidden], .tv-game [hidden] { display: none !important; }
 
 /* ---------------- efektler, bildirimler, pencereler ---------------- */
 .tv-fx { position: absolute; inset: 0; z-index: 70; pointer-events: none; }
@@ -310,6 +348,7 @@ body.tv-port #undoBtn { width: 40px; padding: 0; }
   <div id="board" class="tv-board">
     <div id="hits" class="tv-hits"></div>
     <div id="ckLayer" class="tv-ck-layer"></div>
+    <div id="ghosts" class="tv-ghosts"></div>
     <div id="dice" class="tv-dice"></div>
   </div>
   <div id="pods"></div>
@@ -322,7 +361,7 @@ body.tv-port #undoBtn { width: 40px; padding: 0; }
 </div>
 <div id="modals"></div>
 <div id="toastBox" class="tv-toasts" aria-live="polite"></div>
-<script src="assets/js/bg-table.js?v=3.4.1"></script>
+<script src="assets/js/bg-table.js?v=3.4.2"></script>
 <script>
 /* ---- engine.js ---- */
 /* =====================================================================
@@ -978,6 +1017,16 @@ body.tv-port #undoBtn { width: 40px; padding: 0; }
         case 'move':
           knock(c, 1250, 0.07, 0.5, 0, true);
           break;
+        case 'bounce':
+          // zar tahtaya düşer: iki zarın tok sesi
+          knock(c, 2300, 0.05, 0.42, 0, true);
+          knock(c, 2650, 0.045, 0.34, 0.035, true);
+          break;
+        case 'bounce2':
+          knock(c, 2500, 0.04, 0.26, 0, true);
+          knock(c, 2900, 0.035, 0.2, 0.03);
+          knock(c, 3200, 0.03, 0.12, 0.09);
+          break;
         case 'pick':
           knock(c, 2200, 0.04, 0.22);
           break;
@@ -1064,13 +1113,15 @@ body.tv-port #undoBtn { width: 40px; padding: 0; }
     undo: '<path d="M3 7v6h6"/><path d="M21 17a9 9 0 0 0-9-9 9 9 0 0 0-6 2.3L3 13"/>',
     eye: '<path d="M2.062 12.348a1 1 0 0 1 0-.696 10.75 10.75 0 0 1 19.876 0 1 1 0 0 1 0 .696 10.75 10.75 0 0 1-19.876 0"/><circle cx="12" cy="12" r="3"/>',
     check: '<path d="M20 6 9 17l-5-5"/>',
+    dice: '<rect width="12" height="12" x="2" y="10" rx="2" ry="2"/><path d="m17.92 14 3.5-3.5a2.24 2.24 0 0 0 0-3l-5-4.92a2.24 2.24 0 0 0-3 0L10 6"/><path d="M6 18h.01"/><path d="M10 14h.01"/><path d="M15 6h.01"/><path d="M18 9h.01"/>',
   };
   const icon = (k, size, sw) =>
     `<svg class="lucide" width="${size || 18}" height="${size || 18}" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="${sw || 2}" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">${P[k] || ''}</svg>`;
 
   /* ---------------- ayarlar ---------------- */
   const SET_KEY = 'tavla-settings';
-  const DEF = { target: 3, level: 'orta', sound: true, oneTap: true, hints: true, name: 'Oyuncu' };
+  // v3.4.2: taşa dokununca otomatik oynamaz (önizleme); tapRoll: sıra bana gelince zarı dokunarak atarım
+  const DEF = { target: 3, level: 'orta', sound: true, hints: true, tapRoll: true, name: 'Oyuncu' };
   const NAMES = ['Ayşe', 'Mehmet', 'Zeynep', 'Mustafa', 'Elif', 'Emre', 'Fatma', 'Burak', 'Selin', 'Kerem', 'Deniz', 'Cem', 'Ebru', 'Oğuz', 'Gizem', 'Murat', 'Hülya', 'Serkan', 'Derya', 'Tolga'];
   const LEVELS = [
     { id: 'kolay', label: 'Kolay' },
@@ -1117,6 +1168,9 @@ body.tv-port #undoBtn { width: 40px; padding: 0; }
     botAt: 0,
     animEnd: 0,
     diceShown: null,
+    diceRot: {}, // zarların son duruşu (yeniden çizimde titremesin)
+    rollWait: null, // zarı atmam bekleniyor: { go }
+    gen: 0, // oyun/masa değişince artar; eski canlandırmalar yarıda kalır
   };
   window.__TVG = G;
   const turnSec = () => (G.mode === 'online' ? +((G.rules && G.rules.turn) || 0) : 0);
@@ -1269,6 +1323,22 @@ body.tv-port #undoBtn { width: 40px; padding: 0; }
      ===================================================================== */
   const PIPS = { 1: [5], 2: [1, 9], 3: [1, 5, 9], 4: [1, 3, 7, 9], 5: [1, 3, 5, 7, 9], 6: [1, 3, 4, 6, 7, 9] };
   const dieFace = (v) => `<div class="die-f">${Array.from({ length: 9 }, (_, i) => `<span class="${(PIPS[v] || []).indexOf(i + 1) >= 0 ? 'on' : ''}${v === 1 ? ' red' : ''}"></span>`).join('')}</div>`;
+  /* v3.4.2: üç boyutlu zar. Yüzler: 1 ön, 6 arka, 2 sağ, 5 sol, 3 üst, 4 alt (karşılıklı yüzler 7 eder).
+     Küp, istenen yüz öne gelecek şekilde döndürülür: rotateZ(c) rotateX(a) rotateY(b). */
+  const FACE_ROT = { 1: [0, 0], 2: [0, -90], 3: [-90, 0], 4: [90, 0], 5: [0, 90], 6: [0, 180] };
+  const DS = 58; // zar boyu (tahta birimi)
+  const facesHTML = () => [1, 2, 3, 4, 5, 6].map((f) => `<div class="d3-f f${f}">${dieFace(f)}</div>`).join('');
+  const cubeHTML = () => `<div class="d3-cube">${facesHTML()}</div>`;
+  const rotOf = (v, z, tx, ty) => `rotateZ(${z}deg) rotateX(${FACE_ROT[v][0] + (tx || 0)}deg) rotateY(${FACE_ROT[v][1] + (ty || 0)}deg)`;
+  /** Zarların duracağı yerler (atan oyuncunun sağ tarafındaki alan) */
+  function diceSpots(seat, open) {
+    const meSide = seat === G.me;
+    const cx = meSide ? B.XR + B.FW / 2 : B.XL + B.FW / 2;
+    const cy = B.H / 2;
+    const k = G.st ? G.st.turnNo || 0 : 0;
+    const j = (i) => ((((k + 3) * 7919 + i * 104729) % 1000) / 1000 - 0.5); // her turda küçük, sabit dağınıklık
+    return [0, 1].map((i) => ({ x: cx + (i ? 44 : -44) + j(i) * 14, y: cy + j(i + 5) * 16 + (open ? 0 : 0), z: Math.round(j(i + 9) * 34) }));
+  }
   function paintDice(o) {
     o = o || {};
     const box = $('#dice');
@@ -1281,7 +1351,6 @@ body.tv-port #undoBtn { width: 40px; padding: 0; }
       return;
     }
     const meSide = seat === G.me;
-    const cx = meSide ? B.XR + B.FW / 2 : B.XL + B.FW / 2;
     const left = o.left || (G.stage && seat === G.me ? G.stage.left : st && st.cur === seat && st.phase === 'move' ? st.left : []);
     const dbl = d[0] === d[1];
     // kullanılan zarlar soluk
@@ -1298,20 +1367,127 @@ body.tv-port #undoBtn { width: 40px; padding: 0; }
           else used[i] = true;
         });
     }
-    const key = d.join('-') + ':' + seat + ':' + (o.roll ? 'r' + Date.now() : '') + (o.open ? 'o' : '');
-    const html = `<div class="dice-g ${meSide ? 'me' : 'op'}${o.open ? ' open' : ''}" style="left:${cx}px;top:${B.H / 2}px">
-        ${d.map((v, i) => `<div class="die${used[i] ? ' used' : ''}${o.roll ? ' rolling r' + i : ''}${o.open ? ' c' + i : ''}" data-v="${v}">${dieFace(v)}</div>`).join('')}
-        ${dbl && !o.open ? `<span class="dice-x">×2${left.length ? ` · ${left.length} hamle` : ''}</span>` : ''}
-      </div>`;
-    if (G.diceShown === key && !o.roll) {
+    const key = d.join('-') + ':' + seat + ':' + (st ? st.turnNo : 0) + (o.open ? 'o' : '');
+    const label = dbl && !o.open ? `×2${left.length ? ` · ${left.length} hamle` : ''}` : '';
+    if (G.diceShown === key && !o.force) {
       // yalnız soluk durumunu güncelle
-      $$('.die', box).forEach((n, i) => n.classList.toggle('used', used[i]));
+      $$('.d3', box).forEach((n, i) => n.classList.toggle('used', used[i]));
       const x = $('.dice-x', box);
-      if (x && dbl) x.textContent = `×2${left.length ? ` · ${left.length} hamle` : ''}`;
+      if (x) x.textContent = label;
       return;
     }
     G.diceShown = key;
-    box.innerHTML = html;
+    const sp = diceSpots(seat, o.open);
+    box.innerHTML =
+      d
+        .map(
+          (v, i) =>
+            `<div class="d3${used[i] ? ' used' : ''}${o.open ? ' open c' + i : ''}" data-v="${v}" style="left:${sp[i].x}px;top:${sp[i].y}px"><div class="d3-sh"></div><div class="d3-cube" style="transform:${rotOf(v, sp[i].z)}">${facesHTML()}</div></div>`,
+        )
+        .join('') + (label ? `<span class="dice-x" style="left:${(sp[0].x + sp[1].x) / 2}px;top:${B.H / 2 + DS * 0.5 + 16}px">${label}</span>` : '');
+  }
+  /**
+   * Zar atışı: zarlar atanın kenarından havada dönerek gelir, tahtaya iki kez sekip yerine oturur.
+   * Süre D() ile kısalır (testler, hareket azaltma).
+   */
+  function throwDice(d, seat, opts) {
+    opts = opts || {};
+    const box = $('#dice');
+    const sp = diceSpots(seat, opts.open);
+    const T = D(opts.open ? 1150 : 1050);
+    const fromMe = (i) => (opts.open ? i === 0 : seat === G.me);
+    G.diceShown = null;
+    box.innerHTML = d
+      .map((v, i) => `<div class="d3 flying${opts.open ? ' open c' + i : ''}" data-v="${v}" style="left:${sp[i].x}px;top:${sp[i].y}px"><div class="d3-sh"></div>${cubeHTML()}</div>`)
+      .join('');
+    if (!T || T < 80 || !box.animate) {
+      paintDice({ d, seat, open: opts.open, force: true, left: opts.left });
+      return Promise.resolve();
+    }
+    SND.play('roll');
+    const nodes = $$('.d3', box);
+    nodes.forEach((n, i) => {
+      const me = fromMe(i);
+      const dir = me ? 1 : -1; // altta oturan (ben) aşağıdan, rakip yukarıdan atar
+      const sx = (i ? 1 : -1) * (18 + Math.random() * 30) + (me ? 70 : -70);
+      const sy = dir * (B.H / 2 + 90 + Math.random() * 40);
+      const lag = i * 0.05;
+      const k = (f) => Math.min(1, lag + f * (1 - lag));
+      n.animate(
+        [
+          { transform: `translate(${sx}px, ${sy}px) scale(1.55)`, offset: 0, easing: 'cubic-bezier(.35,.0,.75,.45)' },
+          { transform: `translate(${sx * 0.3}px, ${sy * 0.22}px) scale(1)`, offset: k(0.42), easing: 'cubic-bezier(.2,.6,.4,1)' },
+          { transform: `translate(${sx * 0.14}px, ${sy * 0.1}px) scale(1.16)`, offset: k(0.57), easing: 'cubic-bezier(.5,0,.8,.5)' },
+          { transform: `translate(${sx * 0.05}px, ${sy * 0.035}px) scale(1)`, offset: k(0.73), easing: 'cubic-bezier(.2,.6,.4,1)' },
+          { transform: `translate(${sx * 0.02}px, ${sy * 0.012}px) scale(1.045)`, offset: k(0.83), easing: 'ease-in' },
+          { transform: 'translate(0px, 0px) scale(1)', offset: 1 },
+        ],
+        { duration: T, fill: 'both' },
+      );
+      const v = d[i];
+      const z = sp[i].z;
+      const spinX = 360 * (2 + Math.floor(Math.random() * 2)) * (Math.random() < 0.5 ? -1 : 1);
+      const spinY = 360 * (1 + Math.floor(Math.random() * 2)) * (Math.random() < 0.5 ? -1 : 1);
+      const cube = $('.d3-cube', n);
+      cube.animate(
+        [
+          { transform: `rotateZ(${z + (Math.random() - 0.5) * 300}deg) rotateX(${FACE_ROT[v][0] + spinX + (Math.random() - 0.5) * 80}deg) rotateY(${FACE_ROT[v][1] + spinY + (Math.random() - 0.5) * 80}deg)` },
+          { transform: rotOf(v, z), offset: 0.86 },
+          { transform: rotOf(v, z) },
+        ],
+        { duration: T, easing: 'cubic-bezier(.18,.62,.28,1)', fill: 'both' },
+      );
+      const sh = $('.d3-sh', n);
+      sh.animate(
+        [
+          { transform: 'translate(26px, 40px) scale(1.35)', opacity: 0.12, offset: 0 },
+          { transform: 'translate(5px, 9px) scale(1)', opacity: 0.6, offset: k(0.42) },
+          { transform: 'translate(14px, 22px) scale(1.12)', opacity: 0.3, offset: k(0.57) },
+          { transform: 'translate(5px, 9px) scale(1)', opacity: 0.6, offset: k(0.73) },
+          { transform: 'translate(7px, 12px) scale(1.04)', opacity: 0.5, offset: k(0.83) },
+          { transform: 'translate(5px, 9px) scale(1)', opacity: 0.6, offset: 1 },
+        ],
+        { duration: T, fill: 'both' },
+      );
+    });
+    setTimeout(() => SND.play('bounce'), T * 0.42);
+    setTimeout(() => SND.play('bounce2'), T * 0.73);
+    const gen = G.gen;
+    return new Promise((res) =>
+      setTimeout(() => {
+        if (gen === G.gen) paintDice({ d, seat, open: opts.open, force: true, left: opts.left });
+        res();
+      }, T + 30),
+    );
+  }
+  /** Sıra bende: zarı atmam için kısa bekleme (dokun ya da boşluk tuşu; dokunmazsan kendiliğinden atılır) */
+  function waitRollTap(seat) {
+    return new Promise((res) => {
+      const box = $('#dice');
+      const sp = diceSpots(seat);
+      const x = (sp[0].x + sp[1].x) / 2;
+      box.innerHTML = `<div class="d3-cup" style="left:${x}px;top:${B.H / 2}px"><div class="d3 rest" style="left:-34px;top:0"><div class="d3-sh"></div><div class="d3-cube" style="transform:${rotOf(5, -14)}">${facesHTML()}</div></div><div class="d3 rest" style="left:34px;top:4px"><div class="d3-sh"></div><div class="d3-cube" style="transform:${rotOf(3, 11)}">${facesHTML()}</div></div></div>`;
+      G.diceShown = null;
+      // düğme ekran katmanında (dikey ekranda tahta döndürülse de düz durur), zarların hemen altında
+      const rs = $$('.d3', box).map((n) => n.getBoundingClientRect());
+      const bx = rs.length ? (Math.min(...rs.map((r) => r.left)) + Math.max(...rs.map((r) => r.right))) / 2 : window.innerWidth / 2;
+      const by = rs.length ? Math.max(...rs.map((r) => r.bottom)) + 10 : window.innerHeight / 2;
+      const btn = el(`<button type="button" class="tv-roll" data-roll style="left:${Math.round(bx)}px;top:${Math.round(by)}px">${icon('dice', 18)} Zar at</button>`);
+      $('#game').appendChild(btn);
+      const wait = G.mode === 'online' ? 2600 : 3200;
+      let done = false;
+      const go = () => {
+        if (done) return;
+        done = true;
+        clearTimeout(t);
+        G.rollWait = null;
+        btn.remove();
+        res();
+      };
+      const t = setTimeout(go, D(wait));
+      G.rollWait = { go };
+      paintMsg();
+    });
   }
 
   /* =====================================================================
@@ -1353,6 +1529,37 @@ body.tv-port #undoBtn { width: 40px; padding: 0; }
       if (n) n.classList.add('is-sel');
     }
     $('#undoBtn').hidden = !(act || (G.stage && G.stage.steps.length && !G.pending)) || !G.stage || !G.stage.steps.length;
+    paintGhosts(act && G.sel != null ? steps.filter((m) => m.from === G.sel) : []);
+  }
+  /** v3.4.2: seçili taşın gidebileceği yerlerde yarı saydam taş ve kullanılacak zar (dokununca oynanır) */
+  function paintGhosts(list) {
+    const box = $('#ghosts');
+    if (!box) return;
+    if (!list.length) {
+      box.innerHTML = '';
+      return;
+    }
+    const by = new Map();
+    list.forEach((m) => {
+      if (!by.has(m.to)) by.set(m.to, []);
+      by.get(m.to).push(m.d);
+    });
+    const x = G.stage.x;
+    const cls = G.me === 0 ? 'ck-w' : 'ck-k';
+    let h = '';
+    for (const [to, ds] of by) {
+      let xy;
+      if (to === 0) xy = B.offXY(true, x.off[G.me]);
+      else {
+        const a = TV.absOf(G.me, to);
+        const mineN = TV.mine(x.b, a, G.me) ? Math.abs(x.b[a]) : 0;
+        xy = B.stackXY(to, mineN, mineN + 1);
+      }
+      const die = Array.from(new Set(ds)).sort((p, q) => p - q).join('/');
+      const hit = list.some((m) => m.to === to && m.hit);
+      h += `<div class="tv-ghost ${cls}${to === 0 ? ' off' : ''}${hit ? ' hit' : ''}" data-v="${to}" style="width:${B.CD}px;height:${B.CD}px;transform:translate(${(xy.x - B.CD / 2).toFixed(1)}px, ${(xy.y - B.CD / 2).toFixed(1)}px)"><b>${die}</b>${hit ? '<em>kır</em>' : ''}</div>`;
+    }
+    box.innerHTML = h;
   }
   function buildHits() {
     const box = $('#hits');
@@ -1367,13 +1574,16 @@ body.tv-port #undoBtn { width: 40px; padding: 0; }
   }
   function onBoardClick(e) {
     SND.unlock();
+    if (G.rollWait) return G.rollWait.go();
     if (!canAct()) {
       if (G.st && !G.spect && e.target.closest('#board') && G.st.phase === 'move' && G.st.cur !== G.me) toast('Sıra rakipte', '');
       return;
     }
     const ck = e.target.closest('.ck');
     let v = null;
-    if (ck) {
+    const gh = e.target.closest('.tv-ghost');
+    if (gh) v = +gh.dataset.v;
+    else if (ck) {
       const l = G.loc.get(ck.dataset.id);
       if (l && l.p === G.me) v = l.w === 'bar' ? 25 : l.w === 'pt' ? TV.posOf(G.me, l.a) : null;
       else if (l && l.w === 'pt') v = TV.posOf(G.me, l.a); // rakibin tek taşı: hedef olabilir
@@ -1395,8 +1605,7 @@ body.tv-port #undoBtn { width: 40px; padding: 0; }
     }
     const from = steps.filter((x) => x.from === v);
     if (from.length) {
-      const dests = Array.from(new Set(from.map((x) => x.to)));
-      if (G.set.oneTap && dests.length === 1) return doStep(from[0]);
+      // v3.4.2: taşa dokunmak yalnız seçer; gidebileceği yerler önizlenir, hedefe dokununca oynanır
       G.sel = v;
       SND.play('pick');
       return paintHints();
@@ -1445,14 +1654,12 @@ body.tv-port #undoBtn { width: 40px; padding: 0; }
     G.stage = { x: TV.cloneBoard(st.x), steps: [], left: st.left.slice() };
     G.sel = null;
   }
+  /** v3.4.2: son zar oynanınca taş yerine oturur oturmaz sıra karşıya geçer ("Geri al" ilk zarlardan sonra) */
   function scheduleCommit() {
     clearTimeout(G.commitT);
-    const bar = $('#commitBar');
-    bar.hidden = false;
-    bar.classList.remove('go');
-    void bar.offsetWidth;
-    bar.classList.add('go');
-    G.commitT = setTimeout(commit, D(1100));
+    hideCommitBar();
+    $('#undoBtn').hidden = true;
+    G.commitT = setTimeout(commit, D(330));
   }
   function hideCommitBar() {
     const bar = $('#commitBar');
@@ -1587,6 +1794,10 @@ body.tv-port #undoBtn { width: 40px; padding: 0; }
     } else if (st.phase === 'gameEnd') t = 'Oyun bitti';
     else if (st.phase === 'over') t = 'Maç bitti';
     else if (st.phase === 'open') t = 'Zarlar atılıyor…';
+    if (G.rollWait && !G.spect) {
+      t = 'Zarını at';
+      cls = 'me';
+    }
     box.innerHTML = t ? `<span class="tv-msg ${cls}">${t}</span>` : '';
   }
 
@@ -1598,10 +1809,11 @@ body.tv-port #undoBtn { width: 40px; padding: 0; }
     if (!G.running) runQ();
   }
   async function runQ() {
+    const gen = G.gen;
     G.running = true;
     G.anim = true;
     paintHints();
-    while (G.Q.length) {
+    while (G.Q.length && G.gen === gen) {
       const fn = G.Q.shift();
       try {
         await fn();
@@ -1609,6 +1821,7 @@ body.tv-port #undoBtn { width: 40px; padding: 0; }
         console.error('[tavla] canlandırma', e);
       }
     }
+    if (G.gen !== gen) return;
     G.running = false;
     G.anim = false;
     G.animEnd = now();
@@ -1675,18 +1888,28 @@ body.tv-port #undoBtn { width: 40px; padding: 0; }
       assignFresh(G.vx);
       placeCheckers({ dur: D(380) });
       paintPips();
-      SND.play('roll');
-      paintDice({ d: [e.d[0], e.d[1]], seat: G.me, open: true, roll: true });
-      await sleep(D(900));
+      await throwDice([e.d[0], e.d[1]], G.me, { open: true });
+      G.openDice = true; // başlangıç zarları başlayan oyuncunun zarlarıdır; yeniden atılmaz
+      await sleep(D(250));
       const fw = who(e.first);
       toast(`${COLOR[0]} ${e.d[0]} · ${COLOR[1]} ${e.d[1]}: ${fw.me ? 'sen başlıyorsun' : esc(fw.name) + ' başlıyor'}`, 'good');
       await sleep(D(700));
       return;
     }
+    if (e.t === 'dice' && G.openDice) {
+      G.openDice = false;
+      paintDice({ d: e.d, seat: e.seat, left: TV.diceList(e.d), force: true });
+      await sleep(D(200));
+      return;
+    }
     if (e.t === 'dice') {
-      SND.play('roll');
-      paintDice({ d: e.d, seat: e.seat, roll: true, left: TV.diceList(e.d) });
-      await sleep(D(640));
+      // sıra bende: zarı ben atarım (dokun; beklersen kendiliğinden atılır). Pas olacaksa bekletmez.
+      const mine = e.seat === G.me && !G.spect && G.set.tapRoll && G.loaded && !G.autoHuman;
+      const gen = G.gen;
+      if (mine && G.st && !(G.st.cur !== G.me && G.st.phase === 'roll')) await waitRollTap(e.seat);
+      if (gen !== G.gen) return;
+      await throwDice(e.d, e.seat, { left: TV.diceList(e.d) });
+      paintMsg();
       return;
     }
     if (e.t === 'pass') {
@@ -2010,6 +2233,9 @@ body.tv-port #undoBtn { width: 40px; padding: 0; }
     document.body.classList.toggle('in-game', id === 'game');
   }
   function resetLocal() {
+    G.gen += 1;
+    G.rollWait = null;
+    $$('.tv-roll').forEach((n) => n.remove());
     clearTimeout(G.botT);
     clearTimeout(G.commitT);
     G.Q = [];
@@ -2025,6 +2251,7 @@ body.tv-port #undoBtn { width: 40px; padding: 0; }
     $('#modals').innerHTML = '';
     $('#fx').innerHTML = '';
     if ($('#dice')) $('#dice').innerHTML = '';
+    if ($('#ghosts')) $('#ghosts').innerHTML = '';
   }
   function toLobby() {
     const toNet = G.mode === 'online' || G.spect;
@@ -2127,7 +2354,8 @@ body.tv-port #undoBtn { width: 40px; padding: 0; }
         <p><b>Zorunluluk:</b> oynayabildiğin kadar zarı oynamak zorundasın. Yalnız biri oynanabiliyorsa büyük zar oynanır. Hiç hamlen yoksa sıra geçer.</p>
         <p><b>Toplama:</b> bütün taşların evindeyken taş toplarsın. Zardan daha uzakta taşın yoksa büyük zarla en uzaktaki taşını toplayabilirsin.</p>
         <p><b>Puan:</b> oyunu kazanan 1 sayı alır; rakip hiç taş toplayamadan bitirirsen <b>mars</b>: 2 sayı. Maç, seçilen sayıya ilk ulaşanındır.</p>
-        <p><b>Kontrol:</b> taşına dokun, sonra gideceği haneye dokun (tek seçenek varsa taş kendiliğinden gider). Son hamleden sonra kısa bir süre “Geri al” ile değiştirebilirsin.</p>
+        <p><b>Zar:</b> sıra sana gelince “Zar at”a (ya da tahtaya) dokun; beklersen zar kendiliğinden atılır. Menüden kapatırsan zarların hemen atılır.</p>
+        <p><b>Kontrol:</b> taşına dokun: gidebileceği yerler yarı saydam taşla ve kullanılacak zarla gösterilir. Gideceği yere dokununca taş gider; taşa dokunmak tek başına hamle yapmaz. İlk zarı oynadıktan sonra “Geri al” ile geri alabilirsin. Son zarı oynayınca sıra rakibe geçer.</p>
        </div>
        <div class="tv-mact"><button class="tv-btn" data-m="close">Kapat</button></div>`,
       (m) => m === 'close' && closeModal('rules'),
@@ -2140,7 +2368,7 @@ body.tv-port #undoBtn { width: 40px; padding: 0; }
       'menu',
       `<h2>Menü</h2>
        <label class="tv-opt"><input type="checkbox" data-set="sound" ${G.set.sound ? 'checked' : ''}> Ses</label>
-       <label class="tv-opt"><input type="checkbox" data-set="oneTap" ${G.set.oneTap ? 'checked' : ''}> Tek seçenek varsa taşı dokununca götür</label>
+       <label class="tv-opt"><input type="checkbox" data-set="tapRoll" ${G.set.tapRoll ? 'checked' : ''}> Zarı ben atayım (dokun; beklersen kendiliğinden atılır)</label>
        <label class="tv-opt"><input type="checkbox" data-set="hints" ${G.set.hints ? 'checked' : ''}> Oynayabilen taşları göster</label>
        <div class="tv-mact col"><button class="tv-btn" data-m="rules">${icon('book', 16)} Kurallar</button>
        ${!online ? `<button class="tv-btn" data-m="restart">${icon('play', 16)} Yeni maç</button>` : ''}${leave}<button class="tv-btn gold" data-m="close">Devam et</button></div>`,
@@ -2263,6 +2491,7 @@ body.tv-port #undoBtn { width: 40px; padding: 0; }
       const b = e.target.closest('[data-a]');
       if (b) return topAction(b.dataset.a);
       if (e.target.closest('#undoBtn')) return undo();
+      if (e.target.closest('[data-roll]')) return G.rollWait && G.rollWait.go();
       if (e.target.closest('#commitNow')) return commit();
       const av = e.target.closest('.tv-av[data-uid]');
       if (av && av.dataset.uid && NET && G.mode === 'online') NET.playerCard(av.dataset.uid);
@@ -2276,6 +2505,10 @@ body.tv-port #undoBtn { width: 40px; padding: 0; }
     document.addEventListener('keydown', (e) => {
       if (e.key === 'Escape') ['menu', 'rules'].forEach(closeModal);
       if ((e.key === 'z' || e.key === 'Z') && (e.ctrlKey || e.metaKey)) undo();
+      if ((e.key === ' ' || e.key === 'Enter') && G.rollWait && !$('#modals').children.length) {
+        e.preventDefault();
+        G.rollWait.go();
+      }
     });
     setInterval(() => {
       if (G.mode === 'offline' && G.st && !G.anim && G.st.cur !== G.me && Date.now() - (G.botAt || 0) > 4000 && ['open', 'roll', 'move'].indexOf(G.st.phase) >= 0) driveOffline();
@@ -2329,7 +2562,7 @@ body.tv-port #undoBtn { width: 40px; padding: 0; }
     showScreen('start');
     startScreen();
   }
-  window.__TVT = { startOffline, commit, undo, canAct, stepsNow, doStep };
+  window.__TVT = { startOffline, commit, undo, canAct, stepsNow, doStep, throwDice };
   if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', boot);
   else boot();
 })();
