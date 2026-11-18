@@ -23,6 +23,9 @@
     blackjack: [['tpl-rules-blackjack', 'Blackjack Royale oyun kuralları', 'book']],
     'pisti-online': [['tpl-rules-pisti', 'Pişti oyun kuralları', 'book']],
     'tavla-online': [['tpl-rules-tavla', 'Tavla oyun kuralları', 'book']],
+    'kizma-online': [['tpl-rules-kizma', 'Kızma Birader oyun kuralları', 'book']],
+    'yalanci-online': [['tpl-rules-yalanci', 'Yalancı Zar oyun kuralları', 'book']],
+    'amiral-online': [['tpl-rules-amiral', 'Amiral Battı oyun kuralları', 'book']],
   };
   /** Online masa oyunlarına geçen adres parametreleri */
   const TABLE_PARAMS = ['masa', 'izle', 'kim', 'mod'];
@@ -163,7 +166,9 @@
      Oyun açıkken sayfa yakınlaştırılamaz ve oyunun arkasındaki site kaymaz. Online kart
      oyunlarında (Blackjack, Americano, Dost Kazığı) ve tam ekranda oyun ekranının kendisi de
      kaymaz; yalnız sohbet, liste gibi kendi kaydırma alanı olan bölümler kaydırılır. */
-  const STRICT = ['blackjack', 'americano-online', 'dostkazigi-online', 'pisti-online', 'tavla-online'];
+  /** v3.4.3: tam ekranda kendi üst çubuğunda sohbet ve çıkış düğmesi olan oyunlar (sağdaki yüzen düğmeler gösterilmez) */
+  const OWN_FS = ['kizma-online', 'yalanci-online', 'amiral-online'];
+  const STRICT = ['blackjack', 'americano-online', 'dostkazigi-online', 'pisti-online', 'tavla-online', 'kizma-online', 'yalanci-online', 'amiral-online'];
   const NOZOOM = 'width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no, viewport-fit=cover';
   let vpOrig = null;
   let lockOn = false;
@@ -272,7 +277,7 @@
     layer.classList.toggle('is-full', on);
     document.documentElement.classList.toggle('game-full', on);
     strictFrame();
-    layer.querySelector('.gl-float').hidden = !on;
+    layer.querySelector('.gl-float').hidden = !on || OWN_FS.indexOf(host.cur && host.cur.key) >= 0;
     const b = bar.querySelector('.gb-full');
     b.innerHTML = icon(on ? 'compress' : 'expand');
     b.setAttribute('aria-label', on ? 'Tam ekrandan çık' : 'Tam ekran');
@@ -282,9 +287,34 @@
       if (w) setTimeout(() => w.dispatchEvent(new Event('resize')), 60);
     } catch (e) {}
   }
+  /** v3.4.3: dokunmatik telefonda tam ekran düğmesini ilk birkaç oyunda kısa bir ipucuyla göster */
+  let tipT = 0;
+  function tipOff() {
+    clearTimeout(tipT);
+    const b = bar && bar.querySelector('.gb-full');
+    if (!b) return;
+    b.classList.remove('tip-on');
+    const t = b.querySelector('.gb-tip');
+    if (t) t.remove();
+  }
+  function fsTip() {
+    try {
+      tipOff(); // önceki oyundan kalan ipucu yeni oyunda sayılmasın
+      const touch = window.matchMedia && matchMedia('(pointer: coarse)').matches;
+      const small = Math.max(window.innerWidth, window.innerHeight) < 1100;
+      const n = +BG.ls.get('bg.fsTipN', 0) || 0;
+      const b = bar.querySelector('.gb-full');
+      if (!b || !touch || !small || n >= 3 || host.isFull()) return;
+      BG.ls.set('bg.fsTipN', n + 1);
+      b.classList.add('tip-on');
+      b.insertAdjacentHTML('beforeend', '<span class="gb-tip" role="note">Tam ekran</span>');
+      tipT = setTimeout(tipOff, 6500);
+    } catch (e) {}
+  }
   host.fullscreen = async function (on) {
     if (!layer || !host.cur) return;
     if (on === undefined) on = !host.isFull();
+    tipOff();
     if (on) {
       if (canFs() && !fsEl()) {
         try {
@@ -641,6 +671,7 @@
     document.documentElement.classList.add('game-open');
     lockPage(true);
     document.title = g.name + ' · Bözer Gaming';
+    fsTip();
 
     if (wantResume && wantResume !== 'yerel' && BG.isAuthed()) {
       try {
@@ -718,6 +749,7 @@
     if (id && BG.isAuthed()) BG.api.rpc('bg_end_live', { p_id: id }).catch(() => {});
     unwatchViewers();
     if (host.isFull()) await host.fullscreen(false);
+    tipOff();
     host.cur = null;
     host.tableChat(false);
     if (frame) frame.setAttribute('src', 'about:blank');

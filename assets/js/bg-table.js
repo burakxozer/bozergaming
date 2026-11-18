@@ -285,7 +285,25 @@
     if (B && B.activity) B.activity();
   };
   /** İsim + bot işareti */
-  T.nameTag = (name, bot) => `${esc(name)}${bot ? ' <span class="t-bot" title="Bot oynuyor">(B)</span>' : ''}`;
+  /** v3.4.3: tam ekran (sitede oyun katmanı; tek başına açılan sayfada tarayıcının tam ekranı) */
+  T.fullscreen = function (on) {
+    const B = site();
+    if (B && B.host && B.host.fullscreen) return B.host.fullscreen(on);
+    const d = document;
+    const de = d.documentElement;
+    const cur = !!(d.fullscreenElement || d.webkitFullscreenElement);
+    if (on === undefined) on = !cur;
+    try {
+      if (on && !cur) (de.requestFullscreen || de.webkitRequestFullscreen).call(de);
+      else if (!on && cur) (d.exitFullscreen || d.webkitExitFullscreen).call(d);
+    } catch (e) {}
+  };
+  T.isFull = function () {
+    const B = site();
+    if (B && B.host && B.host.isFull) return B.host.isFull();
+    return !!(document.fullscreenElement || document.webkitFullscreenElement);
+  };
+  T.nameTag = (name, bot) => `${esc(name)}${bot ? ' <span class="t-bot" title="Bot oynuyor">(BOT)</span>' : ''}`;
 
   T.params = (function () {
     const out = {};
@@ -1327,7 +1345,7 @@
       .join('');
     const title = t.title || (t.host_name ? t.host_name + ' masası' : 'Masa');
     const rules = T.cfg.rules.summary(t.rules || {}, t.seats_n);
-    const fee = t.mode === 'online' && t.fee ? `<span class="t-chip is-fee" title="Masa ücreti">${ICON.coin}${t.fee} BP</span>` : '';
+    const fee = t.mode === 'online' && t.fee ? `<span class="t-chip is-fee" title="Masa ücreti">${ICON.coin}${T.cfg.tiers ? esc(tierOf(t.rules, t.fee).name) + ' · ' : ''}${t.fee} BP</span>` : '';
     let state = '';
     let btn = '';
     if (kind === 'mine') {
@@ -1495,8 +1513,12 @@
       opts.title != null
         ? `<div class="t-field"><label class="t-lab" for="tTitle">Masa adı</label><input class="t-input" id="tTitle" maxlength="40" placeholder="${esc((T.myName() || 'Benim') + ' masası')}" value="${esc(opts.title)}"></div>`
         : '';
-    const fee = opts.vis ? feeHTML(rules.fee || 10, n) : '';
-    return `<form class="t-form" onsubmit="return false">${title}${seg}${fee}<div class="t-rules">${T.cfg.rules.form(rules, n, opts)}</div>${vis}<p class="t-note">Boş kalan koltuklara oyun başlarken bot oturur.</p></form>`;
+    const fee = opts.vis ? (T.cfg.tiers ? tiersHTML(rules, n) : feeHTML(rules.fee || 10, n)) : '';
+    // v3.4.3: oturma yerleri (varsayılan: herkes oturduğu yerde; açılırsa oyun başlarken karıştırılır)
+    const shuf = opts.vis
+      ? `<div class="t-field"><span class="t-lab">Oturma yerleri</span><div class="t-seg" data-seg="shuffle"><button type="button" data-v="0" aria-pressed="${!rules.shuffle}">Herkes oturduğu yerde</button><button type="button" data-v="1" aria-pressed="${!!rules.shuffle}">Başlarken karıştır</button></div></div>`
+      : '';
+    return `<form class="t-form" onsubmit="return false">${title}${seg}${fee}<div class="t-rules">${T.cfg.rules.form(rules, n, opts)}</div>${shuf}${vis}<p class="t-note">Kişi sayısı dolmasa da oyun başlatılabilir: boş kalan koltuklara oyun başlarken bot oturur.</p></form>`;
   }
   /* ---------------- masa ücreti ve ödül tablosu ---------------- */
   /* v3.2: masa ücretleri, rütbe şartları ve ödüller yönetim panelinden gelir (cüzdan özeti → levels) */
@@ -1542,11 +1564,20 @@
   T.dkPrize = dkPrize;
   /** Ödül özeti: n = ücret ödeyecek gerçek oyuncu sayısı (Americano) / masa koltuk sayısı (Dost Kazığı) */
   function prizeText(fee, n, seats) {
+    // v3.4.3: Yalancı Zar seviyeleri (Bronze / Silver / Gold) kendi ödül tablosuyla
+    if (T.cfg.tiers) {
+      const tr = tierOf(null, fee);
+      if (n < 2) return 'Tek gerçek oyuncuyla (botlara karşı) masa ücretsiz ve ödülsüzdür.';
+      const a = ((tr && tr.am && tr.am[Math.min(n, 5)]) || []).map((v) => +v || 0);
+      const first = a[0] || 0;
+      const second = a[1] || 0;
+      return `${n} gerçek oyuncuyla: 1. <b>${first} BP</b>${n >= 3 && second ? ` · 2. <b>${second} BP</b>${second === +fee ? ' (ücretini geri alır)' : ''}` : ''}`;
+    }
     if (T.cfg.game === 'dostkazigi-online') return `Kazanan takımın her oyuncusu <b>${dkPrize(fee, seats || n)} BP</b> alır; kaybeden takım almaz. Bütün takımlar berabere kalırsa ücretler iade edilir.`;
     if (n < 2) return 'Tek gerçek oyuncuyla (botlara karşı) masa ücretsiz ve ödülsüzdür.';
     const pr = amPrizes(fee, n);
     // v3.4.1: Tavla tek kazanan; sıfır ödüllü sıralar yazılmaz
-    if (T.cfg.game === 'tavla-online') return `Maçı kazanan <b>${pr[0] || 0} BP</b> alır.`;
+    if (T.cfg.game === 'tavla-online' || T.cfg.game === 'amiral-online') return `Maçı kazanan <b>${pr[0] || 0} BP</b> alır.`;
     const pos = pr.map((v, i) => [v, i]).filter((x) => x[0] > 0);
     const pairs = T.cfg.game === 'pisti-online' && T.cfg.pairsNote ? ' Eşli oyunda kazanan takımın iki oyuncusu 1. ve 2. ödülü paylaşır.' : '';
     return `${n} gerçek oyuncuyla ödüller: ${(pos.length ? pos : [[0, 0]]).map(([v, i]) => `${i + 1}. <b>${v} BP</b>`).join(' · ')}${pairs}`;
@@ -1562,6 +1593,10 @@
     // v3.4.1: Pişti ve Tavla (varsayılan kapalı)
     if (T.cfg.game === 'pisti-online') return !!ps.ps_rank_lock;
     if (T.cfg.game === 'tavla-online') return !!ps.tv_rank_lock;
+    // v3.4.3 (varsayılan kapalı)
+    if (T.cfg.game === 'kizma-online') return !!ps.kb_rank_lock;
+    if (T.cfg.game === 'yalanci-online') return !!ps.lz_rank_lock;
+    if (T.cfg.game === 'amiral-online') return !!ps.ab_rank_lock;
     return ps.dk_rank_lock !== false;
   }
   function feeHTML(fee, n) {
@@ -1580,6 +1615,46 @@
       <p class="t-note t-prize" data-prize>${prizeText(fee, Math.min(n, 5), n)}</p>
       <p class="t-note">${locked ? `Rütben en fazla <b>${max} BP</b>’lik masa açmana izin veriyor.` : 'Bütün masa ücretleri herkese açık; bakiyen yettiği sürece istediğin ücreti seç.'} Ücret, oyun başlarken en az 2 gerçek oyuncu varsa herkesten alınır; ödüller maç sonunda “Ödülleri topla” ile hesaba geçer.</p></div>`;
   }
+  /* v3.4.3: Yalancı Zar masa seviyeleri (Bronze / Silver / Gold); panelden ücret ve ödüller değişebilir */
+  const DEF_TIERS = {
+    bronze: { fee: 10, min_rank: 1, am: { 2: [15], 3: [15, 10], 4: [25, 10], 5: [35, 10] } },
+    silver: { fee: 30, min_rank: 11, am: { 2: [45], 3: [45, 30], 4: [75, 30], 5: [105, 30] } },
+    gold: { fee: 50, min_rank: 20, am: { 2: [75], 3: [75, 50], 4: [125, 50], 5: [175, 50] } },
+  };
+  const TIER_KEYS = ['bronze', 'silver', 'gold'];
+  const TIER_NAME = { bronze: 'Bronze', silver: 'Silver', gold: 'Gold' };
+  function tiers() {
+    const B = site();
+    const e = T.econ();
+    const v = (e && e.lz_tiers) || (B && B.publicSettings && B.publicSettings.lz_tiers);
+    return v && v.bronze && v.silver && v.gold ? v : DEF_TIERS;
+  }
+  /** Seviye: kural (tier) ya da ücretten */
+  function tierOf(rules, fee) {
+    const all = tiers();
+    let k = rules && rules.tier;
+    if (!all[k]) k = TIER_KEYS.find((x) => +all[x].fee === +fee) || 'bronze';
+    return Object.assign({ key: k, name: TIER_NAME[k] }, all[k]);
+  }
+  T.tierOf = tierOf;
+  T.TIER_NAME = TIER_NAME;
+  function tiersHTML(rules, n) {
+    const e = T.econ();
+    const bal = e ? e.balance : 0;
+    const rank = (e && e.rank) || 1;
+    const B = site();
+    const locked = rankLocked();
+    const all = tiers();
+    const cur = tierOf(rules, rules.fee);
+    const rname = (r) => (B && B.rankInfo ? B.rankInfo(r).name : r + '. rütbe');
+    return `<div class="t-field t-feebox"><span class="t-lab">Masa seviyesi</span><div class="t-seg t-tiers" data-seg="tier">${TIER_KEYS.map((k) => {
+      const l = all[k];
+      const lock = locked && (l.min_rank || 1) > rank ? `Bu masa için en az ${rname(l.min_rank)} rütbesi gerekli` : +l.fee > bal ? 'BP bakiyen yetmiyor' : '';
+      return `<button type="button" class="t-tier t-tier-${k}" data-v="${k}" data-fee="${+l.fee}" aria-pressed="${k === cur.key}" ${lock ? `disabled title="${esc(lock)}"` : ''}><b>${TIER_NAME[k]}</b><span>${+l.fee} BP${lock ? ICON.lock : ''}</span></button>`;
+    }).join('')}</div>
+      <p class="t-note t-prize" data-prize>${prizeText(cur.fee, Math.min(n, 5), n)}</p>
+      <p class="t-note">1. yüksek ödülü alır, 2. (en az 3 gerçek oyuncuda) yatırdığını geri alır. Ücret, oyun başlarken en az 2 gerçek oyuncu varsa herkesten alınır; ödüller maç sonunda “Ödülleri topla” ile hesaba geçer.</p></div>`;
+  }
   function wireForm(body, state) {
     body.addEventListener('click', (e) => {
       const b = e.target.closest('.t-seg button');
@@ -1597,15 +1672,30 @@
         state.rules.fee = +b.dataset.v;
         const pz = $('[data-prize]', body);
         if (pz) pz.innerHTML = prizeText(state.rules.fee, Math.min(state.n, 5), state.n);
-      } else if (seg.dataset.seg === 'vis') state.vis = b.dataset.v;
+      } else if (seg.dataset.seg === 'tier') {
+        state.rules.tier = b.dataset.v;
+        state.rules.fee = +b.dataset.fee;
+        const pz = $('[data-prize]', body);
+        if (pz) pz.innerHTML = prizeText(state.rules.fee, Math.min(state.n, 5), state.n);
+      } else if (seg.dataset.seg === 'shuffle') state.rules.shuffle = b.dataset.v === '1';
+      else if (seg.dataset.seg === 'vis') state.vis = b.dataset.v;
       else if (T.cfg.rules.onSeg) T.cfg.rules.onSeg(seg, b, body, state);
     });
   }
   function readForm(body, state) {
     const fee = state.rules.fee;
+    const tier = state.rules.tier;
     state.rules = T.cfg.rules.read($('form', body), state.rules);
     const on = $('[data-seg="fee"] [aria-pressed="true"]', body);
     state.rules.fee = on ? +on.dataset.v : fee || 10;
+    // v3.4.3: Yalancı seviyesi ve oturma yerleri
+    const tr = $('[data-seg="tier"] [aria-pressed="true"]', body);
+    if (tr) {
+      state.rules.tier = tr.dataset.v;
+      state.rules.fee = +tr.dataset.fee;
+    } else if (T.cfg.tiers) state.rules.tier = tier || 'bronze';
+    const sh = $('[data-seg="shuffle"] [aria-pressed="true"]', body);
+    if (sh) state.rules.shuffle = sh.dataset.v === '1';
     const t = $('#tTitle', body);
     if (t) state.title = t.value.trim();
     return state;
@@ -1628,8 +1718,17 @@
       const rank = (e && e.rank) || 1;
       const bal = e ? e.balance : 0;
       const locked = rankLocked();
+      if (T.cfg.tiers) {
+        const all = tiers();
+        const okT = TIER_KEYS.filter((k) => (!locked || (all[k].min_rank || 1) <= rank) && +all[k].fee <= bal);
+        const curT = tierOf(state.rules, state.rules.fee).key;
+        // seçili seviye açılamıyorsa: altındaki en yüksek açılabilen seviye (yoksa açılabilen ilk seviye)
+        if (!okT.includes(curT)) state.rules.tier = okT.filter((k) => TIER_KEYS.indexOf(k) <= TIER_KEYS.indexOf(curT)).pop() || okT[0] || 'bronze';
+        else state.rules.tier = curT;
+        state.rules.fee = +all[state.rules.tier].fee;
+      }
       const ok = levels().filter((l) => (!locked || (l.min_rank || 1) <= rank) && +l.fee <= bal).map((l) => +l.fee);
-      if (!ok.includes(state.rules.fee)) {
+      if (!T.cfg.tiers && !ok.includes(state.rules.fee)) {
         const below = ok.filter((f) => state.rules.fee && f <= state.rules.fee);
         state.rules.fee = below.length ? Math.max(...below) : ok.length ? ok[0] : +levels()[0].fee;
       }
@@ -1835,7 +1934,7 @@
     const visTxt = t.visibility === 'public' ? 'Herkese açık' : 'Arkadaşlarına açık';
     const nHum = humans.length;
     const feeBox = t.mode === 'online' && t.fee
-      ? `<div class="t-feeinfo"><div class="t-feeinfo-h">${ICON.coin}<b>Masa ücreti: ${t.fee} BP</b></div>
+      ? `<div class="t-feeinfo"><div class="t-feeinfo-h">${ICON.coin}<b>${T.cfg.tiers ? `${esc(tierOf(t.rules, t.fee).name)} masa · ` : ''}Masa ücreti: ${t.fee} BP</b></div>
           <p>${prizeText(t.fee, Math.max(2, Math.min(nHum, 5)), t.seats_n)}</p>
           <p class="t-muted">${nHum >= 2 ? `Oyun başlarken ${nHum} gerçek oyuncunun her birinden ${t.fee} BP alınır. Ödüller maç sonunda sonuç ekranından toplanır.` : 'Şu an tek gerçek oyuncu var: böyle başlarsa masa ücretsiz ve ödülsüz oynanır. En az 2 gerçek oyuncu olunca ücret alınır.'}</p></div>`
       : '';
@@ -1849,7 +1948,7 @@
         </div>
       </div>
       <div class="t-room-main">
-        <div class="t-ring"><div class="t-felt"><div class="t-felt-in"><b>${esc(T.cfg.name)}</b><span>${esc(T.cfg.rules.summary(t.rules || {}, t.seats_n))}</span>${
+        <div class="t-ring"><div class="t-felt"><div class="t-felt-in"><b>${esc(T.cfg.name)}</b><span>${esc(T.cfg.rules.summary(t.rules || {}, t.seats_n))}${t.rules && t.rules.shuffle ? ' · yerler karışacak' : ''}</span>${
           isHost ? '<button type="button" class="t-btn is-sm is-ghost" data-rules>Kuralları düzenle</button>' : ''
         }</div></div>${seatHTML}</div>
         <div class="t-room-side">${feeBox}${actions}<p class="t-note">Oyun sırasında bağlantın koparsa yerine bot oynar, geri gelince kaldığın yerden devam edersin. Oyundan çıkarsan koltuğunda bot oynamaya devam eder${t.fee ? ' ve masa ücreti iade edilmez' : ''}.</p></div>

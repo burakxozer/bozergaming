@@ -174,6 +174,9 @@
     ['dostkazigi-online', 'Dost Kazığı'],
     ['pisti-online', 'Pişti'],
     ['tavla-online', 'Tavla'],
+    ['kizma-online', 'Kızma Birader'],
+    ['yalanci-online', 'Yalancı Zar'],
+    ['amiral-online', 'Amiral Battı'],
     ['blackjack', 'Blackjack'],
   ];
   BG.views.missions = function (params, query, loc, opts) {

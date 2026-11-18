@@ -57,7 +57,7 @@
     tv_refund: 'Tavla ücret iadesi',
     tv_mission: 'Tavla görev ödülü',
   };
-  const GAME = { 'americano-online': 'Americano', 'dostkazigi-online': 'Dost Kazığı', 'pisti-online': 'Pişti', 'tavla-online': 'Tavla', blackjack: 'Blackjack' };
+  const GAME = { 'americano-online': 'Americano', 'dostkazigi-online': 'Dost Kazığı', 'pisti-online': 'Pişti', 'tavla-online': 'Tavla', 'kizma-online': 'Kızma Birader', 'yalanci-online': 'Yalancı Zar', 'amiral-online': 'Amiral Battı', blackjack: 'Blackjack' };
   econ.kindLabel = (k) => KIND[k] || k;
   econ.gameLabel = (g) => GAME[g] || 'Site';
   // v3.2: Blackjack seviyeleri panelden gelir (bakiye eşiği ve bahis değerleri)
@@ -398,7 +398,7 @@
           <div class="bpx-filters">
             <label class="bpx-f"><span>Oyun</span><select class="input" data-f="game">
               <option value="">Tümü</option><option value="site">Site (bonus, mağaza, yönetici)</option>
-              <option value="americano-online">Americano</option><option value="dostkazigi-online">Dost Kazığı</option><option value="pisti-online">Pişti</option><option value="tavla-online">Tavla</option><option value="blackjack">Blackjack</option>
+              <option value="americano-online">Americano</option><option value="dostkazigi-online">Dost Kazığı</option><option value="pisti-online">Pişti</option><option value="tavla-online">Tavla</option><option value="kizma-online">Kızma Birader</option><option value="yalanci-online">Yalancı Zar</option><option value="amiral-online">Amiral Battı</option><option value="blackjack">Blackjack</option>
             </select></label>
             <label class="bpx-f"><span>Başlangıç</span><input class="input" type="date" data-f="from"></label>
             <label class="bpx-f"><span>Bitiş</span><input class="input" type="date" data-f="to"></label>

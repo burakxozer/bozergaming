@@ -145,7 +145,7 @@
               </div>
             </article>
             <article class="hv-card" data-game="pisti-online">
-              <a class="hv-shot" href="#/oyun/pisti-online?mod=online" tabindex="-1" aria-hidden="true"><img src="assets/shots/pisti-online.webp?v=${esc(BG.config.version)}" alt="" loading="lazy" decoding="async"><span class="hv-new-tag">Yeni</span></a>
+              <a class="hv-shot" href="#/oyun/pisti-online?mod=online" tabindex="-1" aria-hidden="true"><img src="assets/shots/pisti-online.webp?v=${esc(BG.config.version)}" alt="" loading="lazy" decoding="async"></a>
               ${docBtn('tpl-rules-pisti', 'Pişti oyun kuralları')}
               <div class="hv-card-body">
                 <div class="hv-name">${BG.gameTile('pisti-online', 'tile-s')}<h3>Pişti Online</h3></div>
@@ -156,13 +156,46 @@
               </div>
             </article>
             <article class="hv-card" data-game="tavla-online">
-              <a class="hv-shot" href="#/oyun/tavla-online?mod=online" tabindex="-1" aria-hidden="true"><img src="assets/shots/tavla-online.webp?v=${esc(BG.config.version)}" alt="" loading="lazy" decoding="async"><span class="hv-new-tag">Yeni</span></a>
+              <a class="hv-shot" href="#/oyun/tavla-online?mod=online" tabindex="-1" aria-hidden="true"><img src="assets/shots/tavla-online.webp?v=${esc(BG.config.version)}" alt="" loading="lazy" decoding="async"></a>
               ${docBtn('tpl-rules-tavla', 'Tavla oyun kuralları')}
               <div class="hv-card-body">
                 <div class="hv-name">${BG.gameTile('tavla-online', 'tile-s')}<h3>Tavla Online</h3></div>
                 <div class="hv-acts">
                   <a class="btn btn-soft btn-sm" href="#/oyun/tavla-online?mod=bot">${icon('play', 16)}Bota karşı</a>
                   <a class="btn btn-primary btn-sm" href="#/oyun/tavla-online?mod=online">${icon('users', 16)}Online</a>
+                </div>
+              </div>
+            </article>
+            <article class="hv-card" data-game="kizma-online">
+              <a class="hv-shot" href="#/oyun/kizma-online?mod=online" tabindex="-1" aria-hidden="true"><img src="assets/shots/kizma-online.webp?v=${esc(BG.config.version)}" alt="" loading="lazy" decoding="async"><span class="hv-new-tag">Yeni</span></a>
+              ${docBtn('tpl-rules-kizma', 'Kızma Birader oyun kuralları')}
+              <div class="hv-card-body">
+                <div class="hv-name">${BG.gameTile('kizma-online', 'tile-s')}<h3>Kızma Birader Online</h3></div>
+                <div class="hv-acts">
+                  <a class="btn btn-soft btn-sm" href="#/oyun/kizma-online?mod=bot">${icon('play', 16)}Botlara karşı</a>
+                  <a class="btn btn-primary btn-sm" href="#/oyun/kizma-online?mod=online">${icon('users', 16)}Online</a>
+                </div>
+              </div>
+            </article>
+            <article class="hv-card" data-game="yalanci-online">
+              <a class="hv-shot" href="#/oyun/yalanci-online?mod=online" tabindex="-1" aria-hidden="true"><img src="assets/shots/yalanci-online.webp?v=${esc(BG.config.version)}" alt="" loading="lazy" decoding="async"><span class="hv-new-tag">Yeni</span></a>
+              ${docBtn('tpl-rules-yalanci', 'Yalancı Zar oyun kuralları')}
+              <div class="hv-card-body">
+                <div class="hv-name">${BG.gameTile('yalanci-online', 'tile-s')}<h3>Yalancı Zar Online</h3></div>
+                <div class="hv-acts">
+                  <a class="btn btn-soft btn-sm" href="#/oyun/yalanci-online?mod=bot">${icon('play', 16)}Botlara karşı</a>
+                  <a class="btn btn-primary btn-sm" href="#/oyun/yalanci-online?mod=online">${icon('users', 16)}Online</a>
+                </div>
+              </div>
+            </article>
+            <article class="hv-card" data-game="amiral-online">
+              <a class="hv-shot" href="#/oyun/amiral-online?mod=online" tabindex="-1" aria-hidden="true"><img src="assets/shots/amiral-online.webp?v=${esc(BG.config.version)}" alt="" loading="lazy" decoding="async"><span class="hv-new-tag">Yeni</span></a>
+              ${docBtn('tpl-rules-amiral', 'Amiral Battı oyun kuralları')}
+              <div class="hv-card-body">
+                <div class="hv-name">${BG.gameTile('amiral-online', 'tile-s')}<h3>Amiral Battı Online</h3></div>
+                <div class="hv-acts">
+                  <a class="btn btn-soft btn-sm" href="#/oyun/amiral-online?mod=bot">${icon('play', 16)}Bota karşı</a>
+                  <a class="btn btn-primary btn-sm" href="#/oyun/amiral-online?mod=online">${icon('users', 16)}Online</a>
                 </div>
               </div>
             </article>

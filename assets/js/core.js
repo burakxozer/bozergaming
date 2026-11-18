@@ -575,6 +575,10 @@
     blackjack: { key: 'blackjack', file: 'blackjack.html', name: 'Blackjack Royale', glyph: 'BJ', color: 'gold', activity: 'Blackjack Royale masasında', group: 'blackjack', table: true },
     'pisti-online': { key: 'pisti-online', file: 'pisti-online.html', name: 'Pişti Online', glyph: 'P', color: 'teal', activity: 'Pişti oynuyor', group: 'pisti-online', table: true },
     'tavla-online': { key: 'tavla-online', file: 'tavla-online.html', name: 'Tavla Online', glyph: 'T', color: 'wood', activity: 'Tavla oynuyor', group: 'tavla-online', table: true },
+    // v3.4.3
+    'kizma-online': { key: 'kizma-online', file: 'kizma-online.html', name: 'Kızma Birader Online', glyph: 'KB', color: 'ruby', activity: 'Kızma Birader oynuyor', group: 'kizma-online', table: true },
+    'yalanci-online': { key: 'yalanci-online', file: 'yalanci-online.html', name: 'Yalancı Zar Online', glyph: 'YZ', color: 'plum', activity: 'Yalancı Zar oynuyor', group: 'yalanci-online', table: true },
+    'amiral-online': { key: 'amiral-online', file: 'amiral-online.html', name: 'Amiral Battı Online', glyph: 'AB', color: 'navy', activity: 'Amiral Battı oynuyor', group: 'amiral-online', table: true },
   };
   /** Arkadaşı izleme bağlantısı: online masada masaya izleyici olarak, diğerlerinde canlı yayına */
   BG.watchHref = function (game, sessionId, userId) {

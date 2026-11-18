@@ -319,9 +319,9 @@
 
   /* ---------------- v3.2: Ekonomi ayarları (rütbeler, Blackjack seviyeleri, masa seviyeleri, haftalık destek) ---------------- */
   const TIER_N = { bronze: 'Bronze', silver: 'Silver', gold: 'Gold' };
-  const AUDIT_KEY = { ranks: 'Rütbeler', prestige: 'Prestij', bj_tiers: 'Blackjack seviyeleri', table_levels: 'Online masa ücretleri ve ödülleri', weekly_support: 'Haftalık destek', am_rank_lock: 'Americano rütbe şartı', dk_rank_lock: 'Dost Kazığı rütbe şartı', ps_rank_lock: 'Pişti rütbe şartı', tv_rank_lock: 'Tavla rütbe şartı', fc_rules: 'Friend Coins kuralları', games_off: 'Oyun yayın durumu' };
+  const AUDIT_KEY = { ranks: 'Rütbeler', prestige: 'Prestij', bj_tiers: 'Blackjack seviyeleri', table_levels: 'Online masa ücretleri ve ödülleri', weekly_support: 'Haftalık destek', am_rank_lock: 'Americano rütbe şartı', dk_rank_lock: 'Dost Kazığı rütbe şartı', ps_rank_lock: 'Pişti rütbe şartı', tv_rank_lock: 'Tavla rütbe şartı', kb_rank_lock: 'Kızma Birader rütbe şartı', lz_rank_lock: 'Yalancı Zar rütbe şartı', ab_rank_lock: 'Amiral Battı rütbe şartı', lz_tiers: 'Yalancı Zar masaları', fc_rules: 'Friend Coins kuralları', games_off: 'Oyun yayın durumu' };
   /* v3.3: sitenin beklediği veritabanı sürümü (kurulum.sql). Eski veritabanında ekonomi ayarları kaydedilemez. */
-  const DB_WANT = '3.4.1';
+  const DB_WANT = '3.4.3';
   const verLess = (a, b) => {
     const p = (v) => String(v || '0').split('.').map((x) => parseInt(x, 10) || 0);
     const x = p(a);
@@ -388,9 +388,14 @@
     const dkLock = d.dk_rank_lock !== false;
     const psLock = !!d.ps_rank_lock;
     const tvLock = !!d.tv_rank_lock;
-    const fr = Object.assign({ am: 10, dk: 10, ps: 10, tv: 10, bj_hands: 10, bj: 1, pair_daily: 0 }, d.fc_rules || {});
+    // v3.4.3: Kızma Birader, Yalancı Zar, Amiral Battı
+    const kbLock = !!d.kb_rank_lock;
+    const lzLock = !!d.lz_rank_lock;
+    const abLock = !!d.ab_rank_lock;
+    const lzT = d.lz_tiers || {};
+    const fr = Object.assign({ am: 10, dk: 10, ps: 10, tv: 10, kb: 10, lz: 10, ab: 10, bj_hands: 10, bj: 1, pair_daily: 0 }, d.fc_rules || {});
     box.innerHTML = `${!d.db_version || verLess(d.db_version, DB_WANT) ? dbOldHTML(d.db_version) : ''}
-      <nav class="ec-jump" aria-label="Ekonomi ayarları bölümleri"><a href="#ec-bj" data-jump="bj">Blackjack</a><a href="#ec-levels" data-jump="levels">Online masa ücretleri</a><a href="#ec-ranks" data-jump="ranks">Rütbeler</a><a href="#ec-weekly" data-jump="weekly">Haftalık destek</a><a href="#ec-fc" data-jump="fc">Friend Coins</a></nav>
+      <nav class="ec-jump" aria-label="Ekonomi ayarları bölümleri"><a href="#ec-bj" data-jump="bj">Blackjack</a><a href="#ec-levels" data-jump="levels">Online masa ücretleri</a><a href="#ec-lz" data-jump="lz">Yalancı Zar masaları</a><a href="#ec-ranks" data-jump="ranks">Rütbeler</a><a href="#ec-weekly" data-jump="weekly">Haftalık destek</a><a href="#ec-fc" data-jump="fc">Friend Coins</a></nav>
       <section class="panel ec-sec" data-sec="ranks" id="ec-ranks">
         <div class="panel-head"><h2>Rütbeler</h2>${tag('ranks')}</div>
         <p class="panel-lead">Rütbe adı, başladığı BP, rengi ve simgesi. Alt sınırlar yukarıdan aşağı artmalı; ilk rütbe 0 BP’den başlar. Kaydedince bütün üyelerin rütbesi yeni tabloya göre hesaplanır.</p>
@@ -424,15 +429,33 @@
       </section>
       <section class="panel ec-sec" data-sec="levels" id="ec-levels">
         <div class="panel-head"><h2>Online masa ücretleri ve ödülleri</h2>${tag('table_levels')}</div>
-        <p class="panel-lead">Masa ücreti seçenekleri, o ücreti açabilen en düşük rütbe ve ödüller (BP). Americano, Pişti ve Tavla: oyuncu sayısına göre 1. ve 2. olanın aldığı toplam BP (AM sütunları; Tavla 2 kişilik sütunu kullanır). Dost Kazığı: kazanan takımın her oyuncusuna. Maç başlarken geçerli değerler o maç bitene kadar kullanılır.</p>
+        <p class="panel-lead">Masa ücreti seçenekleri, o ücreti açabilen en düşük rütbe ve ödüller (BP). Americano, Pişti, Tavla, Kızma Birader ve Amiral Battı: oyuncu sayısına göre 1. ve 2. olanın aldığı toplam BP (AM sütunları; Tavla ve Amiral Battı 2 kişilik sütunu kullanır). Yalancı Zar’ın kendi Bronze / Silver / Gold seviyeleri aşağıda. Dost Kazığı: kazanan takımın her oyuncusuna. Maç başlarken geçerli değerler o maç bitene kadar kullanılır.</p>
         <label class="ec-switch"><input type="checkbox" data-amlock ${amLock ? 'checked' : ''}><span><b>Americano’da rütbe şartı uygula</b><small>${amLock ? 'Açık: Americano masa ücretleri rütbe şartına bağlı.' : 'Kapalı: Americano’da herkes bakiyesi yettiği sürece her ücretle masa açabilir.'}</small></span></label>
         <label class="ec-switch"><input type="checkbox" data-dklock ${dkLock ? 'checked' : ''}><span><b>Dost Kazığı’nda rütbe şartı uygula</b><small>${dkLock ? 'Açık: Dost Kazığı masa ücretleri rütbe şartına bağlı.' : 'Kapalı: Dost Kazığı’nda herkes bakiyesi yettiği sürece her ücretle masa açabilir.'}</small></span></label>
         <label class="ec-switch"><input type="checkbox" data-pslock ${psLock ? 'checked' : ''}><span><b>Pişti’de rütbe şartı uygula</b><small>${psLock ? 'Açık: Pişti masa ücretleri rütbe şartına bağlı.' : 'Kapalı: Pişti’de herkes bakiyesi yettiği sürece her ücretle masa açabilir.'}</small></span></label>
         <label class="ec-switch"><input type="checkbox" data-tvlock ${tvLock ? 'checked' : ''}><span><b>Tavla’da rütbe şartı uygula</b><small>${tvLock ? 'Açık: Tavla masa ücretleri rütbe şartına bağlı.' : 'Kapalı: Tavla’da herkes bakiyesi yettiği sürece her ücretle masa açabilir.'}</small></span></label>
+        <label class="ec-switch"><input type="checkbox" data-kblock ${kbLock ? 'checked' : ''}><span><b>Kızma Birader’de rütbe şartı uygula</b><small>${kbLock ? 'Açık: Kızma Birader masa ücretleri rütbe şartına bağlı.' : 'Kapalı: Kızma Birader’de herkes bakiyesi yettiği sürece her ücretle masa açabilir.'}</small></span></label>
+        <label class="ec-switch"><input type="checkbox" data-ablock ${abLock ? 'checked' : ''}><span><b>Amiral Battı’da rütbe şartı uygula</b><small>${abLock ? 'Açık: Amiral Battı masa ücretleri rütbe şartına bağlı.' : 'Kapalı: Amiral Battı’nda herkes bakiyesi yettiği sürece her ücretle masa açabilir.'}</small></span></label>
         <div class="am-scroll"><table class="ec-table ec-levels"><thead><tr><th>Ücret</th><th>En düşük rütbe${(() => { const on = [amLock && 'AM', dkLock && 'DK', psLock && 'Pişti', tvLock && 'Tavla'].filter(Boolean); return on.length === 4 ? '' : on.length ? '<br><small>' + on.join(', ') + '</small>' : '<br><small>şu an kullanılmıyor</small>'; })()}</th><th>AM 2 kişi<br><small>1.</small></th><th>AM 3 kişi<br><small>1. · 2.</small></th><th>AM 4 kişi<br><small>1. · 2.</small></th><th>AM 5 kişi<br><small>1. · 2.</small></th><th>DK 4 kişi</th><th>DK 6 kişi</th><th>DK 8 kişi</th><th></th></tr></thead>
           <tbody>${lv.map(levelRow).join('')}</tbody></table></div>
         <div class="ec-acts"><button class="btn btn-soft" type="button" data-add-level>${icon('plus', 16)}Seviye ekle</button>
           <span class="grow"></span><button class="btn btn-ghost" type="button" data-reset="table_levels">Varsayılana dön</button><button class="btn btn-primary" type="button" data-save="table_levels">Masa seviyelerini kaydet</button></div>
+      </section>
+      <section class="panel ec-sec" data-sec="lz" id="ec-lz">
+        <div class="panel-head"><h2>Yalancı Zar masaları</h2>${tag('lz_tiers')}</div>
+        <p class="panel-lead">Bronze, Silver ve Gold masaların ücreti, rütbe şartı (anahtar açıksa) ve gerçek oyuncu sayısına göre ödüller. Önerilen düzen: 1. yüksek ödülü alır, 2. (en az 3 gerçek oyuncuda) ücretini geri alır. Maç başlarken geçerli değerler o maç bitene kadar kullanılır.</p>
+        <label class="ec-switch"><input type="checkbox" data-lzlock ${lzLock ? 'checked' : ''}><span><b>Yalancı Zar’da rütbe şartı uygula</b><small>${lzLock ? 'Açık: seviyeler rütbe şartına bağlı.' : 'Kapalı: herkes bakiyesi yettiği sürece her seviyeyi açabilir.'}</small></span></label>
+        <div class="ec-tiers">${['bronze', 'silver', 'gold'].map((k) => {
+          const t = lzT[k] || {};
+          const am = t.am || {};
+          const a = (n, i) => ((am[n] || [])[i] != null ? am[n][i] : 0);
+          return `<div class="ec-tier ${k}" data-lztier="${k}"><h3>${TIER_N[k]}</h3>
+            <div class="ec-pair"><label>Masa ücreti (BP)${num(t.fee, 'data-k="fee"')}</label><label>En düşük rütbe<select class="input input-sm" data-k="min_rank">${rankOpts(t.min_rank || 1)}</select></label></div>
+            <label>2 kişi: 1. (BP)${num(a('2', 0), 'data-am="2" data-i="0"')}</label>
+            ${['3', '4', '5'].map((n) => `<div class="ec-pair"><label>${n} kişi: 1.${num(a(n, 0), `data-am="${n}" data-i="0"`)}</label><label>${n} kişi: 2.${num(a(n, 1), `data-am="${n}" data-i="1"`)}</label></div>`).join('')}
+          </div>`;
+        }).join('')}</div>
+        <div class="ec-acts"><span class="grow"></span><button class="btn btn-ghost" type="button" data-reset="lz_tiers">Varsayılana dön</button><button class="btn btn-primary" type="button" data-save="lz_tiers">Yalancı Zar seviyelerini kaydet</button></div>
       </section>
       <section class="panel ec-sec" data-sec="weekly" id="ec-weekly">
         <div class="panel-head"><h2>Haftalık BP desteği</h2>${tag('weekly_support')}</div>
@@ -452,6 +475,9 @@
           <label>Dost Kazığı maç sonu, arkadaş başına (FC)${num(fr.dk, 'data-k="dk"')}</label>
           <label>Pişti maç sonu, arkadaş başına (FC)${num(fr.ps, 'data-k="ps"')}</label>
           <label>Tavla maç sonu, arkadaş başına (FC)${num(fr.tv, 'data-k="tv"')}</label>
+          <label>Kızma Birader maç sonu, arkadaş başına (FC)${num(fr.kb, 'data-k="kb"')}</label>
+          <label>Yalancı Zar maç sonu, arkadaş başına (FC)${num(fr.lz, 'data-k="lz"')}</label>
+          <label>Amiral Battı maç sonu, arkadaş başına (FC)${num(fr.ab, 'data-k="ab"')}</label>
           <label>Blackjack: her kaç ortak elde${num(fr.bj_hands, 'data-k="bj_hands"')}</label>
           <label>Blackjack: arkadaş başına (FC)${num(fr.bj, 'data-k="bj"')}</label>
           <label>Aynı iki arkadaşın günlük FC sınırı (0 = sınırsız)${num(fr.pair_daily, 'data-k="pair_daily"')}</label>
@@ -540,7 +566,18 @@
       if (key === 'fc_rules') {
         const sec = box.querySelector('[data-sec="fc"]');
         const v = (k) => intOf(sec.querySelector(`[data-k="${k}"]`));
-        return { am: v('am'), dk: v('dk'), ps: v('ps'), tv: v('tv'), bj_hands: v('bj_hands'), bj: v('bj'), pair_daily: v('pair_daily') };
+        return { am: v('am'), dk: v('dk'), ps: v('ps'), tv: v('tv'), kb: v('kb'), lz: v('lz'), ab: v('ab'), bj_hands: v('bj_hands'), bj: v('bj'), pair_daily: v('pair_daily') };
+      }
+      if (key === 'lz_tiers') {
+        const o = {};
+        $$('[data-lztier]').forEach((el) => {
+          const am = {};
+          el.querySelectorAll('[data-am]').forEach((inp) => {
+            (am[inp.dataset.am] = am[inp.dataset.am] || [])[+inp.dataset.i] = intOf(inp);
+          });
+          o[el.dataset.lztier] = { fee: intOf(el.querySelector('[data-k="fee"]')), min_rank: +el.querySelector('[data-k="min_rank"]').value, am };
+        });
+        return o;
       }
       if (key === 'weekly_support') {
         const sec = box.querySelector('[data-sec="weekly"]');
@@ -598,6 +635,9 @@
     lockSwitch('[data-dklock]', 'dk_rank_lock', 'Dost Kazığı’nda rütbe şartı açıldı.', 'Dost Kazığı’nda bütün masa ücretleri herkese açık.');
     lockSwitch('[data-pslock]', 'ps_rank_lock', 'Pişti’de rütbe şartı açıldı.', 'Pişti’de bütün masa ücretleri herkese açık.');
     lockSwitch('[data-tvlock]', 'tv_rank_lock', 'Tavla’da rütbe şartı açıldı.', 'Tavla’da bütün masa ücretleri herkese açık.');
+    lockSwitch('[data-kblock]', 'kb_rank_lock', 'Kızma Birader’de rütbe şartı açıldı.', 'Kızma Birader’de bütün masa ücretleri herkese açık.');
+    lockSwitch('[data-ablock]', 'ab_rank_lock', 'Amiral Battı’nda rütbe şartı açıldı.', 'Amiral Battı’nda bütün masa ücretleri herkese açık.');
+    lockSwitch('[data-lzlock]', 'lz_rank_lock', 'Yalancı Zar’da rütbe şartı açıldı.', 'Yalancı Zar’da bütün seviyeler herkese açık.');
     box.querySelector('.ec-jump').addEventListener('click', (e) => {
       const a = e.target.closest('[data-jump]');
       if (!a) return;
@@ -626,7 +666,7 @@
     $$('[data-save]').forEach((b) =>
       b.addEventListener('click', () => {
         const key = b.dataset.save;
-        save(key, collect(key), b, { ranks: 'Rütbeler kaydedildi.', bj_tiers: 'Blackjack seviyeleri kaydedildi.', table_levels: 'Masa seviyeleri kaydedildi.', weekly_support: 'Haftalık destek kaydedildi.', fc_rules: 'Friend Coins kuralları kaydedildi.' }[key]);
+        save(key, collect(key), b, { ranks: 'Rütbeler kaydedildi.', bj_tiers: 'Blackjack seviyeleri kaydedildi.', table_levels: 'Masa seviyeleri kaydedildi.', weekly_support: 'Haftalık destek kaydedildi.', fc_rules: 'Friend Coins kuralları kaydedildi.', lz_tiers: 'Yalancı Zar seviyeleri kaydedildi.' }[key]);
       }),
     );
     $$('[data-reset]').forEach((b) =>
@@ -640,12 +680,12 @@
   }
 
   /* ---------------- v3.2: açık Americano / Dost Kazığı masaları ---------------- */
-  const GAME_N = { 'americano-online': 'Americano Online', 'dostkazigi-online': 'Dost Kazığı Online', 'pisti-online': 'Pişti Online', 'tavla-online': 'Tavla Online' };
+  const GAME_N = { 'americano-online': 'Americano Online', 'dostkazigi-online': 'Dost Kazığı Online', 'pisti-online': 'Pişti Online', 'tavla-online': 'Tavla Online', 'kizma-online': 'Kızma Birader Online', 'yalanci-online': 'Yalancı Zar Online', 'amiral-online': 'Amiral Battı Online' };
 
   /* ---------------- v3.4.1: oyunların yayın durumu ---------------- */
   // Yayından kaldırılan oyun sitede görünmez ve yeni masa açılmaz; süren masalar ve kayıtlar bozulmadan devam eder.
   const PUB_GROUPS = [
-    ['Online masalar', ['blackjack', 'americano-online', 'dostkazigi-online', 'pisti-online', 'tavla-online']],
+    ['Online masalar', ['blackjack', 'americano-online', 'dostkazigi-online', 'pisti-online', 'tavla-online', 'kizma-online', 'yalanci-online', 'amiral-online']],
     ['Dart', ['dartbot', 'dart-mac', 'dart-turnuva', 'dart-lig']],
     ['Skor tabloları ve araçlar', ['americano', 'somali', 'lig', 'kura']],
   ];
@@ -770,7 +810,7 @@
         <section class="eco-game"><h3>${BG.gameTile('dostkazigi-online', 'tile-xs')}Dost Kazığı Online</h3><dl>
           ${row('Tamamlanan ücretli maç', n0(dk.matches))}${row('Giriş ücretleri', n0(dk.fees))}${row('Maç ödülleri (toplanan)', n0(dk.prizes))}${row('Ücret iadeleri', n0(dk.refunds))}${row('Görev ödülleri', n0(dk.missions))}
           <div class="net"><dt>Net BP farkı (oyuncular)</dt><dd class="${sg(dk.net)}">${sgn(dk.net)}</dd></div></dl></section>
-        ${[['pisti-online', 'Pişti Online', d.pisti || {}], ['tavla-online', 'Tavla Online', d.tavla || {}]].map(([k, n, g]) => `<section class="eco-game"><h3>${BG.gameTile(k, 'tile-xs')}${n}</h3><dl>
+        ${[['pisti-online', 'Pişti Online', d.pisti || {}], ['tavla-online', 'Tavla Online', d.tavla || {}], ['kizma-online', 'Kızma Birader Online', d.kizma || {}], ['yalanci-online', 'Yalancı Zar Online', d.yalanci || {}], ['amiral-online', 'Amiral Battı Online', d.amiral || {}]].map(([k, n, g]) => `<section class="eco-game"><h3>${BG.gameTile(k, 'tile-xs')}${n}</h3><dl>
           ${row('Tamamlanan ücretli maç', n0(g.matches))}${row('Giriş ücretleri', n0(g.fees))}${row('Maç ödülleri (toplanan)', n0(g.prizes))}${row('Ücret iadeleri', n0(g.refunds))}${row('Görev ödülleri', n0(g.missions))}
           <div class="net"><dt>Net BP farkı (oyuncular)</dt><dd class="${sg(g.net)}">${sgn(g.net)}</dd></div></dl></section>`).join('')}
         <section class="eco-game"><h3>${BG.gameTile('blackjack', 'tile-xs')}Blackjack Royale</h3><dl>

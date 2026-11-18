@@ -45,7 +45,7 @@
   let view, topbar, tabbar, currentView = null;
 
   function navLink(href, ic, label, badge, extraClass) {
-    return `<a class="nav-link${extraClass ? ' ' + extraClass : ''}" href="#${href}" data-path="${href}">${icon(ic, 20)}<span>${label}</span>${badge ? `<span class="nav-badge" data-badge="${badge}"></span>` : ''}</a>`;
+    return `<a class="nav-link${extraClass ? ' ' + extraClass : ''}" href="#${href}" data-path="${href}" title="${label}">${icon(ic, 20)}<span>${label}</span>${badge ? `<span class="nav-badge" data-badge="${badge}"></span>` : ''}</a>`;
   }
 
   app.renderShell = function () {

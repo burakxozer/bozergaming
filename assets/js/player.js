@@ -88,6 +88,9 @@
           <div><dt>Dost Kazığı</dt><dd>${fmt(dk.played || 0)} maç · ${fmt(dk.wins || 0)} galibiyet · ${BG.pct(dk.wins || 0, dk.played || 0)}</dd></div>
           ${(st.pisti || {}).played ? `<div><dt>Pişti</dt><dd>${fmt(st.pisti.played)} maç · ${fmt(st.pisti.wins || 0)} birincilik</dd></div>` : ''}
           ${(st.tavla || {}).played ? `<div><dt>Tavla</dt><dd>${fmt(st.tavla.played)} maç · ${fmt(st.tavla.wins || 0)} galibiyet</dd></div>` : ''}
+          ${(st.kizma || {}).played ? `<div><dt>Kızma Birader</dt><dd>${fmt(st.kizma.played)} maç · ${fmt(st.kizma.wins || 0)} galibiyet</dd></div>` : ''}
+          ${(st.yalanci || {}).played ? `<div><dt>Yalancı Zar</dt><dd>${fmt(st.yalanci.played)} maç · ${fmt(st.yalanci.wins || 0)} birincilik</dd></div>` : ''}
+          ${(st.amiral || {}).played ? `<div><dt>Amiral Battı</dt><dd>${fmt(st.amiral.played)} maç · ${fmt(st.amiral.wins || 0)} galibiyet</dd></div>` : ''}
           <div><dt>Blackjack</dt><dd>${fmt(bj.played || 0)} ana el · ${fmt(bj.wins || 0)} kazanç · ${BG.pct(bj.wins || 0, bj.played || 0)}</dd></div>
           <div><dt>En yüksek rütbe</dt><dd>${esc(BG.rankInfo(d.bp.best_rank).name)}</dd></div>
         </dl>
@@ -371,7 +374,10 @@
     const bj = st.blackjack || {};
     const ps = st.pisti || {};
     const tv = st.tavla || {};
-    const online = ['americano-online', 'dostkazigi-online', 'pisti-online', 'tavla-online', 'blackjack'];
+    const kb = st.kizma || {};
+    const lz = st.yalanci || {};
+    const ab = st.amiral || {};
+    const online = ['americano-online', 'dostkazigi-online', 'pisti-online', 'tavla-online', 'kizma-online', 'yalanci-online', 'amiral-online', 'blackjack'];
     const others = (d.playtime || []).filter((g) => online.indexOf(g.game) < 0 && g.secs >= 60);
     return `<section class="pp-sec">
         <h2>${icon('gamepad', 18)}Oyunlar</h2>
@@ -399,6 +405,21 @@
             ['Mağlubiyet', fmt(tv.losses || 0)],
             ['Kazanma oranı', BG.pct(tv.wins || 0, tv.played || 0)],
           ], secs('tavla-online'), '#e0a46a')}
+          ${kb.played || secs('kizma-online') ? gameCard('kizma-online', 'Kızma Birader Online', [
+            ['Toplam maç', fmt(kb.played || 0)],
+            ['Galibiyet', fmt(kb.wins || 0)],
+            ['Kazanma oranı', BG.pct(kb.wins || 0, kb.played || 0)],
+          ], secs('kizma-online'), '#ff6f6a') : ''}
+          ${lz.played || secs('yalanci-online') ? gameCard('yalanci-online', 'Yalancı Zar Online', [
+            ['Toplam maç', fmt(lz.played || 0)],
+            ['Birincilik', fmt(lz.wins || 0)],
+            ['Kazanma oranı', BG.pct(lz.wins || 0, lz.played || 0)],
+          ], secs('yalanci-online'), '#d79bff') : ''}
+          ${ab.played || secs('amiral-online') ? gameCard('amiral-online', 'Amiral Battı Online', [
+            ['Toplam maç', fmt(ab.played || 0)],
+            ['Galibiyet', fmt(ab.wins || 0)],
+            ['Kazanma oranı', BG.pct(ab.wins || 0, ab.played || 0)],
+          ], secs('amiral-online'), '#7fb7ff') : ''}
           ${gameCard('blackjack', 'Blackjack Royale', [
             ['Toplam ana el', fmt(bj.played || 0)],
             ['Kazanılan', fmt(bj.wins || 0)],
