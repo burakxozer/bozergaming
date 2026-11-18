@@ -12,6 +12,9 @@
   const AWAY_MS = 20000; // bu kadar süre ses vermeyen oyuncunun yerine bot oynar
   const DRIVER_MS = 12000; // botları yöneten tarayıcı bu kadar sessiz kalırsa sıradaki devralır
   const PING_MS = 5000;
+  /* v3.4.2: canlı bağlantı (realtime) yokken ya da koptuğunda yeni hamleleri bu aralıkla sor; rakip attıktan
+     sonra 5 saniyelik nabzı beklemeyelim */
+  const POLL_MS = 1500;
   const PAGE = 800; // sunucunun tek seferde verdiği hamle sayısı
 
   /* ---------------- yardımcılar ---------------- */
@@ -2255,6 +2258,13 @@
       }
     } else this.gapSince = 0;
     if (this.pending.length && !this.inflight) this.post();
+    const rt = this.cur && this.cur.link ? this.cur.link.status : null;
+    if (rt !== 'SUBSCRIBED' && this.table.status === 'playing' && !this.fetching && !this.fetchT && !document.hidden) {
+      if (!this.lastPoll || now - this.lastPoll >= POLL_MS) {
+        this.lastPoll = now;
+        this.scheduleFetch(0);
+      }
+    }
     if (this.GA && this.GA.onTick) this.GA.onTick();
   };
 
