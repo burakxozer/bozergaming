@@ -8,8 +8,8 @@
 <link rel="preconnect" href="https://fonts.googleapis.com" />
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
 <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@600;700;800&family=Manrope:wght@400;500;600;700;800&display=swap" rel="stylesheet" />
-<link rel="stylesheet" href="assets/css/bg-table.css?v=3.4.2" />
-<link rel="stylesheet" href="assets/css/badges.css?v=3.4.2" />
+<link rel="stylesheet" href="assets/css/bg-table.css?v=3.4.3" />
+<link rel="stylesheet" href="assets/css/badges.css?v=3.4.3" />
 <style>
 /* =====================================================================
    Bözer Royale — görünüm: zümrüt keçe, siyah ve altın, sıcak ışık
@@ -691,7 +691,8 @@ html[data-q='low'] .hand-glow, html[data-q='low'] .spot-hl, html[data-q='low'] .
 .bj-stage[data-layout='port'] .seat-name em { font-size: 13px; }
 .bj-stage[data-layout='port'] .seat-sub { font-size: 17px; }
 .bj-stage[data-layout='port'] .seat-kalk { position: absolute; left: calc(50% + 40px); top: 6px; font-size: 19px; padding: 8px 14px; }
-.bj-stage[data-layout='port'] .seat-plate.sl .seat-kalk { left: auto; right: calc(50% + 40px); }
+/* v3.4.3: soldaki koltuklarda (P6, P7) "KALK" ekranın dışına taşmasın: avatarın sağ üstünde */
+.bj-stage[data-layout='port'] .seat-plate.sl .seat-kalk { left: calc(50% + 26px); right: auto; top: -16px; font-size: 15px; padding: 4px 10px; }
 .bj-stage[data-layout='port'] .seat-plate.sc .seat-kalk { left: calc(50% + 18px); top: -14px; font-size: 15px; padding: 4px 10px; }
 .bj-stage[data-layout='port'] .seat-name em { display: none; }
 .bj-stage[data-layout='port'] .seat-sit { width: 100px; height: 100px; font-size: 19px; }
@@ -1098,6 +1099,28 @@ html[data-q='high'] .cd.reveal::before { background: rgba(255, 214, 130, .7); fi
   .sbk-x { min-width: 24px; font-size: 14px; }
 }
 
+/* =====================================================================
+   v3.4.3: Auto Rebet sol üstte, küçük (masadaki potları kapatmaz)
+   ===================================================================== */
+.ar-float { position: absolute; z-index: 30; left: calc(10px + env(safe-area-inset-left)); top: calc(var(--hud-h, 64px) + 8px); display: flex; pointer-events: none; }
+.ar-float[hidden] { display: none; }
+.ar-float .ar-group { flex-direction: column; align-items: flex-start; gap: 5px; pointer-events: auto; }
+.ar-float .ar { padding: 4px 10px; font-size: 10.5px; letter-spacing: .06em; background: rgba(6, 8, 6, .72); -webkit-backdrop-filter: blur(6px); backdrop-filter: blur(6px); }
+.ar-float .ar i { font-size: 14px; }
+@media (max-width: 760px) {
+  .ar-float { top: calc(var(--hud-h, 60px) + 6px); left: calc(6px + env(safe-area-inset-left)); }
+  .ar-float .ar { padding: 3px 8px; font-size: 10px; }
+  .ar-float .ar span { display: none; }
+  .ar-float .ar em { font-size: 10px; opacity: .9; }
+}
+/* yatay telefon: bahis bilgisi (yan bahisler, pot sekmeleri) masanın sol üstüne — P6/P7 potlarını kapatmaz */
+@media (max-height: 500px) and (orientation: landscape) {
+  .ar-float { top: calc(var(--hud-h, 44px) + 4px); }
+  .ar-float .ar-group { flex-direction: row; }
+  .dock[data-mode='bet'] .dk-info { position: fixed; left: calc(8px + env(safe-area-inset-left)); bottom: auto; top: calc(var(--hud-h, 44px) + 34px); max-width: min(40vw, 320px); }
+  .dock[data-mode='pre'] .dk-info { position: fixed; left: calc(8px + env(safe-area-inset-left)); bottom: auto; top: calc(var(--hud-h, 44px) + 34px); max-width: min(40vw, 320px); }
+}
+
 </style>
 </head>
 <body>
@@ -1106,10 +1129,11 @@ html[data-q='high'] .cd.reveal::before { background: rgba(255, 214, 130, .7); fi
 <section id="table" class="bj-view" hidden aria-label="Blackjack masası">
   <header id="hud" class="bj-hud"></header>
   <div id="scene" class="bj-scene"></div>
+  <div id="arFloat" class="ar-float" hidden></div>
   <footer id="controls" class="bj-controls"></footer>
 </section>
 <aside id="chat" class="bj-chat" hidden aria-label="Masa sohbeti"></aside>
-<script src="assets/js/bg-table.js?v=3.4.2"></script>
+<script src="assets/js/bg-table.js?v=3.4.3"></script>
 <script>
 /* ---- cards.js ---- */
 /* =====================================================================
@@ -4625,6 +4649,7 @@ html[data-q='high'] .cd.reveal::before { background: rgba(255, 214, 130, .7); fi
       }, true);
       $('#hud').addEventListener('click', onHud);
       $('#controls').addEventListener('click', onControls);
+      $('#arFloat').addEventListener('click', onControls);
       // kontrol paneli büyüyüp küçüldükçe masa yeniden sığdırılır
       if (window.ResizeObserver) new ResizeObserver(() => G.scene && G.view === 'table' && fitScene()).observe($('#scene'));
     } else G.scene.reset();
@@ -5260,7 +5285,7 @@ html[data-q='high'] .cd.reveal::before { background: rgba(255, 214, 130, .7); fi
         : '';
       const allReadyHint = mySeats.length && anyBet ? (allOk ? 'Hazırsın. Herkes hazırsa süre 3 sn’ye iner.' : 'Bahsini koy ve Hazır’a bas; herkes hazırsa 3 sn kalır.') : 'Fişe dokun, bahsini kur, Hazır’a bas.';
       const who = `<p class="dk-who${side ? ' has-kind' : ''}"><b>Bahis</b><span class="dk-amt">${fmt(amt)} BP</span><small>${fmt(L.min)}–${fmt(L.max)} BP · fiş ${fmt(L.chip)} · ${allReadyHint}</small></p>`;
-      const info = `${who}${sideRow}${tabs}${arPills(mySeats)}`;
+      const info = `${who}${sideRow}${tabs}`;
       const maxOk = amt < L.max;
       html = dock(
         'bet',
@@ -5311,8 +5336,23 @@ html[data-q='high'] .cd.reveal::before { background: rgba(255, 214, 130, .7); fi
         html = dock('pre', info, b(ACT.slice(0, 3)), b(ACT.slice(3)), null);
       } else if (st.state === 'RESULT_DISPLAY' && st.round && st.round.settled && !st.round.cancelled && myRoundNet() != null) {
         const n = myRoundNet();
-        html = dock('res', arPills(mySeats), '', '', `<div class="ctl-res ${n > 0 ? 'win' : n < 0 ? 'lose' : 'push'}"><span>Bu tur</span><b>${sgn(n)} BP</b><small>Yeni tur birazdan başlıyor.</small></div>`);
-      } else html = dock('wait', mySeats.length ? arPills(mySeats) : null, '', '', `<p class="ctl-status">${esc(statusLine(st))}</p>`);
+        html = dock('res', null, '', '', `<div class="ctl-res ${n > 0 ? 'win' : n < 0 ? 'lose' : 'push'}"><span>Bu tur</span><b>${sgn(n)} BP</b><small>Yeni tur birazdan başlıyor.</small></div>`);
+      } else html = dock('wait', null, '', '', `<p class="ctl-status">${esc(statusLine(st))}</p>`);
+    }
+    // v3.4.3: Auto Rebet düğmeleri sol üstte küçük (telefonda P6/P7 potlarının üstüne binmez)
+    const arBox = $('#arFloat');
+    if (arBox) {
+      const hh = $('#hud') ? $('#hud').offsetHeight : 0;
+      if (hh && arBox._hh !== hh) {
+        arBox._hh = hh;
+        $('#table').style.setProperty('--hud-h', hh + 'px');
+      }
+      const arHtml = mySeats.length ? arPills(mySeats) : '';
+      if (arBox._html !== arHtml) {
+        arBox.innerHTML = arHtml;
+        arBox._html = arHtml;
+      }
+      arBox.hidden = !arHtml;
     }
     if (box._html !== html) {
       box.innerHTML = html;

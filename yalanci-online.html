@@ -1,0 +1,1270 @@
+<!doctype html>
+<html lang="tr">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no, viewport-fit=cover" />
+<meta name="theme-color" content="#0a1a12" />
+<title>Yalancı Zar Online · Bözer Gaming</title>
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@600;700;800;900&family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet" />
+<link rel="stylesheet" href="assets/css/bz-kit.css?v=3.4.3" />
+<link rel="stylesheet" href="assets/css/bg-table.css?v=3.4.3" />
+<link rel="stylesheet" href="assets/css/badges.css?v=3.4.3" />
+<style>
+/* ---------------- Yalancı Zar (site) ---------------- */
+body { --bz-accent: #d9534f; }
+.yz-wrap { position: absolute; inset: 0; display: grid; grid-template-rows: minmax(0, 1fr) auto; gap: 8px; padding: calc(58px + var(--bz-safe-t)) calc(8px + var(--bz-safe-r)) calc(8px + var(--bz-safe-b)) calc(8px + var(--bz-safe-l)); }
+.yz-wrap.land { grid-template-columns: minmax(0, 1fr) minmax(300px, 38%); grid-template-rows: minmax(0, 1fr); }
+.yz-table { position: relative; min-height: 0; }
+.yz-felt { position: absolute; left: 5%; right: 5%; top: 12%; bottom: 6%; border-radius: 50%; background: radial-gradient(70% 70% at 50% 40%, #1f7a55 0%, #11533a 55%, #082a1d 100%);
+  box-shadow: 0 0 0 10px #4a2a14, 0 0 0 13px #c9a46a, 0 24px 60px rgba(0, 0, 0, 0.6), inset 0 0 60px rgba(0, 0, 0, 0.5); }
+.yz-center { position: absolute; left: 50%; top: 52%; transform: translate(-50%, -50%); display: grid; justify-items: center; gap: 6px; text-align: center; max-width: 80%; }
+
+/* ortadaki teklif: büyük, okunaklı zar */
+.yz-bid { display: grid; justify-items: center; gap: 4px; min-height: 92px; padding: 10px 18px 8px; border-radius: 20px; background: rgba(4, 18, 12, 0.72); border: 1px solid rgba(248, 226, 164, 0.4); box-shadow: 0 10px 30px rgba(0, 0, 0, 0.45); }
+.yz-bid.pulse { animation: yzPulse 0.5s ease; }
+@keyframes yzPulse { 30% { transform: scale(1.08); box-shadow: 0 0 0 3px rgba(248, 226, 164, 0.6), 0 10px 30px rgba(0, 0, 0, 0.45); } }
+.yz-bidrow { display: flex; align-items: center; gap: 10px; }
+.yz-bq { font: 900 clamp(44px, 9vmin, 64px)/1 var(--bz-display); color: var(--bz-gold-hi); text-shadow: 0 3px 10px rgba(0, 0, 0, 0.6); min-width: 1ch; }
+.yz-x { font: 800 28px/1 var(--bz-font); color: var(--bz-muted); }
+.yz-by { font-size: 12.5px; font-weight: 750; color: #cfe8db; max-width: 240px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.yz-none { color: #cfe8db; font-weight: 750; font-size: 14.5px; padding: 18px 6px; }
+.yz-total { font-size: 12.5px; color: #b9dccb; font-weight: 750; padding: 3px 10px; border-radius: 99px; background: rgba(0, 0, 0, 0.25); }
+
+/* düz zar yüzü (iri noktalı) */
+.yz-face { --fs: 26px; display: inline-grid; grid-template-columns: repeat(3, 1fr); grid-template-rows: repeat(3, 1fr); width: var(--fs); height: var(--fs); padding: calc(var(--fs) * 0.13); border-radius: 20%; flex: none;
+  background: linear-gradient(145deg, #ffffff, #efe6d2); box-shadow: inset 0 calc(var(--fs) * -0.06) calc(var(--fs) * 0.08) rgba(0, 0, 0, 0.18), 0 2px 5px rgba(0, 0, 0, 0.4); vertical-align: middle; }
+.yz-face i { width: 82%; height: 82%; margin: auto; border-radius: 50%; visibility: hidden; background: radial-gradient(circle at 35% 30%, #4a3a30, #120b07 70%); }
+.yz-face i.on { visibility: visible; }
+.yz-face[data-v='1'] i.on { background: radial-gradient(circle at 35% 30%, #ff6b6b, #a3141b 70%); }
+.yz-face.big { --fs: clamp(62px, 13vmin, 86px); border-radius: 18%; }
+.yz-face.tiny { --fs: 20px; box-shadow: none; }
+
+/* koltuklar */
+.yz-seat { position: absolute; transform: translate(-50%, -50%); width: max-content; display: grid; justify-items: center; gap: 3px; transition: filter 0.3s, opacity 0.3s; z-index: 3; }
+.yz-seat.me { z-index: 4; }
+.yz-seat.out { opacity: 0.4; filter: grayscale(1); }
+.yz-seat.lose { animation: yzLose 1.1s ease; }
+.yz-seat.gain .yz-tag { box-shadow: 0 0 0 2px #7ff0b4, 0 0 22px rgba(80, 230, 160, 0.6); }
+@keyframes yzLose { 15%, 45% { transform: translate(-50%, -50%) translateX(-6px); } 30%, 60% { transform: translate(-50%, -50%) translateX(6px); } }
+.yz-cup { position: relative; width: 46px; height: 50px; }
+.yz-seat.me .yz-cup { display: none; }
+.yz-cupb { position: absolute; inset: 0; clip-path: polygon(8% 0, 92% 0, 80% 100%, 20% 100%); background: linear-gradient(90deg, #3a140b, #9c4a2a 42%, #b8643a 52%, #7a3219 64%, #3a140b);
+  box-shadow: inset 0 6px 0 rgba(255, 220, 170, 0.25); transition: transform 0.45s cubic-bezier(0.3, 0.8, 0.3, 1.2), opacity 0.4s; transform-origin: 50% 0; z-index: 2; }
+.yz-cupb::after { content: ''; position: absolute; left: 10%; right: 10%; top: 26%; height: 4px; background: rgba(226, 191, 110, 0.6); }
+.yz-cup.shake .yz-cupb, .yz-mycup.shake .yz-cupb { animation: yzShake 0.6s ease; }
+@keyframes yzShake { 20% { transform: rotate(-12deg) translateY(-4px); } 45% { transform: rotate(11deg); } 70% { transform: rotate(-7deg); } }
+.yz-cup.up .yz-cupb { transform: translateY(-30px) rotate(-14deg); opacity: 0.55; }
+.yz-tag { position: relative; display: flex; align-items: center; gap: 6px; padding: 4px 10px 6px 4px; border-radius: 99px; background: rgba(14, 10, 7, 0.9); border: 1px solid var(--bz-line); white-space: nowrap; overflow: hidden; transition: border-color 0.2s, box-shadow 0.2s; max-width: 46vw; }
+.yz-seat.on .yz-tag { border-color: rgba(248, 226, 164, 0.95); box-shadow: 0 0 18px rgba(248, 210, 120, 0.5); }
+.yz-avw { display: grid; place-items: center; cursor: pointer; flex: none; }
+.yz-av { display: grid; place-items: center; border-radius: 50%; font-weight: 800; font-size: 13px; background: radial-gradient(circle at 35% 30%, #c98a4b, #5e3214); color: #fff4dc; }
+.yz-tn { display: grid; line-height: 1.15; min-width: 0; }
+.yz-tn b { font-size: 13px; max-width: 120px; overflow: hidden; text-overflow: ellipsis; }
+.yz-tn .t-bot { color: #b8c2ff; font-size: 0.82em; }
+.yz-dn { display: inline-flex; align-items: center; gap: 3px; font-size: 12px; color: var(--bz-gold-hi); }
+.yz-dn svg { opacity: 0.85; }
+.yz-dn em { font-size: 11px; color: var(--bz-red); font-style: normal; font-weight: 800; }
+.yz-time { position: absolute; left: 0; bottom: 0; height: 3px; width: calc(var(--t, 1) * 100%); background: linear-gradient(90deg, #45cf8c, #9ff2c8); opacity: 0; transition: width 0.5s linear; }
+.yz-seat.timed .yz-time { opacity: 1; }
+.yz-seat.late .yz-time { background: linear-gradient(90deg, #ec5a5f, #ffb27a); }
+.yz-say { position: absolute; bottom: calc(100% + 2px); left: 50%; transform: translateX(-50%) scale(0.8); opacity: 0; padding: 5px 11px; border-radius: 12px; white-space: nowrap; display: flex; align-items: center; gap: 6px;
+  font: 900 16px/1.1 var(--bz-font); color: #2a1606; background: #fff4d6; box-shadow: 0 6px 16px rgba(0, 0, 0, 0.45); transition: opacity 0.2s, transform 0.25s; pointer-events: none; z-index: 6; }
+.yz-say .yz-face { --fs: 24px; }
+.yz-say::after { content: ''; position: absolute; left: 50%; top: 100%; transform: translateX(-50%); border: 7px solid transparent; border-top-color: #fff4d6; }
+.yz-say.show { opacity: 1; transform: translateX(-50%) scale(1); }
+.yz-say.mine { background: #d9f7e6; }
+.yz-say.mine::after { border-top-color: #d9f7e6; }
+.yz-say.loud { color: #fff; background: #c8321f; font-size: 19px; letter-spacing: 0.04em; }
+.yz-say.loud::after { border-top-color: #c8321f; }
+.yz-seat.me .yz-say { bottom: calc(100% + 4px); }
+
+/* açılış: küçük panel (ekranı kaplamaz) */
+.yz-reveal { position: absolute; left: 50%; top: 50%; transform: translate(-50%, -50%); z-index: 20; width: min(560px, 96%); max-height: 92%; display: flex; }
+.yz-rcard { width: 100%; display: grid; grid-template-rows: auto minmax(0, 1fr) auto; gap: 8px; padding: 10px 12px; border-radius: 16px; background: rgba(12, 9, 6, 0.95); border: 1px solid rgba(248, 226, 164, 0.5); box-shadow: 0 18px 44px rgba(0, 0, 0, 0.6); animation: bzPop 0.25s ease; }
+.yz-rcard.ok { border-color: rgba(127, 240, 180, 0.8); }
+.yz-rcard.no { border-color: rgba(255, 120, 110, 0.85); }
+.yz-rhead { display: flex; align-items: center; justify-content: space-between; gap: 10px; font-size: 14px; font-weight: 750; }
+.yz-rhead b.liar { color: #ff8a7f; letter-spacing: 0.03em; }
+.yz-rhead b.tam { color: #8fd0ff; letter-spacing: 0.03em; }
+.yz-rbid { display: inline-flex; align-items: center; gap: 6px; font: 900 20px/1 var(--bz-display); color: var(--bz-gold-hi); }
+.yz-rbid .yz-face { --fs: 26px; }
+.yz-rbid small { font: 700 11.5px/1 var(--bz-font); color: var(--bz-muted); }
+.yz-rlist { list-style: none; margin: 0; padding: 0; display: grid; gap: 4px; overflow-y: auto; }
+.yz-rlist li { display: grid; grid-template-columns: minmax(56px, 92px) 1fr auto; align-items: center; gap: 8px; padding: 4px 8px; border-radius: 10px; background: rgba(255, 255, 255, 0.04); }
+.yz-rlist li.bidder { background: rgba(248, 226, 164, 0.08); }
+.yz-rlist li b { font-size: 12.5px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.yz-rdice { display: flex; flex-wrap: wrap; gap: 3px; }
+.yz-rdice .yz-face { --fs: 22px; box-shadow: 0 1px 2px rgba(0, 0, 0, 0.4); transition: transform 0.15s, box-shadow 0.15s, opacity 0.2s; }
+.yz-rdice .yz-face.miss { opacity: 0.32; }
+.yz-rdice .yz-face.hit { opacity: 0.7; }
+.yz-rdice .yz-face.lit { opacity: 1; box-shadow: 0 0 0 2px #ffe08a, 0 0 10px rgba(255, 214, 110, 0.9); transform: translateY(-2px); }
+.yz-rn { font: 900 15px/1 var(--bz-display); color: var(--bz-dim); font-style: normal; min-width: 18px; text-align: right; }
+.yz-rlist li.has .yz-rn { color: var(--bz-gold-hi); }
+.yz-rfoot { display: flex; align-items: center; justify-content: space-between; gap: 10px; flex-wrap: wrap; }
+.yz-rcount { font: 900 28px/1 var(--bz-display); color: #fff; }
+.yz-rcount b { color: var(--bz-gold-hi); }
+.yz-rres { font-size: 13.5px; color: var(--bz-ink); }
+.yz-rres b { font-size: 15px; margin-right: 4px; }
+.yz-rcard.ok .yz-rres b { color: #9ff2c8; }
+.yz-rcard.no .yz-rres b { color: #ff9b94; }
+.yz-rres em { color: #ffb3aa; font-style: normal; font-weight: 800; }
+
+/* alt panel: benim zarlarım ve teklif */
+.yz-dock { position: relative; display: grid; grid-template-columns: auto 1fr; gap: 14px; align-items: center; padding: 10px 12px; border-radius: 18px; background: rgba(16, 11, 8, 0.94); border: 1px solid var(--bz-line); }
+.yz-wrap.land .yz-dock { grid-template-columns: 1fr; align-self: stretch; align-content: center; }
+.yz-mine { position: relative; display: flex; gap: 8px; align-items: center; justify-content: center; min-height: 56px; min-width: 0; flex-wrap: nowrap; }
+.yz-mine .bz-die.hid .f i { visibility: hidden; }
+.yz-mine .bz-die.hid .f { background: linear-gradient(145deg, #d8cdb6, #b3a487); }
+.yz-mycup { position: absolute; left: 50%; top: 50%; width: min(220px, 90%); height: 64px; transform: translate(-50%, -50%); z-index: 3; }
+.yz-mycup .yz-cupb { clip-path: polygon(4% 0, 96% 0, 88% 100%, 12% 100%); }
+.yz-mycup.up .yz-cupb { transform: translateY(-70px) rotate(-8deg); opacity: 0; }
+.yz-out { color: var(--bz-muted); font-weight: 700; text-align: center; }
+.yz-ctl { display: grid; gap: 8px; transition: opacity 0.2s; }
+.yz-ctl.off { opacity: 0.5; }
+.yz-ctl.off .bz-btn, .yz-ctl.off .bz-ib { pointer-events: none; }
+.yz-qrow { display: flex; align-items: center; gap: 8px; flex-wrap: wrap; justify-content: center; }
+.yz-q { min-width: 44px; text-align: center; font: 900 32px/1 var(--bz-display); color: var(--bz-gold-hi); }
+.yz-qrow .bz-ib { font-size: 22px; font-weight: 800; }
+.yz-faces { display: flex; gap: 5px; }
+.yz-faces button { padding: 4px; border-radius: 11px; border: 2px solid transparent; background: rgba(255, 255, 255, 0.04); cursor: pointer; }
+.yz-faces button[aria-pressed='true'] { border-color: #f8e2a4; background: rgba(248, 226, 164, 0.18); box-shadow: 0 0 12px rgba(248, 226, 164, 0.35); }
+.yz-faces button[disabled] { cursor: default; }
+.yz-faces .yz-face { --fs: 34px; }
+.yz-arow { display: grid; grid-template-columns: 1.4fr 1fr 1fr; gap: 8px; }
+.yz-arow .bz-btn { min-height: 48px; padding: 0 10px; }
+.yz-arow .bz-btn b { font-size: 17px; }
+.yz-arow .bz-btn .yz-face { --fs: 20px; }
+.bz-btn.blue { color: #e6f3ff; border-color: rgba(99, 166, 255, 0.55); background: linear-gradient(180deg, #1f4f86, #12325a); }
+.yz-odds { font-size: 12.5px; color: var(--bz-muted); font-weight: 700; min-height: 16px; text-align: center; }
+.yz-netpill { position: absolute; z-index: 70; left: 50%; top: calc(62px + var(--bz-safe-t)); transform: translateX(-50%); padding: 6px 14px; border-radius: 99px; font-weight: 800; font-size: 13px; color: #2a1406; background: linear-gradient(180deg, #ffd88a, #e7a63c); }
+
+/* dikey telefon */
+.yz-wrap.port .yz-dock { grid-template-columns: 1fr; gap: 8px; padding: 8px; }
+.yz-wrap.port .yz-felt { top: 10%; bottom: 8%; left: 2%; right: 2%; }
+@media (max-width: 420px) {
+  .yz-faces .yz-face { --fs: 30px; }
+  .yz-faces { gap: 3px; }
+  .yz-faces button { padding: 3px; }
+  .yz-q { font-size: 28px; min-width: 36px; }
+  .yz-arow .bz-btn { font-size: 14px; }
+  .yz-tn b { max-width: 84px; font-size: 12px; }
+  .yz-say { font-size: 14px; }
+  .yz-say .yz-face { --fs: 20px; }
+}
+@media (max-width: 560px) and (orientation: portrait) {
+  .yz-wrap { padding-top: calc(90px + var(--bz-safe-t)); }
+}
+/* yatay telefon */
+@media (max-height: 520px) and (orientation: landscape) {
+  .yz-wrap { padding-top: calc(52px + var(--bz-safe-t)); gap: 6px; }
+  .yz-dock { padding: 6px 8px; gap: 6px; }
+  .yz-mine { min-height: 44px; }
+  .yz-faces .yz-face { --fs: 28px; }
+  .yz-arow .bz-btn { min-height: 42px; }
+  .yz-q { font-size: 26px; }
+  .yz-bid { min-height: 0; padding: 6px 12px; }
+  .yz-face.big { --fs: 56px; }
+  .yz-bq { font-size: 42px; }
+  .yz-cup { width: 36px; height: 38px; }
+  .yz-rlist li { padding: 2px 6px; }
+  .yz-rdice .yz-face { --fs: 18px; }
+  .yz-rcount { font-size: 22px; }
+}
+.yz-wrap.land .yz-dock { align-self: center; max-height: 100%; overflow-y: auto; }
+.yz-dock-h { display: none; font: 800 13px/1.2 var(--bz-font); color: var(--bz-muted); text-align: center; letter-spacing: 0.02em; }
+.yz-wrap.land .yz-dock-h { display: block; }
+
+</style>
+</head>
+<body>
+<noscript>Bu oyunu oynamak için JavaScript'i etkinleştirin.</noscript>
+<div id="start" hidden></div>
+<section id="net" class="t-screen" aria-label="Online masalar" hidden></section>
+<div id="game" class="bz-game" hidden>
+  <header id="hud" class="bz-hud"></header>
+</div>
+<script src="assets/js/bg-table.js?v=3.4.3"></script>
+<script src="assets/js/bz-kit.js?v=3.4.3"></script>
+<script>
+window.GAME_ART = "<svg viewBox=\"0 0 360 220\" xmlns=\"http://www.w3.org/2000/svg\"><defs><linearGradient id=\"yzc\" x1=\"0\" y1=\"0\" x2=\"1\" y2=\"0\"><stop offset=\"0\" stop-color=\"#4a1d12\"/><stop offset=\".45\" stop-color=\"#9c4a2a\"/><stop offset=\".6\" stop-color=\"#7a3219\"/><stop offset=\"1\" stop-color=\"#3a140b\"/></linearGradient><radialGradient id=\"yzf\" cx=\".5\" cy=\".4\" r=\".7\"><stop offset=\"0\" stop-color=\"#1f6b4c\"/><stop offset=\"1\" stop-color=\"#0a2b1f\"/></radialGradient></defs><ellipse cx=\"180\" cy=\"150\" rx=\"170\" ry=\"62\" fill=\"url(#yzf)\"/><ellipse cx=\"180\" cy=\"150\" rx=\"170\" ry=\"62\" fill=\"none\" stroke=\"#c9a46a\" stroke-width=\"4\"/><g transform=\"translate(110 70) rotate(-12)\"><path d=\"M-34 0 L34 0 L26 86 L-26 86 Z\" fill=\"url(#yzc)\"/><ellipse cx=\"0\" cy=\"0\" rx=\"34\" ry=\"9\" fill=\"#5b2614\"/><ellipse cx=\"0\" cy=\"86\" rx=\"26\" ry=\"7\" fill=\"#2b0f08\"/><path d=\"M-30 18 h60 M-28 62 h56\" stroke=\"#e2bf6e\" stroke-opacity=\".6\" stroke-width=\"3\"/></g><g><rect x=\"196\" y=\"118\" width=\"38\" height=\"38\" rx=\"8\" fill=\"#fffdf6\" stroke=\"#cdbb92\" stroke-width=\"2\" transform=\"rotate(-10 215 137)\"/><g fill=\"#1b120c\" transform=\"rotate(-10 215 137)\"><circle cx=\"205\" cy=\"128\" r=\"3.6\"/><circle cx=\"225\" cy=\"128\" r=\"3.6\"/><circle cx=\"215\" cy=\"137\" r=\"3.6\"/><circle cx=\"205\" cy=\"146\" r=\"3.6\"/><circle cx=\"225\" cy=\"146\" r=\"3.6\"/></g><rect x=\"244\" y=\"132\" width=\"38\" height=\"38\" rx=\"8\" fill=\"#fffdf6\" stroke=\"#cdbb92\" stroke-width=\"2\" transform=\"rotate(14 263 151)\"/><g fill=\"#1b120c\" transform=\"rotate(14 263 151)\"><circle cx=\"253\" cy=\"142\" r=\"3.6\"/><circle cx=\"273\" cy=\"160\" r=\"3.6\"/><circle cx=\"263\" cy=\"151\" r=\"3.6\"/></g><rect x=\"160\" y=\"150\" width=\"34\" height=\"34\" rx=\"7\" fill=\"#fffdf6\" stroke=\"#cdbb92\" stroke-width=\"2\" transform=\"rotate(24 177 167)\"/><g fill=\"#c1272d\" transform=\"rotate(24 177 167)\"><circle cx=\"177\" cy=\"167\" r=\"4.4\"/></g></g><g><rect x=\"214\" y=\"30\" width=\"130\" height=\"50\" rx=\"14\" fill=\"#1a0e09\" stroke=\"#e2bf6e\" stroke-width=\"2.5\"/><text x=\"279\" y=\"64\" text-anchor=\"middle\" font-family=\"Georgia,serif\" font-weight=\"700\" font-size=\"26\" fill=\"#f8e2a4\">YALAN!</text></g></svg>";
+/* ---- engine.js ---- */
+/* =====================================================================
+   YALANCI ZAR — motor (saf ve belirlenimci; online kilit adım için)
+   Herkes 5 zarla başlar. Her elde zarlar kupanın altında atılır (online: masanın tohumundan; her el ayrı).
+   Sırayla teklif: "masada en az q tane f var" (birler jokerse 1'ler her yüzü sayar, teklif 2–6'ya verilir).
+   Teklif yükseltilir (daha çok adet ya da aynı adette daha büyük yüz) ya da "Yalan!" denir.
+   "Tam!": sayının tam tuttuğunu iddia eder; tutarsa bir zar KAZANIR (v3.4.3: üst sınır yok, 5'ken de artar),
+   tutmazsa bir zar kaybeder. Zarı biten elenir; son kalan kazanır.
+
+   Hamleler: {seat, kind: 'bid', data: {q, f, k}} | {seat, kind: 'liar'|'tam', data: {k}} |
+             {seat: null, kind: 'next', data: {k}} (açılıştan sonra yeni el). data.k: adım (st.step).
+   ===================================================================== */
+(function (root) {
+  'use strict';
+  function rng(seed) {
+    let a = seed >>> 0 || 1;
+    return () => {
+      a = (a + 0x6d2b79f5) | 0;
+      let t = Math.imul(a ^ (a >>> 15), 1 | a);
+      t = (t + Math.imul(t ^ (t >>> 7), 61 | t)) ^ t;
+      return ((t ^ (t >>> 14)) >>> 0) / 4294967296;
+    };
+  }
+  /** o: { n, seed, first, jokers, tam, start (başlangıç zarı, 5) } */
+  function newGame(o) {
+    const n = Math.max(2, Math.min(6, o.n | 0 || 4));
+    const st = {
+      n,
+      seed: (o.seed >>> 0) || 1,
+      dice: new Array(n).fill(Math.max(1, o.start | 0 || 5)),
+      cups: [],
+      round: 0,
+      bid: null,
+      bidder: null,
+      cur: 0,
+      phase: 'bid',
+      jokers: o.jokers !== false,
+      tam: o.tam !== false,
+      out: [],
+      log: [],
+      last: null,
+      step: 0,
+      over: false,
+      winner: null,
+    };
+    newRound(st, ((o.first | 0) % n + n) % n);
+    return st;
+  }
+  const clone = (st) => JSON.parse(JSON.stringify(st));
+  const alive = (st) => st.dice.map((d, i) => (d > 0 ? i : -1)).filter((i) => i >= 0);
+  function nextAlive(st, p) {
+    for (let k = 1; k <= st.n; k++) {
+      const q = (p + k) % st.n;
+      if (st.dice[q] > 0) return q;
+    }
+    return p;
+  }
+  /** Elin zarları: masa tohumu + el numarası (her istemcide aynı) */
+  function rollCups(st) {
+    const r = rng((st.seed ^ Math.imul(st.round + 1, 0x9e3779b1)) >>> 0);
+    for (let k = 0; k < 7; k++) r();
+    return st.dice.map((d) => Array.from({ length: d }, () => 1 + Math.floor(r() * 6)).sort((a, b) => a - b));
+  }
+  function newRound(st, starter) {
+    st.round += 1;
+    st.cups = rollCups(st);
+    st.bid = null;
+    st.bidder = null;
+    st.log = [];
+    st.cur = st.dice[starter] > 0 ? starter : nextAlive(st, starter);
+    st.phase = 'bid';
+  }
+  const total = (st) => st.dice.reduce((a, b) => a + b, 0);
+  const minFace = (st) => (st.jokers ? 2 : 1);
+  function validBid(st, q, f) {
+    if (!(q >= 1) || !(f >= minFace(st)) || f > 6 || q > total(st) || q !== Math.floor(q) || f !== Math.floor(f)) return false;
+    if (!st.bid) return true;
+    return q > st.bid.q || (q === st.bid.q && f > st.bid.f);
+  }
+  /** Teklif edilebilen en küçük teklif (yoksa null) */
+  function minBid(st) {
+    const q0 = st.bid ? st.bid.q : 1;
+    for (let q = q0; q <= total(st); q++) for (let f = minFace(st); f <= 6; f++) if (validBid(st, q, f)) return { q, f };
+    return null;
+  }
+  const matches = (st, v, f) => v === f || (st.jokers && v === 1 && f !== 1);
+  function countFace(st, f) {
+    let c = 0;
+    st.cups.forEach((cup) => cup.forEach((v) => (matches(st, v, f) ? c++ : 0)));
+    return c;
+  }
+  function apply(st, a) {
+    if (!a || st.over) return { ok: false };
+    const d = a.data || {};
+    if (d.k != null && d.k !== st.step) return { ok: false, stale: true };
+    if (a.kind === 'next') {
+      if (st.phase !== 'reveal') return { ok: false };
+      st.step += 1;
+      const l = st.last;
+      newRound(st, l && l.next != null ? l.next : st.cur);
+      return { ok: true, ev: [{ t: 'round', round: st.round, cur: st.cur }] };
+    }
+    if (st.phase !== 'bid' || a.seat !== st.cur || st.dice[a.seat] <= 0) return { ok: false };
+    const p = a.seat;
+    if (a.kind === 'bid') {
+      const q = +d.q;
+      const f = +d.f;
+      if (!validBid(st, q, f)) return { ok: false };
+      st.step += 1;
+      st.bid = { q, f };
+      st.bidder = p;
+      st.log.push({ p, q, f });
+      st.cur = nextAlive(st, p);
+      return { ok: true, ev: [{ t: 'bid', p, q, f, auto: !!d.auto }] };
+    }
+    if (a.kind !== 'liar' && a.kind !== 'tam') return { ok: false };
+    if (!st.bid) return { ok: false };
+    if (a.kind === 'tam' && !st.tam) return { ok: false };
+    st.step += 1;
+    const cnt = countFace(st, st.bid.f);
+    const b = st.bidder;
+    let loser = null;
+    let gainer = null;
+    if (a.kind === 'liar') loser = cnt >= st.bid.q ? p : b;
+    else if (cnt === st.bid.q) gainer = p;
+    else loser = p;
+    const ev = { t: a.kind, p, bidder: b, bid: Object.assign({}, st.bid), count: cnt, loser, gainer, cups: st.cups.map((c) => c.slice()), jokers: st.jokers, auto: !!d.auto };
+    if (loser != null) {
+      st.dice[loser] -= 1;
+      if (!st.dice[loser]) {
+        st.out.push(loser);
+        ev.out = loser;
+      }
+    }
+    if (gainer != null) st.dice[gainer] += 1; // v3.4.3: üst sınır yok
+    ev.dice = st.dice.slice();
+    const al = alive(st);
+    // yeni eli kaybeden başlatır (elendiyse sıradaki); kazanan (tam) başlatır
+    ev.next = loser != null ? (st.dice[loser] > 0 ? loser : nextAlive(st, loser)) : gainer;
+    st.last = ev;
+    if (al.length === 1) {
+      st.over = true;
+      st.winner = al[0];
+      st.out.push(al[0]);
+      st.phase = 'over';
+      return { ok: true, ev: [ev, { t: 'over', winner: st.winner }] };
+    }
+    st.phase = 'reveal';
+    return { ok: true, ev: [ev] };
+  }
+  /** Sıralama: elenme sırası (ilk elenen en sonda). total büyük = iyi. */
+  function ranking(st) {
+    const order = st.out.slice();
+    for (let s = 0; s < st.n; s++) if (order.indexOf(s) < 0) order.push(s);
+    return order.map((s, k) => ({ seat: s, total: k })).reverse();
+  }
+
+  /* ---------------- yapay zekâ ---------------- */
+  function binomTail(n, p, k) {
+    if (k <= 0) return 1;
+    if (k > n) return 0;
+    let s = 0;
+    let c = 1;
+    for (let i = 0; i <= n; i++) {
+      if (i > 0) c = (c * (n - i + 1)) / i;
+      if (i >= k) s += c * Math.pow(p, i) * Math.pow(1 - p, n - i);
+    }
+    return Math.min(1, s);
+  }
+  function binomExact(n, p, k) {
+    if (k < 0 || k > n) return 0;
+    let c = 1;
+    for (let i = 1; i <= k; i++) c = (c * (n - i + 1)) / i;
+    return c * Math.pow(p, k) * Math.pow(1 - p, n - k);
+  }
+  const mine = (st, p, f) => st.cups[p].filter((v) => matches(st, v, f)).length;
+  const pOf = (st, f) => (st.jokers && f !== 1 ? 1 / 3 : 1 / 6);
+  /** p oyuncusunun bildiğine göre "en az q tane f" tutma olasılığı */
+  const probOf = (st, p, q, f) => binomTail(total(st) - st.dice[p], pOf(st, f), q - mine(st, p, f));
+  const probExact = (st, p, q, f) => binomExact(total(st) - st.dice[p], pOf(st, f), q - mine(st, p, f));
+  /** Bot kararı: {kind: 'bid', q, f} | {kind: 'liar'} | {kind: 'tam'} (rnd verilmezse Math.random) */
+  function decide(st, p, level, rnd) {
+    rnd = rnd || Math.random;
+    const persona = 0.36 + ((p * 37) % 10) / 100; // her bota küçük kişilik farkı
+    if (st.bid) {
+      const pt = probOf(st, p, st.bid.q, st.bid.f);
+      if (st.tam && level !== 'kolay') {
+        const pe = probExact(st, p, st.bid.q, st.bid.f);
+        if (pe > 0.28 && rnd() < 0.45) return { kind: 'tam' };
+      }
+      if (pt < persona - (level === 'kolay' ? 0.12 : 0) + (level === 'zor' ? 0.06 : 0) && rnd() > 0.08) return { kind: 'liar' };
+    }
+    const cands = [];
+    const q0 = st.bid ? st.bid.q : Math.max(1, Math.floor(total(st) / (st.jokers ? 4 : 6)));
+    for (let q = q0; q <= Math.min(total(st), q0 + 2); q++)
+      for (let f = minFace(st); f <= 6; f++) {
+        if (!validBid(st, q, f)) continue;
+        let v = probOf(st, p, q, f);
+        v += mine(st, p, f) * 0.03; // elindekini teklif etmeyi sev
+        if (rnd() < (level === 'kolay' ? 0.35 : 0.14)) v += 0.25; // blöf
+        v -= (q - q0) * 0.06;
+        cands.push({ q, f, v });
+      }
+    if (!cands.length) return st.bid ? { kind: 'liar' } : { kind: 'bid', q: 1, f: minFace(st) };
+    cands.sort((a, b) => b.v - a.v);
+    const pick = level === 'kolay' ? cands[Math.floor(rnd() * Math.min(4, cands.length))] : cands[0];
+    if (st.bid && probOf(st, p, pick.q, pick.f) < 0.18 && probOf(st, p, st.bid.q, st.bid.f) < 0.55) return { kind: 'liar' };
+    return { kind: 'bid', q: pick.q, f: pick.f };
+  }
+
+  const LZ = { rng, newGame, clone, alive, nextAlive, newRound, rollCups, total, minFace, validBid, minBid, matches, countFace, apply, ranking, probOf, probExact, decide };
+  root.LZ = LZ;
+  if (typeof module !== 'undefined' && module.exports) module.exports = LZ;
+})(typeof window !== 'undefined' ? window : globalThis);
+
+/* ---- ui.js ---- */
+/* =====================================================================
+   YALANCI ZAR — görünüm: botlara karşı ve online masa (bg-table.js; Bronze / Silver / Gold)
+   v3.4.3: ortadaki teklif zarı büyük ve okunaklı; açılışta sayılan zarlar küçük bir panelde (ekranı
+   kaplamaz); zar atılmadan önce zarlar görünmez; Tam! tutunca zar sınırsız artar; 5 kişiye kadar online.
+   ===================================================================== */
+(function () {
+  'use strict';
+  const { $, $$, el, sleep, esc, icon, snd: SND } = BZ;
+  const L = window.LZ;
+  const NET = window.BGT || null;
+  const S = BZ.store('yalanci-site', { players: 4, level: 'orta', jokers: true, tam: true, sound: true });
+  const set = S.v;
+  SND.setOn(set.sound !== false);
+  const G = { st: null, mode: 'offline', net: null, me: 0, spect: false, names: [], gen: 0, Q: [], running: false, anim: false, testMul: 1, rules: null, q: 1, f: 2, finished: false, rolledRound: 0, hidden: true };
+  window.__YZ = G;
+  const D = (ms) => (BZ.reduceMotion ? Math.min(ms, 40) : ms * (G.testMul || 1));
+  const now = () => (NET && G.mode === 'online' ? NET.now() : Date.now());
+  const LEVELS = [['kolay', 'Saf'], ['orta', 'Kurnaz'], ['zor', 'Pokerci']];
+  const REVEAL_MS = 5600;
+  const PIPS = { 1: [5], 2: [3, 7], 3: [3, 5, 7], 4: [1, 3, 7, 9], 5: [1, 3, 5, 7, 9], 6: [1, 3, 4, 6, 7, 9] };
+  const face = (v, cls) => `<span class="yz-face ${cls || ''}" data-v="${v}">${[1, 2, 3, 4, 5, 6, 7, 8, 9].map((i) => `<i class="${PIPS[v].indexOf(i) >= 0 ? 'on' : ''}"></i>`).join('')}</span>`;
+
+  /* ---------------- oyuncular ---------------- */
+  function who(p) {
+    if (G.mode === 'online' && G.net) return G.net.who(p);
+    return { name: G.names[p], bot: p !== 0, me: p === 0, away: false, user_id: null };
+  }
+  const nm = (p) => {
+    const w = who(p);
+    return w.me ? 'Sen' : w.name;
+  };
+  const nameHTML = (w) => (NET && G.mode === 'online' ? NET.nameTag(w.me ? 'Sen' : w.name, w.bot) : esc(w.me ? 'Sen' : w.name));
+  function avatarHTML(w, size) {
+    if (NET && G.mode === 'online') return NET.avatar({ name: w.name, avatar_url: w.avatar_url, bot: w.bot && !w.away, badge: w.badge }, size);
+    return `<span class="yz-av" style="width:${size}px;height:${size}px">${esc(String(w.name || '?').charAt(0).toLocaleUpperCase('tr-TR'))}</span>`;
+  }
+  const mySeat = () => (G.spect ? null : G.me);
+  const myTurn = () => {
+    const st = G.st;
+    return !!st && !G.spect && !st.over && st.phase === 'bid' && st.cur === G.me && st.dice[G.me] > 0 && !G.anim && (G.mode !== 'online' || (G.net && G.net.canAct()));
+  };
+
+  /* ---------------- masa ---------------- */
+  /** Koltuk yeri (yüzde): ben altta; diğerleri üstte yay boyunca */
+  function seatPos(rel, n) {
+    if (rel === 0) return { x: 50, y: 90 };
+    const k = n - 1;
+    const port = G.lay && G.lay.port;
+    const a = Math.PI * (1 - rel / (k + 1));
+    return { x: 50 + Math.cos(a) * (port ? 40 : 42), y: (port ? 50 : 52) - Math.sin(a) * (port ? 36 : 38) };
+  }
+  function seatsHTML() {
+    const st = G.st;
+    const base = G.me || 0;
+    let h = '';
+    for (let p = 0; p < st.n; p++) {
+      const rel = (p - base + st.n) % st.n;
+      const pos = seatPos(rel, st.n);
+      const w = who(p);
+      h += `<div class="yz-seat${rel === 0 ? ' me' : ''}" data-p="${p}" style="left:${pos.x}%;top:${pos.y}%">
+        <div class="yz-say" data-say="${p}"></div>
+        <div class="yz-cup" data-cup="${p}"><div class="yz-cupb"></div></div>
+        <div class="yz-tag"><span class="yz-avw" data-uid="${esc(w.user_id || '')}" data-seat="${p}">${avatarHTML(w, 28)}</span><span class="yz-tn"><b>${nameHTML(w)}</b><span class="yz-dn" data-dn="${p}"></span></span><i class="yz-time"></i></div></div>`;
+    }
+    return h;
+  }
+  function paintSeats() {
+    const st = G.st;
+    for (let p = 0; p < st.n; p++) {
+      const s = $(`.yz-seat[data-p="${p}"]`);
+      if (!s) continue;
+      const d = st.dice[p];
+      $('.yz-dn', s).innerHTML = d > 0 ? `${icon('dice', 13)}<b>${d}</b>` : '<em>elendi</em>';
+      s.classList.toggle('on', !st.over && st.phase === 'bid' && st.cur === p);
+      s.classList.toggle('out', d === 0);
+      const w = who(p);
+      const t = $('.yz-tn b', s);
+      const html = nameHTML(w);
+      if (t && t.innerHTML !== html) t.innerHTML = html;
+    }
+    paintTimer();
+  }
+  function paintCenter() {
+    const st = G.st;
+    const b = st.bid;
+    $('#yzBid').innerHTML = b
+      ? `<div class="yz-bidrow"><span class="yz-bq">${b.q}</span><span class="yz-x">×</span>${face(b.f, 'big')}</div><div class="yz-by">${esc(nm(st.bidder))} teklif etti${st.jokers && b.f !== 1 ? ' · birler dahil' : ''}</div>`
+      : `<div class="yz-none">${st.over ? 'Oyun bitti' : st.phase === 'reveal' ? 'Kupalar açıldı' : `${esc(nm(st.cur))} açılış teklifini veriyor`}</div>`;
+    $('#yzTotal').textContent = `${st.round}. el · masada ${L.total(st)} zar${st.jokers ? ' · birler joker' : ''}`;
+  }
+  /** Benim zarlarım (el başında kupa kalkana kadar gizli) */
+  function paintMine(force) {
+    const st = G.st;
+    const box = $('#yzMine');
+    const p = mySeat();
+    if (p == null) {
+      box.innerHTML = `<span class="yz-out">${G.spect ? 'İzliyorsun' : ''}</span>`;
+      return;
+    }
+    if (st.dice[p] <= 0) {
+      box.innerHTML = '<span class="yz-out">Zarın bitti — masayı izliyorsun</span>';
+      return;
+    }
+    const cup = st.cups[p] || [];
+    const key = st.round + ':' + cup.join('') + ':' + (G.hidden ? 'h' : 'v');
+    if (box.dataset.key === key && !force) return;
+    box.dataset.key = key;
+    const ds = diceSize(cup.length);
+    box.style.setProperty('--ds', ds + 'px');
+    box.innerHTML = cup.map((v, i) => BZ.dieHTML(v, ds, ((i * 37) % 17) - 8, G.hidden ? 'hid' : '')).join('') + (G.hidden ? `<div class="yz-mycup"><div class="yz-cupb"></div></div>` : '');
+  }
+  function diceSize(n) {
+    const w = $('#yzMine') ? $('#yzMine').clientWidth || 320 : 320;
+    return Math.max(28, Math.min(54, Math.floor((w - (n - 1) * 8) / Math.max(1, n))));
+  }
+  function say(p, html, kind, keep) {
+    const n = $(`[data-say="${p}"]`);
+    if (!n) return;
+    n.innerHTML = html;
+    n.className = 'yz-say show ' + (kind || '');
+    clearTimeout(n._t);
+    if (!keep) n._t = setTimeout(() => n.classList.remove('show'), 2400);
+  }
+  function clearSays() {
+    $$('.yz-say').forEach((n) => {
+      clearTimeout(n._t);
+      n.className = 'yz-say';
+    });
+  }
+
+  /* ---------------- teklif kontrolleri ---------------- */
+  function syncPick() {
+    const st = G.st;
+    if (!st || st.phase !== 'bid') return;
+    if (!L.validBid(st, G.q, G.f)) {
+      const m = L.minBid(st);
+      if (m) {
+        // aynı yüzde geçerli en küçük adet; olmazsa en küçük teklif
+        let q = st.bid ? st.bid.q : Math.max(1, Math.floor(L.total(st) / (st.jokers ? 4 : 6)));
+        if (L.validBid(st, q, G.f)) G.q = q;
+        else if (L.validBid(st, q + 1, G.f)) G.q = q + 1;
+        else {
+          G.q = m.q;
+          G.f = m.f;
+        }
+      }
+    }
+  }
+  function paintCtl() {
+    const st = G.st;
+    const ctl = $('#yzCtl');
+    if (!st || !ctl) return;
+    const mine = myTurn();
+    const p = mySeat();
+    ctl.hidden = p == null || st.dice[p] <= 0 || st.over;
+    ctl.classList.toggle('off', !mine);
+    if (mine) syncPick();
+    $('#yzQ').textContent = G.q;
+    $$('#yzFaces button').forEach((n) => {
+      const f = +n.dataset.f;
+      n.hidden = f < L.minFace(st);
+      n.setAttribute('aria-pressed', f === G.f);
+      n.disabled = !mine;
+    });
+    const valid = mine && L.validBid(st, G.q, G.f);
+    const bidBtn = $('[data-y="bid"]');
+    bidBtn.disabled = !valid;
+    bidBtn.innerHTML = `${icon('play', 16)} Teklif: <b>${G.q}</b> × ${face(G.f, 'tiny')}`;
+    $('[data-y="liar"]').disabled = !mine || !st.bid;
+    $('[data-y="tam"]').disabled = !mine || !st.bid || !st.tam;
+    $('[data-y="tam"]').hidden = !st.tam;
+    $('[data-y="qm"]').disabled = !mine || G.q <= 1;
+    $('[data-y="qp"]').disabled = !mine || G.q >= L.total(st);
+    const pv = mine && valid && p != null ? Math.round(L.probOf(st, p, G.q, G.f) * 100) : null;
+    const pl = mine && st.bid && p != null ? Math.round(L.probOf(st, p, st.bid.q, st.bid.f) * 100) : null;
+    $('#yzOdds').innerHTML = mine ? `${pv != null ? `Teklifinin tutma olasılığı ~%${pv}` : ''}${pl != null ? ` · son teklif ~%${pl}` : ''}` : st.phase === 'bid' ? `${esc(nm(st.cur))} düşünüyor…` : '';
+  }
+  function paintMsg() {
+    const st = G.st;
+    if (!st || !G.hud) return;
+    if (st.over) return G.hud.msg('Oyun bitti', '');
+    if (st.phase === 'reveal') return G.hud.msg('Kupalar açılıyor…', 'warn');
+    if (myTurn()) return G.hud.msg(st.bid ? 'Yükselt ya da “Yalan!” de' : 'Açılış teklifini ver', 'me');
+    G.hud.msg(`${esc(nm(st.cur))} düşünüyor…`, '');
+  }
+  function paintAll() {
+    if (!G.st) return;
+    paintSeats();
+    paintCenter();
+    paintMine();
+    paintCtl();
+    paintMsg();
+  }
+  function turnSec() {
+    return G.mode === 'online' ? +(G.rules && G.rules.turn) || 0 : 0;
+  }
+  function paintTimer() {
+    const st = G.st;
+    if (!st) return;
+    const sec = turnSec();
+    $$('.yz-seat').forEach((s) => {
+      const p = +s.dataset.p;
+      const on = sec > 0 && !st.over && st.phase === 'bid' && st.cur === p;
+      s.classList.toggle('timed', on);
+      if (on) {
+        const t = BZ.timeLeft(st._at || now(), sec, now());
+        s.querySelector('.yz-time').style.setProperty('--t', t.toFixed(3));
+        s.classList.toggle('late', t < 0.3);
+      }
+    });
+  }
+
+  /* ---------------- canlandırma ---------------- */
+  function enqueue(fn) {
+    G.Q.push(fn);
+    if (!G.running) runQ();
+  }
+  async function runQ() {
+    const gen = G.gen;
+    G.running = true;
+    G.anim = true;
+    paintCtl();
+    while (G.Q.length && G.gen === gen) {
+      const fn = G.Q.shift();
+      try {
+        await fn();
+      } catch (e) {
+        console.error('[yalancı] canlandırma', e);
+      }
+    }
+    if (G.gen !== gen) return;
+    G.running = false;
+    G.anim = false;
+    afterAnim();
+  }
+  function reduce(st, a) {
+    const r = L.apply(st, a);
+    if (r.ok) st._at = a.at || now();
+    return r;
+  }
+  function applyUI(a) {
+    const st = G.st;
+    if (!st) return { ok: false };
+    const r = reduce(st, a);
+    if (!r.ok) return r;
+    const evs = r.ev;
+    enqueue(async () => {
+      for (const e of evs) await animEvent(e);
+    });
+    return r;
+  }
+  async function animEvent(e) {
+    const gen = G.gen;
+    if (e.t === 'bid') {
+      SND.play('pop');
+      say(e.p, `${e.q} × ${face(e.f)}`, e.p === mySeat() ? 'mine' : '', true);
+      if (e.auto && e.p === mySeat()) BZ.toast('Süre doldu: teklifin otomatik verildi', 'warn');
+      paintCenter();
+      paintSeats();
+      const bid = $('#yzBid');
+      bid.classList.remove('pulse');
+      void bid.offsetWidth;
+      bid.classList.add('pulse');
+      await sleep(D(e.p === mySeat() ? 250 : 420));
+      return;
+    }
+    if (e.t === 'liar' || e.t === 'tam') {
+      clearSays();
+      say(e.p, e.t === 'liar' ? 'YALAN!' : 'TAM!', 'loud', true);
+      SND.play(e.t === 'liar' ? 'buzz' : 'ding');
+      BZ.haptic(30);
+      paintCtl();
+      paintMsg();
+      await sleep(D(800));
+      if (gen !== G.gen) return;
+      await reveal(e);
+      return;
+    }
+    if (e.t === 'round') {
+      await roundStart();
+      return;
+    }
+    if (e.t === 'over') return;
+  }
+  /** Açılış: küçük panel (ekranı kaplamaz); eşleşen zarlar hızla sayılır */
+  async function reveal(e) {
+    const gen = G.gen;
+    const st = G.st;
+    const box = $('#yzReveal');
+    const f = e.bid.f;
+    const rows = [];
+    for (let p = 0; p < e.cups.length; p++) {
+      if (!e.cups[p].length) continue;
+      rows.push(`<li data-p="${p}" class="${p === e.bidder ? 'bidder' : ''}${p === e.p ? ' caller' : ''}"><b>${esc(nm(p))}</b><span class="yz-rdice">${e.cups[p]
+        .map((v) => face(v, L.matches({ jokers: e.jokers }, v, f) ? 'hit' : 'miss'))
+        .join('')}</span><i class="yz-rn">0</i></li>`);
+    }
+    box.innerHTML = `<div class="yz-rcard"><div class="yz-rhead"><span>${esc(nm(e.p))}: <b class="${e.t}">${e.t === 'liar' ? 'YALAN!' : 'TAM!'}</b></span>
+        <span class="yz-rbid">${e.bid.q} × ${face(f)}<small>${esc(nm(e.bidder))}</small></span></div>
+      <ul class="yz-rlist">${rows.join('')}</ul>
+      <div class="yz-rfoot"><span class="yz-rcount"><b>0</b> / ${e.bid.q}</span><span class="yz-rres"></span></div></div>`;
+    box.hidden = false;
+    $$('.yz-cup').forEach((c) => c.classList.add('up'));
+    SND.play('whoosh');
+    await sleep(D(380));
+    const hits = $$('.yz-rlist .yz-face.hit', box);
+    const cnt = $('.yz-rcount b', box);
+    const per = D(hits.length > 12 ? 70 : hits.length > 6 ? 110 : 170);
+    for (let k = 0; k < hits.length; k++) {
+      if (gen !== G.gen) return;
+      hits[k].classList.add('lit');
+      const li = hits[k].closest('li');
+      const rn = $('.yz-rn', li);
+      rn.textContent = +rn.textContent + 1;
+      li.classList.add('has');
+      cnt.textContent = k + 1;
+      SND.play('tick');
+      await sleep(per);
+    }
+    await sleep(D(300));
+    const ok = e.count >= e.bid.q;
+    const card = $('.yz-rcard', box);
+    let title;
+    if (e.t === 'liar') title = ok ? 'Teklif doğruymuş!' : 'Yalanmış!';
+    else title = e.gainer != null ? 'Tam tuttu!' : 'Tutmadı!';
+    const sub = e.loser != null ? `${esc(nm(e.loser))} bir zar kaybetti` : `${esc(nm(e.gainer))} bir zar kazandı`;
+    card.classList.add(e.t === 'liar' ? (ok ? 'ok' : 'no') : e.gainer != null ? 'ok' : 'no');
+    $('.yz-rres', box).innerHTML = `<b>${title}</b> ${sub}${e.out != null ? ` · <em>${esc(nm(e.out))} elendi</em>` : ''}`;
+    const me = mySeat();
+    SND.play(e.loser === me ? 'wrong' : e.gainer === me || (e.loser != null && e.loser !== me && me != null) ? 'correct' : 'ding');
+    if (e.loser != null) {
+      const s = $(`.yz-seat[data-p="${e.loser}"]`);
+      if (s) {
+        s.classList.add('lose');
+        setTimeout(() => s.classList.remove('lose'), 1200);
+      }
+    } else if (e.gainer != null) {
+      const s = $(`.yz-seat[data-p="${e.gainer}"]`);
+      if (s) {
+        s.classList.add('gain');
+        setTimeout(() => s.classList.remove('gain'), 1400);
+      }
+    }
+    paintSeats();
+    paintCenter();
+    await sleep(D(G.mode === 'online' ? 1500 : 2300));
+  }
+  /** Yeni el: kupalar sallanır, benim zarlarım kupa kalkınca dönerek görünür (önceden görünmez) */
+  async function roundStart() {
+    const gen = G.gen;
+    const st = G.st;
+    $('#yzReveal').hidden = true;
+    $('#yzReveal').innerHTML = '';
+    clearSays();
+    $$('.yz-cup').forEach((c) => c.classList.remove('up'));
+    G.hidden = true;
+    G.rolledRound = st.round;
+    paintAll();
+    $$('.yz-cup, .yz-mycup').forEach((c) => {
+      c.classList.remove('shake');
+      void c.offsetWidth;
+      c.classList.add('shake');
+    });
+    SND.play('shake');
+    await sleep(D(640));
+    if (gen !== G.gen) return;
+    const p = mySeat();
+    if (p != null && st.dice[p] > 0) {
+      const cup = $('#yzMine .yz-mycup');
+      if (cup) cup.classList.add('up');
+      const nodes = $$('#yzMine .bz-die');
+      nodes.forEach((n) => n.classList.remove('hid'));
+      G.hidden = false;
+      $('#yzMine').dataset.key = st.round + ':' + (st.cups[p] || []).join('') + ':v';
+      await BZ.rollDice(nodes, st.cups[p], { from: { x: 0, y: 70 }, dur: D(760) });
+      if (cup) cup.remove();
+    } else G.hidden = false;
+    if (gen !== G.gen) return;
+    G.q = Math.max(1, Math.floor(L.total(st) / (st.jokers ? 4 : 6)));
+    G.f = L.minFace(st);
+    BZ.toast(`${st.round}. el · ${esc(nm(st.cur))} başlıyor`, '', 1200);
+  }
+
+  /* ---------------- sıra ---------------- */
+  function afterAnim() {
+    const st = G.st;
+    if (!st || G.anim) return;
+    // el değiştiyse (yeniden yükleme / izleme) zarlarım gizli kalmasın
+    if (G.rolledRound !== st.round && st.phase === 'bid') {
+      G.rolledRound = st.round;
+      G.hidden = false;
+    }
+    paintAll();
+    if (st.over) {
+      $('#yzReveal').hidden = true;
+      return onOver();
+    }
+    if (myTurn()) {
+      const k = st.round + ':' + st.step;
+      if (G.turnKey !== k) {
+        G.turnKey = k;
+        SND.play('turn');
+        BZ.haptic(25);
+      }
+    }
+    if (G.mode === 'online') netDrive();
+    else driveOffline();
+  }
+  function myAct(kind) {
+    const st = G.st;
+    if (!myTurn()) return;
+    SND.unlock();
+    const data = { k: st.step };
+    if (kind === 'bid') {
+      if (!L.validBid(st, G.q, G.f)) return SND.play('error');
+      data.q = G.q;
+      data.f = G.f;
+    }
+    if (G.mode === 'online') {
+      const r = G.net.dispatch({ seat: G.me, kind, data });
+      if (!r || r.ok === false) {
+        if (r && r.err) BZ.toast(esc(r.err), 'bad');
+        paintCtl();
+      }
+      return;
+    }
+    applyUI({ seat: G.me, kind, data, at: now() });
+  }
+
+  /* ---------------- botlara karşı ---------------- */
+  function driveOffline() {
+    clearTimeout(G.botT);
+    const st = G.st;
+    if (!st || st.over || G.anim || G.mode === 'online') return;
+    const key = st.step;
+    if (st.phase === 'reveal') {
+      G.botT = setTimeout(() => {
+        if (G.st === st && st.step === key && !G.anim) applyUI({ seat: null, kind: 'next', data: { k: st.step }, at: now() });
+      }, D(250));
+      return;
+    }
+    if (st.cur === 0) return;
+    const p = st.cur;
+    G.botT = setTimeout(
+      () => {
+        if (G.st !== st || st.step !== key || G.anim) return;
+        const a = L.decide(st, p, set.level);
+        applyUI({ seat: p, kind: a.kind, data: { q: a.q, f: a.f, k: st.step }, at: now() });
+      },
+      D(900 + Math.random() * 900),
+    );
+  }
+  function startOffline() {
+    G.gen++;
+    clearTimeout(G.botT);
+    BZ.closeModals();
+    const n = Math.max(2, Math.min(6, +set.players || 4));
+    G.mode = 'offline';
+    G.net = null;
+    G.spect = false;
+    G.me = 0;
+    G.rules = null;
+    G.finished = false;
+    G.Q = [];
+    G.running = false;
+    G.anim = false;
+    G.names = ['Sen', ...BZ.botNames(n - 1)];
+    G.st = L.newGame({ n, seed: BZ.newSeed(), first: Math.floor(Math.random() * n), jokers: set.jokers !== false, tam: set.tam !== false });
+    G.st._at = now();
+    sh.show('game');
+    setupGame(`${n} oyuncu · ${(LEVELS.find((l) => l[0] === set.level) || LEVELS[1])[1]} botlar`);
+    enqueue(roundStart);
+  }
+  function setupGame(sub) {
+    G.hud = BZ.hud({
+      root: $('#hud'),
+      title: 'Yalancı Zar',
+      sub,
+      right: G.mode === 'online' && NET ? `<button class="bz-ib" data-a="emoji" aria-label="Emoji gönder">${icon('smile', 20)}</button>` : '',
+      chat: G.mode === 'online' && !!NET,
+      onMenu: showMenu,
+      onAction: (a) => {
+        if (a === 'emoji' && NET) NET.emojiPicker();
+      },
+      onSound: (v) => {
+        set.sound = v;
+        S.save();
+      },
+    });
+    layout();
+    $('#yzSeats').innerHTML = seatsHTML();
+    $('#yzReveal').hidden = true;
+    $('#yzMine').dataset.key = '';
+    paintAll();
+  }
+  function layout() {
+    const vw = window.innerWidth;
+    const vh = window.innerHeight;
+    const port = vh >= vw * 0.9;
+    G.lay = { port, vw, vh };
+    $('#yzWrap').classList.toggle('port', port);
+    $('#yzWrap').classList.toggle('land', !port);
+  }
+  function relayout() {
+    if (!G.st || $('#game').hidden) return;
+    layout();
+    $('#yzSeats').innerHTML = seatsHTML();
+    $('#yzMine').dataset.key = '';
+    paintAll();
+  }
+
+  /* ---------------- online masa ---------------- */
+  const GA = {
+    init(table) {
+      const r = table.rules || {};
+      const st = L.newGame({ n: table.seats_n, seed: Number(table.seed) || 1, first: Number(table.seed || 1) % table.seats_n, jokers: r.jokers !== false, tam: r.tam !== false });
+      st._at = Date.parse(table.started_at) || now();
+      return st;
+    },
+    apply: (st, a) => reduce(st, a),
+    clone: (st) => L.clone(st),
+    view: () => G.st,
+    applyLocal: (a) => applyUI(Object.assign({ at: now() }, a)),
+    applyRemote(a) {
+      const r = applyUI(a);
+      return r && r.ok ? { pace: 160 } : null;
+    },
+    reset(st, why) {
+      G.gen++;
+      G.st = st;
+      G.Q = [];
+      G.running = false;
+      G.anim = false;
+      G.hidden = why === 'load' ? true : false;
+      relayout();
+      if (why === 'load' && st.phase === 'bid' && !st.over) {
+        // masaya girerken: kupa kalkar, zarlarım döner
+        G.rolledRound = 0;
+        enqueue(roundStart);
+        return;
+      }
+      if (st.phase === 'reveal' && st.last) {
+        G.hidden = false;
+        enqueue(() => reveal(st.last));
+        return;
+      }
+      G.hidden = false;
+      G.rolledRound = st.round;
+      afterAnim();
+    },
+    onSeats() {
+      if (G.st && !G.anim) paintSeats();
+    },
+    onStatus(status) {
+      if (status === 'closed') {
+        BZ.toast(G.spect ? 'Masa kapandı.' : 'Masa kapandı: oyunda başka oyuncu kalmadı.', 'bad');
+        setTimeout(() => sh.lobby(), 1600);
+      }
+    },
+    onTick() {
+      if (G.mode !== 'online') return;
+      paintTimer();
+      const pill = $('#yzNet');
+      if (pill) pill.hidden = !(G.net && G.net.fails > 1);
+      netDrive();
+    },
+    onSpectate() {
+      G.spect = true;
+      BZ.toast('Koltuğunda artık bot oynuyor. Masayı izliyorsun.', 'bad');
+      paintAll();
+    },
+  };
+  function fresh(slot, key) {
+    const k = G[slot];
+    if (k && k.key === key && Date.now() - k.at < 6000) return false;
+    G[slot] = { key, at: Date.now() };
+    return true;
+  }
+  function netDrive() {
+    const N = G.net;
+    const st = G.st;
+    if (!N || !st || G.mode !== 'online' || N.closed || G.anim || st.over) return;
+    if (!N.canAct() || N.busy()) return;
+    const t = now();
+    const key = st.step;
+    const at = st._at || t;
+    if (st.phase === 'reveal') {
+      if (!N.isDriver()) return;
+      const due = at + REVEAL_MS * (G.testMul || 1);
+      if (t >= due) {
+        if (fresh('nextKey', key)) {
+          const r = N.dispatch({ seat: null, kind: 'next', data: { k: st.step } }, { later: true });
+          if (!r || r.ok === false) G.nextKey = null;
+        }
+      } else soon(due - t);
+      return;
+    }
+    const p = st.cur;
+    const sec = turnSec();
+    if (!G.spect && p === G.me) {
+      if (G.autoHuman) {
+        if (t >= at + 400 * (G.testMul || 1)) {
+          if (fresh('botKey', key)) botAct(p, false);
+        } else soon(at + 400 * (G.testMul || 1) - t);
+        return;
+      }
+      if (sec && t >= at + sec * 1000 && fresh('autoKey', key)) botAct(p, true);
+      return;
+    }
+    if (!N.isDriver()) return;
+    const ctl = N.control(p);
+    if (ctl === 'bot' || ctl === 'away') {
+      const due = at + (1100 + ((st.step * 7919) % 900)) * (G.testMul || 1);
+      if (t >= due) {
+        if (fresh('botKey', key)) botAct(p, false);
+      } else soon(due - t);
+      return;
+    }
+    if (ctl === 'human' && sec && t >= at + sec * 1000 + 3500 && fresh('autoKey', key)) botAct(p, true);
+  }
+  function soon(ms) {
+    clearTimeout(G.ndT);
+    G.ndT = setTimeout(netDrive, Math.max(20, ms + 15));
+  }
+  function botAct(p, auto) {
+    const st = G.st;
+    const a = L.decide(st, p, auto ? 'orta' : (G.rules && G.rules.level) || 'orta');
+    const data = { k: st.step };
+    if (a.kind === 'bid') {
+      data.q = a.q;
+      data.f = a.f;
+    }
+    if (auto) data.auto = true;
+    const r = G.net.dispatch({ seat: p, kind: a.kind, data }, { later: true });
+    if (!r || r.ok === false) G.botKey = G.autoKey = null;
+  }
+  function startTable(sess) {
+    G.gen++;
+    clearTimeout(G.botT);
+    BZ.closeModals();
+    G.net = sess;
+    G.mode = 'online';
+    G.rules = Object.assign({ turn: 30, level: 'orta', jokers: true, tam: true }, sess.table.rules || {});
+    G.spect = sess.spect;
+    G.me = sess.spect ? sess.watch : sess.mySeat;
+    if (G.me == null) G.me = 0;
+    G.finished = false;
+    G.Q = [];
+    G.running = false;
+    G.anim = false;
+    G.st = GA.init(sess.table);
+    G.hidden = true;
+    const tier = NET.tierOf ? NET.tierOf(sess.table.rules || {}, sess.table.fee || sess.table.entry_fee) : null;
+    sh.show('game');
+    setupGame(`${sess.table.seats_n} kişi · ${tier && (sess.table.fee || sess.table.entry_fee) ? tier.name + ' masa' : 'online'}${G.spect ? ' · izliyorsun' : ''}`);
+    sess.start(GA).catch(() => sh.lobby());
+  }
+  const TABLE_RULES = {
+    defaults: () => ({ turn: 30, level: 'orta', jokers: true, tam: true, tier: 'bronze' }),
+    form(r) {
+      const seg = (k, v, l) => `<button type="button" data-v="${v}" aria-pressed="${String(r[k]) === String(v)}">${l}</button>`;
+      return `<div class="t-field"><span class="t-lab">Birler</span><div class="t-seg" data-seg="jokers">${seg('jokers', true, 'Joker')}${seg('jokers', false, 'Normal')}</div></div>
+        <div class="t-field"><span class="t-lab">“Tam!” çağrısı</span><div class="t-seg" data-seg="tam">${seg('tam', true, 'Açık')}${seg('tam', false, 'Kapalı')}</div></div>
+        <div class="t-field"><span class="t-lab">Hamle süresi</span><div class="t-seg" data-seg="turn">${[20, 30, 45, 60].map((v) => seg('turn', v, v + ' sn')).join('')}</div></div>
+        <div class="t-field"><span class="t-lab">Bot seviyesi (boş koltuk ve bağlantısı kopan oyuncu için)</span><div class="t-seg" data-seg="level">${LEVELS.map(([v, l]) => seg('level', v, l)).join('')}</div></div>
+        <p class="t-note">Herkes 5 zarla başlar. “Tam!” tutarsa zar kazanılır (üst sınır yok).</p>`;
+    },
+    read(form, prev) {
+      const r = Object.assign({}, prev || TABLE_RULES.defaults());
+      const pick = (k) => form.querySelector(`[data-seg="${k}"] [aria-pressed="true"]`);
+      const t = pick('turn');
+      const l = pick('level');
+      const j = pick('jokers');
+      const m = pick('tam');
+      if (t) r.turn = +t.dataset.v;
+      if (l) r.level = l.dataset.v;
+      if (j) r.jokers = j.dataset.v === 'true';
+      if (m) r.tam = m.dataset.v === 'true';
+      return r;
+    },
+    summary: (r) => {
+      const tier = NET && NET.tierOf ? NET.tierOf(r, r.fee) : null;
+      return `${tier ? tier.name + ' · ' : ''}birler ${r.jokers === false ? 'normal' : 'joker'} · Tam! ${r.tam === false ? 'kapalı' : 'açık'} · hamle ${r.turn ? r.turn + ' sn' : 'süresiz'}`;
+    },
+  };
+
+  /* ---------------- maç sonu ---------------- */
+  function onOver() {
+    const st = G.st;
+    if (!st || !st.over || $('.bz-modals [data-modal="results"]')) return;
+    const rk = L.ranking(st);
+    if (G.mode === 'online' && G.net && !G.spect && !G.finished) {
+      G.finished = true;
+      G.net.finish({ ranking: rk.map((r) => ({ seat: r.seat, total: r.total })) });
+    }
+    const w = st.winner;
+    const win = w === mySeat();
+    BZ.banner(win ? 'KAZANDIN!' : `${esc(nm(w)).toLocaleUpperCase('tr-TR')} KAZANDI`, 'Masada son zar onun', win || G.spect);
+    SND.play(win ? 'win' : 'lose');
+    if (win) BZ.confetti(120);
+    const online = G.mode === 'online';
+    const gen = G.gen;
+    setTimeout(() => {
+      if (gen !== G.gen) return;
+      const rows = rk.map((r, k) => {
+        const x = who(r.seat);
+        return { name: (x.me ? 'Sen' : x.name) + (online && x.bot ? ' (BOT)' : ''), val: k, label: k === 0 ? 'Kazandı' : `${k + 1}.`, me: r.seat === mySeat(), win: r.seat === w };
+      });
+      BZ.results({
+        title: win ? 'Kazandın!' : `${esc(nm(w))} kazandı`,
+        sub: online ? 'Zarı en son biten kazanır. 1. yüksek ödülü alır, 2. yatırdığını geri alır (en az 3 gerçek oyuncuda).' : 'Zarı en son biten kazanır.',
+        rows,
+        tiePlaces: false,
+        noMedal: false,
+        extra: online && !G.spect ? '<div class="rw-slot"></div>' : '',
+        onAgain: () => (online ? sh.lobby() : startOffline()),
+        onHome: () => (online ? sh.lobby() : home()),
+      });
+      const box = $('.bz-modals [data-modal="results"]');
+      if (online && box) {
+        const again = box.querySelector('[data-m="again"]');
+        if (again) again.innerHTML = `${icon('users', 17)} Masalara dön`;
+        const hm = box.querySelector('[data-m="home"]');
+        if (hm) hm.remove();
+        const rws = box.querySelector('.rw-slot');
+        if (rws && NET && NET.mountRewards && G.net) NET.mountRewards(rws, G.net.id);
+      }
+    }, D(1800));
+  }
+
+  /* ---------------- menü, kurallar, başlangıç ---------------- */
+  const RULES = `<p><b>Başlangıç:</b> herkesin 5 zarı var. Her elde zarlar kupanın altında atılır; yalnız kendi zarlarını görürsün.</p>
+    <p><b>Teklif:</b> sırası gelen, masadaki bütün zarlar için bir iddiada bulunur: “en az 4 tane beşli var” gibi. Sonraki oyuncu ya teklifi yükseltir (daha çok adet ya da aynı adette daha büyük yüz) ya da itiraz eder.</p>
+    <p><b>Birler joker</b> (açıksa): 1'ler her yüzün yerine sayılır; teklifler 2–6 yüzlerine verilir.</p>
+    <p><b>Yalan!</b>: son teklife inanmıyorsan söyle. Kupalar açılır: teklif tutuyorsa itiraz eden, tutmuyorsa teklif veren bir zar kaybeder.</p>
+    <p><b>Tam!</b> (açıksa): sayının tam olarak tuttuğunu iddia edersin. Tutarsa bir zar kazanırsın — 5 zarın olsa bile, üst sınır yok; tutmazsa bir zar kaybedersin.</p>
+    <p><b>Bitiş:</b> zarı biten elenir. Kaybeden yeni eli başlatır. Masada son kalan kazanır.</p>
+    <p><b>Online:</b> Bronze, Silver ya da Gold masa kurulur; 1. yüksek ödülü alır, 2. (en az 3 gerçek oyuncuda) yatırdığını geri alır. Kişi sayısı dolmasa da oyun başlar; boş koltuklara bot oturur.</p>`;
+  function showMenu() {
+    const online = G.mode === 'online' && G.net;
+    BZ.gameMenu({
+      title: 'Yalancı Zar',
+      rules: RULES,
+      online,
+      homeLabel: online ? (G.spect ? 'İzlemeyi bırak' : 'Masadan çık') : 'Oyun ayarlarına dön',
+      onAction: (m) => {
+        if (m === 'restart') return startOffline();
+        if (m === 'home') return online ? sh.leave(G.net, G.spect) : home();
+      },
+    });
+  }
+  function home() {
+    G.gen++;
+    clearTimeout(G.botT);
+    BZ.closeModals();
+    G.st = null;
+    G.mode = 'offline';
+    G.net = null;
+    sh.show('start');
+    BZ.startScreen({
+      root: $('#start'),
+      title: 'Yalancı Zar',
+      tagline: 'Zarlar kupanın altında; kimse kimseninkini görmüyor. Teklifi yükselt, blöf yap ya da gözünü kırpmadan “Yalan!” de. Masada son zar kimde kalırsa o kazanır.',
+      chips: ['2–6 kişi', 'Blöf', 'Online: Bronze · Silver · Gold'],
+      art: window.GAME_ART,
+      settings: set,
+      save: () => S.save(),
+      panelTitle: 'Botlara karşı',
+      options: [
+        { key: 'players', label: 'Oyuncu sayısı', choices: [[2, '2'], [3, '3'], [4, '4'], [5, '5'], [6, '6']] },
+        { key: 'level', label: 'Bot seviyesi', choices: LEVELS },
+        { key: 'jokers', label: 'Birler', choices: [[true, 'Joker'], [false, 'Normal']] },
+        { key: 'tam', label: '“Tam!” çağrısı', choices: [[true, 'Açık'], [false, 'Kapalı']] },
+      ],
+      actions: [{ id: 'play', label: 'Masaya otur', kind: 'gold big', icon: 'play' }],
+      online: { title: 'Online', text: 'Bronze, Silver ya da Gold masa kur; 5 kişiye kadar. 1. yüksek ödülü alır, 2. yatırdığını geri alır. Kişi sayısı dolmasa da başlatabilirsin: boş koltuklara bot oturur.' },
+      onAction: (id) => {
+        if (id === 'play') return startOffline();
+        if (id === 'online') return sh.online();
+      },
+      rules: RULES,
+    });
+  }
+  const sh = BZ.shell({
+    game: 'yalanci-online',
+    name: 'Yalancı Zar',
+    seatCounts: [2, 3, 4, 5],
+    defSeats: 5,
+    tiers: true,
+    rules: TABLE_RULES,
+    onPlay: startTable,
+    onOffline: () => startOffline(),
+    onStart: home,
+    mySeat: () => (G.spect ? null : G.me),
+    avatarEl: (uid, seat) => {
+      if (!G.st) return null;
+      let p = seat != null && seat !== '' && !isNaN(+seat) ? +seat : null;
+      if (p == null && G.net) for (let i = 0; i < G.st.n; i++) if (G.net.who(i).user_id === uid) p = i;
+      return p == null ? null : $(`.yz-seat[data-p="${p}"] .yz-avw`);
+    },
+  });
+
+  function boot() {
+    $('#game').insertAdjacentHTML(
+      'beforeend',
+      `<div id="yzWrap" class="yz-wrap">
+        <div class="yz-table"><div class="yz-felt"></div>
+          <div class="yz-center"><div id="yzBid" class="yz-bid"></div><div id="yzTotal" class="yz-total"></div></div>
+          <div id="yzSeats"></div>
+          <div id="yzReveal" class="yz-reveal" hidden></div></div>
+        <div class="yz-dock"><div class="yz-dock-h">Senin kupan</div><div id="yzMine" class="yz-mine"></div>
+          <div id="yzCtl" class="yz-ctl">
+            <div class="yz-qrow"><button class="bz-ib" data-y="qm" aria-label="Adedi azalt">−</button><span id="yzQ" class="yz-q">1</span><button class="bz-ib" data-y="qp" aria-label="Adedi artır">+</button><span class="yz-x">×</span>
+              <div id="yzFaces" class="yz-faces">${[1, 2, 3, 4, 5, 6].map((f) => `<button data-f="${f}" aria-label="${f}">${face(f)}</button>`).join('')}</div></div>
+            <div class="yz-arow"><button class="bz-btn gold" data-y="bid"></button><button class="bz-btn danger" data-y="liar">Yalan!</button><button class="bz-btn blue" data-y="tam">Tam!</button></div>
+            <div id="yzOdds" class="yz-odds"></div></div></div></div><span id="yzNet" class="yz-netpill" hidden>Bağlantı yavaş…</span>`,
+    );
+    $('#yzCtl').addEventListener('click', (e) => {
+      SND.unlock();
+      const st = G.st;
+      if (!myTurn()) return;
+      const fb = e.target.closest('#yzFaces button');
+      if (fb) {
+        G.f = +fb.dataset.f;
+        // seçilen yüzde geçerli en küçük adede çek
+        if (!L.validBid(st, G.q, G.f) && st.bid) G.q = L.validBid(st, st.bid.q, G.f) ? st.bid.q : st.bid.q + 1;
+        SND.play('select');
+        return paintCtl();
+      }
+      const b = e.target.closest('[data-y]');
+      if (!b || b.disabled) return;
+      const y = b.dataset.y;
+      if (y === 'qm') G.q = Math.max(1, G.q - 1);
+      else if (y === 'qp') G.q = Math.min(L.total(st), G.q + 1);
+      else if (y === 'bid') return myAct('bid');
+      else if (y === 'liar') return myAct('liar');
+      else if (y === 'tam') return myAct('tam');
+      SND.play('tap');
+      paintCtl();
+    });
+    $('#yzWrap').addEventListener('click', (e) => {
+      const av = e.target.closest('.yz-avw[data-uid]');
+      if (av && av.dataset.uid && NET && G.mode === 'online') NET.playerCard(av.dataset.uid);
+    });
+    let rz = null;
+    window.addEventListener('resize', () => {
+      clearTimeout(rz);
+      rz = setTimeout(relayout, 80);
+    });
+    window.addEventListener('orientationchange', () => setTimeout(relayout, 260));
+    setInterval(() => {
+      if (G.st && G.mode === 'online') paintTimer();
+    }, 500);
+    sh.boot();
+  }
+  window.__YZT = { startOffline, myAct, G };
+  if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', boot);
+  else boot();
+})();
+
+</script>
+</body>
+</html>

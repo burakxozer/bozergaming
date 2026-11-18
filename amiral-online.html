@@ -1,0 +1,1164 @@
+<!doctype html>
+<html lang="tr">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no, viewport-fit=cover" />
+<meta name="theme-color" content="#06141c" />
+<title>Amiral Battı Online · Bözer Gaming</title>
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@600;700;800;900&family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet" />
+<link rel="stylesheet" href="assets/css/bz-kit.css?v=3.4.3" />
+<link rel="stylesheet" href="assets/css/bg-table.css?v=3.4.3" />
+<link rel="stylesheet" href="assets/css/badges.css?v=3.4.3" />
+<style>
+.am-wrap { position: absolute; inset: 0; display: flex; align-items: center; justify-content: center; gap: 26px; padding: calc(62px + var(--bz-safe-t)) 14px calc(12px + var(--bz-safe-b)); }
+.am-wrap.port { flex-direction: column; gap: 10px; justify-content: flex-start; padding-top: calc(66px + var(--bz-safe-t)); }
+.am-wrap.placing { flex-direction: column; justify-content: center; }
+.am-bw { display: grid; justify-items: center; gap: 6px; }
+.am-title { font: 800 12.5px/1 var(--bz-font); letter-spacing: 0.12em; color: var(--bz-muted); text-transform: uppercase; }
+.am-board { --sz: 420px; --pad: calc(var(--sz) * 0.07); --cell: calc((var(--sz) - var(--pad)) / 10); position: relative; width: var(--sz); height: var(--sz); touch-action: none; }
+.am-sea { position: absolute; left: var(--pad); top: var(--pad); right: 0; bottom: 0; border-radius: 10px; overflow: hidden;
+  background: radial-gradient(120% 90% at 30% 20%, #1c6d9a 0%, #0c3f61 55%, #062236 100%); box-shadow: 0 18px 40px rgba(0, 0, 0, 0.5), inset 0 0 0 1px rgba(150, 220, 255, 0.25); }
+.am-sea::before { content: ''; position: absolute; inset: -50%; background: repeating-radial-gradient(circle at 30% 40%, rgba(255, 255, 255, 0.05) 0 2px, transparent 2px 22px); animation: amWave 16s linear infinite; }
+@keyframes amWave { to { transform: translate(14%, 8%) rotate(8deg); } }
+.am-sea.radar { background: radial-gradient(110% 110% at 50% 50%, #0f3c42 0%, #072328 60%, #031114 100%); }
+.am-sea.radar::before { inset: 0; background: conic-gradient(from 0deg, rgba(95, 224, 176, 0.32), rgba(95, 224, 176, 0) 22%, transparent 100%); border-radius: 50%; transform-origin: 50% 50%; animation: amSweep 4.5s linear infinite; scale: 1.5; }
+@keyframes amSweep { to { transform: rotate(360deg); } }
+.am-lab { position: absolute; font: 800 calc(var(--sz) * 0.03) / 1 var(--bz-font); color: var(--bz-muted); }
+.am-lab.col { left: calc(var(--pad) + var(--c) * var(--cell) + var(--cell) / 2); top: calc(var(--pad) * 0.3); transform: translateX(-50%); }
+.am-lab.row { top: calc(var(--pad) + var(--r) * var(--cell) + var(--cell) / 2); left: calc(var(--pad) * 0.45); transform: translate(-50%, -50%); }
+.am-cell { position: absolute; left: calc(var(--pad) + var(--c) * var(--cell)); top: calc(var(--pad) + var(--r) * var(--cell)); width: var(--cell); height: var(--cell); box-shadow: inset 0 0 0 0.5px rgba(160, 220, 255, 0.2); }
+.am-board.radar .am-cell { box-shadow: inset 0 0 0 0.5px rgba(95, 224, 176, 0.22); }
+.am-board.radar.can .am-cell { cursor: crosshair; }
+.am-board.radar.can .am-cell:hover { background: rgba(95, 224, 176, 0.22); box-shadow: inset 0 0 0 2px rgba(150, 255, 210, 0.75); }
+.am-ships, .am-marks, .am-fx { position: absolute; inset: 0; pointer-events: none; }
+.am-ship { position: absolute; left: calc(var(--pad) + var(--c) * var(--cell)); top: calc(var(--pad) + var(--r) * var(--cell)); width: calc(var(--n) * var(--cell)); height: var(--cell); padding: calc(var(--cell) * 0.1) calc(var(--cell) * 0.05); transform-origin: 0 0; pointer-events: auto; cursor: grab; transition: filter 0.2s; }
+.am-ship.v { transform: translateX(var(--cell)) rotate(90deg); }
+.am-ship svg { width: 100%; height: 100%; display: block; filter: drop-shadow(0 4px 5px rgba(0, 0, 0, 0.55)); }
+.am-ship.sel svg { filter: drop-shadow(0 0 6px rgba(248, 226, 164, 0.9)) drop-shadow(0 4px 5px rgba(0, 0, 0, 0.55)); }
+.am-ship.bad svg { filter: drop-shadow(0 0 7px rgba(255, 80, 70, 0.95)); opacity: 0.8; }
+.am-board.radar .am-ship, .am-wrap:not(.placing) .am-ship { cursor: default; pointer-events: none; }
+.am-ship.sunk svg { opacity: 0.92; }
+.am-m { position: absolute; left: calc(var(--pad) + var(--c) * var(--cell)); top: calc(var(--pad) + var(--r) * var(--cell)); width: var(--cell); height: var(--cell); display: grid; place-items: center; }
+.am-m.miss::before { content: ''; width: 30%; height: 30%; border-radius: 50%; border: 2px solid rgba(190, 235, 255, 0.75); background: rgba(190, 235, 255, 0.12); }
+.am-m.hit::before { content: ''; width: 62%; height: 62%; border-radius: 50%; background: radial-gradient(circle, #fff6c0 0%, #ffb23e 35%, #e2461f 70%, transparent 72%); filter: drop-shadow(0 0 6px rgba(255, 120, 40, 0.9)); animation: amFire 0.8s ease-in-out infinite alternate; }
+.am-m.sunk::before { background: radial-gradient(circle, #ffcf8a 0%, #c43a1c 45%, #3a0f08 70%, transparent 72%); animation: none; filter: none; }
+.am-m.sunk::after { content: ''; position: absolute; width: 70%; height: 3px; background: #ffb4a0; transform: rotate(45deg); box-shadow: 0 0 0 0 transparent; opacity: 0.85; }
+@keyframes amFire { to { transform: scale(1.12); filter: drop-shadow(0 0 10px rgba(255, 150, 60, 1)); } }
+.am-aim { position: absolute; left: calc(var(--pad) + var(--c) * var(--cell)); top: calc(var(--pad) + var(--r) * var(--cell)); width: var(--cell); height: var(--cell); border: 2px solid #ffe08a; border-radius: 50%; box-shadow: 0 0 14px rgba(255, 220, 120, 0.9); animation: amAim 0.42s ease-in forwards; }
+@keyframes amAim { from { transform: scale(2.6); opacity: 0; } to { transform: scale(0.8); opacity: 1; } }
+.am-splash, .am-boom { position: absolute; left: calc(var(--pad) + var(--c) * var(--cell) + var(--cell) / 2); top: calc(var(--pad) + var(--r) * var(--cell) + var(--cell) / 2); width: 0; height: 0; }
+.am-splash::before, .am-splash::after { content: ''; position: absolute; left: calc(var(--cell) * -1); top: calc(var(--cell) * -1); width: calc(var(--cell) * 2); height: calc(var(--cell) * 2); border-radius: 50%; border: 3px solid rgba(200, 240, 255, 0.85); animation: amRipple 0.9s ease-out forwards; }
+.am-splash::after { animation-delay: 0.15s; }
+@keyframes amRipple { from { transform: scale(0.2); opacity: 1; } to { transform: scale(1.2); opacity: 0; } }
+.am-boom::before { content: ''; position: absolute; left: calc(var(--cell) * -1.1); top: calc(var(--cell) * -1.1); width: calc(var(--cell) * 2.2); height: calc(var(--cell) * 2.2); border-radius: 50%; background: radial-gradient(circle, #fffbe0 0%, #ffcc4a 25%, #ff6a2a 50%, rgba(160, 30, 10, 0.4) 70%, transparent 72%); animation: amBoom 0.75s ease-out forwards; }
+.am-boom.big::before { left: calc(var(--cell) * -2); top: calc(var(--cell) * -2); width: calc(var(--cell) * 4); height: calc(var(--cell) * 4); }
+@keyframes amBoom { from { transform: scale(0.1); opacity: 1; } 60% { opacity: 1; } to { transform: scale(1); opacity: 0; } }
+.am-board.shake { animation: amShake 0.45s ease; }
+@keyframes amShake { 20% { transform: translate(-6px, 3px); } 40% { transform: translate(5px, -4px); } 60% { transform: translate(-4px, 2px); } 80% { transform: translate(3px, -1px); } }
+.am-placebar { display: flex; gap: 10px; margin-top: 8px; flex-wrap: wrap; justify-content: center; }
+.am-fleets { display: grid; gap: 8px; align-self: center; }
+.am-wrap:not(.port) .am-fleets { position: absolute; right: calc(16px + var(--bz-safe-r)); bottom: calc(16px + var(--bz-safe-b)); }
+@media (max-height: 560px) { .am-wrap:not(.port) .am-fleets { display: none; } .am-title { font-size: 11px; } }
+@media (orientation: portrait) { .bz-toasts { top: auto !important; bottom: calc(18px + var(--bz-safe-b)); } }
+.am-fleets > div { display: flex; align-items: center; gap: 8px; padding: 6px 12px; border-radius: 12px; background: rgba(12, 18, 24, 0.82); border: 1px solid rgba(120, 200, 240, 0.25); }
+.am-fleets b { font-size: 13px; min-width: 64px; color: var(--bz-gold-hi); }
+.am-fl { display: inline-flex; gap: 2px; }
+.am-fl i { width: 9px; height: 9px; border-radius: 2px; background: #8fb1c8; }
+.am-fl.sunk i { background: #c4432a; opacity: 0.55; }
+.am-wrap.port .am-bw.mine .am-title { margin-top: 2px; }
+
+/* ---------------- site sürümü (v3.4.3) ---------------- */
+body { --bz-accent: #3fa3d6; }
+.am-m.water::before { content: ''; width: 16%; height: 16%; border-radius: 50%; background: rgba(190, 235, 255, 0.35); }
+.am-aim.wait { animation: amAim 0.42s ease-in forwards, amAimWait 0.8s 0.42s ease-in-out infinite; }
+@keyframes amAimWait { 50% { box-shadow: 0 0 22px rgba(255, 220, 120, 1); transform: scale(0.9); } }
+.am-bw.turn .am-title { color: #9ff2c8; }
+.am-bw.turn .am-board .am-sea { box-shadow: 0 18px 40px rgba(0, 0, 0, 0.5), inset 0 0 0 2px rgba(150, 255, 210, 0.65); }
+.am-placebar.done button { opacity: 0.6; }
+.am-time { position: absolute; left: 50%; top: calc(56px + var(--bz-safe-t)); transform: translateX(-50%); width: min(320px, 70vw); height: 4px; border-radius: 99px; background: rgba(255, 255, 255, 0.1); overflow: hidden; z-index: 5; }
+.am-time::after { content: ''; position: absolute; left: 0; top: 0; bottom: 0; width: calc(var(--t, 1) * 100%); background: linear-gradient(90deg, #45cf8c, #9ff2c8); transition: width 0.5s linear; }
+.am-time.late::after { background: linear-gradient(90deg, #ec5a5f, #ffb27a); }
+.am-fleets b .t-bot { color: #b8c2ff; font-size: 0.82em; }
+.am-fleets b { max-width: 130px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.am-netpill { position: absolute; z-index: 70; left: 50%; bottom: calc(10px + var(--bz-safe-b)); transform: translateX(-50%); padding: 6px 14px; border-radius: 99px; font-weight: 800; font-size: 13px; color: #2a1406; background: linear-gradient(180deg, #ffd88a, #e7a63c); }
+.am-title { text-transform: none; letter-spacing: 0.04em; font-size: 13px; }
+@media (max-width: 560px) and (orientation: portrait) {
+  .am-wrap.port { padding-top: calc(98px + var(--bz-safe-t)); }
+  .am-time { top: calc(92px + var(--bz-safe-t)); }
+}
+
+</style>
+</head>
+<body>
+<noscript>Bu oyunu oynamak için JavaScript'i etkinleştirin.</noscript>
+<div id="start" hidden></div>
+<section id="net" class="t-screen" aria-label="Online masalar" hidden></section>
+<div id="game" class="bz-game" hidden>
+  <header id="hud" class="bz-hud"></header>
+</div>
+<script src="assets/js/bg-table.js?v=3.4.3"></script>
+<script src="assets/js/bz-kit.js?v=3.4.3"></script>
+<script>
+window.GAME_ART = "<svg viewBox=\"0 0 360 220\" xmlns=\"http://www.w3.org/2000/svg\"><defs><linearGradient id=\"amsea\" x1=\"0\" y1=\"0\" x2=\"0\" y2=\"1\"><stop offset=\"0\" stop-color=\"#0d4a6e\"/><stop offset=\"1\" stop-color=\"#062236\"/></linearGradient><linearGradient id=\"amhull\" x1=\"0\" y1=\"0\" x2=\"0\" y2=\"1\"><stop offset=\"0\" stop-color=\"#9fb2c2\"/><stop offset=\"1\" stop-color=\"#4c5d6c\"/></linearGradient><radialGradient id=\"amboom\" cx=\".5\" cy=\".5\" r=\".5\"><stop offset=\"0\" stop-color=\"#fff6c0\"/><stop offset=\".4\" stop-color=\"#ffb23e\"/><stop offset=\".8\" stop-color=\"#e2461f\" stop-opacity=\".8\"/><stop offset=\"1\" stop-color=\"#e2461f\" stop-opacity=\"0\"/></radialGradient></defs><rect x=\"10\" y=\"20\" width=\"340\" height=\"180\" rx=\"18\" fill=\"url(#amsea)\"/><g stroke=\"#5fc6f2\" stroke-opacity=\".22\" stroke-width=\"1\"><path d=\"M10 56h340M10 92h340M10 128h340M10 164h340M44 20v180M78 20v180M112 20v180M146 20v180M180 20v180M214 20v180M248 20v180M282 20v180M316 20v180\"/></g><circle cx=\"248\" cy=\"92\" r=\"70\" fill=\"none\" stroke=\"#5fe0b0\" stroke-opacity=\".25\"/><path d=\"M248 92 L318 62 A76 76 0 0 0 290 32 Z\" fill=\"#5fe0b0\" fill-opacity=\".14\"/><g transform=\"translate(46 116)\"><path d=\"M0 22 L150 22 L136 40 L14 40 Z\" fill=\"url(#amhull)\"/><rect x=\"40\" y=\"6\" width=\"44\" height=\"16\" rx=\"3\" fill=\"#7c8e9d\"/><rect x=\"58\" y=\"-8\" width=\"14\" height=\"14\" rx=\"2\" fill=\"#93a5b4\"/><rect x=\"96\" y=\"12\" width=\"26\" height=\"10\" rx=\"2\" fill=\"#7c8e9d\"/><path d=\"M84 10 h40\" stroke=\"#c9d5df\" stroke-width=\"3\"/><path d=\"M0 40 Q75 52 150 40\" stroke=\"#bfe7ff\" stroke-opacity=\".5\" stroke-width=\"2\" fill=\"none\"/></g><circle cx=\"262\" cy=\"146\" r=\"34\" fill=\"url(#amboom)\"/><g fill=\"#fff3d0\"><circle cx=\"252\" cy=\"122\" r=\"3\"/><circle cx=\"286\" cy=\"134\" r=\"2.5\"/><circle cx=\"240\" cy=\"152\" r=\"2\"/><circle cx=\"276\" cy=\"166\" r=\"2.5\"/></g><g stroke=\"#ff6a4a\" stroke-width=\"3\" stroke-linecap=\"round\"><path d=\"M104 60 l12 12 M116 60 l-12 12\"/></g><circle cx=\"182\" cy=\"66\" r=\"7\" fill=\"none\" stroke=\"#bfe7ff\" stroke-opacity=\".7\" stroke-width=\"2\"/></svg>";
+/* ---- engine.js ---- */
+/* =====================================================================
+   AMİRAL BATTI — motor (online kilit adım için saf ve belirlenimci)
+   10×10 deniz, 5 gemi (5, 4, 3, 3, 2). Gemiler birbirine (çapraz dahil) değemez.
+   Online: filolar sunucuda gizlidir; atışın sonucu (miss / hit / sunk, sıradaki atıcı, maç sonu ve iki filo)
+   sunucudan hamle verisi olarak gelir. Motor yalnız bu sonuçları kaydeder (filoyu bilmez).
+   Botlara karşı: sonuç tarayıcıda aynı biçimde üretilir (fire).
+
+   Hamleler: {seat, kind: 'ready', data: {start?, first?}} |
+             {seat, kind: 'shot', data: {c, res, ship?, next?, win?, fleets?, k}}
+   ===================================================================== */
+(function (root) {
+  'use strict';
+  const N = 10;
+  const SHIPS = [
+    { id: 'a', name: 'Amiral gemisi', n: 5 },
+    { id: 'k', name: 'Kruvazör', n: 4 },
+    { id: 'm', name: 'Muhrip', n: 3 },
+    { id: 'd', name: 'Denizaltı', n: 3 },
+    { id: 'h', name: 'Hücumbot', n: 2 },
+  ];
+  const LET = 'ABCDEFGHIJ';
+  const shipCells = (s) => Array.from({ length: s.n }, (_, i) => (s.dir === 'h' ? s.r * N + s.c + i : (s.r + i) * N + s.c));
+  /** Gemi yerleşimi geçerli mi (skipId: taşınan gemi) */
+  function fits(ships, s, skipId) {
+    const cs = shipCells(s);
+    if (s.dir === 'h' ? s.c < 0 || s.c + s.n > N || s.r < 0 || s.r >= N : s.r < 0 || s.r + s.n > N || s.c < 0 || s.c >= N) return false;
+    for (const o of ships) {
+      if (o.id === skipId || o.r == null) continue;
+      for (const a of shipCells(o)) for (const b of cs) if (Math.abs(((a / N) | 0) - ((b / N) | 0)) <= 1 && Math.abs((a % N) - (b % N)) <= 1) return false;
+    }
+    return true;
+  }
+  function placeRandom(rnd) {
+    rnd = rnd || Math.random;
+    for (let tries = 0; tries < 200; tries++) {
+      const ships = [];
+      let ok = true;
+      for (const t of SHIPS) {
+        let placed = false;
+        for (let k = 0; k < 300 && !placed; k++) {
+          const dir = rnd() < 0.5 ? 'h' : 'v';
+          const s = { id: t.id, n: t.n, dir, r: Math.floor(rnd() * (dir === 'v' ? N - t.n + 1 : N)), c: Math.floor(rnd() * (dir === 'h' ? N - t.n + 1 : N)) };
+          if (fits(ships, s)) {
+            ships.push(s);
+            placed = true;
+          }
+        }
+        if (!placed) {
+          ok = false;
+          break;
+        }
+      }
+      if (ok) return ships;
+    }
+    return null;
+  }
+  function validFleet(ships) {
+    if (!Array.isArray(ships) || ships.length !== 5) return false;
+    const ids = new Set(ships.map((s) => s.id));
+    if (ids.size !== 5 || SHIPS.some((t) => !ids.has(t.id))) return false;
+    const done = [];
+    for (const s of ships) {
+      const t = SHIPS.find((x) => x.id === s.id);
+      if (s.n !== t.n || !fits(done, s)) return false;
+      done.push(s);
+    }
+    return true;
+  }
+  /** o: { again (isabet yeniden atar), first? } */
+  function newGame(o) {
+    return {
+      phase: 'place',
+      ready: [false, false],
+      cur: null,
+      again: o.again !== false,
+      // shots[p]: p'nin rakip denizine attıkları → 0 bilinmiyor, 1 su, 2 isabet, 3 batık, 4 batığın çevresi (su)
+      shots: [new Array(N * N).fill(0), new Array(N * N).fill(0)],
+      sunk: [[], []], // sunk[t]: t koltuğunun batan gemileri
+      count: [0, 0],
+      hits: [0, 0],
+      winner: null,
+      fleets: null,
+      over: false,
+      step: 0,
+      turnNo: 0,
+    };
+  }
+  const clone = (st) => JSON.parse(JSON.stringify(st));
+  /** Yerel atış sonucu (botlara karşı): fleet = hedefin gemileri, hit = hedefe yapılmış atışlar (Set) */
+  function fire(fleet, hitSet, c) {
+    const s = fleet.find((x) => shipCells(x).indexOf(c) >= 0);
+    if (!s) return { res: 'miss' };
+    const cs = shipCells(s);
+    if (cs.every((x) => x === c || hitSet.has(x))) {
+      const all = fleet.every((x) => shipCells(x).every((y) => y === c || hitSet.has(y)));
+      return { res: 'sunk', ship: Object.assign({}, s, { cells: cs }), all };
+    }
+    return { res: 'hit' };
+  }
+  function markSunk(grid, cells) {
+    for (const a of cells) {
+      grid[a] = 3;
+      const r = (a / N) | 0;
+      const c = a % N;
+      for (let dr = -1; dr <= 1; dr++)
+        for (let dc = -1; dc <= 1; dc++) {
+          const x = r + dr;
+          const y = c + dc;
+          if (x >= 0 && y >= 0 && x < N && y < N && grid[x * N + y] === 0) grid[x * N + y] = 4;
+        }
+    }
+  }
+  function apply(st, a) {
+    if (!a || st.over) return { ok: false };
+    const d = a.data || {};
+    const p = a.seat;
+    if (a.kind === 'ready') {
+      if (st.phase !== 'place' || (p !== 0 && p !== 1) || st.ready[p]) return { ok: false };
+      st.step += 1;
+      st.ready[p] = true;
+      const ev = [{ t: 'ready', p, rnd: !!d.rnd }];
+      if (d.start) {
+        st.phase = 'battle';
+        st.cur = d.first === 1 ? 1 : 0;
+        ev.push({ t: 'start', first: st.cur });
+      }
+      return { ok: true, ev };
+    }
+    if (a.kind === 'shot') {
+      // sıra ve tekrar atış sunucuda denetlenir; sunucunun kabul ettiği atış burada da geçerlidir (adım denetimi yok)
+      if (st.phase !== 'battle' || p !== st.cur) return { ok: false };
+      const c = d.c | 0;
+      const g = st.shots[p];
+      if (c < 0 || c >= N * N || g[c] === 1 || g[c] === 2 || g[c] === 3) return { ok: false };
+      if (d.res !== 'miss' && d.res !== 'hit' && d.res !== 'sunk') return { ok: false };
+      st.step += 1;
+      st.count[p] += 1;
+      const ev = { t: 'shot', p, c, res: d.res, auto: !!d.auto };
+      if (d.res === 'miss') g[c] = 1;
+      else {
+        g[c] = 2;
+        st.hits[p] += 1;
+        if (d.res === 'sunk' && d.ship && Array.isArray(d.ship.cells)) {
+          markSunk(g, d.ship.cells);
+          st.sunk[1 - p].push({ id: d.ship.id, n: d.ship.n, dir: d.ship.dir, r: d.ship.r, c: d.ship.c, cells: d.ship.cells.slice() });
+          ev.ship = d.ship;
+        }
+      }
+      if (d.win) {
+        st.over = true;
+        st.phase = 'over';
+        st.winner = p;
+        st.fleets = Array.isArray(d.fleets) ? d.fleets : null;
+        ev.win = true;
+        return { ok: true, ev: [ev, { t: 'over', winner: p }] };
+      }
+      const nx = d.next === 0 || d.next === 1 ? d.next : d.res === 'miss' || !st.again ? 1 - p : p;
+      if (nx !== st.cur) st.turnNo += 1;
+      st.cur = nx;
+      ev.next = nx;
+      return { ok: true, ev: [ev] };
+    }
+    return { ok: false };
+  }
+  const ranking = (st) => (st.winner == null ? [] : [{ seat: st.winner, total: 1 }, { seat: 1 - st.winner, total: 0 }]);
+
+  /* ---------------- yapay zekâ (yalnız açık bilgiyle: atış sonuçları ve batan gemiler) ---------------- */
+  function aiShot(st, p, level, rnd) {
+    rnd = rnd || Math.random;
+    const sh = st.shots[p];
+    const unknown = [];
+    const hits = [];
+    for (let i = 0; i < N * N; i++) {
+      if (sh[i] === 0) unknown.push(i);
+      else if (sh[i] === 2) hits.push(i);
+    }
+    if (!unknown.length) return null;
+    const pick = (arr) => arr[Math.floor(rnd() * arr.length)];
+    if (level === 'kolay') {
+      if (hits.length && rnd() < 0.6) {
+        const nb = [];
+        hits.forEach((h) => {
+          const r = (h / N) | 0;
+          const c = h % N;
+          [[1, 0], [-1, 0], [0, 1], [0, -1]].forEach(([dr, dc]) => {
+            const x = r + dr;
+            const y = c + dc;
+            if (x >= 0 && y >= 0 && x < N && y < N && sh[x * N + y] === 0) nb.push(x * N + y);
+          });
+        });
+        if (nb.length) return pick(nb);
+      }
+      return pick(unknown);
+    }
+    const sunkIds = new Set(st.sunk[1 - p].map((s) => s.id));
+    const left = SHIPS.filter((t) => !sunkIds.has(t.id)).map((t) => t.n);
+    const heat = new Array(N * N).fill(0);
+    for (const n of left)
+      for (const dir of ['h', 'v'])
+        for (let r = 0; r < N; r++)
+          for (let c = 0; c < N; c++) {
+            if (dir === 'h' ? c + n > N : r + n > N) continue;
+            const cs = shipCells({ r, c, n, dir });
+            if (cs.some((a) => sh[a] === 1 || sh[a] === 3 || sh[a] === 4)) continue;
+            const cover = cs.filter((a) => sh[a] === 2).length;
+            const w = hits.length ? (cover ? 1 + cover * 30 : level === 'zor' ? 0.02 : 0.2) : 1;
+            cs.forEach((a) => sh[a] === 0 && (heat[a] += w));
+          }
+    let best = -1;
+    let list = [];
+    for (const a of unknown) {
+      let h = heat[a];
+      const r = (a / N) | 0;
+      const c = a % N;
+      if (!hits.length && level === 'orta' && (r + c) % 2) h *= 0.35; // dama tahtası taraması
+      if (level === 'orta') h *= 0.75 + rnd() * 0.5;
+      if (h > best + 1e-9) {
+        best = h;
+        list = [a];
+      } else if (Math.abs(h - best) < 1e-9) list.push(a);
+    }
+    return list.length ? pick(list) : pick(unknown);
+  }
+
+  const AB = { N, SHIPS, LET, shipCells, fits, placeRandom, validFleet, newGame, clone, fire, apply, ranking, aiShot, markSunk };
+  root.AB = AB;
+  if (typeof module !== 'undefined' && module.exports) module.exports = AB;
+})(typeof window !== 'undefined' ? window : globalThis);
+
+/* ---- ui.js ---- */
+/* =====================================================================
+   AMİRAL BATTI — görünüm: botlara karşı ve online masa (bg-table.js)
+   Online: filon sunucuya gizli gönderilir (rakip göremez); atış sonucu sunucudan gelir; maç sonunda
+   iki filo da açılır. Bağlantısı kopan ya da masadan çıkanın yerine bot oynar.
+   ===================================================================== */
+(function () {
+  'use strict';
+  const { $, $$, el, sleep, esc, icon, snd: SND } = BZ;
+  const A = window.AB;
+  const { N, SHIPS, LET } = A;
+  const NET = window.BGT || null;
+  const S = BZ.store('amiral-site', { level: 'orta', again: true, sound: true });
+  const set = S.v;
+  SND.setOn(set.sound !== false);
+  const G = { st: null, mode: 'offline', net: null, me: 0, spect: false, gen: 0, Q: [], running: false, anim: false, testMul: 1, rules: null, mine: null, myFleet: null, sel: null, drag: null, fleets: null, hit: null, bot: 'Bot', pend: null, finished: false };
+  window.__AM = G;
+  const D = (ms) => (BZ.reduceMotion ? Math.min(ms, 40) : ms * (G.testMul || 1));
+  const now = () => (NET && G.mode === 'online' ? NET.now() : Date.now());
+  const LEVELS = [['kolay', 'Acemi'], ['orta', 'Kaptan'], ['zor', 'Amiral']];
+  const PLACE_SEC = 90;
+  /** gemi adlarının belirtme hâli (senin … batırdı) */
+  const ACC = { a: 'amiral gemisini', k: 'kruvazörünü', m: 'muhribini', d: 'denizaltısını', h: 'hücumbotunu' };
+
+  function who(p) {
+    if (G.mode === 'online' && G.net) return G.net.who(p);
+    return { name: p === 0 ? 'Sen' : G.bot, bot: p !== 0, me: p === 0, away: false, user_id: null };
+  }
+  const nm = (p) => {
+    const w = who(p);
+    return w.me ? 'Sen' : w.name;
+  };
+  const nameHTML = (w) => (NET && G.mode === 'online' ? NET.nameTag(w.me ? 'Sen' : w.name, w.bot) : esc(w.me ? 'Sen' : w.name));
+  const opp = () => 1 - (G.me || 0);
+  const myTurn = () => {
+    const st = G.st;
+    return !!st && !G.spect && st.phase === 'battle' && st.cur === G.me && !G.anim && !G.pend && (G.mode !== 'online' || (G.net && G.net.canAct()));
+  };
+
+  /* ---------------- çizim ---------------- */
+  const hullSVG = (n, sunk) => {
+    const w = n * 100;
+    const id = 'hg' + n + (sunk ? 's' : '');
+    return `<svg viewBox="0 0 ${w} 100" preserveAspectRatio="none" aria-hidden="true"><defs><linearGradient id="${id}" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="${sunk ? '#5a4a44' : '#b8c7d3'}"/><stop offset="1" stop-color="${sunk ? '#2c201c' : '#55687a'}"/></linearGradient></defs>
+      <path d="M8 50 Q10 18 40 14 L${w - 40} 14 Q${w - 6} 22 ${w - 4} 50 Q${w - 6} 78 ${w - 40} 86 L40 86 Q10 82 8 50 Z" fill="url(#${id})" stroke="rgba(255,255,255,.35)" stroke-width="3"/>
+      <rect x="${w * 0.3}" y="32" width="${w * 0.22}" height="36" rx="6" fill="${sunk ? '#3a2c26' : '#7d91a3'}"/>
+      ${n >= 3 ? `<rect x="${w * 0.58}" y="38" width="${w * 0.14}" height="24" rx="5" fill="${sunk ? '#3a2c26' : '#8ea2b3'}"/>` : ''}
+      <circle cx="${w * 0.41}" cy="50" r="8" fill="${sunk ? '#20140f' : '#c9d6e0'}"/>
+      <path d="M${w * 0.12} 50 H${w * 0.24}" stroke="${sunk ? '#20140f' : '#d6e2ea'}" stroke-width="6" stroke-linecap="round"/></svg>`;
+  };
+  function gridHTML(kind) {
+    let h = '';
+    for (let i = 0; i < N; i++) h += `<span class="am-lab col" style="--c:${i}">${LET[i]}</span><span class="am-lab row" style="--r:${i}">${i + 1}</span>`;
+    for (let r = 0; r < N; r++) for (let c = 0; c < N; c++) h += `<div class="am-cell" data-i="${r * N + c}" style="--r:${r};--c:${c}"></div>`;
+    return `<div class="am-sea ${kind}"></div>${h}<div class="am-ships"></div><div class="am-marks"></div><div class="am-fx"></div>`;
+  }
+  function paintShips(box, ships, pendBad) {
+    $('.am-ships', box).innerHTML = (ships || [])
+      .filter((s) => s.r != null)
+      .map((s) => `<div class="am-ship${s.dir === 'v' ? ' v' : ''}${s.sunk ? ' sunk' : ''}${G.sel === s.id && G.st && G.st.phase === 'place' ? ' sel' : ''}${pendBad === s.id ? ' bad' : ''}" data-id="${s.id}" style="--r:${s.r};--c:${s.c};--n:${s.n}">${hullSVG(s.n, s.sunk)}</div>`)
+      .join('');
+  }
+  /** grid: atış kaydı (0 bilinmiyor, 1 su, 2 isabet, 3 batık, 4 batığın çevresi) */
+  function paintMarks(box, grid) {
+    let h = '';
+    for (let i = 0; i < N * N; i++) {
+      const v = grid[i];
+      if (!v) continue;
+      const r = (i / N) | 0;
+      const c = i % N;
+      if (v === 1) h += `<i class="am-m miss" style="--r:${r};--c:${c}"></i>`;
+      else if (v === 4) h += `<i class="am-m water" style="--r:${r};--c:${c}"></i>`;
+      else h += `<i class="am-m hit${v === 3 ? ' sunk' : ''}" style="--r:${r};--c:${c}"></i>`;
+    }
+    $('.am-marks', box).innerHTML = h;
+  }
+  /** Hedefin gemileri: kendi filom (her zaman), rakibinki yalnız batanlar ya da maç sonunda hepsi */
+  function shipsFor(target) {
+    const st = G.st;
+    const sunk = st.sunk[target].map((s) => Object.assign({ sunk: true }, s));
+    let all = null;
+    if (st.fleets && st.fleets[target]) all = st.fleets[target];
+    else if (target === G.me && !G.spect && G.myFleet) all = G.myFleet;
+    if (!all) return sunk;
+    const ids = new Set(sunk.map((s) => s.id));
+    return all.map((s) => (ids.has(s.id) ? Object.assign({}, s, { sunk: true }) : s));
+  }
+  function paintFleet() {
+    const st = G.st;
+    const row = (t) => {
+      const ids = new Set(st.sunk[t].map((s) => s.id));
+      return SHIPS.map((s) => `<span class="am-fl${ids.has(s.id) ? ' sunk' : ''}" title="${s.name}">${'<i></i>'.repeat(s.n)}</span>`).join('');
+    };
+    const a = opp();
+    const b = G.me || 0;
+    $('#amFleetHis').innerHTML = `<b>${nameHTML(who(a))}</b>${row(a)}`;
+    $('#amFleetMe').innerHTML = `<b>${nameHTML(who(b))}</b>${row(b)}`;
+    const left = (t) => 5 - st.sunk[t].length;
+    $('#amHisWrap .am-title').innerHTML = G.spect ? `${esc(nm(b))} → ${esc(nm(a))} · ${left(a)}/5 gemi` : `Düşman suları · ${left(a)}/5 gemi`;
+    $('.am-bw.mine .am-title').innerHTML = G.spect ? `${esc(nm(a))} → ${esc(nm(b))} · ${left(b)}/5 gemi` : `Senin filon · ${left(b)}/5 gemi`;
+  }
+  function paintAll() {
+    const st = G.st;
+    if (!st) return;
+    const wrap = $('#amWrap');
+    const placing = st.phase === 'place';
+    wrap.classList.toggle('placing', placing);
+    $('#amPlaceBar').hidden = !placing || G.spect;
+    $('#amHisWrap').hidden = placing;
+    $('#amFleets').hidden = placing;
+    if (placing) {
+      const mineReady = G.mode === 'online' && st.ready[G.me];
+      paintShips($('#amMine'), mineReady ? G.myFleet || G.mine : G.mine, G.drag && G.drag.bad);
+      $('.am-marks', $('#amMine')).innerHTML = '';
+      $('.am-bw.mine .am-title').textContent = G.spect ? 'Filolar diziliyor' : mineReady ? 'Filon hazır' : 'Filonu diz';
+      $('#amPlaceBar').classList.toggle('done', !!mineReady);
+      const go = $('[data-p="go"]');
+      if (go) go.innerHTML = G.mode === 'online' ? (mineReady ? `${icon('check', 17)} Hazırsın` : `${icon('play', 17)} Hazırım`) : `${icon('play', 17)} Savaşa başla`;
+      $$('#amPlaceBar button').forEach((b) => (b.disabled = !!mineReady));
+      paintPlaceMsg();
+      return;
+    }
+    const a = opp();
+    const b = G.me || 0;
+    // büyük tahta: benim (izlenen) atışlarım; küçük: rakibin bana atışları
+    paintShips($('#amHis'), shipsFor(a));
+    paintMarks($('#amHis'), st.shots[b]);
+    paintShips($('#amMine'), shipsFor(b));
+    paintMarks($('#amMine'), st.shots[a]);
+    paintFleet();
+    $('#amHis').classList.toggle('can', myTurn());
+    $('#amHisWrap').classList.toggle('turn', st.phase === 'battle' && st.cur === b);
+    $('.am-bw.mine').classList.toggle('turn', st.phase === 'battle' && st.cur === a);
+    if (st.over) G.hud.msg('Savaş bitti', '');
+    else if (myTurn()) G.hud.msg('Sıra sende: düşman sularına ateş et', 'me');
+    else if (G.pend) G.hud.msg('Atış…', '');
+    else G.hud.msg(`${esc(nm(st.cur))} nişan alıyor…`, '');
+    paintTimer();
+  }
+  function paintPlaceMsg() {
+    const st = G.st;
+    if (!G.hud) return;
+    if (G.mode !== 'online') return G.hud.msg('Filonu diz: sürükle, dokunarak döndür', 'me');
+    const oReady = st.ready[opp()];
+    if (G.spect) return G.hud.msg('Oyuncular filolarını diziyor…', '');
+    if (st.ready[G.me]) return G.hud.msg(oReady ? 'Savaş başlıyor…' : `${esc(nm(opp()))} filosunu diziyor…`, '');
+    G.hud.msg(oReady ? 'Rakip hazır: filonu diz, “Hazırım”a bas' : 'Filonu diz: sürükle, dokunarak döndür', 'me');
+  }
+  function paintTimer() {
+    const st = G.st;
+    const bar = $('#amTime');
+    if (!st || !bar) return;
+    const sec = G.mode === 'online' ? (st.phase === 'place' ? PLACE_SEC : +(G.rules && G.rules.turn) || 0) : 0;
+    const on = sec > 0 && !st.over && (st.phase === 'place' ? !st.ready[G.me] && !G.spect : true);
+    bar.hidden = !on;
+    if (on) {
+      const t = BZ.timeLeft(st._at || now(), sec, now());
+      bar.style.setProperty('--t', t.toFixed(3));
+      bar.classList.toggle('late', t < 0.3);
+    }
+  }
+  function layout() {
+    const vw = window.innerWidth;
+    const vh = window.innerHeight;
+    const port = vh > vw * 1.05;
+    const wrap = $('#amWrap');
+    wrap.classList.toggle('port', port);
+    const placing = G.st && G.st.phase === 'place';
+    const top = port && vw <= 560 ? 96 : 64;
+    let big;
+    let small;
+    if (placing) {
+      big = Math.min(vw - 24, vh - top - (port ? 150 : 110), 560);
+      small = big;
+    } else if (port) {
+      big = Math.min(vw - 20, (vh - top - 90) * 0.6, 560);
+      small = Math.min(vw * 0.6, (vh - top - 90) * 0.36, 300);
+    } else {
+      big = Math.min(vh - top - 40, (vw - 60) * 0.58, 600);
+      small = Math.min(vh - top - 120, (vw - 60) * 0.34, 340);
+    }
+    $('#amHis').style.setProperty('--sz', Math.max(200, big) + 'px');
+    $('#amMine').style.setProperty('--sz', Math.max(150, placing ? big : small) + 'px');
+  }
+  function relayout() {
+    if (!G.st || $('#game').hidden) return;
+    layout();
+    paintAll();
+  }
+
+  /* ---------------- yerleştirme ---------------- */
+  const canPlace = () => G.st && G.st.phase === 'place' && !G.spect && !(G.mode === 'online' && G.st.ready[G.me]);
+  function cellFromPoint(box, x, y) {
+    const g = box.getBoundingClientRect();
+    const pad = g.width * 0.07;
+    const cell = (g.width - pad) / N;
+    return [Math.floor((y - g.top - pad) / cell), Math.floor((x - g.left - pad) / cell)];
+  }
+  function onPlaceDown(e) {
+    if (!canPlace()) return;
+    const sh = e.target.closest('.am-ship');
+    if (!sh) return;
+    e.preventDefault();
+    SND.unlock();
+    const s = G.mine.find((x) => x.id === sh.dataset.id);
+    const [r, c] = cellFromPoint($('#amMine'), e.clientX, e.clientY);
+    G.drag = { id: s.id, dr: r - s.r, dc: c - s.c, x0: e.clientX, y0: e.clientY, moved: false, orig: { r: s.r, c: s.c } };
+    G.sel = s.id;
+    paintAll();
+  }
+  function onPlaceMove(e) {
+    const d = G.drag;
+    if (!d) return;
+    if (!d.moved && Math.hypot(e.clientX - d.x0, e.clientY - d.y0) < 8) return;
+    d.moved = true;
+    const s = G.mine.find((x) => x.id === d.id);
+    const [r, c] = cellFromPoint($('#amMine'), e.clientX, e.clientY);
+    const nr = Math.max(0, Math.min(N - (s.dir === 'v' ? s.n : 1), r - d.dr));
+    const nc = Math.max(0, Math.min(N - (s.dir === 'h' ? s.n : 1), c - d.dc));
+    if (nr !== s.r || nc !== s.c) {
+      s.r = nr;
+      s.c = nc;
+      d.bad = A.fits(G.mine, s, s.id) ? null : s.id;
+      paintAll();
+    }
+  }
+  function onPlaceUp() {
+    const d = G.drag;
+    if (!d) return;
+    G.drag = null;
+    const s = G.mine.find((x) => x.id === d.id);
+    if (!d.moved) return rotate(s);
+    if (!A.fits(G.mine, s, s.id)) {
+      s.r = d.orig.r;
+      s.c = d.orig.c;
+      SND.play('error');
+      BZ.toast('Gemiler birbirine değemez (çapraz da)', 'bad', 1500);
+    } else SND.play('pop');
+    paintAll();
+  }
+  function rotate(s) {
+    const t = Object.assign({}, s, { dir: s.dir === 'h' ? 'v' : 'h' });
+    for (const [dr, dc] of [[0, 0], [0, -1], [-1, 0], [0, -2], [-2, 0], [-1, -1], [0, -3], [-3, 0], [0, -4], [-4, 0]]) {
+      const u = Object.assign({}, t, { r: t.r + dr, c: t.c + dc });
+      if (A.fits(G.mine, u, s.id)) {
+        Object.assign(s, u);
+        SND.play('select');
+        paintAll();
+        return;
+      }
+    }
+    SND.play('error');
+    BZ.toast('Burada döndürülemiyor', 'bad', 1200);
+  }
+  const fleetOut = (ships) => ships.map((s) => ({ id: s.id, n: s.n, dir: s.dir, r: s.r, c: s.c }));
+  function ready(auto) {
+    const st = G.st;
+    if (!canPlace()) return;
+    if (!A.validFleet(G.mine)) G.mine = A.placeRandom();
+    if (G.mode === 'online') {
+      const ships = fleetOut(G.mine);
+      G.myFleet = ships;
+      try {
+        sessionStorage.setItem('am.fleet.' + G.net.id, JSON.stringify(ships));
+      } catch (e) {}
+      const r = G.net.dispatch({ seat: G.me, kind: 'ready', data: Object.assign({ ships }, auto ? { auto: true } : {}) }, { later: true });
+      if (!r || r.ok === false) {
+        if (r && r.err) BZ.toast(esc(r.err), 'bad');
+        return;
+      }
+      st.readyPend = true;
+      SND.play('coin');
+      paintAll();
+      return;
+    }
+    // botlara karşı
+    G.myFleet = fleetOut(G.mine);
+    G.fleets = [G.myFleet, A.placeRandom()];
+    G.hit = [new Set(), new Set()];
+    applyUI({ seat: 0, kind: 'ready', data: {} });
+    applyUI({ seat: 1, kind: 'ready', data: { start: true, first: Math.random() < 0.5 ? 0 : 1 } });
+  }
+
+  /* ---------------- atış ---------------- */
+  function enqueue(fn) {
+    G.Q.push(fn);
+    if (!G.running) runQ();
+  }
+  async function runQ() {
+    const gen = G.gen;
+    G.running = true;
+    G.anim = true;
+    while (G.Q.length && G.gen === gen) {
+      const fn = G.Q.shift();
+      try {
+        await fn();
+      } catch (e) {
+        console.error('[amiral] canlandırma', e);
+      }
+    }
+    if (G.gen !== gen) return;
+    G.running = false;
+    G.anim = false;
+    afterAnim();
+  }
+  function reduce(st, a) {
+    const r = A.apply(st, a);
+    if (r.ok) st._at = a.at || now();
+    return r;
+  }
+  function applyUI(a) {
+    const st = G.st;
+    if (!st) return { ok: false };
+    const r = reduce(st, a);
+    if (!r.ok) return r;
+    const evs = r.ev;
+    enqueue(async () => {
+      for (const e of evs) await animEvent(e);
+    });
+    return r;
+  }
+  async function animEvent(e) {
+    const st = G.st;
+    if (e.t === 'ready') {
+      if (G.mode === 'online' && e.p !== G.me) BZ.toast(`${esc(nm(e.p))} filosunu dizdi`, '', 1300);
+      if (G.mode === 'online' && e.p === G.me && e.rnd && !G.myFleet) fetchMyFleet();
+      paintAll();
+      return;
+    }
+    if (e.t === 'start') {
+      layout();
+      paintAll();
+      SND.play('whistle');
+      BZ.toast(e.first === G.me && !G.spect ? 'İlk atış senin!' : `İlk atış: ${esc(nm(e.first))}`, '', 1500);
+      await sleep(D(500));
+      return;
+    }
+    if (e.t === 'shot') {
+      G.pend = null;
+      const target = 1 - e.p;
+      const box = target === (G.me || 0) ? $('#amMine') : $('#amHis');
+      const fx = $('.am-fx', box);
+      const r = (e.c / N) | 0;
+      const c = e.c % N;
+      if (!$(`.am-aim[data-c="${e.c}"]`, fx)) {
+        const aim = el(`<i class="am-aim" data-c="${e.c}" style="--r:${r};--c:${c}"></i>`);
+        fx.appendChild(aim);
+        SND.play('whoosh');
+        await sleep(D(380));
+      }
+      $$('.am-aim', fx).forEach((n) => n.remove());
+      if (e.res === 'miss') {
+        fx.appendChild(el(`<i class="am-splash" style="--r:${r};--c:${c}"></i>`));
+        SND.play('splash');
+      } else {
+        fx.appendChild(el(`<i class="am-boom${e.res === 'sunk' ? ' big' : ''}" style="--r:${r};--c:${c}"></i>`));
+        SND.play('boom');
+        BZ.haptic(e.res === 'sunk' ? 60 : 25);
+        if (e.res === 'sunk' && e.ship) {
+          const sn = (SHIPS.find((t) => t.id === e.ship.id) || {}).name || 'Gemi';
+          box.classList.add('shake');
+          setTimeout(() => box.classList.remove('shake'), 500);
+          const meShot = e.p === G.me && !G.spect;
+          const meHit = target === G.me && !G.spect;
+          const acc = ACC[e.ship.id] || 'gemini';
+          BZ.toast(meShot ? `${sn} batırıldı!` : meHit ? `${esc(nm(e.p))} senin ${acc} batırdı` : `${esc(nm(e.p))}, ${esc(nm(target))} oyuncusunun ${acc} batırdı`, meShot ? 'good' : meHit ? 'bad' : '', 1800);
+        }
+      }
+      if (e.auto && e.p === G.me && !G.spect) BZ.toast('Süre doldu: atışın otomatik yapıldı', 'warn');
+      paintAll();
+      setTimeout(() => $$('.am-splash, .am-boom', fx).forEach((n) => n.remove()), 1100);
+      await sleep(D(e.res === 'miss' ? 420 : 620));
+      return;
+    }
+    if (e.t === 'over') {
+      paintAll();
+      return;
+    }
+  }
+  function shoot(i) {
+    const st = G.st;
+    if (!myTurn()) return;
+    const me = G.me;
+    if (st.shots[me][i] === 1 || st.shots[me][i] === 2 || st.shots[me][i] === 3) return SND.play('error');
+    SND.unlock();
+    if (G.mode === 'online') {
+      G.pend = { c: i, at: Date.now() };
+      const fx = $('.am-fx', $('#amHis'));
+      fx.appendChild(el(`<i class="am-aim wait" data-c="${i}" style="--r:${(i / N) | 0};--c:${i % N}"></i>`));
+      SND.play('whoosh');
+      paintAll();
+      const r = G.net.dispatch({ seat: me, kind: 'shot', data: { c: i } }, { later: true });
+      if (!r || r.ok === false) {
+        G.pend = null;
+        $$('.am-aim', fx).forEach((n) => n.remove());
+        if (r && r.err) BZ.toast(esc(r.err), 'bad');
+        paintAll();
+      }
+      return;
+    }
+    offlineShot(me, i);
+  }
+  function offlineShot(p, i) {
+    const t = 1 - p;
+    const res = A.fire(G.fleets[t], G.hit[t], i);
+    G.hit[t].add(i);
+    const data = { c: i, res: res.res };
+    if (res.ship) data.ship = res.ship;
+    if (res.all) {
+      data.win = true;
+      data.fleets = G.fleets;
+    } else data.next = res.res === 'miss' || !G.st.again ? t : p;
+    applyUI({ seat: p, kind: 'shot', data, at: now() });
+  }
+  function afterAnim() {
+    const st = G.st;
+    if (!st || G.anim) return;
+    paintAll();
+    if (st.over) return onOver();
+    if (myTurn()) {
+      const k = st.turnNo + ':' + st.step;
+      if (G.turnKey !== k && st.cur !== st._lastCur) {
+        SND.play('turn');
+        BZ.haptic(25);
+      }
+      G.turnKey = k;
+    }
+    st._lastCur = st.cur;
+    if (G.mode === 'online') netDrive();
+    else driveOffline();
+  }
+  function driveOffline() {
+    clearTimeout(G.botT);
+    const st = G.st;
+    if (!st || st.over || G.anim || st.phase !== 'battle' || st.cur !== 1) return;
+    const key = st.step;
+    G.botT = setTimeout(() => {
+      if (G.st !== st || st.step !== key || G.anim) return;
+      const c = A.aiShot(st, 1, set.level);
+      if (c != null) offlineShot(1, c);
+    }, D(650 + Math.random() * 450));
+  }
+
+  /* ---------------- online masa ---------------- */
+  async function fetchMyFleet() {
+    if (!G.net || G.spect || !NET) return;
+    try {
+      const r = await NET.rpc('bg_amiral_fleet', { p_table: G.net.id });
+      if (r && Array.isArray(r.ships)) {
+        G.myFleet = r.ships;
+        try {
+          sessionStorage.setItem('am.fleet.' + G.net.id, JSON.stringify(r.ships));
+        } catch (e) {}
+        paintAll();
+      }
+    } catch (e) {}
+  }
+  const GA = {
+    init(table) {
+      const st = A.newGame({ again: ((table.rules || {}).again) !== false });
+      st._at = Date.parse(table.started_at) || now();
+      return st;
+    },
+    apply: (st, a) => reduce(st, a),
+    clone: (st) => A.clone(st),
+    view: () => G.st,
+    applyLocal: (a) => applyUI(Object.assign({ at: now() }, a)),
+    applyRemote(a) {
+      const r = applyUI(a);
+      return r && r.ok ? { pace: 140 } : null;
+    },
+    reset(st) {
+      G.gen++;
+      G.st = st;
+      G.Q = [];
+      G.running = false;
+      G.anim = false;
+      G.pend = null;
+      if (st.ready[G.me] && !G.spect && !G.myFleet) {
+        try {
+          G.myFleet = JSON.parse(sessionStorage.getItem('am.fleet.' + G.net.id) || 'null');
+        } catch (e) {}
+        if (!G.myFleet) fetchMyFleet();
+      }
+      $('#amMine').innerHTML = gridHTML('mine');
+      $('#amHis').innerHTML = gridHTML('radar');
+      relayout();
+      afterAnim();
+    },
+    onSeats() {
+      if (G.st && !G.anim) paintAll();
+    },
+    onStatus(status) {
+      if (status === 'closed') {
+        BZ.toast(G.spect ? 'Masa kapandı.' : 'Masa kapandı: oyunda başka oyuncu kalmadı.', 'bad');
+        setTimeout(() => sh.lobby(), 1600);
+      }
+    },
+    onTick() {
+      if (G.mode !== 'online') return;
+      paintTimer();
+      if (G.pend && Date.now() - G.pend.at > 9000) {
+        G.pend = null;
+        $$('.am-aim.wait').forEach((n) => n.remove());
+        paintAll();
+      }
+      const pill = $('#amNet');
+      if (pill) pill.hidden = !(G.net && G.net.fails > 1);
+      netDrive();
+    },
+    onSpectate() {
+      G.spect = true;
+      BZ.toast('Koltuğunda artık bot oynuyor. Masayı izliyorsun.', 'bad');
+      paintAll();
+    },
+  };
+  function fresh(slot, key) {
+    const k = G[slot];
+    if (k && k.key === key && Date.now() - k.at < 7000) return false;
+    G[slot] = { key, at: Date.now() };
+    return true;
+  }
+  function netDrive() {
+    const N2 = G.net;
+    const st = G.st;
+    if (!N2 || !st || G.mode !== 'online' || N2.closed || G.anim || st.over) return;
+    if (!N2.canAct() || N2.busy()) return;
+    const t = now();
+    const at = st._at || t;
+    if (st.phase === 'place') {
+      // süre dolunca kendi dizdiğim filo gönderilir
+      if (!G.spect && !st.ready[G.me] && !st.readyPend && t >= at + PLACE_SEC * 1000 && fresh('placeKey', 'me')) ready(true);
+      if (!N2.isDriver()) return;
+      for (const p of [0, 1]) {
+        if (st.ready[p] || (p === G.me && !G.spect)) continue;
+        const ctl = N2.control(p);
+        const late = ctl === 'human' && t >= at + PLACE_SEC * 1000 + 5000;
+        if ((ctl === 'bot' || ctl === 'away' || late) && t >= at + 1200 && fresh('readyKey' + p, 'r' + p)) {
+          const r = N2.dispatch({ seat: p, kind: 'ready', data: ctl === 'human' ? { auto: true } : {} }, { later: true });
+          if (!r || r.ok === false) G['readyKey' + p] = null;
+        }
+      }
+      return;
+    }
+    if (st.phase !== 'battle') return;
+    const p = st.cur;
+    const key = st.step;
+    const sec = +(G.rules && G.rules.turn) || 0;
+    if (!G.spect && p === G.me) {
+      if (G.autoHuman && !G.pend && fresh('botKey', key)) {
+        const c = A.aiShot(st, p, 'orta');
+        if (c != null) {
+          G.pend = { c, at: Date.now() };
+          const r = N2.dispatch({ seat: p, kind: 'shot', data: { c } }, { later: true });
+          if (!r || r.ok === false) G.pend = null;
+        }
+        return;
+      }
+      if (sec && !G.pend && t >= at + sec * 1000 && fresh('autoKey', key)) {
+        const c = A.aiShot(st, p, 'orta');
+        if (c != null) {
+          G.pend = { c, at: Date.now() };
+          const r = N2.dispatch({ seat: p, kind: 'shot', data: { c, auto: true } }, { later: true });
+          if (!r || r.ok === false) G.pend = null;
+        }
+      }
+      return;
+    }
+    if (!N2.isDriver()) return;
+    const ctl = N2.control(p);
+    const due = ctl === 'bot' || ctl === 'away' ? 750 + ((st.step * 7919) % 500) : ctl === 'human' && sec ? sec * 1000 + 3500 : null;
+    if (due != null && ctl !== 'human' && t < at + due * (G.testMul || 1)) {
+      clearTimeout(G.ndT);
+      G.ndT = setTimeout(netDrive, Math.max(20, at + due * (G.testMul || 1) - t + 15));
+      return;
+    }
+    if (due != null && t >= at + due * (ctl === 'human' ? 1 : G.testMul || 1) && fresh('botKey', key)) {
+      const c = A.aiShot(st, p, ctl === 'human' ? 'orta' : (G.rules && G.rules.level) || 'orta');
+      if (c == null) return;
+      const r = N2.dispatch({ seat: p, kind: 'shot', data: Object.assign({ c }, ctl === 'human' ? { auto: true } : {}) }, { later: true });
+      if (!r || r.ok === false) G.botKey = null;
+    }
+  }
+  function startTable(sess) {
+    G.gen++;
+    clearTimeout(G.botT);
+    BZ.closeModals();
+    G.net = sess;
+    G.mode = 'online';
+    G.rules = Object.assign({ turn: 30, level: 'orta', again: true }, sess.table.rules || {});
+    G.spect = sess.spect;
+    G.me = sess.spect ? sess.watch : sess.mySeat;
+    if (G.me == null) G.me = 0;
+    G.finished = false;
+    G.Q = [];
+    G.running = false;
+    G.anim = false;
+    G.pend = null;
+    G.myFleet = null;
+    G.mine = A.placeRandom();
+    G.sel = null;
+    G.st = GA.init(sess.table);
+    sh.show('game');
+    setupGame(`1’e 1 · online${G.spect ? ' · izliyorsun' : ''}`);
+    sess.start(GA).catch(() => sh.lobby());
+  }
+  const TABLE_RULES = {
+    defaults: () => ({ turn: 30, level: 'orta', again: true }),
+    form(r) {
+      const seg = (k, v, l) => `<button type="button" data-v="${v}" aria-pressed="${String(r[k]) === String(v)}">${l}</button>`;
+      return `<div class="t-field"><span class="t-lab">İsabet edince</span><div class="t-seg" data-seg="again">${seg('again', true, 'Yeniden atar')}${seg('again', false, 'Sıra geçer')}</div></div>
+        <div class="t-field"><span class="t-lab">Atış süresi</span><div class="t-seg" data-seg="turn">${[15, 30, 45, 60].map((v) => seg('turn', v, v + ' sn')).join('')}</div></div>
+        <div class="t-field"><span class="t-lab">Bot seviyesi (boş koltuk ve bağlantısı kopan oyuncu için)</span><div class="t-seg" data-seg="level">${LEVELS.map(([v, l]) => seg('level', v, l)).join('')}</div></div>
+        <p class="t-note">Filolar sunucuda gizli tutulur: rakibin senin gemilerini göremez. Diziliş için ${PLACE_SEC} saniye var.</p>`;
+    },
+    read(form, prev) {
+      const r = Object.assign({}, prev || TABLE_RULES.defaults());
+      const pick = (k) => form.querySelector(`[data-seg="${k}"] [aria-pressed="true"]`);
+      const t = pick('turn');
+      const l = pick('level');
+      const g = pick('again');
+      if (t) r.turn = +t.dataset.v;
+      if (l) r.level = l.dataset.v;
+      if (g) r.again = g.dataset.v === 'true';
+      return r;
+    },
+    summary: (r) => `${r.again === false ? 'isabette sıra geçer' : 'isabet eden yeniden atar'} · atış ${r.turn ? r.turn + ' sn' : 'süresiz'}`,
+  };
+
+  /* ---------------- maç sonu ---------------- */
+  function onOver() {
+    const st = G.st;
+    if (!st || !st.over || $('.bz-modals [data-modal="results"]')) return;
+    if (G.mode === 'online' && G.net && !G.spect && !G.finished) {
+      G.finished = true;
+      G.net.finish({ ranking: A.ranking(st) });
+    }
+    const w = st.winner;
+    const win = w === G.me && !G.spect;
+    BZ.banner(G.spect ? `${esc(nm(w)).toLocaleUpperCase('tr-TR')} KAZANDI` : win ? 'ZAFER!' : 'FİLON BATTI', win ? 'Düşman filosu denizin dibinde' : `${esc(nm(w))} kazandı`, win || G.spect);
+    SND.play(win ? 'win' : 'lose');
+    if (win) BZ.confetti(120);
+    paintAll();
+    const online = G.mode === 'online';
+    const gen = G.gen;
+    setTimeout(() => {
+      if (gen !== G.gen) return;
+      const acc = (q) => (st.count[q] ? Math.round((st.hits[q] / st.count[q]) * 100) : 0);
+      const rows = [w, 1 - w].map((p) => {
+        const x = who(p);
+        return { name: (x.me ? 'Sen' : x.name) + (online && x.bot ? ' (BOT)' : ''), val: p === w ? 1 : 0, label: `${st.count[p]} atış · %${acc(p)} isabet`, me: p === G.me && !G.spect, win: p === w };
+      });
+      BZ.results({
+        title: win ? 'Kazandın!' : `${esc(nm(w))} kazandı`,
+        sub: 'Bütün gemileri ilk batıran kazanır. Rakibin filosu tahtada açıldı.',
+        rows,
+        tiePlaces: false,
+        extra: online && !G.spect ? '<div class="rw-slot"></div>' : '',
+        onAgain: () => (online ? sh.lobby() : startOffline()),
+        onHome: () => (online ? sh.lobby() : home()),
+      });
+      const box = $('.bz-modals [data-modal="results"]');
+      if (online && box) {
+        const again = box.querySelector('[data-m="again"]');
+        if (again) again.innerHTML = `${icon('users', 17)} Masalara dön`;
+        const hm = box.querySelector('[data-m="home"]');
+        if (hm) hm.remove();
+        const rws = box.querySelector('.rw-slot');
+        if (rws && NET && NET.mountRewards && G.net) NET.mountRewards(rws, G.net.id);
+      }
+    }, D(2000));
+  }
+
+  /* ---------------- ekranlar ---------------- */
+  const RULES = `<p><b>Filo:</b> Amiral gemisi (5), Kruvazör (4), Muhrip (3), Denizaltı (3), Hücumbot (2). Gemiler yatay ya da dikey durur ve birbirine değemez (çapraz da).</p>
+    <p><b>Dizmek:</b> gemiyi sürükleyerek taşı, dokunarak döndür; “Rastgele diz” ile hızlı başla.</p>
+    <p><b>Ateş:</b> sıran gelince düşman sularında bir kareye dokun. Halka: su. Ateş: isabet. Bir geminin bütün kareleri vurulunca batar; çevresi su olarak işaretlenir.</p>
+    <p><b>Vuran yeniden atar:</b> isabet ettirirsen bir kez daha atarsın (masa ayarından kapatılabilir).</p>
+    <p><b>Kazanmak:</b> rakibin bütün gemilerini ilk batıran kazanır.</p>
+    <p><b>Online:</b> filon sunucuda gizli tutulur; rakibin göremez. Diziliş için ${PLACE_SEC} saniye var; süre dolarsa o anki dizilişin gönderilir. Atış süresi dolarsa atışın kendiliğinden yapılır.</p>`;
+  function showMenu() {
+    const online = G.mode === 'online' && G.net;
+    BZ.gameMenu({
+      title: 'Amiral Battı',
+      rules: RULES,
+      online,
+      homeLabel: online ? (G.spect ? 'İzlemeyi bırak' : 'Masadan çık') : 'Oyun ayarlarına dön',
+      onAction: (m) => {
+        if (m === 'restart') return startOffline();
+        if (m === 'home') return online ? sh.leave(G.net, G.spect) : home();
+      },
+    });
+  }
+  function setupGame(sub) {
+    G.hud = BZ.hud({
+      root: $('#hud'),
+      title: 'Amiral Battı',
+      sub,
+      right: G.mode === 'online' && NET ? `<button class="bz-ib" data-a="emoji" aria-label="Emoji gönder">${icon('smile', 20)}</button>` : '',
+      chat: G.mode === 'online' && !!NET,
+      onMenu: showMenu,
+      onAction: (a) => {
+        if (a === 'emoji' && NET) NET.emojiPicker();
+      },
+      onSound: (v) => {
+        set.sound = v;
+        S.save();
+      },
+    });
+    $('#amMine').innerHTML = gridHTML('mine');
+    $('#amHis').innerHTML = gridHTML('radar');
+    layout();
+    paintAll();
+  }
+  function home() {
+    G.gen++;
+    clearTimeout(G.botT);
+    BZ.closeModals();
+    G.st = null;
+    G.mode = 'offline';
+    G.net = null;
+    sh.show('start');
+    BZ.startScreen({
+      root: $('#start'),
+      title: 'Amiral Battı',
+      tagline: 'Filonu gizlice diz, radarı tara, düşmanın gemilerini tek tek batır. İsabet ettiren yeniden atar; son gemisi batan kaybeder.',
+      chips: ['1’e 1', '5 gemi', 'Online: filolar gizli'],
+      art: window.GAME_ART,
+      settings: set,
+      save: () => S.save(),
+      panelTitle: 'Bota karşı',
+      options: [
+        { key: 'level', label: 'Bot seviyesi', choices: LEVELS },
+        { key: 'again', label: 'İsabet edince', choices: [[true, 'Yeniden atar'], [false, 'Sıra geçer']] },
+      ],
+      actions: [{ id: 'play', label: 'Filoyu diz', kind: 'gold big', icon: 'play' }],
+      online: { title: 'Online', text: 'Arkadaşınla 1’e 1 masa kur. Filon sunucuda gizli tutulur; rakibin göremez, atış sonuçlarını sunucu söyler. Bağlantısı kopanın yerine bot oynar.' },
+      onAction: (id) => {
+        if (id === 'play') return startOffline();
+        if (id === 'online') return sh.online();
+      },
+      rules: RULES,
+    });
+  }
+  function startOffline() {
+    G.gen++;
+    clearTimeout(G.botT);
+    BZ.closeModals();
+    G.mode = 'offline';
+    G.net = null;
+    G.spect = false;
+    G.me = 0;
+    G.rules = null;
+    G.finished = false;
+    G.Q = [];
+    G.running = false;
+    G.anim = false;
+    G.pend = null;
+    G.bot = BZ.botNames(1)[0];
+    G.mine = A.placeRandom();
+    G.myFleet = null;
+    G.sel = null;
+    G.st = A.newGame({ again: set.again !== false });
+    G.st._at = now();
+    sh.show('game');
+    setupGame(`Rakip: ${G.bot} (${(LEVELS.find((l) => l[0] === set.level) || LEVELS[1])[1]})`);
+  }
+  const sh = BZ.shell({
+    game: 'amiral-online',
+    name: 'Amiral Battı',
+    seatCounts: [2],
+    defSeats: 2,
+    rules: TABLE_RULES,
+    onPlay: startTable,
+    onOffline: () => startOffline(),
+    onStart: home,
+    mySeat: () => (G.spect ? null : G.me),
+    avatarEl: () => null,
+  });
+
+  function boot() {
+    $('#game').insertAdjacentHTML(
+      'beforeend',
+      `<div id="amWrap" class="am-wrap">
+        <div id="amHisWrap" class="am-bw his"><div class="am-title">Düşman suları</div><div id="amHis" class="am-board radar"></div></div>
+        <div class="am-bw mine"><div class="am-title">Senin filon</div><div id="amMine" class="am-board"></div>
+          <div id="amPlaceBar" class="am-placebar"><button class="bz-btn" data-p="rand">${icon('shuffle', 17)} Rastgele diz</button><button class="bz-btn gold" data-p="go">${icon('play', 17)} Hazırım</button></div></div>
+        <div id="amFleets" class="am-fleets" hidden><div id="amFleetHis"></div><div id="amFleetMe"></div></div>
+        <i id="amTime" class="am-time" hidden></i>
+      </div><span id="amNet" class="am-netpill" hidden>Bağlantı yavaş…</span>`,
+    );
+    const mine = $('#amMine');
+    mine.addEventListener('pointerdown', onPlaceDown);
+    window.addEventListener('pointermove', onPlaceMove);
+    window.addEventListener('pointerup', onPlaceUp);
+    window.addEventListener('pointercancel', onPlaceUp);
+    $('#amHis').addEventListener('click', (e) => {
+      const cell = e.target.closest('.am-cell');
+      if (cell) shoot(+cell.dataset.i);
+    });
+    $('#amPlaceBar').addEventListener('click', (e) => {
+      const b = e.target.closest('[data-p]');
+      if (!b || b.disabled || !canPlace()) return;
+      SND.unlock();
+      SND.play('tap');
+      if (b.dataset.p === 'rand') {
+        G.mine = A.placeRandom();
+        G.sel = null;
+        paintAll();
+      } else ready(false);
+    });
+    let rz = null;
+    window.addEventListener('resize', () => {
+      clearTimeout(rz);
+      rz = setTimeout(relayout, 80);
+    });
+    window.addEventListener('orientationchange', () => setTimeout(relayout, 260));
+    setInterval(() => {
+      if (G.st && G.mode === 'online') paintTimer();
+    }, 500);
+    sh.boot();
+  }
+  window.__AMT = { startOffline, ready, shoot, G };
+  if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', boot);
+  else boot();
+})();
+
+</script>
+</body>
+</html>

@@ -1,0 +1,1335 @@
+<!doctype html>
+<html lang="tr">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no, viewport-fit=cover" />
+<meta name="theme-color" content="#120b07" />
+<title>Kızma Birader Online · Bözer Gaming</title>
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@600;700;800;900&family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet" />
+<link rel="stylesheet" href="assets/css/bz-kit.css?v=3.4.3" />
+<link rel="stylesheet" href="assets/css/bg-table.css?v=3.4.3" />
+<link rel="stylesheet" href="assets/css/badges.css?v=3.4.3" />
+<style>
+/* ---------------- Kızma Birader (site) ---------------- */
+body { --bz-accent: #e2534f; }
+.kz-wrap { position: absolute; inset: 0; display: grid; grid-template-columns: minmax(140px, 210px) auto minmax(140px, 210px); grid-template-rows: 1fr; align-items: center; justify-content: center; gap: 12px;
+  padding: calc(58px + var(--bz-safe-t)) calc(10px + var(--bz-safe-r)) calc(8px + var(--bz-safe-b)) calc(10px + var(--bz-safe-l)); }
+.kz-wrap .kz-pods { align-self: stretch; display: grid; align-content: space-between; gap: 8px; padding: 6px 0; }
+.kz-wrap.port { grid-template-columns: auto; grid-template-rows: auto auto auto; align-content: center; gap: 8px; }
+.kz-wrap.port .kz-pods { grid-template-columns: repeat(2, minmax(0, 1fr)); align-content: center; width: min(var(--sz, 360px), 100%); justify-self: center; padding: 0; }
+.kz-wrap.port .kz-board { justify-self: center; }
+.kz-board { --sz: 640px; --cs: calc(var(--sz) / 11); position: relative; width: var(--sz); height: var(--sz); border-radius: calc(var(--sz) * 0.04); touch-action: manipulation;
+  background: radial-gradient(90% 90% at 50% 40%, #fbf3e2 0%, #efe0c2 70%, #dcc59a 100%);
+  box-shadow: 0 30px 70px rgba(0, 0, 0, 0.55), inset 0 0 0 calc(var(--sz) * 0.012) #c9a46a, inset 0 0 0 calc(var(--sz) * 0.02) #f6ead2; }
+.kz-cross { position: absolute; left: calc(var(--cs) * 4); top: calc(var(--cs) * 4); width: calc(var(--cs) * 3); height: calc(var(--cs) * 3); border-radius: 50%;
+  background: conic-gradient(from 45deg, #e2443c33 0 25%, #f2c12e33 0 50%, #3a7de033 0 75%, #36b45a33 0); }
+.kz-sq { position: absolute; left: calc(var(--x) * var(--cs) + var(--cs) * 0.1); top: calc(var(--y) * var(--cs) + var(--cs) * 0.1); width: calc(var(--cs) * 0.8); height: calc(var(--cs) * 0.8); border-radius: 50%;
+  background: #fffdf6; box-shadow: inset 0 calc(var(--cs) * -0.05) 0 rgba(0, 0, 0, 0.12), 0 0 0 calc(var(--cs) * 0.035) #b99a66; display: grid; place-items: center; }
+.kz-sq b { width: 0; height: 0; border-left: calc(var(--cs) * 0.16) solid rgba(255, 255, 255, 0.9); border-top: calc(var(--cs) * 0.11) solid transparent; border-bottom: calc(var(--cs) * 0.11) solid transparent; margin-left: calc(var(--cs) * 0.04); }
+.kz-sq.red { --k: #e2443c; } .kz-sq.blue { --k: #3a7de0; } .kz-sq.green { --k: #36b45a; } .kz-sq.yellow { --k: #f2c12e; }
+.kz-sq.start, .kz-sq.home { background: radial-gradient(circle at 40% 35%, color-mix(in srgb, var(--k) 55%, white), var(--k)); }
+.kz-sq.yard { background: radial-gradient(circle at 40% 35%, color-mix(in srgb, var(--k) 25%, white), color-mix(in srgb, var(--k) 55%, white)); box-shadow: inset 0 calc(var(--cs) * 0.06) calc(var(--cs) * 0.08) rgba(0, 0, 0, 0.25), 0 0 0 calc(var(--cs) * 0.035) color-mix(in srgb, var(--k) 70%, black); }
+.kz-sq.off, .kz-yard.off { opacity: 0.35; filter: saturate(0.4); }
+.kz-yard { position: absolute; left: calc(var(--x) * var(--cs) - var(--cs) * 0.08); top: calc(var(--y) * var(--cs) - var(--cs) * 0.08); width: calc(var(--cs) * 2.16); height: calc(var(--cs) * 2.16); border-radius: calc(var(--cs) * 0.4); }
+.kz-yard.red { background: #e2443c2e; box-shadow: inset 0 0 0 3px #e2443c88; } .kz-yard.blue { background: #3a7de02e; box-shadow: inset 0 0 0 3px #3a7de088; }
+.kz-yard.green { background: #36b45a2e; box-shadow: inset 0 0 0 3px #36b45a88; } .kz-yard.yellow { background: #f2c12e33; box-shadow: inset 0 0 0 3px #d8a51c88; }
+.kz-mid { position: absolute; left: calc(var(--cs) * 5.1); top: calc(var(--cs) * 5.1); width: calc(var(--cs) * 0.8); height: calc(var(--cs) * 0.8); border-radius: 50%;
+  background: conic-gradient(#36b45a 0 25%, #f2c12e 0 50%, #e2443c 0 75%, #3a7de0 0); box-shadow: 0 0 0 calc(var(--cs) * 0.05) #fffdf6, 0 4px 10px rgba(0, 0, 0, 0.3); }
+.kz-pcs, .kz-tgts, .kz-dicebox, .kz-fx { position: absolute; inset: 0; pointer-events: none; }
+.kz-dicebox { z-index: 30; }
+.kz-fx { z-index: 60; }
+.kz-pc { position: absolute; left: 0; top: 0; width: calc(var(--cs) * 0.74); height: calc(var(--cs) * 0.92); border: 0; padding: 0; background: none; pointer-events: auto; cursor: default;
+  transform: translate(calc(var(--px) - var(--cs) * 0.37), calc(var(--py) - var(--cs) * 0.66)); transition: transform 0.14s cubic-bezier(0.3, 0.7, 0.3, 1); z-index: 5; }
+.kz-pc i { position: absolute; inset: 0; }
+.kz-pc i::before { content: ''; position: absolute; left: 12%; right: 12%; bottom: 8%; height: 62%; border-radius: 50% 50% 46% 46% / 70% 70% 30% 30%; background: radial-gradient(circle at 35% 30%, var(--hi), var(--mid) 55%, var(--lo)); box-shadow: 0 calc(var(--cs) * 0.08) calc(var(--cs) * 0.08) rgba(0, 0, 0, 0.4); }
+.kz-pc i::after { content: ''; position: absolute; left: 27%; right: 27%; top: 6%; aspect-ratio: 1; border-radius: 50%; background: radial-gradient(circle at 35% 30%, var(--hi), var(--mid) 60%, var(--lo)); box-shadow: 0 2px 3px rgba(0, 0, 0, 0.3); }
+.kz-pc.red { --hi: #ffb3a8; --mid: #e2443c; --lo: #7a120e; } .kz-pc.blue { --hi: #b6d6ff; --mid: #3a7de0; --lo: #0e2f74; }
+.kz-pc.green { --hi: #c2f5c9; --mid: #36b45a; --lo: #0d5a26; } .kz-pc.yellow { --hi: #fff2b0; --mid: #f2c12e; --lo: #8a6106; }
+.kz-pc.can { cursor: pointer; z-index: 20; }
+.kz-pc.can i { animation: kzCan 0.8s ease-in-out infinite; }
+@keyframes kzCan { 50% { transform: translateY(calc(var(--cs) * -0.12)); filter: drop-shadow(0 0 8px rgba(255, 240, 160, 0.95)); } }
+.kz-pc.moving { z-index: 30; }
+.kz-pc.hop i { animation: kzHop 0.14s ease-out; }
+@keyframes kzHop { 50% { transform: translateY(calc(var(--cs) * -0.32)) scale(1.05); } }
+.kz-pc.knocked { transition: transform 0.42s cubic-bezier(0.4, 0, 0.3, 1); z-index: 40; }
+.kz-pc.knocked i { animation: kzKnock 0.6s ease; }
+@keyframes kzKnock { 30% { transform: rotate(-80deg) translateY(calc(var(--cs) * -0.3)); } 70% { transform: rotate(-200deg); } }
+.kz-tgt { position: absolute; left: 0; top: 0; width: calc(var(--cs) * 0.86); height: calc(var(--cs) * 0.86); border-radius: 50%; border: 0; padding: 0; pointer-events: auto; cursor: pointer;
+  transform: translate(calc(var(--px) - var(--cs) * 0.43), calc(var(--py) - var(--cs) * 0.43));
+  background: radial-gradient(circle, rgba(79, 214, 144, 0.55), rgba(79, 214, 144, 0.15) 70%); box-shadow: 0 0 0 3px rgba(79, 214, 144, 0.9); animation: kzTgt 1s ease-in-out infinite; z-index: 4; }
+.kz-tgt.cap { z-index: 25; background: radial-gradient(circle, rgba(236, 90, 95, 0.6), rgba(236, 90, 95, 0.15) 70%); box-shadow: 0 0 0 3px rgba(236, 90, 95, 0.95); }
+.kz-tgt.home { box-shadow: 0 0 0 3px rgba(248, 226, 164, 0.95); }
+@keyframes kzTgt { 50% { box-shadow: 0 0 0 5px rgba(255, 255, 255, 0.95), 0 0 16px rgba(79, 214, 144, 0.9); } }
+
+/* zar: bekleyen (sallanan), atılan ve sonuç */
+.kz-die { position: absolute; transform: translate(-50%, -50%); pointer-events: auto; }
+.kz-die .bz-die { --die-bg: linear-gradient(145deg, #ffffff, #f4ecdc 55%, #dccdb0); }
+.kz-die.wait .bz-die { animation: kzWait 1.1s ease-in-out infinite; cursor: pointer; }
+.kz-die.wait::before { content: ''; position: absolute; inset: -12px; border-radius: 30%; border: 3px solid rgba(79, 214, 144, 0.85); animation: kzRingIdle 1.1s ease-in-out infinite; }
+.kz-die.shaking .bz-die { animation: kzRattle 0.16s linear infinite; }
+@keyframes kzWait { 0%, 100% { transform: rotate(0) translateY(0); } 30% { transform: rotate(-10deg) translateY(-4px); } 60% { transform: rotate(8deg) translateY(1px); } }
+@keyframes kzRattle { 0% { transform: translate(-3px, 2px) rotate(-12deg); } 50% { transform: translate(3px, -3px) rotate(12deg); } 100% { transform: translate(-3px, 2px) rotate(-12deg); } }
+@keyframes kzRingIdle { 50% { transform: scale(1.12); opacity: 0.5; } }
+.kz-die-res.bz-throw.land::after { border-color: rgba(255, 236, 170, 0.95); }
+.kz-roll { position: absolute; transform: translateX(-50%); z-index: 35; display: inline-flex; align-items: center; gap: 7px; min-height: 44px; padding: 0 18px; border-radius: 99px; border: 0; cursor: pointer; pointer-events: auto;
+  font: 850 15px/1 var(--bz-font); color: #062a1b; background: linear-gradient(180deg, #9ff2c8, #45cf8c); box-shadow: 0 8px 20px rgba(0, 0, 0, 0.45), 0 0 18px rgba(80, 230, 160, 0.4); white-space: nowrap; }
+.kz-roll:active { transform: translateX(-50%) scale(0.96); }
+.kz-dicebox.tap { pointer-events: auto; cursor: pointer; }
+.kz-note { position: absolute; transform: translateX(-50%); padding: 4px 11px; border-radius: 99px; white-space: nowrap;
+  font: 800 12.5px/1.2 var(--bz-font); color: #fff6dc; background: rgba(28, 14, 6, 0.9); border: 1px solid rgba(248, 226, 164, 0.5); animation: kzNote 1.6s ease forwards; pointer-events: none; }
+.kz-note.good { color: #0d3320; background: linear-gradient(180deg, #c8f8de, #7fe3b0); border-color: transparent; }
+@keyframes kzNote { 0% { opacity: 0; transform: translate(-50%, 6px); } 12% { opacity: 1; transform: translate(-50%, 0); } 80% { opacity: 1; } 100% { opacity: 0; } }
+
+/* oyuncu kartları */
+.kz-pod { position: relative; display: grid; grid-template-columns: auto 1fr auto; align-items: center; gap: 8px; padding: 7px 12px 9px 8px; border-radius: 14px; overflow: hidden;
+  background: rgba(18, 12, 8, 0.88); border: 1px solid var(--bz-line); transition: border-color 0.2s, box-shadow 0.2s; min-width: 0; }
+.kz-pod.on { border-color: rgba(248, 226, 164, 0.95); box-shadow: 0 0 18px rgba(248, 210, 120, 0.45); }
+.kz-pod.me .kz-pod-t b { color: var(--bz-gold-hi); }
+.kz-pod-t { display: grid; min-width: 0; line-height: 1.2; }
+.kz-pod-t b { font-size: 14px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.kz-pod-t small { font-size: 12px; color: var(--bz-muted); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.kz-pod .t-bot, .kz-bot { color: #b8c2ff; font-weight: 800; font-size: 0.86em; }
+.kz-av { display: grid; place-items: center; cursor: pointer; }
+.kz-av-in { display: grid; place-items: center; border-radius: 50%; font-weight: 850; color: #1b1206; background: linear-gradient(160deg, #f3dfb0, #b98a3c); font-size: 15px; }
+.kz-dot { width: 14px; height: 14px; border-radius: 50%; box-shadow: 0 0 0 2px rgba(255, 255, 255, 0.2); }
+.kz-pod.red .kz-dot { background: #e2443c; } .kz-pod.blue .kz-dot { background: #3a7de0; } .kz-pod.green .kz-dot { background: #36b45a; } .kz-pod.yellow .kz-dot { background: #f2c12e; }
+.kz-pod.red { border-left: 4px solid #e2443c; } .kz-pod.blue { border-left: 4px solid #3a7de0; } .kz-pod.green { border-left: 4px solid #36b45a; } .kz-pod.yellow { border-left: 4px solid #f2c12e; }
+.kz-time { position: absolute; left: 0; bottom: 0; height: 3px; width: calc(var(--t) * 100%); background: linear-gradient(90deg, #45cf8c, #9ff2c8); opacity: 0; transition: width 0.5s linear; }
+.kz-pod.timed .kz-time { opacity: 1; }
+.kz-pod.late .kz-time { background: linear-gradient(90deg, #ec5a5f, #ffb27a); }
+.kz-seattag { display: inline-block; padding: 2px 8px; border-radius: 99px; font-size: 11px; font-weight: 800; color: #1b1206; }
+.kz-seattag.red { background: #ff8f86; } .kz-seattag.blue { background: #8fb9ff; } .kz-seattag.green { background: #8ee0a4; } .kz-seattag.yellow { background: #ffe08a; }
+.kz-opt { display: flex; align-items: center; gap: 10px; padding: 10px 12px; border-radius: 12px; border: 1px solid var(--bz-line); color: var(--bz-ink); font-size: 14px; cursor: pointer; }
+.kz-opt input { width: 18px; height: 18px; accent-color: #d9aa4b; }
+.kz-netpill { position: absolute; z-index: 70; left: 50%; bottom: calc(10px + var(--bz-safe-b)); transform: translateX(-50%); padding: 6px 14px; border-radius: 99px; font-weight: 800; font-size: 13px; color: #2a1406; background: linear-gradient(180deg, #ffd88a, #e7a63c); }
+
+/* küçük ekranlar */
+.kz-wrap.port .kz-pod { padding: 6px 10px 8px 6px; gap: 6px; }
+.kz-wrap.port .kz-pod-t b { font-size: 13px; }
+.kz-wrap.port .kz-pod-t small { font-size: 11px; }
+@media (max-height: 520px) and (orientation: landscape) {
+  .kz-wrap { grid-template-columns: minmax(120px, 180px) auto minmax(120px, 180px); gap: 8px; padding-top: calc(52px + var(--bz-safe-t)); }
+  .kz-pod { padding: 5px 8px 7px 6px; gap: 6px; }
+  .kz-pod-t b { font-size: 12.5px; }
+  .kz-pod-t small { font-size: 11px; }
+  .kz-roll { min-height: 38px; font-size: 14px; padding: 0 14px; }
+}
+
+/* dikey dar ekranda üst çubuk mesajı ikinci satırda (başlık sığsın) */
+@media (max-width: 560px) and (orientation: portrait) {
+  .kz-wrap { padding-top: calc(92px + var(--bz-safe-t)); }
+}
+.kz-tapme { position: absolute; transform: translate(-50%, -100%); padding: 3px 10px; border-radius: 99px; white-space: nowrap; pointer-events: none;
+  font: 850 12px/1.2 var(--bz-font); color: #062a1b; background: linear-gradient(180deg, #c8f8de, #6fdca5); box-shadow: 0 4px 12px rgba(0, 0, 0, 0.35); animation: kzBob 1.1s ease-in-out infinite; }
+@keyframes kzBob { 50% { transform: translate(-50%, calc(-100% - 4px)); } }
+.kz-pod.roll { border-color: rgba(120, 235, 175, 0.95); box-shadow: 0 0 22px rgba(80, 230, 160, 0.45); }
+.kz-cta { position: absolute; inset: 0; display: flex; align-items: center; justify-content: center; gap: 8px; border: 0; cursor: pointer; border-radius: inherit;
+  font: 850 15px/1 var(--bz-font); color: #062a1b; background: linear-gradient(180deg, rgba(170, 245, 205, 0.97), rgba(69, 207, 140, 0.97)); animation: kzCta 1.2s ease-in-out infinite; }
+.kz-cta:active { filter: brightness(0.95); }
+@keyframes kzCta { 50% { filter: brightness(1.08); box-shadow: inset 0 0 0 2px rgba(255, 255, 255, 0.7); } }
+
+</style>
+</head>
+<body>
+<noscript>Bu oyunu oynamak için JavaScript'i etkinleştirin.</noscript>
+<div id="start" hidden></div>
+<section id="net" class="t-screen" aria-label="Online masalar" hidden></section>
+<div id="game" class="bz-game" hidden>
+  <header id="hud" class="bz-hud"></header>
+</div>
+<script src="assets/js/bg-table.js?v=3.4.3"></script>
+<script src="assets/js/bz-kit.js?v=3.4.3"></script>
+<script>
+window.GAME_ART = "<svg viewBox=\"0 0 360 220\" xmlns=\"http://www.w3.org/2000/svg\"><defs><radialGradient id=\"kzr\" cx=\".35\" cy=\".3\" r=\".8\"><stop offset=\"0\" stop-color=\"#ffb3a8\"/><stop offset=\".5\" stop-color=\"#e2443c\"/><stop offset=\"1\" stop-color=\"#7a120e\"/></radialGradient><radialGradient id=\"kzb\" cx=\".35\" cy=\".3\" r=\".8\"><stop offset=\"0\" stop-color=\"#b6d6ff\"/><stop offset=\".5\" stop-color=\"#3a7de0\"/><stop offset=\"1\" stop-color=\"#0e2f74\"/></radialGradient><radialGradient id=\"kzg\" cx=\".35\" cy=\".3\" r=\".8\"><stop offset=\"0\" stop-color=\"#c2f5c9\"/><stop offset=\".5\" stop-color=\"#36b45a\"/><stop offset=\"1\" stop-color=\"#0d5a26\"/></radialGradient><radialGradient id=\"kzy\" cx=\".35\" cy=\".3\" r=\".8\"><stop offset=\"0\" stop-color=\"#fff2b0\"/><stop offset=\".5\" stop-color=\"#f2c12e\"/><stop offset=\"1\" stop-color=\"#8a6106\"/></radialGradient></defs><g transform=\"translate(180 112) rotate(-10)\"><rect x=\"-96\" y=\"-96\" width=\"192\" height=\"192\" rx=\"18\" fill=\"#f3e7cf\" stroke=\"#c9a46a\" stroke-width=\"4\"/><g fill=\"none\" stroke=\"#d6bf96\" stroke-width=\"2\"><path d=\"M-80 -16h60v-60h40v60h60v40h-60v60h-40v-60h-60z\"/></g><rect x=\"-90\" y=\"-90\" width=\"44\" height=\"44\" rx=\"10\" fill=\"#e2443c\" opacity=\".25\"/><rect x=\"46\" y=\"-90\" width=\"44\" height=\"44\" rx=\"10\" fill=\"#36b45a\" opacity=\".25\"/><rect x=\"-90\" y=\"46\" width=\"44\" height=\"44\" rx=\"10\" fill=\"#3a7de0\" opacity=\".25\"/><rect x=\"46\" y=\"46\" width=\"44\" height=\"44\" rx=\"10\" fill=\"#f2c12e\" opacity=\".25\"/><circle r=\"16\" fill=\"#fff\" stroke=\"#c9a46a\" stroke-width=\"3\"/></g><g><ellipse cx=\"96\" cy=\"150\" rx=\"16\" ry=\"6\" fill=\"#000\" opacity=\".3\"/><path d=\"M84 150 Q96 104 108 150 Z\" fill=\"url(#kzr)\"/><circle cx=\"96\" cy=\"108\" r=\"10\" fill=\"url(#kzr)\"/><ellipse cx=\"270\" cy=\"96\" rx=\"16\" ry=\"6\" fill=\"#000\" opacity=\".3\"/><path d=\"M258 96 Q270 50 282 96 Z\" fill=\"url(#kzg)\"/><circle cx=\"270\" cy=\"54\" r=\"10\" fill=\"url(#kzg)\"/><ellipse cx=\"150\" cy=\"70\" rx=\"14\" ry=\"5\" fill=\"#000\" opacity=\".3\"/><path d=\"M140 70 Q150 32 160 70 Z\" fill=\"url(#kzb)\"/><circle cx=\"150\" cy=\"35\" r=\"8.5\" fill=\"url(#kzb)\"/><ellipse cx=\"236\" cy=\"176\" rx=\"14\" ry=\"5\" fill=\"#000\" opacity=\".3\"/><path d=\"M226 176 Q236 138 246 176 Z\" fill=\"url(#kzy)\"/><circle cx=\"236\" cy=\"141\" r=\"8.5\" fill=\"url(#kzy)\"/></g><g transform=\"translate(176 150) rotate(14)\"><rect x=\"-20\" y=\"-20\" width=\"40\" height=\"40\" rx=\"8\" fill=\"#fffdf6\" stroke=\"#cdbb92\" stroke-width=\"2\"/><circle cx=\"-9\" cy=\"-9\" r=\"4\" fill=\"#1b120c\"/><circle cx=\"9\" cy=\"9\" r=\"4\" fill=\"#1b120c\"/><circle cx=\"9\" cy=\"-9\" r=\"4\" fill=\"#1b120c\"/><circle cx=\"-9\" cy=\"9\" r=\"4\" fill=\"#1b120c\"/><circle cx=\"0\" cy=\"0\" r=\"4\" fill=\"#1b120c\"/></g></svg>";
+/* ---- engine.js ---- */
+/* =====================================================================
+   KIZMA BİRADER — motor (saf ve belirlenimci; online kilit adım için)
+   11×11 ızgarada 40 karelik yol (saat yönünde). Renkler: 0 kırmızı (alt), 1 mavi (sol), 2 yeşil (üst),
+   3 sarı (sağ). Piyon ilerlemesi p: −1 ahır, 0–39 yol (rengin başlangıç karesinden), 40–43 ev.
+   Koltuk → renk: 2 kişi kırmızı/yeşil (karşılıklı), 3 kişi kırmızı/mavi/yeşil, 4 kişi hepsi.
+
+   Kurallar (v3.4.3): 6 atınca ahırdan piyon çıkarmak ZORUNLU DEĞİL — dışarıdaki bir piyon da 6 oynanabilir.
+   Başlangıç karesini boşaltma zorunluluğu yok: 6 ile çıkan piyondan sonraki zarla istenen piyon oynanır.
+   6 atan yeniden atar; bütün piyonları ahırda (ya da evde kımıldayamaz) olan oyuncunun 6 için 3 hakkı vardır.
+
+   Hamleler: {seat, kind: 'roll', data: {d: [v], k}} (zar sunucudan) | {seat, kind: 'move', data: {i, k}}.
+   data.k: hamlenin yapıldığı adım (st.step); tutmayan (eski / çift) hamle yok sayılır.
+   ===================================================================== */
+(function (root) {
+  'use strict';
+  const TRACK = [
+    [0, 4], [1, 4], [2, 4], [3, 4], [4, 4], [4, 3], [4, 2], [4, 1], [4, 0], [5, 0],
+    [6, 0], [6, 1], [6, 2], [6, 3], [6, 4], [7, 4], [8, 4], [9, 4], [10, 4], [10, 5],
+    [10, 6], [9, 6], [8, 6], [7, 6], [6, 6], [6, 7], [6, 8], [6, 9], [6, 10], [5, 10],
+    [4, 10], [4, 9], [4, 8], [4, 7], [4, 6], [3, 6], [2, 6], [1, 6], [0, 6], [0, 5],
+  ];
+  const START = [30, 0, 10, 20];
+  const HOME = [
+    [[5, 9], [5, 8], [5, 7], [5, 6]],
+    [[1, 5], [2, 5], [3, 5], [4, 5]],
+    [[5, 1], [5, 2], [5, 3], [5, 4]],
+    [[9, 5], [8, 5], [7, 5], [6, 5]],
+  ];
+  const YARD = [
+    [[0, 9], [1, 9], [0, 10], [1, 10]],
+    [[0, 0], [1, 0], [0, 1], [1, 1]],
+    [[9, 0], [10, 0], [9, 1], [10, 1]],
+    [[9, 9], [10, 9], [9, 10], [10, 10]],
+  ];
+  const COLORS = ['red', 'blue', 'green', 'yellow'];
+  const CNAME = ['Kırmızı', 'Mavi', 'Yeşil', 'Sarı'];
+  const colorsFor = (n) => (n === 2 ? [0, 2] : n === 3 ? [0, 1, 2] : [0, 1, 2, 3]);
+
+  /** o: { n, first, end (1: ilk bitiren kazanır, 2: ikinci de belli olana kadar) } */
+  function newGame(o) {
+    const n = Math.max(2, Math.min(4, o.n | 0 || 4));
+    return {
+      n,
+      col: colorsFor(n),
+      pcs: Array.from({ length: n }, () => [-1, -1, -1, -1]),
+      cur: ((o.first | 0) % n + n) % n,
+      phase: 'roll',
+      die: null,
+      tries: 0,
+      sixes: 0,
+      step: 0,
+      turnNo: 0,
+      done: [],
+      end: o.end === 2 && n > 2 ? 2 : 1,
+      over: false,
+      winner: null,
+      last: null,
+    };
+  }
+  const clone = (st) => JSON.parse(JSON.stringify(st));
+  const absOf = (st, s, p) => (START[st.col[s]] + p) % 40;
+  /** Yol karesindeki piyon: [koltuk, piyon] */
+  function occupant(st, a) {
+    for (let s = 0; s < st.n; s++)
+      for (let i = 0; i < 4; i++) {
+        const p = st.pcs[s][i];
+        if (p >= 0 && p <= 39 && absOf(st, s, p) === a) return [s, i];
+      }
+    return null;
+  }
+  const finished = (st, s) => st.pcs[s].every((p) => p >= 40);
+  /** Yasal hamleler: [{i, from, to, cap}] — zorunluluk yok (oyuncu seçer). Ahırdan çıkış tek seçenek olarak görünür. */
+  function moves(st, s, d) {
+    const out = [];
+    const pcs = st.pcs[s];
+    let yardDone = false;
+    for (let i = 0; i < 4; i++) {
+      const p = pcs[i];
+      if (p === -1) {
+        if (d !== 6 || yardDone) continue;
+        yardDone = true;
+        const o = occupant(st, absOf(st, s, 0));
+        if (o && o[0] === s) continue;
+        out.push({ i, from: -1, to: 0, cap: o && o[0] !== s ? o : null });
+        continue;
+      }
+      const t = p + d;
+      if (t > 43) continue;
+      if (t >= 40) {
+        // evde atlama yok: geçilen ve inilen ev kareleri boş olmalı
+        let ok = true;
+        for (let h = Math.max(40, p + 1); h <= t; h++) if (pcs.some((q, j) => j !== i && q === h)) ok = false;
+        if (ok) out.push({ i, from: p, to: t, cap: null });
+        continue;
+      }
+      const o = occupant(st, absOf(st, s, t));
+      if (o && o[0] === s) continue;
+      out.push({ i, from: p, to: t, cap: o && o[0] !== s ? o : null });
+    }
+    return out;
+  }
+  /** Bu zarla hamle yoksa: bütün piyonlar ahırda (ya da evde kımıldayamaz) mı (3 hak) */
+  function stuck(st, s) {
+    const pcs = st.pcs[s];
+    if (pcs.some((p) => p >= 0 && p <= 39)) return false;
+    // evdeki piyonlardan biri ilerleyebiliyorsa 3 hak yok
+    for (let i = 0; i < 4; i++) {
+      const p = pcs[i];
+      if (p >= 40 && p < 43) for (let d = 1; d <= 43 - p; d++) if (!pcs.some((q, j) => j !== i && q > p && q <= p + d)) return false;
+    }
+    return true;
+  }
+  function nextSeat(st) {
+    let s = st.cur;
+    for (let k = 1; k <= st.n; k++) {
+      const q = (s + k) % st.n;
+      if (!finished(st, q)) {
+        s = q;
+        break;
+      }
+    }
+    st.cur = s;
+    st.phase = 'roll';
+    st.die = null;
+    st.tries = 0;
+    st.sixes = 0;
+    st.turnNo += 1;
+  }
+  /** Bitmemiş oyuncunun ilerleme puanı (evdeki piyon başına 100 + kat edilen kareler) */
+  const progress = (st, s) => st.pcs[s].reduce((a, p) => a + (p >= 40 ? 100 + p + 1 : p < 0 ? 0 : p + 1), 0);
+  /** Sıralama: bitirenler bitiriş sırasıyla, kalanlar ilerlemeye göre. total büyük = iyi. */
+  function ranking(st) {
+    const rows = [];
+    for (let s = 0; s < st.n; s++) {
+      const k = st.done.indexOf(s);
+      rows.push({ seat: s, total: k >= 0 ? 10000 - k : progress(st, s), done: k >= 0, home: st.pcs[s].filter((p) => p >= 40).length });
+    }
+    return rows.sort((a, b) => b.total - a.total || a.seat - b.seat);
+  }
+  /** Hamleyi uygula → { ok, ev: [...] } */
+  function apply(st, a) {
+    if (!a || st.over) return { ok: false };
+    const d = a.data || {};
+    if (d.k != null && d.k !== st.step) return { ok: false, stale: true };
+    const s = a.seat;
+    if (s !== st.cur) return { ok: false };
+    const ev = [];
+    if (a.kind === 'roll') {
+      if (st.phase !== 'roll') return { ok: false };
+      const v = Array.isArray(d.d) ? d.d[0] | 0 : 0;
+      if (v < 1 || v > 6) return { ok: false };
+      st.step += 1;
+      st.die = v;
+      if (v === 6) st.sixes += 1;
+      const ms = moves(st, s, v);
+      if (ms.length) {
+        st.phase = 'move';
+        ev.push({ t: 'roll', seat: s, d: v, n: ms.length });
+        return { ok: true, ev };
+      }
+      // hamle yok
+      if (v === 6) {
+        // 6 geldi ama oynanacak piyon yok: yine atar
+        st.phase = 'roll';
+        st.die = null;
+        ev.push({ t: 'roll', seat: s, d: v, n: 0, again: true });
+        return { ok: true, ev };
+      }
+      if (stuck(st, s)) {
+        st.tries += 1;
+        if (st.tries < 3) {
+          st.phase = 'roll';
+          st.die = null;
+          ev.push({ t: 'roll', seat: s, d: v, n: 0, tries: st.tries });
+          return { ok: true, ev };
+        }
+      }
+      ev.push({ t: 'roll', seat: s, d: v, n: 0, pass: true });
+      nextSeat(st);
+      return { ok: true, ev };
+    }
+    if (a.kind === 'move') {
+      if (st.phase !== 'move') return { ok: false };
+      const m = moves(st, s, st.die).find((x) => x.i === (d.i | 0));
+      if (!m) return { ok: false };
+      st.step += 1;
+      st.pcs[s][m.i] = m.to;
+      if (m.cap) st.pcs[m.cap[0]][m.cap[1]] = -1;
+      ev.push({ t: 'move', seat: s, i: m.i, from: m.from, to: m.to, cap: m.cap, d: st.die, auto: !!d.auto });
+      if (finished(st, s) && st.done.indexOf(s) < 0) {
+        st.done.push(s);
+        ev.push({ t: 'finish', seat: s, place: st.done.length });
+        const left = st.n - st.done.length;
+        if (st.done.length >= st.end || left <= 1) {
+          st.over = true;
+          st.phase = 'over';
+          st.winner = st.done[0];
+          st.die = null;
+          ev.push({ t: 'over', winner: st.winner });
+          return { ok: true, ev };
+        }
+      }
+      if (st.die === 6 && !finished(st, s)) {
+        st.phase = 'roll';
+        st.die = null;
+        st.tries = 0;
+        ev.push({ t: 'again', seat: s });
+        return { ok: true, ev };
+      }
+      nextSeat(st);
+      return { ok: true, ev };
+    }
+    return { ok: false };
+  }
+
+  /* ---------------- yapay zekâ ---------------- */
+  function danger(st, s, a) {
+    // a karesine 1–6 adım arkasından gelebilecek rakip var mı
+    for (let o = 0; o < st.n; o++) {
+      if (o === s) continue;
+      for (const p of st.pcs[o]) {
+        if (p < 0 || p > 39) continue;
+        const from = absOf(st, o, p);
+        const dist = (a - from + 40) % 40;
+        if (dist >= 1 && dist <= 6 && p + dist <= 39) return true;
+      }
+    }
+    return false;
+  }
+  /** Bot seçimi (rnd: tohumlu ya da Math.random) */
+  function choose(st, s, level, rnd) {
+    rnd = rnd || Math.random;
+    const ms = moves(st, s, st.die);
+    if (!ms.length) return null;
+    if (ms.length === 1) return ms[0];
+    if (level === 'kolay' && rnd() < 0.45) return ms[Math.floor(rnd() * ms.length)];
+    let best = ms[0];
+    let bv = -Infinity;
+    for (const m of ms) {
+      let v = 0;
+      if (m.cap) v += 60 + Math.max(0, st.pcs[m.cap[0]][m.cap[1]]) * 0.8;
+      if (m.from === -1) v += st.pcs[s].some((p) => p >= 0 && p <= 39) ? 34 : 50;
+      if (m.to >= 40 && m.from < 40) v += 42;
+      if (m.to >= 40) v += 8;
+      if (m.to <= 39) {
+        const a = absOf(st, s, m.to);
+        if (danger(st, s, a)) v -= level === 'zor' ? 30 : 16;
+        if (m.from >= 0 && m.from <= 39 && danger(st, s, absOf(st, s, m.from))) v += level === 'zor' ? 24 : 10;
+      }
+      // başlangıç karesinde bekleyen piyon ahırdakilerin yolunu kapatır
+      if (m.from === 0 && st.pcs[s].some((p) => p === -1)) v += 6;
+      v += m.to * 0.4;
+      v += rnd() * (level === 'zor' ? 1 : 6);
+      if (v > bv) {
+        bv = v;
+        best = m;
+      }
+    }
+    return best;
+  }
+
+  const KB = { TRACK, START, HOME, YARD, COLORS, CNAME, colorsFor, newGame, clone, absOf, occupant, moves, stuck, apply, ranking, progress, finished, choose, danger };
+  root.KB = KB;
+  if (typeof module !== 'undefined' && module.exports) module.exports = KB;
+})(typeof window !== 'undefined' ? window : globalThis);
+
+/* ---- ui.js ---- */
+/* =====================================================================
+   KIZMA BİRADER — görünüm: botlara karşı / aynı cihazda / online masa (bg-table.js; zar sunucuda)
+   ===================================================================== */
+(function () {
+  'use strict';
+  const { $, $$, el, sleep, esc, icon, snd: SND } = BZ;
+  const K = window.KB;
+  const { TRACK, HOME, YARD, COLORS, CNAME } = K;
+  const NET = window.BGT || null;
+  const S = BZ.store('kizma-site', { players: 4, mode: 'bot', level: 'orta', end: 1, sound: true, name: '' });
+  const set = S.v;
+  SND.setOn(set.sound !== false);
+  const G = { st: null, mode: 'offline', net: null, me: 0, spect: false, rot: 0, human: [], names: [], gen: 0, Q: [], running: false, anim: false, testMul: 1, rules: null, waitRoll: false, rolling: false, ms: null, finished: false, layout: null };
+  window.__KZ = G;
+  const D = (ms) => (BZ.reduceMotion ? Math.min(ms, 40) : ms * (G.testMul || 1));
+  const now = () => (NET && G.mode === 'online' ? NET.now() : Date.now());
+  const LEVELS = [['kolay', 'Kolay'], ['orta', 'Orta'], ['zor', 'Kurnaz']];
+
+  /* ---------------- koordinatlar (benim rengim hep sol altta) ---------------- */
+  const rot = (c, r) => {
+    for (let k = 0; k < G.rot; k++) [c, r] = [r, 10 - c];
+    return [c, r];
+  };
+  const colOf = (s) => G.st.col[s];
+  const cellPx = (c, r) => {
+    const [x, y] = rot(c, r);
+    const cs = G.layout ? G.layout.cs : 60;
+    return { x: (x + 0.5) * cs, y: (y + 0.5) * cs };
+  };
+  function posOf(s, p, i) {
+    const c = colOf(s);
+    if (p === -1) return YARD[c][i];
+    if (p >= 40) return HOME[c][p - 40];
+    return TRACK[K.absOf(G.st, s, p)];
+  }
+  const piecePx = (s, p, i) => cellPx(...posOf(s, p, i));
+  /** Zarın durduğu yer: atanın ahırının merkeze yakın köşesi */
+  function diceSpot(s) {
+    const ys = YARD[colOf(s)];
+    let cx = (ys[0][0] + ys[3][0]) / 2;
+    let cy = (ys[0][1] + ys[3][1]) / 2;
+    cx = cx < 5 ? cx + 2.35 : cx - 2.35;
+    cy = cy < 5 ? cy + 2.35 : cy - 2.35;
+    const [x, y] = rot(cx, cy);
+    const cs = G.layout.cs;
+    return { x: (x + 0.5) * cs, y: (y + 0.5) * cs };
+  }
+  function yardCorner(s) {
+    const ys = YARD[colOf(s)];
+    const cx = (ys[0][0] + ys[3][0]) / 2;
+    const cy = (ys[0][1] + ys[3][1]) / 2;
+    const [x, y] = rot(cx, cy);
+    const cs = G.layout.cs;
+    return { x: (x + 0.5) * cs, y: (y + 0.5) * cs };
+  }
+
+  /* ---------------- oyuncular ---------------- */
+  function who(p) {
+    if (G.mode === 'online' && G.net) return G.net.who(p);
+    return { name: G.names[p] || CNAME[colOf(p)], bot: !G.human[p], me: G.human[p] && G.humans === 1, away: false, user_id: null };
+  }
+  const isMine = (p) => (G.mode === 'online' ? !G.spect && p === G.me : !!G.human[p]);
+  const nameHTML = (w) => (NET && G.mode === 'online' ? NET.nameTag(w.me ? 'Sen' : w.name, w.bot) : esc(w.me ? 'Sen' : w.name) + (w.bot && G.mode === 'online' ? ' <span class="kz-bot">(BOT)</span>' : ''));
+  function avatarHTML(w, size) {
+    if (NET && G.mode === 'online') return NET.avatar({ name: w.name, avatar_url: w.avatar_url, bot: w.bot && !w.away, badge: w.badge }, size);
+    return `<span class="kz-av-in" style="width:${size}px;height:${size}px">${esc(String(w.name || '?').charAt(0).toLocaleUpperCase('tr-TR'))}</span>`;
+  }
+
+  /* ---------------- tahta ---------------- */
+  function boardHTML() {
+    let h = `<div class="kz-cross" style="transform:rotate(${-90 * G.rot}deg)"></div>`;
+    const sq = (c, r, cls, inner) => {
+      const [x, y] = rot(c, r);
+      return `<i class="kz-sq ${cls}" style="--x:${x};--y:${y}">${inner || ''}</i>`;
+    };
+    TRACK.forEach(([c, r], k) => {
+      const st = K.START.indexOf(k);
+      h += sq(c, r, st >= 0 ? 'start ' + COLORS[st] : '', st >= 0 ? '<b></b>' : '');
+    });
+    HOME.forEach((hs, c) => hs.forEach(([x, y]) => (h += sq(x, y, 'home ' + COLORS[c]))));
+    YARD.forEach((ys, c) => {
+      const pts = ys.map(([x, y]) => rot(x, y));
+      const mx = Math.min(...pts.map((p) => p[0]));
+      const my = Math.min(...pts.map((p) => p[1]));
+      const used = G.st.col.indexOf(c) >= 0;
+      h += `<div class="kz-yard ${COLORS[c]}${used ? '' : ' off'}" style="--x:${mx};--y:${my}"></div>`;
+      ys.forEach(([x, y]) => (h += sq(x, y, 'yard ' + COLORS[c] + (used ? '' : ' off'))));
+    });
+    h += `<div class="kz-mid" style="transform:rotate(${-90 * G.rot}deg)"></div><div class="kz-tgts"></div><div class="kz-pcs"></div><div class="kz-dicebox"></div><div class="kz-fx"></div>`;
+    return h;
+  }
+  function paintPieces() {
+    const box = $('.kz-pcs');
+    const st = G.st;
+    if (!box || !st) return;
+    if (box.children.length !== st.n * 4) {
+      let h = '';
+      for (let s = 0; s < st.n; s++)
+        for (let i = 0; i < 4; i++) h += `<button type="button" class="kz-pc ${COLORS[colOf(s)]}" data-s="${s}" data-i="${i}" aria-label="${CNAME[colOf(s)]} piyon ${i + 1}"><i></i></button>`;
+      box.innerHTML = h;
+    }
+    $$('.kz-pc', box).forEach((n) => {
+      const s = +n.dataset.s;
+      const i = +n.dataset.i;
+      const { x, y } = piecePx(s, st.pcs[s][i], i);
+      n.style.setProperty('--px', x.toFixed(1) + 'px');
+      n.style.setProperty('--py', y.toFixed(1) + 'px');
+    });
+  }
+  function paintTargets() {
+    const box = $('.kz-tgts');
+    if (!box) return;
+    $$('.kz-pc.can').forEach((n) => n.classList.remove('can'));
+    if (!G.ms || !G.ms.length) {
+      box.innerHTML = '';
+      return;
+    }
+    const s = G.st.cur;
+    box.innerHTML = G.ms
+      .map((m) => {
+        const { x, y } = piecePx(s, m.to, m.i);
+        return `<button type="button" class="kz-tgt${m.cap ? ' cap' : ''}${m.to >= 40 ? ' home' : ''}" data-i="${m.i}" style="--px:${x.toFixed(1)}px;--py:${y.toFixed(1)}px" aria-label="Piyonu buraya götür"></button>`;
+      })
+      .join('');
+    G.ms.forEach((m) => {
+      const n = $(`.kz-pc[data-s="${s}"][data-i="${m.i}"]`);
+      if (n) n.classList.add('can');
+    });
+  }
+  /** Zar: sırası gelenin köşesinde (atılmayı bekliyorsa sallanır) */
+  function paintIdleDie(s, wait) {
+    const box = $('.kz-dicebox');
+    if (!box) return;
+    const p = diceSpot(s);
+    const v = G.st.die || G.lastDie || 6;
+    box.innerHTML = `<div class="kz-die${wait ? ' wait' : ''} ${COLORS[colOf(s)]}" style="left:${p.x}px;top:${p.y}px">${BZ.dieHTML(v, G.layout.ds, -12)}</div>`;
+    box.classList.toggle('tap', !!wait);
+    if (wait) box.insertAdjacentHTML('beforeend', `<span class="kz-tapme" style="left:${p.x}px;top:${p.y - G.layout.ds * 0.5 - 12}px">Dokun, zarı at</span>`);
+    paintRollCta(wait);
+  }
+  /** Sıra bendeyken kendi kartım "Zar at" düğmesine dönüşür (tahtanın üstünü kapatmaz) */
+  function paintRollCta(on) {
+    $$('.kz-pod .kz-cta').forEach((n) => n.remove());
+    $$('.kz-pod.roll').forEach((n) => n.classList.remove('roll'));
+    if (!on || !G.st) return;
+    const pod = $(`.kz-pod[data-seat="${G.st.cur}"]`);
+    if (!pod) return;
+    pod.classList.add('roll');
+    pod.insertAdjacentHTML('beforeend', `<button type="button" class="kz-cta" data-roll>${icon('dice', 18)} Zar at</button>`);
+  }
+  function note(t, s, cls) {
+    const fx = $('.kz-fx');
+    if (!fx || !G.layout) return;
+    const p = diceSpot(s == null ? G.st.cur : s);
+    const n = el(`<span class="kz-note ${cls || ''}" style="left:${p.x}px;top:${p.y - G.layout.ds * 0.5 - 34}px">${t}</span>`);
+    fx.appendChild(n);
+    setTimeout(() => n.remove(), D(1700));
+  }
+
+  /* ---------------- oyuncu kartları ---------------- */
+  /** Oyuncunun ahırı ekranda hangi köşede: {left, top} */
+  function corner(s) {
+    const c = yardCorner(s);
+    const half = G.layout.size / 2;
+    return { left: c.x < half, top: c.y < half };
+  }
+  function podsHTML(filter) {
+    const st = G.st;
+    let h = '';
+    const order = [];
+    for (let s = 0; s < st.n; s++) order.push(s);
+    // köşeye göre sırala: dikeyde soldan sağa, yatayda yukarıdan aşağı
+    order.sort((a, b) => {
+      const A = corner(a);
+      const B = corner(b);
+      return G.layout.port ? (A.left === B.left ? 0 : A.left ? -1 : 1) : A.top === B.top ? 0 : A.top ? -1 : 1;
+    });
+    for (const s of order) {
+      if (filter && !filter(corner(s))) continue;
+      const w = who(s);
+      const home = st.pcs[s].filter((p) => p >= 40).length;
+      const place = st.done.indexOf(s);
+      h += `<div class="kz-pod ${COLORS[colOf(s)]}${s === st.cur && !st.over ? ' on' : ''}${isMine(s) ? ' me' : ''}" data-seat="${s}">
+        <span class="kz-av" data-uid="${esc(w.user_id || '')}" data-seat="${s}">${avatarHTML(w, G.layout && G.layout.port ? 30 : 36)}</span>
+        <span class="kz-pod-t"><b>${nameHTML(w)}</b><small>${place >= 0 ? `${place + 1}. bitirdi` : `${home}/4 evde`}${w.away ? ' · bağlantı yok' : ''}</small></span>
+        <span class="kz-dot"></span><i class="kz-time" style="--t:1"></i></div>`;
+    }
+    return h;
+  }
+  function paintPods() {
+    const a = $('#kzPodsA');
+    const b = $('#kzPodsB');
+    if (!a || !b || !G.st || !G.layout) return;
+    // dikey ekran: üstteki ahırlar tahtanın üstünde, alttakiler altında; yatay: soldakiler solda, sağdakiler sağda
+    const port = G.layout.port;
+    a.innerHTML = podsHTML((c) => (port ? c.top : c.left));
+    b.innerHTML = podsHTML((c) => (port ? !c.top : !c.left));
+    paintTimer();
+    if (G.waitRoll) paintRollCta(true);
+  }
+  function turnSec() {
+    return G.mode === 'online' ? +(G.rules && G.rules.turn) || 0 : 0;
+  }
+  function paintTimer() {
+    const st = G.st;
+    if (!st) return;
+    const sec = turnSec();
+    $$('.kz-pods .kz-pod').forEach((n) => {
+      const s = +n.dataset.seat;
+      const on = !st.over && s === st.cur && sec > 0;
+      n.classList.toggle('timed', on);
+      if (on) {
+        const t = BZ.timeLeft(st._at || now(), sec, now());
+        n.querySelector('.kz-time').style.setProperty('--t', t.toFixed(3));
+        n.classList.toggle('late', t < 0.3);
+      }
+    });
+  }
+  function paintMsg() {
+    const st = G.st;
+    if (!st || !G.hud) return;
+    if (st.over) return G.hud.msg('Oyun bitti', '');
+    const w = who(st.cur);
+    const mine = isMine(st.cur);
+    if (mine && st.phase === 'roll') G.hud.msg(G.mode === 'local' ? `${w.name}: zarı at` : 'Sıra sende: zarı at', 'me');
+    else if (mine && st.phase === 'move' && G.ms) G.hud.msg(G.ms.length > 1 ? 'Oynayacağın piyonu seç' : 'Piyonunu oynat', 'me');
+    else G.hud.msg(`${esc(w.me ? 'Sen' : w.name)} oynuyor…`, '');
+  }
+
+  /* ---------------- yerleşim ---------------- */
+  function layout() {
+    const vw = window.innerWidth;
+    const vh = window.innerHeight;
+    const port = vh >= vw * 1.05;
+    const hud = port && vw <= 560 ? 94 : 58;
+    let size;
+    if (port) size = Math.min(vw - 12, vh - hud - 150);
+    else size = Math.min(vh - hud - 10, vw - 2 * Math.min(210, vw * 0.21) - 30);
+    size = Math.max(240, Math.min(size, 860));
+    const cs = size / 11;
+    G.layout = { port, size, cs, ds: Math.round(Math.max(34, Math.min(64, cs * 0.95))) };
+    const b = $('#kzBoard');
+    b.style.setProperty('--sz', size + 'px');
+    $('#kzWrap').classList.toggle('port', port);
+  }
+  function relayout() {
+    if (!G.st || $('#game').hidden) return;
+    layout();
+    $('#kzBoard').innerHTML = boardHTML();
+    paintPieces();
+    paintTargets();
+    paintPods();
+    const st = G.st;
+    if (!st.over) {
+      if (st.phase === 'roll') paintIdleDie(st.cur, G.waitRoll);
+      else paintIdleDie(st.cur, false);
+    }
+  }
+
+  /* ---------------- canlandırma kuyruğu ---------------- */
+  function enqueue(fn) {
+    G.Q.push(fn);
+    if (!G.running) runQ();
+  }
+  async function runQ() {
+    const gen = G.gen;
+    G.running = true;
+    G.anim = true;
+    while (G.Q.length && G.gen === gen) {
+      const fn = G.Q.shift();
+      try {
+        await fn();
+      } catch (e) {
+        console.error('[kızma] canlandırma', e);
+      }
+    }
+    if (G.gen !== gen) return;
+    G.running = false;
+    G.anim = false;
+    afterAnim();
+  }
+  function reduce(st, a) {
+    const r = K.apply(st, a);
+    if (r.ok) st._at = a.at || now();
+    return r;
+  }
+  /** Hamle uygula ve canlandır. own: kendi elle yaptığım hamle (piyon hemen gider) */
+  function applyUI(a, own) {
+    const st = G.st;
+    if (!st) return { ok: false };
+    const before = K.clone(st);
+    const r = reduce(st, a);
+    if (!r.ok) return r;
+    G.ms = null;
+    G.waitRoll = false;
+    paintTargets();
+    const snap = K.clone(st);
+    enqueue(async () => {
+      for (const e of r.ev) await animEvent(e, before, own);
+      // eşitle
+      G.view = snap;
+      paintPieces();
+    });
+    return r;
+  }
+  async function animEvent(e, before, own) {
+    const gen = G.gen;
+    if (e.t === 'roll') {
+      G.lastDie = e.d;
+      await throwDie(e.seat, e.d);
+      if (gen !== G.gen) return;
+      if (e.n === 0) {
+        if (e.again) note('6! Oynayacak piyon yok, yine at', e.seat, 'good');
+        else if (e.tries) note(`6 gelmedi · ${3 - e.tries} hak kaldı`, e.seat);
+        else note('Oynayacak piyon yok', e.seat);
+        await sleep(D(e.pass ? 650 : 420));
+      } else if (e.d === 6) {
+        SND.play('coin');
+        note('6 geldi!', e.seat, 'good');
+      }
+      return;
+    }
+    if (e.t === 'move') {
+      await animMove(e, own);
+      return;
+    }
+    if (e.t === 'again') {
+      note('6! Bir daha at', e.seat, 'good');
+      await sleep(D(260));
+      return;
+    }
+    if (e.t === 'finish') {
+      const w = who(e.seat);
+      SND.play('win');
+      BZ.toast(`${esc(w.me ? 'Sen' : w.name)} dört piyonunu da eve soktu! (${e.place}.)`, isMine(e.seat) ? 'good' : '', 2200);
+      await sleep(D(600));
+      return;
+    }
+    if (e.t === 'over') {
+      G.view = K.clone(G.st);
+      return;
+    }
+  }
+  async function throwDie(s, v) {
+    const box = $('.kz-dicebox');
+    if (!box || !G.layout) return;
+    box.classList.remove('tap');
+    const idle = box.querySelector('.kz-die');
+    if (idle && G.rolling) await BZ.shakeDie(idle, D(220));
+    box.innerHTML = '';
+    G.rolling = false;
+    const at = diceSpot(s);
+    const from = yardCorner(s);
+    const cs = G.layout.cs;
+    // atış yönü: ahırdan tahtanın ortasına doğru, ahırın biraz dışından
+    const dx = from.x - G.layout.size / 2;
+    const dy = from.y - G.layout.size / 2;
+    const L = Math.hypot(dx, dy) || 1;
+    const f = { x: from.x + (dx / L) * cs * 1.2, y: from.y + (dy / L) * cs * 1.2 };
+    const nodes = await BZ.throwDice(box, { values: [v], at: [at], from: f, size: G.layout.ds, dur: D(1150), height: cs * 3.2 });
+    nodes.forEach((n) => n.classList.add('kz-die-res', COLORS[colOf(s)]));
+  }
+  async function animMove(e, own) {
+    const { seat: s, i } = e;
+    const n = $(`.kz-pc[data-s="${s}"][data-i="${i}"]`);
+    if (!n) return;
+    n.classList.add('moving');
+    const steps = [];
+    if (e.from === -1) steps.push(0);
+    else for (let p = e.from + 1; p <= e.to; p++) steps.push(p);
+    const per = own ? 120 : 150;
+    for (const p of steps) {
+      const { x, y } = piecePx(s, p, i);
+      n.style.setProperty('--px', x.toFixed(1) + 'px');
+      n.style.setProperty('--py', y.toFixed(1) + 'px');
+      n.classList.remove('hop');
+      void n.offsetWidth;
+      n.classList.add('hop');
+      SND.play('tap');
+      await sleep(D(per));
+    }
+    n.classList.remove('moving', 'hop');
+    if (e.cap) {
+      const [cs, ci] = e.cap;
+      const vn = $(`.kz-pc[data-s="${cs}"][data-i="${ci}"]`);
+      SND.play('boom');
+      BZ.haptic(40);
+      if (vn) {
+        vn.classList.add('knocked');
+        await sleep(D(240));
+        const { x, y } = piecePx(cs, -1, ci);
+        vn.style.setProperty('--px', x.toFixed(1) + 'px');
+        vn.style.setProperty('--py', y.toFixed(1) + 'px');
+        await sleep(D(420));
+        vn.classList.remove('knocked');
+      }
+      const a = who(s);
+      const b = who(cs);
+      BZ.toast(`${esc(a.me ? 'Sen' : a.name)}, ${esc(b.me ? 'senin' : b.name)} piyonunu kırdı!`, isMine(s) && !isMine(cs) ? 'good' : isMine(cs) && !isMine(s) ? 'bad' : '', 1600);
+    }
+    if (e.to >= 40 && e.from < 40) SND.play('coin');
+  }
+
+  /* ---------------- sıra ---------------- */
+  function afterAnim() {
+    const st = G.st;
+    if (!st || G.anim) return;
+    paintPieces();
+    paintPods();
+    if (st.over) {
+      $('.kz-dicebox').innerHTML = '';
+      G.hud.msg('Oyun bitti', '');
+      return onOver();
+    }
+    const mine = isMine(st.cur);
+    G.ms = null;
+    if (st.phase === 'move') {
+      if (mine && (G.mode !== 'online' || (G.net && G.net.canAct()))) {
+        G.ms = K.moves(st, st.cur, st.die);
+        if (G.ms.length === 1 && set.auto1 !== false) {
+          // tek seçenek: kısa bir an gösterip kendiliğinden oynat
+          const m = G.ms[0];
+          const key = st.step;
+          paintTargets();
+          paintMsg();
+          setTimeout(() => {
+            if (G.st === st && st.step === key && !G.anim) play(m.i);
+          }, D(520));
+          return;
+        }
+      }
+      paintIdleDie(st.cur, false);
+    } else {
+      G.waitRoll = mine && (G.mode !== 'online' || (G.net && G.net.canAct()));
+      paintIdleDie(st.cur, G.waitRoll);
+      if (G.waitRoll) {
+        const k = 'r' + st.turnNo + ':' + st.step;
+        if (G.turnKey !== k && (G.mode !== 'local')) {
+          G.turnKey = k;
+          if (st.tries === 0 && st.sixes === 0) {
+            SND.play('turn');
+            BZ.haptic(25);
+          }
+        }
+      }
+    }
+    paintTargets();
+    paintMsg();
+    if (G.mode === 'online') netDrive();
+    else driveOffline();
+  }
+  /** Zarı at (benim sıram) */
+  function roll() {
+    const st = G.st;
+    if (!st || st.over || st.phase !== 'roll' || !G.waitRoll || G.anim) return;
+    SND.unlock();
+    G.waitRoll = false;
+    G.rolling = true;
+    const idle = $('.kz-dicebox .kz-die');
+    paintRollCta(false);
+    $$('.kz-dicebox .kz-tapme').forEach((n) => n.remove());
+    $('.kz-dicebox').classList.remove('tap');
+    if (idle) {
+      idle.classList.remove('wait');
+      idle.classList.add('shaking');
+    }
+    SND.play('shake');
+    if (G.mode === 'online') {
+      const r = G.net.dispatch({ seat: G.me, kind: 'roll', data: { k: st.step } }, { later: true });
+      if (!r || r.ok === false) {
+        G.rolling = false;
+        G.waitRoll = true;
+        paintIdleDie(st.cur, true);
+        if (r && r.err) BZ.toast(esc(r.err), 'bad');
+      }
+      return;
+    }
+    applyUI({ seat: st.cur, kind: 'roll', data: { d: [1 + Math.floor(Math.random() * 6)], k: st.step }, at: now() });
+  }
+  /** Piyon oynat (benim sıram) */
+  function play(i) {
+    const st = G.st;
+    if (!st || st.phase !== 'move' || !G.ms || G.anim) return;
+    const m = G.ms.find((x) => x.i === i);
+    if (!m) {
+      SND.play('error');
+      return;
+    }
+    SND.play('select');
+    G.ms = null;
+    paintTargets();
+    if (G.mode === 'online') {
+      const r = G.net.dispatch({ seat: G.me, kind: 'move', data: { i, k: st.step } });
+      if (!r || r.ok === false) {
+        if (r && r.err) BZ.toast(esc(r.err), 'bad');
+        afterAnim();
+      }
+      return;
+    }
+    applyUI({ seat: st.cur, kind: 'move', data: { i, k: st.step }, at: now() }, true);
+  }
+
+  /* ---------------- botlara karşı ---------------- */
+  function driveOffline() {
+    clearTimeout(G.botT);
+    const st = G.st;
+    if (!st || st.over || G.anim || G.mode === 'online') return;
+    if (G.human[st.cur]) return;
+    const s = st.cur;
+    const key = st.step;
+    G.botT = setTimeout(
+      () => {
+        if (G.st !== st || st.step !== key || G.anim) return;
+        if (st.phase === 'roll') applyUI({ seat: s, kind: 'roll', data: { d: [1 + Math.floor(Math.random() * 6)], k: st.step }, at: now() });
+        else {
+          const m = K.choose(st, s, set.level);
+          if (m) applyUI({ seat: s, kind: 'move', data: { i: m.i, k: st.step }, at: now() });
+        }
+      },
+      D(st.phase === 'roll' ? 520 : 480 + Math.random() * 320),
+    );
+  }
+  function startOffline() {
+    G.gen++;
+    BZ.closeModals();
+    clearTimeout(G.botT);
+    const n = +set.players || 4;
+    G.mode = set.mode === 'local' ? 'local' : 'offline';
+    G.net = null;
+    G.spect = false;
+    G.me = 0;
+    G.rot = 0;
+    G.rules = null;
+    G.finished = false;
+    G.Q = [];
+    G.running = false;
+    G.anim = false;
+    G.st = K.newGame({ n, first: Math.floor(Math.random() * n), end: +set.end === 2 ? 2 : 1 });
+    G.st._at = now();
+    const bots = BZ.botNames(3, set.name);
+    G.human = [];
+    G.names = [];
+    for (let s = 0; s < n; s++) {
+      G.human[s] = G.mode === 'local' || s === 0;
+      G.names[s] = G.mode === 'local' ? CNAME[G.st.col[s]] : s === 0 ? set.name || 'Sen' : bots[s - 1];
+    }
+    G.humans = G.human.filter(Boolean).length;
+    sh.show('game');
+    setupGame(`${n} oyuncu · ${G.mode === 'local' ? 'aynı cihazda' : 'botlara karşı'}`);
+    BZ.toast(`${esc(who(G.st.cur).me ? 'Sen' : who(G.st.cur).name)} başlıyor`, '', 1400);
+    afterAnim();
+  }
+  function setupGame(sub) {
+    G.hud = BZ.hud({
+      root: $('#hud'),
+      title: 'Kızma Birader',
+      sub,
+      right: G.mode === 'online' && NET ? `<button class="bz-ib" data-a="emoji" aria-label="Emoji gönder">${icon('smile', 20)}</button>` : '',
+      chat: G.mode === 'online' && !!NET,
+      onMenu: showMenu,
+      onAction: (a) => {
+        if (a === 'emoji' && NET) NET.emojiPicker();
+      },
+      onSound: (v) => {
+        set.sound = v;
+        S.save();
+      },
+    });
+    layout();
+    $('#kzBoard').innerHTML = boardHTML();
+    paintPieces();
+    paintPods();
+  }
+
+  /* ---------------- online masa ---------------- */
+  const GA = {
+    init(table) {
+      const st = K.newGame({ n: table.seats_n, first: Number(table.seed || 1) % table.seats_n, end: +((table.rules || {}).end) === 2 ? 2 : 1 });
+      st._at = Date.parse(table.started_at) || now();
+      return st;
+    },
+    apply: (st, a) => reduce(st, a),
+    clone: (st) => K.clone(st),
+    view: () => G.st,
+    applyLocal: (a) => applyUI(Object.assign({ at: now() }, a), true),
+    applyRemote(a, mine) {
+      const r = applyUI(a, mine && a.kind === 'move');
+      return r && r.ok ? { pace: 120 } : null;
+    },
+    reset(st) {
+      G.gen++;
+      G.st = st;
+      G.Q = [];
+      G.running = false;
+      G.anim = false;
+      G.ms = null;
+      G.rolling = false;
+      relayout();
+      afterAnim();
+    },
+    onSeats() {
+      if (G.st && !G.anim) paintPods();
+    },
+    onStatus(status) {
+      if (status === 'closed') {
+        BZ.toast(G.spect ? 'Masa kapandı.' : 'Masa kapandı: oyunda başka oyuncu kalmadı.', 'bad');
+        setTimeout(() => sh.lobby(), 1600);
+      }
+    },
+    onTick() {
+      if (G.mode !== 'online') return;
+      paintTimer();
+      const pill = $('#kzNet');
+      if (pill) pill.hidden = !(G.net && G.net.fails > 1);
+      netDrive();
+    },
+    onSpectate() {
+      G.spect = true;
+      G.ms = null;
+      G.waitRoll = false;
+      BZ.toast('Koltuğunda artık bot oynuyor. Masayı izliyorsun.', 'bad');
+      paintPods();
+      paintTargets();
+      paintMsg();
+    },
+  };
+  function fresh(slot, key) {
+    const k = G[slot];
+    if (k && k.key === key && Date.now() - k.at < 6000) return false;
+    G[slot] = { key, at: Date.now() };
+    return true;
+  }
+  function netDrive() {
+    const N = G.net;
+    const st = G.st;
+    if (!N || !st || G.mode !== 'online' || N.closed || G.anim || st.over) return;
+    if (!N.canAct() || N.busy()) return;
+    const t = now();
+    const key = st.step;
+    const at = st._at || t;
+    const sec = turnSec();
+    const p = st.cur;
+    const ctl = N.control(p);
+    // benim sıram: süre dolunca kendi tarayıcım oynar
+    if (!G.spect && p === G.me) {
+      // test kancası: kendi koltuğumu bot gibi oynat
+      if (G.autoHuman) {
+        if (t >= at + 300 * (G.testMul || 1)) {
+          if (fresh('botKey', key)) botAct(p, false);
+        } else soon(at + 300 * (G.testMul || 1) - t);
+        return;
+      }
+      if (sec && t >= at + sec * 1000 && fresh('autoKey', key)) {
+        BZ.toast('Süre doldu: hamlen otomatik oynandı', 'warn');
+        botAct(p, true);
+      }
+      return;
+    }
+    if (!N.isDriver()) return;
+    if (ctl === 'bot' || ctl === 'away') {
+      const due = at + (st.phase === 'roll' ? 650 : 450) * (G.testMul || 1);
+      if (t >= due) {
+        if (fresh('botKey', key)) botAct(p, false);
+      } else soon(due - t);
+      return;
+    }
+    if (ctl === 'human' && sec && t >= at + sec * 1000 + 3500 && fresh('autoKey', key)) botAct(p, true);
+  }
+  /** Botun sırası: bir sonraki saniyeyi beklemeden tam zamanında yeniden bak */
+  function soon(ms) {
+    clearTimeout(G.ndT);
+    G.ndT = setTimeout(netDrive, Math.max(20, ms + 15));
+  }
+  function botAct(p, auto) {
+    const st = G.st;
+    const extra = auto ? { auto: true } : {};
+    if (st.phase === 'roll') {
+      const r = G.net.dispatch({ seat: p, kind: 'roll', data: Object.assign({ k: st.step }, extra) }, { later: true });
+      if (!r || r.ok === false) G.botKey = G.autoKey = null;
+      if (p === G.me) {
+        G.waitRoll = false;
+        G.rolling = true;
+      }
+      return;
+    }
+    const lvl = (G.rules && G.rules.level) || 'orta';
+    const m = K.choose(st, p, lvl);
+    if (!m) return;
+    const r = G.net.dispatch({ seat: p, kind: 'move', data: Object.assign({ i: m.i, k: st.step }, extra) }, { later: true });
+    if (!r || r.ok === false) G.botKey = G.autoKey = null;
+  }
+  function startTable(sess) {
+    G.gen++;
+    BZ.closeModals();
+    clearTimeout(G.botT);
+    G.net = sess;
+    G.mode = 'online';
+    G.rules = Object.assign({ turn: 20, level: 'orta', end: 1 }, sess.table.rules || {});
+    G.spect = sess.spect;
+    G.me = sess.spect ? sess.watch : sess.mySeat;
+    if (G.me == null) G.me = 0;
+    G.finished = false;
+    G.Q = [];
+    G.running = false;
+    G.anim = false;
+    G.st = GA.init(sess.table);
+    G.rot = G.st.col[G.me] || 0;
+    sh.show('game');
+    setupGame(`${sess.table.seats_n} oyuncu · online${G.spect ? ' · izliyorsun' : ''}`);
+    sess.start(GA).catch(() => sh.lobby());
+  }
+  const TABLE_RULES = {
+    defaults: () => ({ turn: 20, level: 'orta', end: 1 }),
+    form(r, n) {
+      const seg = (k, v, l) => `<button type="button" data-v="${v}" aria-pressed="${String(r[k]) === String(v)}">${l}</button>`;
+      return `<div class="t-field"><span class="t-lab">Maç sonu</span><div class="t-seg" data-seg="end">${seg('end', 1, 'İlk bitiren kazanır')}${n > 2 ? seg('end', 2, '2. de belli olsun') : ''}</div></div>
+        <div class="t-field"><span class="t-lab">Hamle süresi</span><div class="t-seg" data-seg="turn">${[15, 20, 30, 45].map((v) => seg('turn', v, v + ' sn')).join('')}</div></div>
+        <div class="t-field"><span class="t-lab">Bot seviyesi (boş koltuk ve bağlantısı kopan oyuncu için)</span><div class="t-seg" data-seg="level">${LEVELS.map(([v, l]) => seg('level', v, l)).join('')}</div></div>
+        <p class="t-note">Zar sunucuda atılır. 6 atan yeniden atar; 6 ile ahırdan piyon çıkarabilir ya da dışarıdaki bir piyonu oynayabilirsin.</p>`;
+    },
+    read(form, prev) {
+      const r = Object.assign({}, prev || TABLE_RULES.defaults());
+      const pick = (k) => form.querySelector(`[data-seg="${k}"] [aria-pressed="true"]`);
+      const t = pick('turn');
+      const l = pick('level');
+      const e = pick('end');
+      if (t) r.turn = +t.dataset.v;
+      if (l) r.level = l.dataset.v;
+      if (e) r.end = +e.dataset.v;
+      return r;
+    },
+    summary: (r, n) => `${+r.end === 2 && n > 2 ? '2. de belli olana kadar' : 'ilk bitiren kazanır'} · hamle ${r.turn ? r.turn + ' sn' : 'süresiz'}`,
+  };
+
+  /* ---------------- maç sonu ---------------- */
+  function onOver() {
+    const st = G.st;
+    if (!st || !st.over || $('.bz-modals [data-modal="results"]')) return;
+    const rk = K.ranking(st);
+    if (G.mode === 'online' && G.net && !G.spect && !G.finished) {
+      G.finished = true;
+      G.net.finish({ ranking: rk.map((r) => ({ seat: r.seat, total: r.total })) });
+    }
+    const w = who(st.winner);
+    const iWon = isMine(st.winner) && (G.mode !== 'local');
+    if (G.mode === 'local' || G.spect) BZ.banner(`${esc(w.name).toLocaleUpperCase('tr-TR')} KAZANDI`, 'Dört piyon evde', true);
+    else BZ.banner(iWon ? 'KAZANDIN!' : `${esc(w.name).toLocaleUpperCase('tr-TR')} KAZANDI`, 'Dört piyon evde', iWon);
+    SND.play(iWon || G.mode === 'local' ? 'win' : 'lose');
+    if (iWon) BZ.confetti(120);
+    const online = G.mode === 'online';
+    const gen = G.gen;
+    setTimeout(() => {
+      if (gen !== G.gen) return;
+      const rows = rk.map((r) => {
+        const x = who(r.seat);
+        return { name: x.me ? 'Sen' : x.name + (x.bot && online ? ' (BOT)' : ''), val: r.total, label: r.done ? 'bitirdi' : `${r.home}/4 evde`, me: isMine(r.seat) && G.mode !== 'local', win: r.seat === st.winner };
+      });
+      BZ.results({
+        title: `${esc(w.me ? 'Sen' : w.name)} kazandı`,
+        sub: 'Sıralama: bitiriş sırası, sonra evdeki piyonlar ve yolda kat edilen mesafe.',
+        rows,
+        tiePlaces: true,
+        extra: online && !G.spect ? '<div class="rw-slot"></div>' : '',
+        onAgain: () => (online ? sh.lobby() : startOffline()),
+        onHome: () => (online ? sh.lobby() : home()),
+      });
+      const box = $('.bz-modals [data-modal="results"]');
+      if (online && box) {
+        const again = box.querySelector('[data-m="again"]');
+        if (again) again.innerHTML = `${icon('users', 17)} Masalara dön`;
+        const hm = box.querySelector('[data-m="home"]');
+        if (hm) hm.remove();
+        const rws = box.querySelector('.rw-slot');
+        if (rws && NET && NET.mountRewards && G.net) NET.mountRewards(rws, G.net.id);
+      }
+    }, D(1700));
+  }
+
+  /* ---------------- menü, kurallar, başlangıç ---------------- */
+  const RULES = `<p><b>Amaç:</b> dört piyonunu da tahtayı dolaştırıp kendi rengindeki eve ilk sokan kazanır.</p>
+    <p><b>Çıkış:</b> piyonlar ahırda başlar; ahırdan çıkmak için <b>6</b> atmalısın. 6 atınca ister ahırdan piyon çıkarırsın, ister dışarıdaki bir piyonunu 6 kare oynarsın — seçim senin.</p>
+    <p><b>6:</b> 6 atan bir kez daha atar. 6 ile piyon çıkardıktan sonra gelen zarla istediğin piyonu oynayabilirsin (yeni çıkanı oynamak zorunda değilsin).</p>
+    <p><b>Hamle:</b> zar kadar saat yönünde ilerlersin. Kendi piyonunun üstüne konamazsın. Oynayabildiğin bir hamle varsa oynamak zorundasın.</p>
+    <p><b>Kırmak:</b> rakibin piyonunun bulunduğu kareye tam gelirsen onu ahırına geri yollarsın.</p>
+    <p><b>Üç hak:</b> bütün piyonların ahırdaysa 6 için 3 kez atabilirsin.</p>
+    <p><b>Ev:</b> tahtayı dolaşınca kendi ev sırana girersin; eve tam zarla girilir ve evde piyon atlanmaz.</p>
+    <p><b>Online:</b> zar sunucuda atılır. Sıran gelince “Zar at”a dokun; süre dolarsa hamlen kendiliğinden oynanır. Bağlantın koparsa yerine bot oynar.</p>`;
+  function showMenu() {
+    const online = G.mode === 'online' && G.net;
+    BZ.gameMenu({
+      title: 'Kızma Birader',
+      rules: RULES,
+      online,
+      homeLabel: online ? (G.spect ? 'İzlemeyi bırak' : 'Masadan çık') : 'Oyun ayarlarına dön',
+      extra: `<label class="kz-opt"><input type="checkbox" data-set="auto1" ${set.auto1 !== false ? 'checked' : ''}> Tek seçenek varsa piyonu kendiliğinden oynat</label>`,
+      onAction: (m) => {
+        if (m === 'restart') return startOffline();
+        if (m === 'home') return online ? sh.leave(G.net, G.spect) : home();
+      },
+    });
+    const box = $('.bz-modals .bz-mwrap:last-child');
+    if (box)
+      box.addEventListener('change', (e) => {
+        if (e.target.dataset.set === 'auto1') {
+          set.auto1 = e.target.checked;
+          S.save();
+        }
+      });
+  }
+  function home() {
+    G.gen++;
+    clearTimeout(G.botT);
+    BZ.closeModals();
+    G.st = null;
+    G.mode = 'offline';
+    G.net = null;
+    sh.show('start');
+    BZ.startScreen({
+      root: $('#start'),
+      title: 'Kızma Birader',
+      tagline: 'Zarı at, 6 ile piyonunu çıkar ya da dışarıdakini koştur; rakiplerini kırıp ahırlarına yolla. Dört piyonunu da eve ilk sokan kazanır.',
+      chips: ['2–4 kişi', 'Zar', 'Online masa'],
+      art: window.GAME_ART,
+      settings: set,
+      save: () => S.save(),
+      panelTitle: 'Botlara karşı',
+      options: [
+        { key: 'players', label: 'Oyuncu sayısı', choices: [[2, '2'], [3, '3'], [4, '4']] },
+        { key: 'mode', label: 'Rakipler', choices: [['bot', 'Botlar'], ['local', 'Hepsi aynı cihazda']] },
+        { key: 'level', label: 'Bot seviyesi', choices: LEVELS, when: (s) => s.mode !== 'local' },
+        { key: 'end', label: 'Maç sonu', choices: [[1, 'İlk bitiren kazanır'], [2, '2. de belli olsun']], when: (s) => +s.players > 2 },
+      ],
+      actions: [{ id: 'play', label: 'Oyuna başla', kind: 'gold big', icon: 'play' }],
+      online: { title: 'Online', text: 'Arkadaşlarınla 2–4 kişilik masa kur ya da açık masalara katıl. Zar sunucuda atılır; boş koltuklara bot oturur, bağlantısı kopanın yerine bot oynar.' },
+      onAction: (id) => {
+        if (id === 'play') return startOffline();
+        if (id === 'online') return sh.online();
+      },
+      rules: RULES,
+    });
+  }
+  const sh = BZ.shell({
+    game: 'kizma-online',
+    name: 'Kızma Birader',
+    seatCounts: [2, 3, 4],
+    defSeats: 4,
+    rules: TABLE_RULES,
+    seatTag: (seat, n) => {
+      const c = K.colorsFor(n)[seat];
+      return `<span class="kz-seattag ${COLORS[c]}">${CNAME[c]}</span>`;
+    },
+    onPlay: startTable,
+    onOffline: () => startOffline(),
+    onStart: home,
+    mySeat: () => (G.spect ? null : G.me),
+    avatarEl: (uid, seat) => {
+      if (!G.st) return null;
+      let p = seat != null && seat !== '' && !isNaN(+seat) ? +seat : null;
+      if (p == null && G.net) for (let i = 0; i < G.st.n; i++) if (G.net.who(i).user_id === uid) p = i;
+      return p == null ? null : $(`.kz-pod[data-seat="${p}"] .kz-av`);
+    },
+  });
+
+  /* ---------------- dokunma ---------------- */
+  function onBoard(e) {
+    SND.unlock();
+    const st = G.st;
+    if (!st || st.over) return;
+    if (e.target.closest('[data-roll]') || (G.waitRoll && (e.target.closest('.kz-dicebox') || e.target.closest('.kz-board')))) {
+      if (G.waitRoll) roll();
+      return;
+    }
+    if (!G.ms || G.anim) return;
+    const t = e.target.closest('.kz-tgt');
+    const pc = e.target.closest('.kz-pc');
+    let i = null;
+    if (t) i = +t.dataset.i;
+    else if (pc && +pc.dataset.s === st.cur) i = +pc.dataset.i;
+    else if (pc) {
+      // kırılacak rakip piyona dokunmak: onu kıran hamle
+      const m = G.ms.find((x) => x.cap && x.cap[0] === +pc.dataset.s && x.cap[1] === +pc.dataset.i);
+      if (m) i = m.i;
+    }
+    if (i == null) return;
+    play(i);
+  }
+  function boot() {
+    $('#game').insertAdjacentHTML('beforeend', `<div id="kzWrap" class="kz-wrap"><div id="kzPodsA" class="kz-pods a"></div><div id="kzBoard" class="kz-board"></div><div id="kzPodsB" class="kz-pods b"></div></div><span id="kzNet" class="kz-netpill" hidden>Bağlantı yavaş…</span>`);
+    $('#kzBoard').addEventListener('click', onBoard);
+    $('#kzWrap').addEventListener('click', (e) => {
+      if (e.target.closest('.kz-pods [data-roll]')) {
+        SND.unlock();
+        return roll();
+      }
+      const av = e.target.closest('.kz-av[data-uid]');
+      if (av && av.dataset.uid && NET && G.mode === 'online') NET.playerCard(av.dataset.uid);
+    });
+    document.addEventListener('keydown', (e) => {
+      if ((e.key === ' ' || e.key === 'Enter') && G.waitRoll && !BZ.hasModal()) {
+        e.preventDefault();
+        roll();
+      }
+    });
+    let rz = null;
+    window.addEventListener('resize', () => {
+      clearTimeout(rz);
+      rz = setTimeout(relayout, 80);
+    });
+    window.addEventListener('orientationchange', () => setTimeout(relayout, 260));
+    setInterval(() => {
+      if (G.st && G.mode === 'online') paintTimer();
+    }, 500);
+    sh.boot();
+  }
+  window.__KZT = { startOffline, roll, play, relayout, G };
+  if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', boot);
+  else boot();
+})();
+
+</script>
+</body>
+</html>
