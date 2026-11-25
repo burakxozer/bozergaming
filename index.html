@@ -17,8 +17,8 @@
 <meta property="og:url" content="https://burakxozer.github.io/bozergaming/">
 <meta property="og:title" content="Bözer Gaming · Arkadaşlarınla online oyun masaları">
 <meta property="og:description" content="Blackjack, Americano, Dost Kazığı, Pişti, Tavla, Kızma Birader, Yalancı Zar ve Amiral Battı. Arkadaşlarınla aynı masada oyna, BP kazan, rozet bas, emoji ve hediye gönder.">
-<meta property="og:image" content="https://burakxozer.github.io/bozergaming/assets/icons/og.jpg?v=3.4.3">
-<meta property="og:image:secure_url" content="https://burakxozer.github.io/bozergaming/assets/icons/og.jpg?v=3.4.3">
+<meta property="og:image" content="https://burakxozer.github.io/bozergaming/assets/icons/og.jpg?v=3.5.0">
+<meta property="og:image:secure_url" content="https://burakxozer.github.io/bozergaming/assets/icons/og.jpg?v=3.5.0">
 <meta property="og:image:type" content="image/jpeg">
 <meta property="og:image:width" content="1200">
 <meta property="og:image:height" content="630">
@@ -26,18 +26,18 @@
 <meta name="twitter:card" content="summary_large_image">
 <meta name="twitter:title" content="Bözer Gaming · Arkadaşlarınla online oyun masaları">
 <meta name="twitter:description" content="Blackjack, Americano, Dost Kazığı, Pişti, Tavla, Kızma Birader, Yalancı Zar ve Amiral Battı. Arkadaşlarınla aynı masada oyna, BP kazan, rozet bas.">
-<meta name="twitter:image" content="https://burakxozer.github.io/bozergaming/assets/icons/og.jpg?v=3.4.3">
+<meta name="twitter:image" content="https://burakxozer.github.io/bozergaming/assets/icons/og.jpg?v=3.5.0">
 <link rel="manifest" href="manifest.webmanifest">
-<link rel="icon" href="assets/icons/favicon.svg?v=3.4.3" type="image/svg+xml">
-<link rel="icon" href="assets/icons/icon-192.png?v=3.4.3" type="image/png" sizes="192x192">
-<link rel="apple-touch-icon" href="assets/icons/apple-touch-icon.png?v=3.4.3">
+<link rel="icon" href="assets/icons/favicon.svg?v=3.5.0" type="image/svg+xml">
+<link rel="icon" href="assets/icons/icon-192.png?v=3.5.0" type="image/png" sizes="192x192">
+<link rel="apple-touch-icon" href="assets/icons/apple-touch-icon.png?v=3.5.0">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="preconnect" href="https://cdn.jsdelivr.net" crossorigin>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Archivo:wdth,wght@62..125,300..900&display=swap">
-<link rel="stylesheet" href="assets/css/app.css?v=3.4.3">
-<link rel="stylesheet" href="assets/css/badges.css?v=3.4.3">
-<link rel="stylesheet" href="assets/css/econ.css?v=3.4.3">
+<link rel="stylesheet" href="assets/css/app.css?v=3.5.0">
+<link rel="stylesheet" href="assets/css/badges.css?v=3.5.0">
+<link rel="stylesheet" href="assets/css/econ.css?v=3.5.0">
 <script>
   try { var t = JSON.parse(localStorage.getItem('bg.theme')); if (t) document.documentElement.setAttribute('data-theme', t); } catch (e) {}
 </script>
@@ -213,6 +213,30 @@
   </ul>
 </template>
 
+<template id="tpl-info-b01">
+  <ul>
+    <li><strong>Hızlı maç:</strong> Oyunu seç (X01, Kriket, Karambol Kriket), tarafları ekle, başlat. Bir tarafa birden çok oyuncu eklersen sırayla atarlar. Bota karşı da oynanır. Giriş yaptıysan “Canlı yayınla” ile maçı arkadaşların ve TV ekranı izler.</li>
+    <li><strong>X01 skoru:</strong> Elin toplamını yaz ve ENTER’a bas ya da hızlı sayılardan birine dokun (26, 41, 45, 60, 100, 140, 180…); sayı hemen kalan puandan düşer. Hızlı sayıya basılı tutarak değiştirebilirsin. “Bitir” kalanı bitirir ve kaç okta bittiğini sorar; “Bust” eli sıfır sayar. Kalan sayıyı aşan ya da çift bitişte 1 bırakan el kendiliğinden bust olur. Bir atışa dokunup düzeltebilir, “Geri al” ile son atışı silebilirsin.</li>
+    <li><strong>Kriket ve Karambol:</strong> Hücreye her dokunuş bir işarettir (/, X, halkalı X = kapalı). Başka tarafın hücresine dokununca sıra o tarafa geçer; “El bitti” ile sırayı sonraki tarafa ver.</li>
+    <li><strong>Turnuva ve lig:</strong> “Turnuva kur” ya da “Lig kur” ile adı, biçimi, oyunu ve katılımcıları seç; yöneticileri arkadaş listenden ekle (bildirim gider). Turnuva sayfasında “Kurayı çek ve başlat”. Maça dokunup skoru tutarsın ya da sonucu elle girersin; sonuç ağaca, fikstüre ve puan durumuna kendiliğinden işlenir.</li>
+    <li><strong>Skoru kim tutar:</strong> Turnuvayı kuran kişi ve seçtiği yöneticiler. Bir maçın skoru aynı anda tek cihazdan tutulur; başka bir yönetici onaylayarak devralabilir.</li>
+    <li><strong>İzleme ve TV:</strong> Herkes (giriş yapmadan da) maçları canlı izler. Turnuva sayfasındaki “TV” düğmesi skor tabelasını açar: tek maç, bir tahta ya da turnuvanın öne çıkan maçı. “Alt bant” yayın (OBS) içindir; bağlantının sonuna &amp;ses=1 eklersen elleri sesli okur.</li>
+    <li>Eski dart sayfaları (Karambol maç, turnuva, lig ve Dartbot) “Klasik” adıyla duruyor.</li>
+  </ul>
+</template>
+
+<template id="tpl-rules-b01">
+  <ul>
+    <li><strong>X01 (301, 501, 701, 1001):</strong> Herkes aynı sayıdan başlar, her elde üç okun toplamı düşülür. Sıfıra ilk inen leg’i alır. Çift bitişte son ok çift bölgeye (ya da bull’un ortasına) gelmelidir; sayıyı aşmak ya da 1 bırakmak “bust”tır, el sayılmaz. Master bitişte çift ya da üçlü, düz bitişte her ok bitirir. Çift girişte puan saymaya ilk çiftle başlanır.</li>
+    <li><strong>Leg ve set:</strong> “İlk 3 leg” 3 leg alan kazanır demektir. Setli maçta her set ilk N leg’le biter, maçı belirli sayıda set alan kazanır. Leg’leri sırayla taraflar başlatır.</li>
+    <li><strong>Kriket (puanlı):</strong> Hedefler 20–15 ve Bull. Tek 1, çift 2, üçlü 3 işarettir; 3 işaret sayıyı kapatır. Kapattığın sayıya rakip kapatmadıysa sonraki işaretlerin puan getirir (Bull 25). Hepsini kapatıp puanda önde ya da eşit olan kazanır.</li>
+    <li><strong>Kriket (kapatma):</strong> Puan yoktur; 20–15 ve Bull’u ilk kapatan seti alır.</li>
+    <li><strong>Karambol Kriket:</strong> Hedefler 20–12, D (çift), T (üçlü), B (bull) ve H (house). Üçlü T açıksa T’ye, kapalıysa sayıyı kapatır; çift D açıksa D’ye, kapalıysa sayıya 2 işaret yazar. Bull 1, kırmızı bull 2 işarettir. Üç okun üçü de aynı sayıya gelirse (House açıksa) yalnız House yazılır. 1–11 tekleri sayılmaz. Hepsini ilk kapatan seti alır.</li>
+    <li><strong>Turnuva biçimleri:</strong> Tek elemede kaybeden elenir; çift elemede iki kez kaybeden elenir, büyük finali kaybedenler tarafından gelen kazanırsa tekrar maçı oynanır. Gruplarda herkes herkesle oynar, gruptan çıkanlar eleme ağacına geçer. İsviçre sisteminde her tur benzer puandakiler eşleşir.</li>
+    <li><strong>Puan durumu:</strong> Galibiyet/beraberlik/mağlubiyet puanı ya da skora göre puan (ör. 3-0’a 3, 3-2’ye 2-1). Eşitlikte averaj (set/leg farkı), leg farkı, atılan, ikili averaj ve galibiyet sayısına bakılır.</li>
+  </ul>
+</template>
+
 <template id="tpl-info-dartbot">
   <ul>
     <li>Karambol Kriket oyun kuralları geçerlidir.</li>
@@ -253,20 +277,20 @@
 </template>
 
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-<script src="assets/js/config.js?v=3.4.3"></script>
-<script src="assets/js/core.js?v=3.4.3"></script>
-<script src="assets/js/api.js?v=3.4.3"></script>
-<script src="assets/js/bp.js?v=3.4.3"></script>
-<script src="assets/js/shop.js?v=3.4.3"></script>
-<script src="assets/js/player.js?v=3.4.3"></script>
-<script src="assets/js/home.js?v=3.4.3"></script>
-<script src="assets/js/home3.js?v=3.4.3"></script>
-<script src="assets/js/auth.js?v=3.4.3"></script>
-<script src="assets/js/profile.js?v=3.4.3"></script>
-<script src="assets/js/social.js?v=3.4.3"></script>
-<script src="assets/js/admin.js?v=3.4.3"></script>
-<script src="assets/js/host.js?v=3.4.3"></script>
-<script src="assets/js/watch.js?v=3.4.3"></script>
-<script src="assets/js/app.js?v=3.4.3"></script>
+<script src="assets/js/config.js?v=3.5.0"></script>
+<script src="assets/js/core.js?v=3.5.0"></script>
+<script src="assets/js/api.js?v=3.5.0"></script>
+<script src="assets/js/bp.js?v=3.5.0"></script>
+<script src="assets/js/shop.js?v=3.5.0"></script>
+<script src="assets/js/player.js?v=3.5.0"></script>
+<script src="assets/js/home.js?v=3.5.0"></script>
+<script src="assets/js/home3.js?v=3.5.0"></script>
+<script src="assets/js/auth.js?v=3.5.0"></script>
+<script src="assets/js/profile.js?v=3.5.0"></script>
+<script src="assets/js/social.js?v=3.5.0"></script>
+<script src="assets/js/admin.js?v=3.5.0"></script>
+<script src="assets/js/host.js?v=3.5.0"></script>
+<script src="assets/js/watch.js?v=3.5.0"></script>
+<script src="assets/js/app.js?v=3.5.0"></script>
 </body>
 </html>
