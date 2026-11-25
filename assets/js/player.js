@@ -377,7 +377,7 @@
     const kb = st.kizma || {};
     const lz = st.yalanci || {};
     const ab = st.amiral || {};
-    const online = ['americano-online', 'dostkazigi-online', 'pisti-online', 'tavla-online', 'kizma-online', 'yalanci-online', 'amiral-online', 'blackjack'];
+    const online = ['americano-online', 'dostkazigi-online', 'pisti-online', 'tavla-online', 'kizma-online', 'yalanci-online', 'amiral-online', 'blackjack', 'b01'];
     const others = (d.playtime || []).filter((g) => online.indexOf(g.game) < 0 && g.secs >= 60);
     return `<section class="pp-sec">
         <h2>${icon('gamepad', 18)}Oyunlar</h2>
@@ -429,6 +429,7 @@
             ['Jackpot', fmt(bj.jackpots || 0)],
             ['Kazanma oranı', BG.pct(bj.wins || 0, bj.played || 0)],
           ], secs('blackjack'), '#f4c430')}
+          <div data-b01-card data-secs="${secs('b01')}" hidden></div>
         </div>
         <h3 class="pp-h3">Diğer oyunlar</h3>
         ${
@@ -611,6 +612,30 @@
       </div>
       <footer class="pp-total"><span>BÖZER GAMING TOPLAM AKTİF SÜRE</span><b>${esc(BG.hours(d.total_active_secs))}</b></footer>`;
     mountComments(root, d);
+    // v3.5: B01 dart istatistikleri (turnuva, lig ve yayınlanan maçlar)
+    const b01 = root.querySelector('[data-b01-card]');
+    if (b01)
+      BG.api
+        .rpc('bg_b01_user_stats', { p_user: d.user.id })
+        .then((r) => {
+          const x = (r && r.x01) || {};
+          const cr = (r && r.cricket) || {};
+          const kr = (r && r.karambol) || {};
+          const n = (x.matches || 0) + (cr.matches || 0) + (kr.matches || 0);
+          const secsB = Number(b01.dataset.secs) || 0;
+          if (!n && !secsB && !(r && r.trophies && r.trophies.length)) return;
+          const card = BG.frag(gameCard('b01', 'B01 Dart', [
+            ['Toplam maç', fmt(n)],
+            ['Galibiyet', fmt((x.wins || 0) + (cr.wins || 0) + (kr.wins || 0))],
+            ['X01 ortalaması', x.matches ? String(x.avg).replace('.', ',') : '—'],
+            ['180', fmt(x.c180 || 0)],
+            ['En yüksek bitiş', x.hi_out ? fmt(x.hi_out) : '—'],
+            ['Kriket MPR', cr.matches ? String(cr.mpr).replace('.', ',') : '—'],
+            ['Kupa', fmt((r.trophies || []).length)],
+          ], secsB, '#4a9dff'));
+          b01.replaceWith(card);
+        })
+        .catch(() => {});
     if (opts.focusBadges && d.relation === 'self') setTimeout(() => openBadges(d, opts), 0);
     // kendi profilinde: hediyeleri kimin gönderdiği (yalnızca sahibi görür)
     const og = root.querySelector('[data-own-gifts]');

@@ -26,9 +26,10 @@
     'kizma-online': [['tpl-rules-kizma', 'Kızma Birader oyun kuralları', 'book']],
     'yalanci-online': [['tpl-rules-yalanci', 'Yalancı Zar oyun kuralları', 'book']],
     'amiral-online': [['tpl-rules-amiral', 'Amiral Battı oyun kuralları', 'book']],
+    b01: [['tpl-info-b01', 'B01 nasıl kullanılır?', 'info'], ['tpl-rules-b01', 'X01, Kriket ve Karambol kuralları', 'book']],
   };
   /** Online masa oyunlarına geçen adres parametreleri */
-  const TABLE_PARAMS = ['masa', 'izle', 'kim', 'mod'];
+  const TABLE_PARAMS = ['masa', 'izle', 'kim', 'mod', 'etkinlik', 'git'];
   function tableQuery(query) {
     const q = new URLSearchParams();
     TABLE_PARAMS.forEach((k) => {
@@ -168,7 +169,7 @@
      kaymaz; yalnız sohbet, liste gibi kendi kaydırma alanı olan bölümler kaydırılır. */
   /** v3.4.3: tam ekranda kendi üst çubuğunda sohbet ve çıkış düğmesi olan oyunlar (sağdaki yüzen düğmeler gösterilmez) */
   const OWN_FS = ['kizma-online', 'yalanci-online', 'amiral-online'];
-  const STRICT = ['blackjack', 'americano-online', 'dostkazigi-online', 'pisti-online', 'tavla-online', 'kizma-online', 'yalanci-online', 'amiral-online'];
+  const STRICT = ['blackjack', 'americano-online', 'dostkazigi-online', 'pisti-online', 'tavla-online', 'kizma-online', 'yalanci-online', 'amiral-online', 'b01'];
   const NOZOOM = 'width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no, viewport-fit=cover';
   let vpOrig = null;
   let lockOn = false;

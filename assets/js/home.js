@@ -141,10 +141,24 @@
               </div>
             </article>
 
+            <article class="game-row game-row-b01" data-game="b01">
+              <div class="game-glyph">${BG.gameTile('b01', 'tile-l')}</div>
+              <div class="game-main">
+                <h3 class="game-name">B01 Dart Merkezi <span class="hv-new">Yeni</span></h3>
+                <p class="game-desc">X01 (301, 501…), Kriket ve Karambol Kriket skor tabelası. Turnuva ve lig kur, yöneticileri seç, maçları canlı ve TV ekranında izlet.</p>
+                <ul class="modes">
+                  <li class="mode"><div><strong>Hızlı maç</strong><span>2–4 taraf, bota karşı da oynanır</span></div><div class="mode-actions"><a class="btn btn-primary btn-sm" href="#/oyun/b01?git=yeni">${icon('play', 16)}Başla</a></div></li>
+                  <li class="mode"><div><strong>Turnuva</strong><span>Tek/çift eleme, gruplar, İsviçre</span></div><div class="mode-actions"><a class="btn btn-primary btn-sm" href="#/oyun/b01?git=turnuvalar">${icon('play', 16)}Aç</a></div></li>
+                  <li class="mode"><div><strong>Lig</strong><span>Haftalık fikstür ve puan durumu</span></div><div class="mode-actions"><a class="btn btn-primary btn-sm" href="#/oyun/b01?git=ligler">${icon('play', 16)}Aç</a></div></li>
+                  <li class="mode"><div><strong>Canlı</strong><span>Oynanan maçları izle</span></div><div class="mode-actions"><a class="btn btn-primary btn-sm" href="#/oyun/b01?git=canli">${icon('play', 16)}İzle</a></div></li>
+                </ul>
+              </div>
+            </article>
+
             <article class="game-row game-row-dart" data-game="dart">
               <div class="game-glyph">${BG.gameTile('dartbot', 'tile-l')}</div>
               <div class="game-main">
-                <h3 class="game-name">Dart</h3>
+                <h3 class="game-name">Dart <small class="hv-classic">Klasik</small></h3>
                 <p class="game-desc">Karambol Kriket için skor tablosu, turnuva ağacı ve seviyeli dart botu.</p>
                 <ul class="modes">
                   <li class="mode">

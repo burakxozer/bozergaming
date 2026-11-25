@@ -321,7 +321,7 @@
   const TIER_N = { bronze: 'Bronze', silver: 'Silver', gold: 'Gold' };
   const AUDIT_KEY = { ranks: 'Rütbeler', prestige: 'Prestij', bj_tiers: 'Blackjack seviyeleri', table_levels: 'Online masa ücretleri ve ödülleri', weekly_support: 'Haftalık destek', am_rank_lock: 'Americano rütbe şartı', dk_rank_lock: 'Dost Kazığı rütbe şartı', ps_rank_lock: 'Pişti rütbe şartı', tv_rank_lock: 'Tavla rütbe şartı', kb_rank_lock: 'Kızma Birader rütbe şartı', lz_rank_lock: 'Yalancı Zar rütbe şartı', ab_rank_lock: 'Amiral Battı rütbe şartı', lz_tiers: 'Yalancı Zar masaları', fc_rules: 'Friend Coins kuralları', games_off: 'Oyun yayın durumu' };
   /* v3.3: sitenin beklediği veritabanı sürümü (kurulum.sql). Eski veritabanında ekonomi ayarları kaydedilemez. */
-  const DB_WANT = '3.4.3';
+  const DB_WANT = '3.5.0';
   const verLess = (a, b) => {
     const p = (v) => String(v || '0').split('.').map((x) => parseInt(x, 10) || 0);
     const x = p(a);
@@ -686,7 +686,7 @@
   // Yayından kaldırılan oyun sitede görünmez ve yeni masa açılmaz; süren masalar ve kayıtlar bozulmadan devam eder.
   const PUB_GROUPS = [
     ['Online masalar', ['blackjack', 'americano-online', 'dostkazigi-online', 'pisti-online', 'tavla-online', 'kizma-online', 'yalanci-online', 'amiral-online']],
-    ['Dart', ['dartbot', 'dart-mac', 'dart-turnuva', 'dart-lig']],
+    ['Dart', ['b01', 'dartbot', 'dart-mac', 'dart-turnuva', 'dart-lig']],
     ['Skor tabloları ve araçlar', ['americano', 'somali', 'lig', 'kura']],
   ];
   async function gamesPane(root) {
@@ -713,7 +713,28 @@
         <div class="panel-head"><h2>Oyunların yayın durumu</h2><span class="chip chip-quiet">${off.size ? n0(off.size) + ' oyun kapalı' : 'Hepsi yayında'}</span></div>
         <p class="panel-lead">Kapattığın oyun ana sayfadan ve menülerden kalkar, yeni masa açılamaz. O an süren masalar, maç ödülleri, istatistikler ve kayıtlar bozulmadan devam eder. Yönetici olarak sen kapalı oyunları yine açıp deneyebilirsin. Açınca oyun hemen geri gelir.</p>
         ${PUB_GROUPS.map(([t, keys]) => `<h3 class="pub-h">${esc(t)}</h3><div class="pub-list">${keys.map(row).join('')}</div>`).join('')}
+      </section>
+      <section class="panel">
+        <div class="panel-head"><h2>B01 Dart Merkezi</h2></div>
+        <p class="panel-lead">Kapalıyken yalnız site yöneticileri turnuva ve lig açabilir. Süren turnuvalar, ligler ve hızlı maçlar etkilenmez.</p>
+        <div class="pub-list"><label class="pub-row${d.b01_open === false ? ' is-off' : ''}"><span class="pub-tile">${BG.gameTile('b01', 'tile-s')}</span>
+          <span class="pub-name"><b>Üyeler turnuva ve lig açabilir</b><small>${d.b01_open === false ? 'Kapalı: yalnız site yöneticileri açar' : 'Açık: her üye turnuva ve lig kurabilir'}</small></span>
+          <span class="pub-sw"><input type="checkbox" data-b01open ${d.b01_open === false ? '' : 'checked'} aria-label="Üyeler turnuva ve lig açabilir"><i aria-hidden="true"></i></span></label></div>
       </section>`;
+    const b01sw = box.querySelector('[data-b01open]');
+    if (b01sw)
+      b01sw.addEventListener('change', async () => {
+        b01sw.disabled = true;
+        try {
+          await BG.api.rpc('bg_admin_econ_set', { p_key: 'b01_open', p_value: b01sw.checked });
+          const s2 = await BG.api.rpc('bg_public_settings', {});
+          if (BG.applyEconSettings) BG.applyEconSettings(s2);
+          BG.toast({ type: 'success', text: b01sw.checked ? 'Üyeler artık turnuva ve lig açabilir.' : 'Turnuva ve lig açmak yalnız yöneticilere açık.' });
+        } catch (e) {
+          BG.toastError(e);
+        }
+        gamesPane(root);
+      });
     box.querySelectorAll('[data-pub]').forEach((inp) =>
       inp.addEventListener('change', async () => {
         const k = inp.dataset.pub;

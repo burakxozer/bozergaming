@@ -621,7 +621,14 @@
   };
 
   /* ---------------- bildirim merkezi ---------------- */
-  const NIC = { admin_bp: 'shield', rank: 'award', prestige: 'star', reward: 'trophy', refund: 'coin', comment: 'message', gift: 'gift', weekly: 'coin', table: 'flag', badge: 'award' };
+  const NIC = { admin_bp: 'shield', rank: 'award', prestige: 'star', reward: 'trophy', refund: 'coin', comment: 'message', gift: 'gift', weekly: 'coin', table: 'flag', badge: 'award',
+    b01_manager: 'shield', b01_ready: 'flag', b01_board: 'flag', b01_start: 'flag', b01_done: 'trophy', b01_join: 'users' };
+  /** v3.5: B01 bildirimi → ilgili maç ya da turnuva */
+  econ.openB01 = function (n) {
+    const d = (n && n.data) || {};
+    const q = d.mac ? 'masa=' + encodeURIComponent(d.mac) + '&izle=1' : d.etkinlik ? 'etkinlik=' + encodeURIComponent(d.etkinlik) : '';
+    BG.router.go('/oyun/b01' + (q ? '?' + q : ''));
+  };
   econ.openNotifications = async function () {
     const body = BG.frag(`<div class="notif"><ul class="notif-list"><li class="muted small">Yükleniyor…</li></ul><button class="btn btn-ghost btn-sm notif-more" type="button" hidden>Daha eski</button></div>`);
     const list = body.querySelector('.notif-list');
@@ -641,6 +648,7 @@
             if (n.kind === 'reward' || n.kind === 'admin_bp' || n.kind === 'refund' || n.kind === 'weekly') econ.openPanel(n.kind === 'admin_bp' ? 'history' : 'wallet');
             else if (n.kind === 'comment' || n.kind === 'rank' || n.kind === 'prestige') BG.router.go('/profil');
             else if (n.kind === 'badge') BG.router.go('/profil?rozet=1');
+            else if (String(n.kind).indexOf('b01_') === 0) econ.openB01(n);
           });
           list.appendChild(li);
         });
@@ -695,7 +703,8 @@
       text: n.body,
       duration: n.kind === 'badge' ? 8000 : 6000,
       // rozet bildirimi: oyun açık değilse doğrudan profildeki Rozetler bölümüne gider
-      onClick: () => (n.kind === 'badge' && !(BG.host && BG.host.isOpen()) ? BG.router.go('/profil?rozet=1') : econ.openNotifications()),
+      onClick: () =>
+        String(n.kind).indexOf('b01_') === 0 ? econ.openB01(n) : n.kind === 'badge' && !(BG.host && BG.host.isOpen()) ? BG.router.go('/profil?rozet=1') : econ.openNotifications(),
     });
   }
 

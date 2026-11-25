@@ -18,5 +18,5 @@ window.BG_CONFIG = {
   // İsteğe bağlı: kullanıcı adı bağlantısı açılmazsa yedek telefon (örn. "905xxxxxxxxx")
   whatsappPhone: "",
 
-  version: "3.4.3"
+  version: "3.5.0"
 };

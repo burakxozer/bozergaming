@@ -204,10 +204,28 @@
 
         <section class="hv-group">
           <h2 class="hv-title">Dart</h2>
+          <article class="hv-dartcard hv-b01" data-game="b01">
+            <div class="hv-b01-art" aria-hidden="true">
+              <div class="t">Bahar Kupası · Yarı Final</div>
+              <div class="r on"><i></i><b>Ali</b><span>2</span><em>141</em></div>
+              <div class="r"><i></i><b>Veli</b><span>1</span><em>281</em></div>
+              <div class="c">T20 T19 D12</div>
+            </div>
+            <div class="hv-dart-body">
+              <div class="hv-dart-head"><h3>B01 Dart Merkezi</h3><span class="hv-new">Yeni</span></div>
+              <p class="hv-b01-desc">X01 (301, 501…), Kriket ve Karambol Kriket skor tabelası. Turnuva ve lig kur, yöneticileri seç, maçları canlı ve TV ekranında izlet.</p>
+              <div class="hv-modes">
+                <a class="hv-mode" href="#/oyun/b01?git=yeni"><b>Hızlı maç</b><span>2–4 taraf, bot</span></a>
+                <a class="hv-mode" href="#/oyun/b01?git=turnuvalar"><b>Turnuva</b><span>Eleme, gruplar</span></a>
+                <a class="hv-mode" href="#/oyun/b01?git=ligler"><b>Lig</b><span>Fikstür, puan</span></a>
+                <a class="hv-mode" href="#/oyun/b01?git=canli"><b>Canlı</b><span>Maçları izle</span></a>
+              </div>
+            </div>
+          </article>
           <article class="hv-dartcard" data-game="dart">
             <div class="hv-dart-art">${dartboard()}</div>
             <div class="hv-dart-body">
-              <div class="hv-dart-head"><h3>Karambol Kriket</h3>
+              <div class="hv-dart-head"><h3>Karambol Kriket <small class="hv-classic">Klasik</small></h3>
                 <a class="hv-yt" href="https://www.youtube.com/watch?v=mSMOEP9QWJk" target="_blank" rel="noopener" title="Nasıl oynanır? (YouTube)" aria-label="Karambol Kriket nasıl oynanır? YouTube’da aç">${icon('play', 14)}Nasıl oynanır</a>
               </div>
               <div class="hv-modes">

@@ -4489,3 +4489,107 @@ a.hv-live-item:hover {
     transform: translateY(-4px);
   }
 }
+
+/* ---------------- v3.5 — B01 Dart Merkezi kartı ---------------- */
+.hv-b01 {
+  background: radial-gradient(ellipse at 0% 50%, rgba(236, 74, 67, 0.16), transparent 60%), var(--surface);
+}
+.hv-b01-art {
+  display: grid;
+  gap: 4px;
+  padding: 10px;
+  border-radius: 14px;
+  background: #0b1013;
+  color: #f2ece0;
+  box-shadow: 0 12px 26px rgba(0, 0, 0, 0.45);
+  font-variant-numeric: tabular-nums;
+}
+.hv-b01-art .t {
+  padding: 4px 8px;
+  border-radius: 6px;
+  background: linear-gradient(90deg, #e8423b, #b8241f 62%, #1b2329 62.4%);
+  color: #fff;
+  font-size: 11px;
+  font-weight: 800;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+.hv-b01-art .r {
+  display: grid;
+  grid-template-columns: 10px minmax(0, 1fr) 20px 50px;
+  align-items: center;
+  gap: 6px;
+  padding: 3px 4px 3px 6px;
+  border-radius: 6px;
+  background: #121a1f;
+  font-size: 14px;
+  font-weight: 800;
+}
+.hv-b01-art .r i {
+  width: 0;
+  height: 0;
+}
+.hv-b01-art .r.on i {
+  border-left: 7px solid #ffc531;
+  border-top: 5px solid transparent;
+  border-bottom: 5px solid transparent;
+}
+.hv-b01-art .r span {
+  text-align: center;
+  color: #ffc531;
+}
+.hv-b01-art .r em {
+  font-style: normal;
+  text-align: center;
+  font-size: 20px;
+  font-weight: 900;
+  font-stretch: 80%;
+  border-radius: 4px;
+  padding: 1px 0;
+}
+.hv-b01-art .r.on em {
+  background: #ffc531;
+  color: #1d1500;
+}
+.hv-b01-art .c {
+  padding-right: 4px;
+  text-align: right;
+  color: #23b26b;
+  font-size: 12px;
+  font-weight: 800;
+  letter-spacing: 0.06em;
+}
+.hv-b01-desc {
+  margin: -6px 0 14px;
+  color: var(--muted);
+  font-size: 14px;
+  max-width: 62ch;
+}
+.hv-new {
+  display: inline-flex;
+  align-items: center;
+  padding: 3px 10px;
+  border-radius: 99px;
+  background: var(--accent);
+  color: var(--accent-ink);
+  font-size: 12px;
+  font-weight: 800;
+  vertical-align: middle;
+}
+.hv-classic {
+  margin-left: 6px;
+  padding: 2px 8px;
+  border-radius: 99px;
+  background: var(--surface-2);
+  color: var(--muted);
+  font-size: 12px;
+  font-weight: 750;
+  vertical-align: middle;
+}
+@media (max-width: 520px) {
+  .hv-b01-art {
+    width: min(100%, 260px);
+    margin: 0 auto;
+  }
+}
